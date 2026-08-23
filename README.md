@@ -16,6 +16,16 @@ npx --yes serve . -p 5188
 
 또는 파일을 브라우저에 직접 열어도 됩니다 (일부 환경에서는 `file://` 제약이 있을 수 있음).
 
+### LAN 코옵 (집 Wi‑Fi · Windows + Mac)
+
+```bash
+cd coop
+npm install
+npm start
+```
+
+호스트 PC에 표시되는 **LAN 주소**를 맥에서 열고, 방 코드로 참가합니다. 자세한 절차는 [`coop/README.md`](coop/README.md).
+
 ## 구성
 
 | 경로 | 설명 |
