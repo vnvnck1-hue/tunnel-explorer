@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>시드루프 테스트 씬 — FoW · 던전 · 채굴 · 램프</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0612;
+    --line: #3a2a55;
+    --tx: #e4d4f5;
+    --mut: #9a86b5;
+    --acc: #d4a8ff;
+    --panel: #140e1f;
+    --card: #1a1228;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--tx);
+    font: 12.5px/1.45 "Pretendard", "Malgun Gothic", ui-sans-serif, system-ui, sans-serif; }
+  #app { display: grid; grid-template-columns: minmax(0,1fr) 360px; height: 100%; min-height: 0; }
+  #stage { display: grid; place-items: center; padding: 14px; min-width: 0; background:
+    radial-gradient(900px 480px at 18% 0%, #2a1848 0%, transparent 55%), var(--bg); }
+  canvas#view {
+    width: min(960px, 92%); height: auto; max-height: calc(100vh - 36px);
+    image-rendering: pixelated; image-rendering: crisp-edges;
+    background: #000; box-shadow: 0 0 0 1px var(--line), 0 18px 50px rgba(0,0,0,.55);
+    touch-action: none; cursor: crosshair;
+  }
+  #side {
+    border-left: 1px solid var(--line); background: var(--panel);
+    overflow: auto; padding: 12px 12px 28px; min-height: 0;
+  }
+  h1 { font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--acc); margin-bottom: 4px; }
+  .sub { color: var(--mut); font-size: 11px; margin-bottom: 12px; }
+  section { border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin-bottom: 10px; background: var(--card); }
+  section h2 { font-size: 11px; letter-spacing: .08em; color: var(--mut); margin-bottom: 8px; font-weight: 700; }
+  .row { display: grid; grid-template-columns: 1fr auto; gap: 6px 8px; align-items: center; margin: 5px 0; }
+  .row label { color: #c4b0dc; cursor: help; border-bottom: 1px dotted rgba(196,176,220,.35); }
+  .row output { color: var(--acc); min-width: 3.5em; text-align: right; }
+  input[type="range"] { width: 100%; grid-column: 1 / -1; accent-color: #a878e0; }
+  input[type="number"], input[type="text"] {
+    width: 100%; background: #0c0814; color: var(--tx); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 7px;
+  }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 6px; }
+  .checks label { color: #c4b0dc; display: inline-flex; gap: 5px; align-items: center; cursor: help;
+    border-bottom: 1px dotted rgba(196,176,220,.25); }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  button {
+    font: inherit; background: #2a1a42; color: var(--tx); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 10px; cursor: pointer;
+  }
+  button.pri { background: rgba(180,120,255,.18); border-color: rgba(180,120,255,.45); color: #edd8ff; }
+  button:active { transform: scale(.97); }
+  #exportBox {
+    width: 100%; min-height: 120px; resize: vertical; background: #0a0612; color: #d4b8ff;
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: 11px/1.4 ui-monospace, Menlo, Consolas, monospace;
+  }
+  .hint { color: var(--mut); font-size: 11px; margin-top: 6px; }
+  .legend { display: grid; gap: 4px; margin-top: 6px; font-size: 11px; color: var(--mut); }
+  .legend span { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  kbd { border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; background: #221633; font-family: inherit; }
+  #prompt {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    background: rgba(20,10,36,.88); border: 1px solid rgba(180,120,255,.45);
+    color: #f0e4ff; padding: 8px 14px; border-radius: 999px; font-size: 13px;
+    pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 5;
+  }
+  #prompt.show { opacity: 1; }
+  @media (max-width: 980px) {
+    #app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    #side { border-left: 0; border-top: 1px solid var(--line); max-height: 42vh; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage"><canvas id="view" width="640" height="360"></canvas></div>
+  <aside id="side">
+    <h1>시드루프 테스트 씬</h1>
+    <p class="sub">안개 조명 · 카메라 워킹 · 절차적 던전 · 채굴 · 거점 램프</p>
+
+    <section>
+      <h2>카메라</h2>
+      <div class="row"><label title="화면이 플레이어를 얼마나 가깝게 보여줄지입니다. 값이 클수록 확대됩니다.">줌</label><output id="oZoom">5.45</output>
+        <input id="zoom" type="range" min="100" max="700" value="545" /></div>
+      <div class="row"><label title="카메라가 목표 지점으로 따라가는 속도입니다. 낮을수록 느리게 따라가며 ‘무게감’이 납니다.">추적 속도</label><output id="oLerp">0.10</output>
+        <input id="camLerp" type="range" min="3" max="100" value="10" /></div>
+      <div class="row"><label title="마우스(조준) 방향으로 카메라를 미리 밀어 두는 거리입니다. 마우스를 움직이면 카메라 목표가 바뀝니다.">룩어헤드 (마우스)</label><output id="oLook">13</output>
+        <input id="camLook" type="range" min="0" max="80" value="13" /></div>
+      <div class="row"><label title="이 반경 안에서는 카메라가 움직이지 않습니다. 미세한 흔들림을 줄이는 데드존입니다.">데드존</label><output id="oDead">3</output>
+        <input id="camDead" type="range" min="0" max="60" value="3" /></div>
+      <div class="checks">
+        <label title="켜면 보간·데드존 없이 카메라가 목표에 바로 붙습니다."><input id="camSnap" type="checkbox" /> 즉시 추적</label>
+      </div>
+      <p class="hint"><kbd>[</kbd>/<kbd>]</kbd> 줌 · 룩어헤드는 마우스 조준 방향 기준</p>
+    </section>
+
+    <section>
+      <h2>플레이어</h2>
+      <div class="row"><label title="기본 이동 속도(월드 유닛/초)입니다.">이동 속도</label><output id="oSpeed">48</output>
+        <input id="moveSpeed" type="range" min="20" max="180" value="48" /></div>
+      <div class="row"><label title="조준점이 마우스를 따라가는 속도입니다. 낮을수록 딜레이가 커서 조준에 긴장감이 생깁니다.">조준 민감도</label><output id="oAim">0.18</output>
+        <input id="aimFollow" type="range" min="3" max="100" value="18" /></div>
+      <div class="row"><label title="대시로 달릴 거리(월드 픽셀)입니다. 순간이동이 아니라 이 거리만큼 빠르게 이동합니다.">대시 거리</label><output id="oDash">10</output>
+        <input id="dashDist" type="range" min="4" max="120" value="10" /></div>
+      <div class="row"><label title="대시가 시작부터 끝날 때까지 걸리는 시간(초)입니다. 짧을수록 더 빠르게 느껴집니다.">대시 시간</label><output id="oDashDur">0.12</output>
+        <input id="dashDur" type="range" min="4" max="40" value="12" /></div>
+      <div class="row"><label title="대시 후 다시 쓸 수 있을 때까지의 대기 시간(초)입니다.">대시 쿨다운</label><output id="oDashCd">0.83</output>
+        <input id="dashCd" type="range" min="5" max="150" value="83" /></div>
+      <div class="row"><label title="대시 중 뒤에 남는 먼지 입자 양입니다. 높을수록 더 진한 궤적이 됩니다.">먼지 농도</label><output id="oDustDen">0.23</output>
+        <input id="dustDen" type="range" min="5" max="100" value="23" /></div>
+      <div class="row"><label title="먼지 입자가 사라지기까지 걸리는 시간(초)입니다.">먼지 수명</label><output id="oDustLife">0.45</output>
+        <input id="dustLife" type="range" min="8" max="100" value="45" /></div>
+      <p class="hint"><kbd>Space</kbd> 대시(빠른 이동) · 조준은 마우스를 지연 추적</p>
+    </section>
+
+    <section>
+      <h2>던전 / 필드</h2>
+      <div class="row"><label title="같은 시드면 같은 맵이 나옵니다.">시드</label></div>
+      <input id="seed" type="text" value="seed-615268202" title="절차적 생성의 난수 씨앗" />
+      <div class="row"><label title="맵의 가로 타일 수입니다.">맵 가로 (타일)</label><output id="oMapW">92</output>
+        <input id="mapW" type="range" min="32" max="192" value="92" /></div>
+      <div class="row"><label title="맵의 세로 타일 수입니다.">맵 세로 (타일)</label><output id="oMapH">96</output>
+        <input id="mapH" type="range" min="32" max="192" value="96" /></div>
+      <div class="row"><label title="한 타일의 픽셀 크기입니다.">타일 크기 (px)</label><output id="oCell">9</output>
+        <input id="cell" type="range" min="6" max="24" value="9" /></div>
+      <div class="row"><label title="초기 랜덤에서 벽이 될 비율입니다.">초기 벽 비율 %</label><output id="oFill">47</output>
+        <input id="fill" type="range" min="35" max="55" value="47" /></div>
+      <div class="row"><label title="셀룰러 오토마타 반복 횟수입니다.">다듬기 횟수</label><output id="oSteps">5</output>
+        <input id="steps" type="range" min="1" max="12" value="5" /></div>
+      <div class="row"><label title="빈 칸→벽 전환에 필요한 주변 벽 수 기준입니다.">벽 생성 한계</label><output id="oBirth">4</output>
+        <input id="birth" type="range" min="3" max="6" value="4" /></div>
+      <div class="row"><label title="벽이 유지되려면 필요한 최소 주변 벽 수입니다.">벽 유지 최소</label><output id="oSurvive">4</output>
+        <input id="survive" type="range" min="2" max="5" value="4" /></div>
+      <div class="row"><label title="맵 가장자리 파괴 불가 벽 두께입니다.">가장자리 벽</label><output id="oEdge">2</output>
+        <input id="edge" type="range" min="0" max="6" value="2" /></div>
+      <div class="row"><label title="파괴 가능 벽 중 약한 벽(1타) 비율입니다.">약한 벽 %</label><output id="oSoft">55</output>
+        <input id="softPct" type="range" min="10" max="80" value="55" /></div>
+      <div class="row"><label title="약한 벽 제외 분량 중 중간 벽 비율입니다.">중간 벽 %</label><output id="oMed">70</output>
+        <input id="medPct" type="range" min="10" max="90" value="70" /></div>
+      <div class="row"><label title="광맥이 생길 확률입니다.">광맥 확률 %</label><output id="oOre">3.5</output>
+        <input id="ore" type="range" min="0" max="120" value="35" /></div>
+      <div class="row"><label title="맵에 배치할 거점 조명 개수입니다.">거점 램프 수</label><output id="oLamps">8</output>
+        <input id="lampCount" type="range" min="2" max="24" value="8" /></div>
+      <div class="row"><label title="거점 램프 점등 시 반경입니다.">램프 반경</label><output id="oLampR">150</output>
+        <input id="lampRadius" type="range" min="40" max="220" value="150" /></div>
+      <div class="checks">
+        <label title="스폰 지점 주변을 확보합니다."><input id="ensurePath" type="checkbox" checked /> 스폰 공간 확보</label>
+        <label title="슬라이더 변경 시 맵을 다시 생성합니다."><input id="autoRegen" type="checkbox" /> 변경 시 자동 재생성</label>
+      </div>
+      <div class="legend">
+        <div><span style="background:#9b6bb8"></span>약한 벽 (1타)</div>
+        <div><span style="background:#6e4294"></span>중간 벽 (2~3타)</div>
+        <div><span style="background:#2a1840; box-shadow: inset 0 0 0 1px #c9a8e8"></span>기반암 (파괴 불가)</div>
+        <div><span style="background:#2e1b44"></span>바닥</div>
+      </div>
+      <div class="btns">
+        <button class="pri" id="btnRegen">다시 생성</button>
+        <button id="btnReseed">랜덤 시드</button>
+        <button id="btnRespawn">플레이어 재스폰</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>조명 / 안개</h2>
+      <div class="row"><label title="플레이어 주변 원형 기본 조명 반경입니다.">주변광 반경</label><output id="oAmb">155</output>
+        <input id="radius" type="range" min="20" max="220" value="155" /></div>
+      <div class="row"><label title="마우스 조준 손전등 원뿔의 길이입니다.">손전등 사거리</label><output id="oFlash">260</output>
+        <input id="flashRange" type="range" min="40" max="320" value="260" /></div>
+      <div class="row"><label title="손전등 원뿔의 반각입니다. 좁을수록 집중광.">손전등 반각°</label><output id="oHalf">23</output>
+        <input id="halfAngle" type="range" min="10" max="55" value="23" /></div>
+      <div class="row"><label title="노멀 조명에서 광원 높이/반경 비율입니다.">광원 높이비</label><output id="oHeight">0.23</output>
+        <input id="height" type="range" min="10" max="200" value="23" /></div>
+      <div class="row"><label title="지면 노멀맵이 조명에 미치는 강도입니다.">노멀 강도</label><output id="oNstr">0.32</output>
+        <input id="nstr" type="range" min="0" max="50" value="32" /></div>
+      <div class="row"><label title="안개(어둠) 레이어의 불투명도입니다. 높을수록 미발견 지역이 더 짙게 가려집니다.">어둠 농도</label><output id="oFogDen">0.95</output>
+        <input id="fogDensity" type="range" min="10" max="100" value="95" /></div>
+      <div class="row"><label title="밝기 단계 수입니다. 2면 어둠/빛 이진, 값을 올리면 중간 밝기 밴드가 늘어 그라데이션처럼 보입니다.">밝기 단계</label><output id="oFogSteps">4</output>
+        <input id="fogSteps" type="range" min="2" max="12" value="4" /></div>
+      <div class="row"><label title="조명 마스크를 부드럽게 쌓을지입니다. 끄면 원작처럼 이진 스탬프, 켜면 단계형 안개에 유리합니다.">소프트 마스크</label><output id="oSoftMask">켜짐</output>
+        <input id="softMask" type="range" min="0" max="1" value="1" /></div>
+      <div class="checks">
+        <label title="원작처럼 반지름이 sin(t*2)*0.1+1 로 숨 쉽니다."><input id="pulse" type="checkbox" checked /> 호흡 펄스</label>
+        <label title="마우스 방향 원뿔 손전등. F로 토글."><input id="flashlight" type="checkbox" checked /> 손전등 (F)</label>
+        <label title="안개 대신 조명 마스크를 표시합니다."><input id="showMask" type="checkbox" /> 조명 마스크 보기</label>
+      </div>
+    </section>
+
+    <section>
+      <h2>프리셋 내보내기</h2>
+      <textarea id="exportBox" readonly></textarea>
+      <div class="btns">
+        <button class="pri" id="btnCopy">JSON 복사</button>
+        <button id="btnRefreshExport">새로고침</button>
+      </div>
+      <p class="hint">이 JSON을 채팅에 붙여넣으면 같은 설정으로 이어서 확장할 수 있습니다.</p>
+    </section>
+
+    <p class="hint"><kbd>WASD</kbd> 이동 · <kbd>Space</kbd> 대시 · 클릭 채굴 · <kbd>E</kbd> 램프 · <kbd>F</kbd> 손전등 · <kbd>[</kbd><kbd>]</kbd> 줌</p>
+  </aside>
+</div>
+<div id="prompt"></div>
+
+<script>
+/**
+ * Seedloop test scene v3
+ * - Tunable camera walk (follow / look-ahead / deadzone)
+ * - Soft multi-step fog + density
+ * - Diggable walls with brick-style art
+ */
+(() => {
+  const VIEW_W = 640, VIEW_H = 360;
+  const canvas = document.getElementById("view");
+  const gl = canvas.getContext("webgl", { alpha: false, antialias: false, preserveDrawingBuffer: true });
+  if (!gl) { document.body.textContent = "WebGL이 필요합니다"; return; }
+  const blendMinMax = gl.getExtension("EXT_blend_minmax");
+
+  const $ = (id) => document.getElementById(id);
+  const promptEl = $("prompt");
+  const ui = {
+    zoom: $("zoom"), camLerp: $("camLerp"), camLook: $("camLook"), camDead: $("camDead"), camSnap: $("camSnap"),
+    moveSpeed: $("moveSpeed"), aimFollow: $("aimFollow"),
+    dashDist: $("dashDist"), dashDur: $("dashDur"), dashCd: $("dashCd"),
+    dustDen: $("dustDen"), dustLife: $("dustLife"),
+    seed: $("seed"), mapW: $("mapW"), mapH: $("mapH"), cell: $("cell"),
+    fill: $("fill"), steps: $("steps"), birth: $("birth"), survive: $("survive"),
+    edge: $("edge"), softPct: $("softPct"), medPct: $("medPct"), ore: $("ore"),
+    lampCount: $("lampCount"), lampRadius: $("lampRadius"),
+    ensurePath: $("ensurePath"), autoRegen: $("autoRegen"),
+    radius: $("radius"), flashRange: $("flashRange"), halfAngle: $("halfAngle"),
+    height: $("height"), nstr: $("nstr"), fogDensity: $("fogDensity"), fogSteps: $("fogSteps"),
+    softMask: $("softMask"), pulse: $("pulse"), flashlight: $("flashlight"), showMask: $("showMask"),
+    oZoom: $("oZoom"), oLerp: $("oLerp"), oLook: $("oLook"), oDead: $("oDead"),
+    oSpeed: $("oSpeed"), oAim: $("oAim"), oDash: $("oDash"), oDashDur: $("oDashDur"), oDashCd: $("oDashCd"),
+    oDustDen: $("oDustDen"), oDustLife: $("oDustLife"),
+    oMapW: $("oMapW"), oMapH: $("oMapH"), oCell: $("oCell"), oFill: $("oFill"), oSteps: $("oSteps"),
+    oBirth: $("oBirth"), oSurvive: $("oSurvive"), oEdge: $("oEdge"), oSoft: $("oSoft"), oMed: $("oMed"),
+    oOre: $("oOre"), oLamps: $("oLamps"), oLampR: $("oLampR"),
+    oAmb: $("oAmb"), oFlash: $("oFlash"), oHalf: $("oHalf"), oHeight: $("oHeight"), oNstr: $("oNstr"),
+    oFogDen: $("oFogDen"), oFogSteps: $("oFogSteps"), oSoftMask: $("oSoftMask"),
+    exportBox: $("exportBox"),
+  };
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  function program(vs, fs) {
+    const p = gl.createProgram();
+    gl.attachShader(p, compile(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    return p;
+  }
+  function tex(w, h, data, opts = {}) {
+    const t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, opts.filter || gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, opts.filter || gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, opts.wrap || gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, opts.wrap || gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, data || null);
+    return t;
+  }
+  function fboWithColor(texture) {
+    const f = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    if (!ok) throw new Error("FBO incomplete");
+    return f;
+  }
+  function u1(p, n, v) { const l = gl.getUniformLocation(p, n); if (l) gl.uniform1f(l, v); }
+  function u2(p, n, x, y) { const l = gl.getUniformLocation(p, n); if (l) gl.uniform2f(l, x, y); }
+  function u4(p, n, a,b,c,d) { const l = gl.getUniformLocation(p, n); if (l) gl.uniform4f(l, a,b,c,d); }
+  function usamp(p, n, v) { const l = gl.getUniformLocation(p, n); if (l) gl.uniform1i(l, v); }
+
+  const BAYER4 = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  const bayerPixels = new Uint8Array(64);
+  for (let i = 0; i < 16; i++) {
+    const v = Math.round((BAYER4[i] / 16) * 255);
+    bayerPixels.set([v, v, v, 255], i * 4);
+  }
+  const bayerTex = tex(4, 4, bayerPixels, { wrap: gl.REPEAT });
+
+  const NSIZE = 64;
+  const normalPixels = new Uint8Array(NSIZE * NSIZE * 4);
+  function hash2(x, y) { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); }
+  function valueNoise(x, y) {
+    const x0 = Math.floor(x), y0 = Math.floor(y);
+    const fx = x - x0, fy = y - y0;
+    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+    const a = hash2(x0, y0), b = hash2(x0 + 1, y0), c = hash2(x0, y0 + 1), d = hash2(x0 + 1, y0 + 1);
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+  }
+  function fbm(x, y) { let v = 0, a = 0.5; for (let o = 0; o < 4; o++) { v += a * valueNoise(x, y); x *= 2; y *= 2; a *= 0.5; } return v; }
+  for (let y = 0; y < NSIZE; y++) for (let x = 0; x < NSIZE; x++) {
+    const u = x / NSIZE, v = y / NSIZE;
+    const e = fbm(u * 6, v * 6), eR = fbm(u * 6 + 0.02, v * 6), eU = fbm(u * 6, v * 6 + 0.02);
+    let nx = (e - eR) * 6, ny = (e - eU) * 6, nz = 1;
+    const len = Math.hypot(nx, ny, nz) || 1; nx /= len; ny /= len; nz /= len;
+    const i = (y * NSIZE + x) * 4;
+    normalPixels[i] = (nx * 0.5 + 0.5) * 255;
+    normalPixels[i + 1] = (ny * 0.5 + 0.5) * 255;
+    normalPixels[i + 2] = (nz * 0.5 + 0.5) * 255;
+    normalPixels[i + 3] = 255;
+  }
+  const normalTex = tex(NSIZE, NSIZE, normalPixels, { wrap: gl.REPEAT, filter: gl.LINEAR });
+
+  const world2d = document.createElement("canvas");
+  world2d.width = VIEW_W; world2d.height = VIEW_H;
+  const wctx = world2d.getContext("2d");
+  const worldTex = tex(VIEW_W, VIEW_H, null);
+  const maskTex = tex(VIEW_W, VIEW_H, null);
+  const maskFbo = fboWithColor(maskTex);
+
+  const quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+
+  const fullscreen = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, fullscreen);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1, 1, 0, 0,  1, 1, 1, 0,  -1,-1, 0, 1,
+    -1,-1, 0, 1,  1, 1, 1, 0,   1,-1, 1, 1,
+  ]), gl.STATIC_DRAW);
+
+  const blitProg = program(`
+    attribute vec2 a_pos; attribute vec2 a_uv; varying vec2 v_uv;
+    void main(){ v_uv=a_uv; gl_Position=vec4(a_pos,0.0,1.0); }
+  `, `
+    precision mediump float; uniform sampler2D u_tex; varying vec2 v_uv;
+    void main(){ gl_FragColor = texture2D(u_tex, vec2(v_uv.x, 1.0 - v_uv.y)); }
+  `);
+
+  const lightVS = `
+    precision mediump float;
+    attribute vec2 position;
+    uniform vec2 u_sourceSize; uniform vec2 u_center;
+    uniform float u_lightRadius; uniform float u_quadRadius;
+    varying vec2 v_pixelPos; varying vec2 v_localPos;
+    void main() {
+      vec2 pixelPos = u_center + position * u_quadRadius;
+      vec2 zeroToOne = pixelPos / u_sourceSize;
+      vec2 clip = zeroToOne * 2.0 - 1.0;
+      gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
+      v_pixelPos = pixelPos;
+      v_localPos = position * (u_quadRadius / u_lightRadius);
+    }
+  `;
+
+  const NORMAL_LIGHT_COMMON = `
+    uniform sampler2D u_normalTex; uniform sampler2D u_bayerTex;
+    uniform vec2 u_worldOrigin; uniform vec2 u_center;
+    uniform float u_lightHeightRadiusRatio; uniform float u_normalTileSize;
+    uniform float u_normalStrength; uniform float u_coneEnabled;
+    uniform vec2 u_coneDir; uniform float u_coneHalfAngle; uniform float u_radiusOverflowMult;
+    varying vec2 v_pixelPos; varying vec2 v_localPos;
+    struct NormalLightSample { float normalizedDistance; float diffuse; float radiusShade; float dither; float coneDot; };
+    vec3 readGroundNormal(vec2 worldPos) {
+      vec3 normal = texture2D(u_normalTex, worldPos / u_normalTileSize).rgb * 2.0 - 1.0;
+      normal.xy *= u_normalStrength; normal.y = -normal.y; return normalize(normal);
+    }
+    NormalLightSample sampleNormalLight() {
+      float normalizedDistance = length(v_localPos);
+      vec2 toLight = -v_localPos;
+      vec3 lightDir = normalize(vec3(toLight.x, -toLight.y, u_lightHeightRadiusRatio));
+      vec3 normal = readGroundNormal(u_worldOrigin + v_pixelPos);
+      vec2 fromLight = v_pixelPos - u_center;
+      float distanceFromLight = length(fromLight);
+      vec2 coneDir = distanceFromLight > 0.001 ? fromLight / distanceFromLight : u_coneDir;
+      vec2 bayerUV = (mod(floor(u_worldOrigin + v_pixelPos), 4.0) + vec2(0.5, 0.5)) / 4.0;
+      return NormalLightSample(
+        normalizedDistance, max(dot(normal, lightDir), 0.0), 1.0 - normalizedDistance,
+        (texture2D(u_bayerTex, bayerUV).r - 0.5) * 0.28, dot(coneDir, u_coneDir)
+      );
+    }
+  `;
+
+  // Soft or binary stamp; shade written for multi-step fog
+  const maskStampProg = program(lightVS, `
+    precision mediump float; ${NORMAL_LIGHT_COMMON}
+    uniform float u_softMask;
+    void main() {
+      NormalLightSample light = sampleNormalLight();
+      if (light.normalizedDistance > u_radiusOverflowMult) discard;
+      float cone = 1.0;
+      if (u_coneEnabled > 0.5) {
+        float cmin = cos(u_coneHalfAngle);
+        cone = smoothstep(cmin - 0.08, cmin + 0.02, light.coneDot);
+        if (cone <= 0.001) discard;
+      }
+      if (u_softMask < 0.5) {
+        if (light.diffuse < 0.6) discard;
+        bool lit = light.radiusShade > 0.04 + light.dither || light.diffuse >= 0.62;
+        if (!lit) discard;
+        gl_FragColor = vec4(1.0);
+      } else {
+        float shade = clamp(light.radiusShade, 0.0, 1.0);
+        shade *= smoothstep(0.42, 0.68, light.diffuse);
+        shade *= cone;
+        shade = shade * shade; // bias toward brighter core
+        if (shade < 0.02) discard;
+        gl_FragColor = vec4(shade, shade, shade, 1.0);
+      }
+    }
+  `);
+
+  const fogProg = program(`
+    attribute vec2 a_pos; attribute vec2 a_uv; varying vec2 v_texcoord;
+    void main(){ v_texcoord=a_uv; gl_Position=vec4(a_pos,0.0,1.0); }
+  `, `
+    precision mediump float;
+    uniform sampler2D u_fogLitMaskTex; uniform sampler2D u_bayerTex;
+    uniform vec2 u_worldSourceSize; uniform vec2 u_fogLitMaskSize;
+    uniform float u_fogLitMaskEnabled; uniform vec4 u_fogColor;
+    uniform float u_fogDensity; uniform float u_lightSteps;
+    varying vec2 v_texcoord;
+    float sampleFogLitMask(vec2 pixelPos, vec2 maskSize) {
+      vec2 uv = vec2(pixelPos.x / maskSize.x, 1.0 - pixelPos.y / maskSize.y);
+      return texture2D(u_fogLitMaskTex, uv).r;
+    }
+    void main() {
+      vec2 pixelPos = v_texcoord * u_worldSourceSize;
+      float lit = 0.0;
+      if (u_fogLitMaskEnabled > 0.5) lit = sampleFogLitMask(pixelPos, u_fogLitMaskSize);
+      float steps = max(u_lightSteps, 2.0);
+      vec2 bayerUV = (mod(floor(pixelPos), 4.0) + vec2(0.5)) / 4.0;
+      float dither = (texture2D(u_bayerTex, bayerUV).r - 0.5) * (1.0 / steps);
+      float q = floor(lit * steps + dither + 0.0001) / max(steps - 1.0, 1.0);
+      q = clamp(q, 0.0, 1.0);
+      float fogA = (1.0 - q) * u_fogDensity * u_fogColor.a;
+      if (fogA < 0.004) discard;
+      gl_FragColor = vec4(u_fogColor.rgb, fogA);
+    }
+  `);
+
+  const maskViewProg = program(`
+    attribute vec2 a_pos; attribute vec2 a_uv; varying vec2 v_uv;
+    void main(){ v_uv=a_uv; gl_Position=vec4(a_pos,0.0,1.0); }
+  `, `
+    precision mediump float; uniform sampler2D u_tex; varying vec2 v_uv;
+    void main(){ float m = texture2D(u_tex, vec2(v_uv.x, 1.0 - v_uv.y)).r; gl_FragColor = vec4(vec3(m),1.0); }
+  `);
+
+  function xmur3(str) {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return function () {
+      h = Math.imul(h ^ (h >>> 16), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      h ^= h >>> 16;
+      return h >>> 0;
+    };
+  }
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const TILE = { FLOOR: 0, SOFT: 1, MED: 2, HARD: 3, ORE: 4 };
+  const WALL_HEIGHT = { [TILE.SOFT]: 0.28, [TILE.MED]: 0.42, [TILE.HARD]: 0.62, [TILE.ORE]: 0.34 };
+  const WALL_HP = { [TILE.SOFT]: 1, [TILE.MED]: 3, [TILE.HARD]: 0, [TILE.ORE]: 2 };
+
+  let map = { w: 92, h: 96, cell: 12, tiles: null, hp: null, floors: [] };
+  let lamps = [];
+
+  function idx(x, y, w) { return y * w + x; }
+  function isWallKind(t) { return t === TILE.SOFT || t === TILE.MED || t === TILE.HARD || t === TILE.ORE; }
+  function tileHash(tx, ty) { return hash2(tx * 0.37, ty * 0.91); }
+
+  function generateDungeon() {
+    const w = +ui.mapW.value | 0;
+    const h = +ui.mapH.value | 0;
+    const cell = +ui.cell.value | 0;
+    const fill = (+ui.fill.value) / 100;
+    const steps = +ui.steps.value | 0;
+    const birth = +ui.birth.value | 0;
+    const survive = +ui.survive.value | 0;
+    const edge = +ui.edge.value | 0;
+    const softP = (+ui.softPct.value) / 100;
+    const medP = (+ui.medPct.value) / 100;
+    const oreP = (+ui.ore.value) / 10 / 100;
+    const lampN = +ui.lampCount.value | 0;
+    const seedStr = ui.seed.value || "seedloop";
+    const rand = mulberry32(xmur3(seedStr)());
+
+    let solid = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const border = x < edge || y < edge || x >= w - edge || y >= h - edge;
+      solid[idx(x, y, w)] = border || rand() < fill ? 1 : 0;
+    }
+
+    function countWalls(g, x, y) {
+      let n = 0;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= w || ny >= h) { n++; continue; }
+        if (g[idx(nx, ny, w)]) n++;
+      }
+      return n;
+    }
+
+    for (let s = 0; s < steps; s++) {
+      const next = new Uint8Array(w * h);
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const walls = countWalls(solid, x, y);
+        const cur = solid[idx(x, y, w)];
+        if (cur) next[idx(x, y, w)] = walls >= survive ? 1 : 0;
+        else next[idx(x, y, w)] = walls > birth ? 1 : 0;
+      }
+      solid = next;
+    }
+
+    const seen = new Uint8Array(w * h);
+    let best = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = idx(x, y, w);
+      if (solid[i] || seen[i]) continue;
+      const stack = [[x, y]]; seen[i] = 1;
+      const comp = [];
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        comp.push([cx, cy]);
+        for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const nx = cx + dx, ny = cy + dy;
+          if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+          const ni = idx(nx, ny, w);
+          if (seen[ni] || solid[ni]) continue;
+          seen[ni] = 1; stack.push([nx, ny]);
+        }
+      }
+      if (comp.length > best.length) best = comp;
+    }
+    const keep = new Set(best.map(([x, y]) => idx(x, y, w)));
+    for (let i = 0; i < solid.length; i++) {
+      if (!solid[i] && !keep.has(i)) solid[i] = 1;
+    }
+
+    if (ui.ensurePath.checked && best.length) {
+      const [sx, sy] = best[(xmur3(seedStr + ":pocket")() >>> 0) % best.length];
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+        if (dx * dx + dy * dy > 5) continue;
+        const nx = sx + dx, ny = sy + dy;
+        if (nx <= 0 || ny <= 0 || nx >= w - 1 || ny >= h - 1) continue;
+        solid[idx(nx, ny, w)] = 0;
+      }
+    }
+
+    const tiles = new Uint8Array(w * h);
+    const hp = new Uint8Array(w * h);
+    const floors = [];
+
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = idx(x, y, w);
+      const border = x < edge || y < edge || x >= w - edge || y >= h - edge;
+      if (!solid[i]) {
+        tiles[i] = TILE.FLOOR;
+        floors.push([x, y]);
+        continue;
+      }
+      if (border) { tiles[i] = TILE.HARD; hp[i] = 0; continue; }
+      const r = rand();
+      if (r < softP) { tiles[i] = TILE.SOFT; hp[i] = WALL_HP[TILE.SOFT]; }
+      else if (r < softP + (1 - softP) * medP) {
+        tiles[i] = TILE.MED;
+        hp[i] = 2 + ((rand() < 0.45) ? 1 : 0);
+      } else { tiles[i] = TILE.HARD; hp[i] = 0; }
+    }
+
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = idx(x, y, w);
+      const t = tiles[i];
+      if (t !== TILE.SOFT && t !== TILE.MED) continue;
+      let nearFloor = false;
+      for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+        if (tiles[idx(x + dx, y + dy, w)] === TILE.FLOOR) { nearFloor = true; break; }
+      }
+      if (nearFloor && rand() < oreP) {
+        tiles[i] = TILE.ORE;
+        hp[i] = WALL_HP[TILE.ORE];
+      }
+    }
+
+    lamps = [];
+    if (floors.length) {
+      const minDist = Math.max(8, Math.floor(Math.sqrt((w * h) / (lampN * 3))));
+      const shuffled = floors.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = (rand() * (i + 1)) | 0;
+        const tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp;
+      }
+      for (const [tx, ty] of shuffled) {
+        if (lamps.length >= lampN) break;
+        const wx = (tx + 0.5) * cell, wy = (ty + 0.5) * cell;
+        if (lamps.some((L) => Math.hypot(L.x - wx, L.y - wy) < minDist * cell)) continue;
+        lamps.push({ x: wx, y: wy, on: false });
+      }
+      while (lamps.length < Math.min(lampN, floors.length)) {
+        const [tx, ty] = floors[(rand() * floors.length) | 0];
+        const wx = (tx + 0.5) * cell, wy = (ty + 0.5) * cell;
+        if (lamps.some((L) => Math.hypot(L.x - wx, L.y - wy) < cell * 3)) continue;
+        lamps.push({ x: wx, y: wy, on: false });
+      }
+    }
+
+    map = { w, h, cell, tiles, hp, floors };
+    return map;
+  }
+
+  function worldSizePx() { return { ww: map.w * map.cell, hh: map.h * map.cell }; }
+
+  function tileAtWorld(wx, wy) {
+    const tx = Math.floor(wx / map.cell), ty = Math.floor(wy / map.cell);
+    if (tx < 0 || ty < 0 || tx >= map.w || ty >= map.h) return TILE.HARD;
+    return map.tiles[idx(tx, ty, map.w)];
+  }
+  function isSolidWorld(wx, wy) { return isWallKind(tileAtWorld(wx, wy)); }
+
+  function damageTile(tx, ty, dmg = 1) {
+    if (tx < 0 || ty < 0 || tx >= map.w || ty >= map.h) return false;
+    const i = idx(tx, ty, map.w);
+    const t = map.tiles[i];
+    if (!isWallKind(t) || t === TILE.HARD || map.hp[i] <= 0) return false;
+    map.hp[i] = Math.max(0, map.hp[i] - dmg);
+    if (map.hp[i] <= 0) {
+      map.tiles[i] = TILE.FLOOR;
+      map.floors.push([tx, ty]);
+    }
+    return true;
+  }
+
+  const player = { x: 0, y: 0, r: 4, vx: 0, vy: 0 };
+  const camera = { x: 0, y: 0 };
+  const mouse = { x: VIEW_W / 2, y: VIEW_H / 2, down: false };
+  const projectiles = [];
+  const FOG_RGB = [0.05, 0.02, 0.09];
+  const FLASH_BODY_RADIUS = 32;
+  const PROJECTILE_LIGHT_RADIUS = 18;
+  const PROJECTILE_SPEED = 280;
+  const PROJECTILE_LIFE = 1.35;
+  const FIRE_COOLDOWN = 0.18;
+  const LAMP_ACTIVATE_RANGE = 22;
+  let fireCd = 0;
+  let dashCooldownLeft = 0;
+  const dash = { active: false, vx: 0, vy: 0, timeLeft: 0 };
+  const aim = { x: 0, y: 0, ready: false }; // lagged aim point in world space
+  const dust = []; // {x,y,vx,vy,life,maxLife,size,alpha}
+  let nearLamp = null;
+  let moveIntentX = 0, moveIntentY = 0;
+  let dustEmitAcc = 0;
+
+  function getZoom() { return (+ui.zoom.value) / 100; }
+  function viewWorldSize() {
+    const z = getZoom();
+    return { vw: VIEW_W / z, vh: VIEW_H / z };
+  }
+  function camTopLeft() {
+    const { vw, vh } = viewWorldSize();
+    return { x: camera.x - vw / 2, y: camera.y - vh / 2 };
+  }
+  function worldToView(wx, wy) {
+    const z = getZoom();
+    const tl = camTopLeft();
+    return { x: (wx - tl.x) * z, y: (wy - tl.y) * z };
+  }
+  function viewToWorld(vx, vy) {
+    const z = getZoom();
+    const tl = camTopLeft();
+    return { x: tl.x + vx / z, y: tl.y + vy / z };
+  }
+
+  function spawnPlayer() {
+    if (!map.floors.length) {
+      player.x = map.w * map.cell / 2;
+      player.y = map.h * map.cell / 2;
+    } else {
+      const [tx, ty] = map.floors[(Math.random() * map.floors.length) | 0];
+      player.x = (tx + 0.5) * map.cell;
+      player.y = (ty + 0.5) * map.cell;
+    }
+    player.vx = player.vy = 0;
+    dash.active = false;
+    dash.timeLeft = 0;
+    aim.ready = false;
+    dust.length = 0;
+    camera.x = player.x;
+    camera.y = player.y;
+    projectiles.length = 0;
+  }
+
+  function movePlayer(dx, dy, dt) {
+    moveIntentX = dx; moveIntentY = dy;
+    if (dash.active) return; // 대시 중에는 일반 이동 입력 무시
+    if (!dx && !dy) { player.vx *= 0.8; player.vy *= 0.8; return; }
+    const len = Math.hypot(dx, dy);
+    dx /= len; dy /= len;
+    const base = +ui.moveSpeed.value;
+    const sp = base * (1.15 / Math.max(0.85, Math.sqrt(getZoom())));
+    player.vx = dx * sp; player.vy = dy * sp;
+    tryMoveTo(player.x + player.vx * dt, player.y + player.vy * dt);
+  }
+
+  function tryMoveTo(nx, ny) {
+    const r = player.r;
+    let moved = false;
+    if (!isSolidWorld(nx - r, player.y) && !isSolidWorld(nx + r, player.y) &&
+        !isSolidWorld(nx, player.y - r) && !isSolidWorld(nx, player.y + r)) {
+      player.x = nx;
+      moved = true;
+    }
+    if (!isSolidWorld(player.x - r, ny) && !isSolidWorld(player.x + r, ny) &&
+        !isSolidWorld(player.x, ny - r) && !isSolidWorld(player.x, ny + r)) {
+      player.y = ny;
+      moved = true;
+    }
+    const { ww, hh } = worldSizePx();
+    player.x = Math.min(ww - r, Math.max(r, player.x));
+    player.y = Math.min(hh - r, Math.max(r, player.y));
+    return moved;
+  }
+
+  function tryDash() {
+    if (dash.active || dashCooldownLeft > 0) return;
+    const dist = +ui.dashDist.value;
+    const dur = Math.max(0.04, (+ui.dashDur.value) / 100);
+    let dx = moveIntentX, dy = moveIntentY;
+    if (!dx && !dy) {
+      const a = aimAngleWorld();
+      dx = Math.cos(a); dy = Math.sin(a);
+    } else {
+      const len = Math.hypot(dx, dy) || 1;
+      dx /= len; dy /= len;
+    }
+    const speed = dist / dur;
+    dash.active = true;
+    dash.vx = dx * speed;
+    dash.vy = dy * speed;
+    dash.timeLeft = dur;
+    player.vx = dash.vx;
+    player.vy = dash.vy;
+    dashCooldownLeft = (+ui.dashCd.value) / 100;
+    spawnDustBurst(1.0);
+  }
+
+  function updateDash(dt) {
+    if (!dash.active) return;
+    const stepDt = Math.min(dt, dash.timeLeft);
+    // 충돌 체크로 쪼개서 이동 (벽에서 자연스럽게 멈춤)
+    const slices = Math.max(1, Math.ceil((Math.hypot(dash.vx, dash.vy) * stepDt) / 2));
+    const sdt = stepDt / slices;
+    for (let i = 0; i < slices; i++) {
+      const beforeX = player.x, beforeY = player.y;
+      tryMoveTo(player.x + dash.vx * sdt, player.y + dash.vy * sdt);
+      if (player.x === beforeX && player.y === beforeY) {
+        dash.active = false;
+        dash.timeLeft = 0;
+        player.vx = 0; player.vy = 0;
+        return;
+      }
+      // 한 축만 막히면 그 축 속도 제거
+      if (player.x === beforeX) dash.vx = 0;
+      if (player.y === beforeY) dash.vy = 0;
+      if (!dash.vx && !dash.vy) {
+        dash.active = false;
+        dash.timeLeft = 0;
+        return;
+      }
+    }
+    dash.timeLeft -= stepDt;
+    if (dash.timeLeft <= 0) {
+      dash.active = false;
+      dash.timeLeft = 0;
+      player.vx *= 0.35;
+      player.vy *= 0.35;
+    }
+  }
+
+  function mouseWorld() {
+    return viewToWorld(mouse.x, mouse.y);
+  }
+
+  function updateAim(dt) {
+    const m = mouseWorld();
+    if (!aim.ready) {
+      aim.x = m.x; aim.y = m.y; aim.ready = true;
+      return;
+    }
+    const follow = (+ui.aimFollow.value) / 100;
+    const t = Math.min(1, follow * 60 * dt);
+    aim.x += (m.x - aim.x) * t;
+    aim.y += (m.y - aim.y) * t;
+  }
+
+  function aimAngleWorld() {
+    return Math.atan2(aim.y - player.y, aim.x - player.x);
+  }
+
+  function spawnDustBurst(intensity) {
+    const den = (+ui.dustDen.value) / 100;
+    const life = (+ui.dustLife.value) / 100;
+    const n = Math.max(1, Math.round(2 + intensity * den * 10));
+    const spd = Math.hypot(dash.vx, dash.vy) || 1;
+    const bx = -dash.vx / spd, by = -dash.vy / spd; // behind
+    for (let i = 0; i < n; i++) {
+      const spread = (Math.random() - 0.5) * 1.2;
+      const px = -by * spread + (Math.random() - 0.5) * 0.4;
+      const py = bx * spread + (Math.random() - 0.5) * 0.4;
+      const push = 8 + Math.random() * 22 * den;
+      dust.push({
+        x: player.x + bx * 2 + (Math.random() - 0.5) * 3,
+        y: player.y + by * 2 + (Math.random() - 0.5) * 3,
+        vx: bx * push + px * 12,
+        vy: by * push + py * 12,
+        life,
+        maxLife: life,
+        size: 1.2 + Math.random() * 2.4 * den,
+        alpha: (0.35 + Math.random() * 0.45) * den,
+      });
+    }
+  }
+
+  function updateDust(dt) {
+    if (dash.active) {
+      const den = (+ui.dustDen.value) / 100;
+      dustEmitAcc += dt * (18 + den * 40);
+      while (dustEmitAcc >= 1) {
+        dustEmitAcc -= 1;
+        spawnDustBurst(0.55);
+      }
+    } else {
+      dustEmitAcc = 0;
+    }
+    for (let i = dust.length - 1; i >= 0; i--) {
+      const p = dust[i];
+      p.life -= dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vx *= 0.92;
+      p.vy *= 0.92;
+      if (p.life <= 0) dust.splice(i, 1);
+    }
+  }
+
+  function tryFire() {
+    if (fireCd > 0) return;
+    const a = aimAngleWorld();
+    const c = Math.cos(a), s = Math.sin(a);
+    projectiles.push({
+      x: player.x + c * 6, y: player.y + s * 6,
+      vx: c * PROJECTILE_SPEED, vy: s * PROJECTILE_SPEED, life: PROJECTILE_LIFE,
+    });
+    fireCd = FIRE_COOLDOWN;
+  }
+
+  function tryActivateLamp() {
+    if (!nearLamp || nearLamp.on) return;
+    nearLamp.on = true;
+  }
+
+  function yp(t) { return Math.sin(t * 2) * 0.1 + 1; }
+
+  function shade(hex, mul) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    r = Math.max(0, Math.min(255, Math.round(r * mul)));
+    g = Math.max(0, Math.min(255, Math.round(g * mul)));
+    b = Math.max(0, Math.min(255, Math.round(b * mul)));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function paletteFor(t) {
+    if (t === TILE.SOFT) return { top: "#8f5fad", side: "#4a2f68", mortar: "#2a1840", hi: "#c9a0e0", accent: "#6a3d88" };
+    if (t === TILE.MED) return { top: "#6a4290", side: "#3a2158", mortar: "#1a0e2c", hi: "#a878c8", accent: "#4e2e72" };
+    if (t === TILE.ORE) return { top: "#7a5a38", side: "#3a2a18", mortar: "#1c1408", hi: "#f0d070", accent: "#c9a040" };
+    return { top: "#3a2858", side: "#160e28", mortar: "#080410", hi: "#b898d8", accent: "#5a4078" };
+  }
+
+  function drawFloorTile(g, sx, sy, s, tx, ty) {
+    const h = tileHash(tx, ty);
+    const base = ((tx + ty) & 1) ? "#2a1840" : "#321e4a";
+    g.fillStyle = base;
+    g.fillRect(sx, sy, s + 0.5, s + 0.5);
+    // subtle grit
+    g.fillStyle = h > 0.55 ? "rgba(90,60,130,0.22)" : "rgba(20,8,40,0.25)";
+    g.fillRect(sx + s * 0.15, sy + s * 0.2, s * 0.2, s * 0.12);
+    if (h > 0.72) {
+      g.fillStyle = "rgba(160,120,200,0.08)";
+      g.fillRect(sx + s * 0.55, sy + s * 0.55, s * 0.25, s * 0.18);
+    }
+    // tile seam
+    g.fillStyle = "rgba(8,4,16,0.45)";
+    g.fillRect(sx, sy + s - 1, s + 0.5, 1);
+    g.fillRect(sx + s - 1, sy, 1, s + 0.5);
+  }
+
+  function drawRaisedTile(g, sx, sy, s, t, hpLeft, maxHp, tx, ty) {
+    const hFrac = WALL_HEIGHT[t] || 0.3;
+    const lift = Math.max(3, s * hFrac);
+    const pal = paletteFor(t);
+    const h = tileHash(tx, ty);
+    const topY = sy - lift;
+    const sideH = lift + s * 0.12;
+
+    // Drop shadow on floor
+    g.fillStyle = "rgba(0,0,0,0.35)";
+    g.fillRect(sx + 1, sy + s * 0.55, s, lift * 0.55);
+
+    // South face (height)
+    g.fillStyle = pal.side;
+    g.fillRect(sx, sy + s - sideH * 0.2, s + 0.6, sideH);
+    // side brick rows
+    const rows = t === TILE.HARD ? 4 : (t === TILE.MED ? 3 : 2);
+    for (let r = 0; r < rows; r++) {
+      const ry = sy + s - sideH * 0.2 + (sideH / rows) * r;
+      g.fillStyle = pal.mortar;
+      g.fillRect(sx, ry, s + 0.6, Math.max(1, s * 0.04));
+      const offset = (r + tx) & 1 ? s * 0.35 : 0;
+      g.fillStyle = shade(pal.side, 1.15);
+      g.fillRect(sx + offset, ry + 1, Math.max(2, s * 0.28), Math.max(1, sideH / rows - 2));
+    }
+
+    // Top face
+    g.fillStyle = pal.top;
+    g.fillRect(sx, topY, s + 0.6, s + 0.6);
+
+    // Brick pattern on top
+    const brickH = Math.max(2, s / (t === TILE.SOFT ? 2.2 : 2.8));
+    const brickW = Math.max(3, s / 1.6);
+    for (let by = 0; by < s; by += brickH) {
+      const row = (by / brickH + ty) | 0;
+      const xOff = (row & 1) ? brickW * 0.5 : 0;
+      for (let bx = -brickW; bx < s + brickW; bx += brickW) {
+        const px = sx + bx + xOff;
+        const py = topY + by;
+        const jitter = hash2(tx + bx * 0.1, ty + by * 0.1);
+        g.fillStyle = shade(pal.top, 0.88 + jitter * 0.22);
+        g.fillRect(px + 1, py + 1, brickW - 2, brickH - 2);
+        g.fillStyle = pal.mortar;
+        g.fillRect(px, py, brickW, Math.max(1, s * 0.04));
+        g.fillRect(px, py, Math.max(1, s * 0.04), brickH);
+      }
+    }
+
+    // Top bevel highlight + left rim
+    g.fillStyle = pal.hi;
+    g.globalAlpha = 0.55;
+    g.fillRect(sx, topY, s + 0.6, Math.max(1, s * 0.07));
+    g.globalAlpha = 0.3;
+    g.fillRect(sx, topY, Math.max(1, s * 0.07), s);
+    g.globalAlpha = 1;
+
+    // Inner accent recess
+    g.fillStyle = shade(pal.accent, 0.7);
+    g.globalAlpha = 0.35;
+    g.fillRect(sx + s * 0.18, topY + s * 0.22, s * 0.64, s * 0.5);
+    g.globalAlpha = 1;
+
+    // Hard wall: studs / rim
+    if (t === TILE.HARD) {
+      g.strokeStyle = pal.hi;
+      g.globalAlpha = 0.65;
+      g.lineWidth = Math.max(1, s * 0.05);
+      g.strokeRect(sx + 1, topY + 1, s - 2, s - 2);
+      g.globalAlpha = 1;
+      g.fillStyle = pal.hi;
+      const stud = Math.max(1.5, s * 0.1);
+      [[0.2,0.2],[0.8,0.2],[0.2,0.8],[0.8,0.8]].forEach(([u, v]) => {
+        g.beginPath();
+        g.arc(sx + s * u, topY + s * v, stud * 0.45, 0, Math.PI * 2);
+        g.fill();
+      });
+    }
+
+    // Ore crystals
+    if (t === TILE.ORE) {
+      g.fillStyle = "#f0d060";
+      const cx = sx + s * (0.35 + h * 0.2);
+      const cy = topY + s * 0.35;
+      g.beginPath();
+      g.moveTo(cx, cy - s * 0.28);
+      g.lineTo(cx + s * 0.14, cy + s * 0.08);
+      g.lineTo(cx - s * 0.1, cy + s * 0.12);
+      g.closePath();
+      g.fill();
+      g.fillStyle = "#fff2a8";
+      g.fillRect(cx - 1, cy - s * 0.2, Math.max(1, s * 0.06), s * 0.18);
+    }
+
+    // Moss / wear speckles
+    if (h > 0.4 && t !== TILE.ORE) {
+      g.fillStyle = "rgba(60,140,90,0.28)";
+      g.fillRect(sx + s * 0.1, topY + s * 0.7, s * 0.22, s * 0.12);
+      if (h > 0.7) g.fillRect(sx + s * 0.6, topY + s * 0.15, s * 0.2, s * 0.1);
+    }
+
+    // Damage cracks
+    if (maxHp > 0 && hpLeft < maxHp) {
+      const dmg = 1 - hpLeft / maxHp;
+      g.strokeStyle = "rgba(10,4,18,0.75)";
+      g.lineWidth = Math.max(1, s * 0.06);
+      g.beginPath();
+      g.moveTo(sx + s * 0.2, topY + s * 0.25);
+      g.lineTo(sx + s * (0.35 + dmg * 0.3), topY + s * 0.55);
+      g.lineTo(sx + s * 0.7, topY + s * 0.4);
+      g.stroke();
+      if (dmg > 0.45) {
+        g.beginPath();
+        g.moveTo(sx + s * 0.55, topY + s * 0.2);
+        g.lineTo(sx + s * 0.8, topY + s * 0.75);
+        g.stroke();
+      }
+    }
+  }
+
+  function drawWorld() {
+    const g = wctx;
+    const z = getZoom();
+    const tl = camTopLeft();
+    const cell = map.cell;
+
+    g.fillStyle = "#0a0612";
+    g.fillRect(0, 0, VIEW_W, VIEW_H);
+
+    const x0 = Math.max(0, Math.floor(tl.x / cell) - 1);
+    const y0 = Math.max(0, Math.floor(tl.y / cell) - 1);
+    const x1 = Math.min(map.w - 1, Math.ceil((tl.x + VIEW_W / z) / cell) + 1);
+    const y1 = Math.min(map.h - 1, Math.ceil((tl.y + VIEW_H / z) / cell) + 1);
+
+    for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+      const t = map.tiles[idx(tx, ty, map.w)];
+      if (isWallKind(t)) continue;
+      const sx = (tx * cell - tl.x) * z;
+      const sy = (ty * cell - tl.y) * z;
+      drawFloorTile(g, sx, sy, cell * z, tx, ty);
+    }
+
+    for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+      const i = idx(tx, ty, map.w);
+      const t = map.tiles[i];
+      if (!isWallKind(t)) continue;
+      const sx = (tx * cell - tl.x) * z;
+      const sy = (ty * cell - tl.y) * z;
+      const maxHp = t === TILE.MED ? 3 : (WALL_HP[t] || 0);
+      drawRaisedTile(g, sx, sy, cell * z, t, map.hp[i], maxHp, tx, ty);
+    }
+
+    for (const L of lamps) {
+      const v = worldToView(L.x, L.y);
+      const s = Math.max(3, 3.2 * z);
+      // pedestal
+      g.fillStyle = "#2a1838";
+      g.fillRect(Math.round(v.x - s * 0.4), Math.round(v.y - s * 0.2), Math.round(s * 0.8), Math.round(s * 0.55));
+      g.fillStyle = L.on ? "#ffe6a0" : "#5a4060";
+      g.fillRect(Math.round(v.x - s * 0.22), Math.round(v.y - s * 1.05), Math.round(s * 0.44), Math.round(s * 0.95));
+      if (L.on) {
+        g.fillStyle = "rgba(255,220,140,0.28)";
+        g.beginPath(); g.arc(v.x, v.y - s * 1.05, s * 2.4, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#fff8d0";
+      } else {
+        g.fillStyle = "#1a1028";
+      }
+      g.beginPath(); g.arc(v.x, v.y - s * 1.1, s * 0.38, 0, Math.PI * 2); g.fill();
+    }
+
+    // Dash dust
+    for (const p of dust) {
+      const v = worldToView(p.x, p.y);
+      const t = Math.max(0, p.life / p.maxLife);
+      const a = p.alpha * t;
+      const s = Math.max(1, p.size * z * (0.6 + 0.4 * t));
+      g.fillStyle = `rgba(180,150,210,${a.toFixed(3)})`;
+      g.beginPath();
+      g.arc(v.x, v.y, s, 0, Math.PI * 2);
+      g.fill();
+      g.fillStyle = `rgba(90,70,110,${(a * 0.45).toFixed(3)})`;
+      g.beginPath();
+      g.arc(v.x + s * 0.2, v.y + s * 0.15, s * 0.55, 0, Math.PI * 2);
+      g.fill();
+    }
+
+    for (const p of projectiles) {
+      const v = worldToView(p.x, p.y);
+      const ps = Math.max(2, z * 0.55);
+      g.fillStyle = "#f0e0ff";
+      g.fillRect(Math.round(v.x - ps / 2), Math.round(v.y - ps / 2), ps, ps);
+    }
+
+    const pv = worldToView(player.x, player.y);
+    const ps = Math.max(7, 3.4 * z);
+    g.fillStyle = "#efe6ff";
+    g.fillRect(Math.round(pv.x - ps * 0.35), Math.round(pv.y - ps * 0.55), Math.round(ps * 0.7), Math.round(ps * 1.05));
+    g.fillStyle = "#1a0e28";
+    g.fillRect(Math.round(pv.x - ps * 0.15), Math.round(pv.y - ps * 0.25), Math.max(1, ps * 0.12), Math.max(1, ps * 0.12));
+    g.fillRect(Math.round(pv.x + ps * 0.05), Math.round(pv.y - ps * 0.25), Math.max(1, ps * 0.12), Math.max(1, ps * 0.12));
+
+    if (ui.flashlight.checked) {
+      const a = aimAngleWorld();
+      g.strokeStyle = "rgba(230,200,255,0.28)";
+      g.beginPath();
+      g.moveTo(pv.x, pv.y);
+      g.lineTo(pv.x + Math.cos(a) * 10 * z, pv.y + Math.sin(a) * 10 * z);
+      g.stroke();
+    }
+
+    // Lagged aim reticle (shows delayed aim point)
+    if (aim.ready) {
+      const av = worldToView(aim.x, aim.y);
+      const r = Math.max(3, 2.2 * z);
+      g.strokeStyle = "rgba(240,210,255,0.55)";
+      g.lineWidth = Math.max(1, z * 0.2);
+      g.beginPath();
+      g.arc(av.x, av.y, r, 0, Math.PI * 2);
+      g.moveTo(av.x - r * 1.4, av.y); g.lineTo(av.x - r * 0.45, av.y);
+      g.moveTo(av.x + r * 0.45, av.y); g.lineTo(av.x + r * 1.4, av.y);
+      g.moveTo(av.x, av.y - r * 1.4); g.lineTo(av.x, av.y - r * 0.45);
+      g.moveTo(av.x, av.y + r * 0.45); g.lineTo(av.x, av.y + r * 1.4);
+      g.stroke();
+      g.lineWidth = 1;
+    }
+
+    gl.bindTexture(gl.TEXTURE_2D, worldTex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, world2d);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
+  }
+
+  function stampLightMask(cx, cy, radius, heightRatio, nStrength, cone, soft) {
+    const quadRadius = radius * 1.08;
+    const prog = maskStampProg;
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    const loc = gl.getAttribLocation(prog, "position");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    u2(prog, "u_sourceSize", VIEW_W, VIEW_H);
+    u2(prog, "u_center", cx, cy);
+    u1(prog, "u_lightRadius", radius);
+    u1(prog, "u_quadRadius", quadRadius);
+    u2(prog, "u_worldOrigin", 0, 0);
+    u1(prog, "u_lightHeightRadiusRatio", heightRatio);
+    u1(prog, "u_normalTileSize", NSIZE);
+    u1(prog, "u_normalStrength", nStrength);
+    u1(prog, "u_radiusOverflowMult", 1.05);
+    u1(prog, "u_softMask", soft ? 1 : 0);
+    if (cone && cone.enabled) {
+      u1(prog, "u_coneEnabled", 1);
+      u2(prog, "u_coneDir", cone.dirX, cone.dirY);
+      u1(prog, "u_coneHalfAngle", cone.halfAngle);
+    } else {
+      u1(prog, "u_coneEnabled", 0);
+      u2(prog, "u_coneDir", 0, 1);
+      u1(prog, "u_coneHalfAngle", 0);
+    }
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, normalTex); usamp(prog, "u_normalTex", 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, bayerTex); usamp(prog, "u_bayerTex", 1);
+
+    if (soft && blendMinMax) {
+      gl.enable(gl.BLEND);
+      gl.blendEquation(blendMinMax.MAX_EXT);
+      gl.blendFunc(gl.ONE, gl.ONE);
+    } else if (soft) {
+      gl.enable(gl.BLEND);
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.ONE, gl.ONE); // additive clamp visually via 8-bit
+    } else {
+      gl.disable(gl.BLEND);
+    }
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.disable(gl.BLEND);
+    if (blendMinMax) gl.blendEquation(gl.FUNC_ADD);
+  }
+
+  function bindFullscreen(prog) {
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, fullscreen);
+    const p = gl.getAttribLocation(prog, "a_pos");
+    const u = gl.getAttribLocation(prog, "a_uv");
+    gl.enableVertexAttribArray(p); gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(u); gl.vertexAttribPointer(u, 2, gl.FLOAT, false, 16, 8);
+  }
+
+  const keys = Object.create(null);
+  addEventListener("keydown", (e) => {
+    keys[e.code] = true;
+    if (e.code === "KeyF") { ui.flashlight.checked = !ui.flashlight.checked; refreshExport(); e.preventDefault(); }
+    if (e.code === "KeyE") { tryActivateLamp(); e.preventDefault(); }
+    if (e.code === "Space") { tryDash(); e.preventDefault(); }
+    if (e.code === "BracketLeft") { ui.zoom.value = Math.max(100, +ui.zoom.value - 15); syncLabels(); refreshExport(); e.preventDefault(); }
+    if (e.code === "BracketRight") { ui.zoom.value = Math.min(600, +ui.zoom.value + 15); syncLabels(); refreshExport(); e.preventDefault(); }
+    if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].includes(e.code)) e.preventDefault();
+  });
+  addEventListener("keyup", (e) => { keys[e.code] = false; });
+
+  function canvasToView(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ((clientX - rect.left) / rect.width) * VIEW_W,
+      y: ((clientY - rect.top) / rect.height) * VIEW_H,
+    };
+  }
+  canvas.addEventListener("pointermove", (e) => {
+    const p = canvasToView(e.clientX, e.clientY);
+    mouse.x = p.x; mouse.y = p.y;
+  });
+  canvas.addEventListener("pointerdown", (e) => {
+    canvas.setPointerCapture(e.pointerId);
+    mouse.down = true;
+    const p = canvasToView(e.clientX, e.clientY);
+    mouse.x = p.x; mouse.y = p.y;
+    tryFire();
+  });
+  canvas.addEventListener("pointerup", () => { mouse.down = false; });
+  canvas.addEventListener("pointercancel", () => { mouse.down = false; });
+
+  function collectPreset() {
+    return {
+      scene: "seedloop-test-fow-dungeon",
+      version: 6,
+      camera: {
+        zoom: getZoom(),
+        followSpeed: (+ui.camLerp.value) / 100,
+        lookAhead: +ui.camLook.value,
+        lookAheadMode: "mouse",
+        deadzone: +ui.camDead.value,
+        snap: ui.camSnap.checked,
+      },
+      playerControls: {
+        moveSpeed: +ui.moveSpeed.value,
+        aimFollow: (+ui.aimFollow.value) / 100,
+        dashDistance: +ui.dashDist.value,
+        dashDuration: (+ui.dashDur.value) / 100,
+        dashCooldown: (+ui.dashCd.value) / 100,
+        dustDensity: (+ui.dustDen.value) / 100,
+        dustLifetime: (+ui.dustLife.value) / 100,
+      },
+      dungeon: {
+        seed: ui.seed.value,
+        mapW: +ui.mapW.value,
+        mapH: +ui.mapH.value,
+        cellSize: +ui.cell.value,
+        fillPercent: +ui.fill.value,
+        caSteps: +ui.steps.value,
+        birthLimit: +ui.birth.value,
+        surviveMin: +ui.survive.value,
+        edgeWall: +ui.edge.value,
+        softWallPercent: +ui.softPct.value,
+        medWallPercent: +ui.medPct.value,
+        oreChancePercent: (+ui.ore.value) / 10,
+        lampCount: +ui.lampCount.value,
+        lampRadius: +ui.lampRadius.value,
+        ensureSpawnPocket: ui.ensurePath.checked,
+      },
+      light: {
+        ambientRadius: +ui.radius.value,
+        flashRange: +ui.flashRange.value,
+        halfAngleDeg: +ui.halfAngle.value,
+        heightRadiusRatio: (+ui.height.value) / 100,
+        normalStrength: (+ui.nstr.value) / 100,
+        fogDensity: (+ui.fogDensity.value) / 100,
+        lightSteps: +ui.fogSteps.value,
+        softMask: +ui.softMask.value === 1,
+        breatheYp: ui.pulse.checked,
+        flashlightOn: ui.flashlight.checked,
+        yp: "sin(t*2)*0.1+1",
+      },
+      view: { width: VIEW_W, height: VIEW_H },
+      player: { x: +player.x.toFixed(2), y: +player.y.toFixed(2) },
+      worldPixels: worldSizePx(),
+      lampsOn: lamps.filter((L) => L.on).length,
+      lampsTotal: lamps.length,
+    };
+  }
+
+  function refreshExport() { ui.exportBox.value = JSON.stringify(collectPreset(), null, 2); }
+
+  function syncLabels() {
+    ui.oZoom.textContent = getZoom().toFixed(2);
+    ui.oLerp.textContent = ((+ui.camLerp.value) / 100).toFixed(2);
+    ui.oLook.textContent = ui.camLook.value;
+    ui.oDead.textContent = ui.camDead.value;
+    ui.oSpeed.textContent = ui.moveSpeed.value;
+    ui.oAim.textContent = ((+ui.aimFollow.value) / 100).toFixed(2);
+    ui.oDash.textContent = ui.dashDist.value;
+    ui.oDashDur.textContent = ((+ui.dashDur.value) / 100).toFixed(2);
+    ui.oDashCd.textContent = ((+ui.dashCd.value) / 100).toFixed(2);
+    ui.oDustDen.textContent = ((+ui.dustDen.value) / 100).toFixed(2);
+    ui.oDustLife.textContent = ((+ui.dustLife.value) / 100).toFixed(2);
+    ui.oMapW.textContent = ui.mapW.value;
+    ui.oMapH.textContent = ui.mapH.value;
+    ui.oCell.textContent = ui.cell.value;
+    ui.oFill.textContent = ui.fill.value;
+    ui.oSteps.textContent = ui.steps.value;
+    ui.oBirth.textContent = ui.birth.value;
+    ui.oSurvive.textContent = ui.survive.value;
+    ui.oEdge.textContent = ui.edge.value;
+    ui.oSoft.textContent = ui.softPct.value;
+    ui.oMed.textContent = ui.medPct.value;
+    ui.oOre.textContent = ((+ui.ore.value) / 10).toFixed(1);
+    ui.oLamps.textContent = ui.lampCount.value;
+    ui.oLampR.textContent = ui.lampRadius.value;
+    ui.oAmb.textContent = ui.radius.value;
+    ui.oFlash.textContent = ui.flashRange.value;
+    ui.oHalf.textContent = ui.halfAngle.value;
+    ui.oHeight.textContent = ((+ui.height.value) / 100).toFixed(2);
+    ui.oNstr.textContent = ((+ui.nstr.value) / 100).toFixed(2);
+    ui.oFogDen.textContent = ((+ui.fogDensity.value) / 100).toFixed(2);
+    ui.oFogSteps.textContent = ui.fogSteps.value;
+    ui.oSoftMask.textContent = +ui.softMask.value === 1 ? "켜짐" : "꺼짐";
+  }
+
+  function regen(respawn = true) {
+    generateDungeon();
+    if (respawn) spawnPlayer();
+    syncLabels();
+    refreshExport();
+  }
+
+  $("btnRegen").onclick = () => regen(true);
+  $("btnReseed").onclick = () => {
+    ui.seed.value = "seed-" + Math.floor(Math.random() * 1e9);
+    regen(true);
+  };
+  $("btnRespawn").onclick = () => { spawnPlayer(); refreshExport(); };
+  $("btnCopy").onclick = async () => {
+    refreshExport();
+    try {
+      await navigator.clipboard.writeText(ui.exportBox.value);
+      $("btnCopy").textContent = "복사됨!";
+      setTimeout(() => { $("btnCopy").textContent = "JSON 복사"; }, 900);
+    } catch { ui.exportBox.select(); }
+  };
+  $("btnRefreshExport").onclick = refreshExport;
+
+  const dungeonControls = [
+    "seed","mapW","mapH","cell","fill","steps","birth","survive","edge",
+    "softPct","medPct","ore","lampCount","lampRadius","ensurePath",
+  ];
+  for (const id of dungeonControls) {
+    const el = ui[id];
+    if (!el) continue;
+    el.addEventListener("input", () => {
+      syncLabels();
+      if (ui.autoRegen.checked && id !== "seed") regen(true);
+      refreshExport();
+    });
+    el.addEventListener("change", () => {
+      if (id === "seed") regen(true);
+      else if (ui.autoRegen.checked) regen(true);
+      refreshExport();
+    });
+  }
+  for (const id of [
+    "zoom","camLerp","camLook","camDead","camSnap",
+    "moveSpeed","aimFollow","dashDist","dashDur","dashCd","dustDen","dustLife",
+    "radius","flashRange","halfAngle","height","nstr",
+    "fogDensity","fogSteps","softMask","pulse","flashlight","showMask",
+  ]) {
+    const el = ui[id];
+    if (!el) continue;
+    el.addEventListener("input", () => { syncLabels(); refreshExport(); });
+    el.addEventListener("change", () => { syncLabels(); refreshExport(); });
+  }
+
+  let last = performance.now();
+  let exportTimer = 0;
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    let mx = 0, my = 0;
+    if (keys.KeyA || keys.ArrowLeft) mx -= 1;
+    if (keys.KeyD || keys.ArrowRight) mx += 1;
+    if (keys.KeyW || keys.ArrowUp) my -= 1;
+    if (keys.KeyS || keys.ArrowDown) my += 1;
+    movePlayer(mx, my, dt);
+    updateAim(dt);
+    updateDash(dt);
+    updateDust(dt);
+    dashCooldownLeft = Math.max(0, dashCooldownLeft - dt);
+
+    // Camera walk: mouse look-ahead + deadzone + follow lag
+    const look = +ui.camLook.value;
+    const aim = aimAngleWorld();
+    const targetX = player.x + Math.cos(aim) * look;
+    const targetY = player.y + Math.sin(aim) * look;
+    if (ui.camSnap.checked) {
+      camera.x = targetX; camera.y = targetY;
+    } else {
+      const dead = +ui.camDead.value;
+      const dx = targetX - camera.x;
+      const dy = targetY - camera.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > dead) {
+        const follow = (+ui.camLerp.value) / 100;
+        const pull = dist - dead;
+        const nx = dx / dist, ny = dy / dist;
+        const aimX = camera.x + nx * pull;
+        const aimY = camera.y + ny * pull;
+        const t = Math.min(1, follow * 60 * dt);
+        camera.x += (aimX - camera.x) * t;
+        camera.y += (aimY - camera.y) * t;
+      }
+    }
+    const { ww, hh } = worldSizePx();
+    const { vw, vh } = viewWorldSize();
+    camera.x = Math.min(ww - vw / 2, Math.max(vw / 2, camera.x));
+    camera.y = Math.min(hh - vh / 2, Math.max(vh / 2, camera.y));
+
+    nearLamp = null;
+    let bestD = LAMP_ACTIVATE_RANGE;
+    for (const L of lamps) {
+      const d = Math.hypot(L.x - player.x, L.y - player.y);
+      if (d < bestD) { bestD = d; nearLamp = L; }
+    }
+    if (nearLamp && !nearLamp.on) {
+      promptEl.textContent = "E — 거점 조명 활성화";
+      promptEl.classList.add("show");
+    } else if (nearLamp && nearLamp.on) {
+      promptEl.textContent = "거점 확보됨";
+      promptEl.classList.add("show");
+    } else {
+      promptEl.classList.remove("show");
+    }
+
+    fireCd = Math.max(0, fireCd - dt);
+    if (mouse.down) tryFire();
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const p = projectiles[i];
+      const ox = p.x, oy = p.y;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
+      let hit = false;
+      if (isSolidWorld(p.x, p.y)) {
+        damageTile(Math.floor(p.x / map.cell), Math.floor(p.y / map.cell), 1);
+        hit = true;
+      } else if (isSolidWorld((ox + p.x) * 0.5, (oy + p.y) * 0.5)) {
+        damageTile(Math.floor(((ox + p.x) * 0.5) / map.cell), Math.floor(((oy + p.y) * 0.5) / map.cell), 1);
+        hit = true;
+      }
+      if (hit || p.life <= 0 || p.x < 0 || p.y < 0 || p.x > ww || p.y > hh) projectiles.splice(i, 1);
+    }
+
+    const tSec = now / 1000;
+    const pulseMul = ui.pulse.checked ? yp(tSec) : 1;
+    const z = getZoom();
+    const zoomScale = z / 2.5;
+    const soft = +ui.softMask.value === 1;
+    const ambientR = (+ui.radius.value) * pulseMul * zoomScale;
+    const flashR = (+ui.flashRange.value) * pulseMul * zoomScale;
+    const bodyR = FLASH_BODY_RADIUS * pulseMul * zoomScale;
+    const halfAngle = (+ui.halfAngle.value) * Math.PI / 180;
+    const heightRatio = (+ui.height.value) / 100;
+    const nStrength = (+ui.nstr.value) / 100;
+    const lampR = (+ui.lampRadius.value) * pulseMul * zoomScale;
+    const fogDen = (+ui.fogDensity.value) / 100;
+    const fogSteps = +ui.fogSteps.value;
+
+    drawWorld();
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, maskFbo);
+    gl.viewport(0, 0, VIEW_W, VIEW_H);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const pView = worldToView(player.x, player.y);
+    stampLightMask(pView.x, pView.y, ambientR, heightRatio, nStrength, null, soft);
+
+    if (ui.flashlight.checked) {
+      const a = aimAngleWorld();
+      const dirX = Math.cos(a), dirY = Math.sin(a);
+      stampLightMask(pView.x, pView.y, bodyR, heightRatio, nStrength, null, soft);
+      stampLightMask(pView.x + dirX * 5 * zoomScale, pView.y + dirY * 5 * zoomScale, flashR, heightRatio, nStrength, {
+        enabled: true, dirX, dirY, halfAngle,
+      }, soft);
+    }
+    for (const p of projectiles) {
+      const v = worldToView(p.x, p.y);
+      stampLightMask(v.x, v.y, PROJECTILE_LIGHT_RADIUS * zoomScale, heightRatio, nStrength, null, soft);
+    }
+    for (const L of lamps) {
+      if (!L.on) continue;
+      const v = worldToView(L.x, L.y);
+      stampLightMask(v.x, v.y, lampR, heightRatio, nStrength, null, soft);
+    }
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+    gl.viewport(0, 0, VIEW_W, VIEW_H);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    if (ui.showMask.checked) {
+      bindFullscreen(maskViewProg);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, maskTex); usamp(maskViewProg, "u_tex", 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    } else {
+      bindFullscreen(blitProg);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, worldTex); usamp(blitProg, "u_tex", 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      bindFullscreen(fogProg);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, maskTex); usamp(fogProg, "u_fogLitMaskTex", 0);
+      gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, bayerTex); usamp(fogProg, "u_bayerTex", 1);
+      u2(fogProg, "u_worldSourceSize", VIEW_W, VIEW_H);
+      u2(fogProg, "u_fogLitMaskSize", VIEW_W, VIEW_H);
+      u1(fogProg, "u_fogLitMaskEnabled", 1);
+      u4(fogProg, "u_fogColor", FOG_RGB[0], FOG_RGB[1], FOG_RGB[2], 1);
+      u1(fogProg, "u_fogDensity", fogDen);
+      u1(fogProg, "u_lightSteps", fogSteps);
+      gl.enable(gl.BLEND);
+      gl.blendEquation(gl.FUNC_ADD);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      gl.disable(gl.BLEND);
+    }
+
+    exportTimer += dt;
+    if (exportTimer > 1.0) { exportTimer = 0; refreshExport(); }
+    requestAnimationFrame(frame);
+  }
+
+  try {
+    regen(true);
+    syncLabels();
+    refreshExport();
+    requestAnimationFrame(frame);
+  } catch (err) {
+    console.error(err);
+    const pre = document.createElement("pre");
+    pre.style.cssText = "color:#f66;padding:12px;white-space:pre-wrap";
+    pre.textContent = String(err && err.stack || err);
+    document.body.appendChild(pre);
+  }
+})();
+</script>
+</body>
+</html>
