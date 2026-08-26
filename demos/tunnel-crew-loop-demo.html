@@ -242,6 +242,7 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
 }
 
 </style>
+<link rel="stylesheet" href="../assets/menu/role-select.css">
 </head>
 <body>
 <div id="shell"><div id="stageWrap"><div id="app">
@@ -296,15 +297,14 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
       <button type="button" class="backLink" id="biomeBackMission">← 미션 선택</button>
     </div>
     <div class="crewPanel" id="crewRole">
-      <h1>역할 선택</h1>
-      <p class="crewSub" id="crewRoleSub">역할을 고르고 땅굴에 하강한다.</p>
-      <div class="roleGrid">
-        <button class="roleBtn" data-role="driller"><b>드릴러</b><span>길을 판다 · 클릭홀드 채굴 · Q 돌파 파기</span></button>
-        <button class="roleBtn" data-role="scout"><b>스카웃</b><span>어둠을 연다 · 빠른 대시 · Q 플레어</span></button>
-        <button class="roleBtn" data-role="engineer"><b>엔지니어</b><span>공간을 만든다 · Q 발판 · E 터렛</span></button>
-        <button class="roleBtn" data-role="gunner"><b>거너</b><span>적을 지운다 · 총 특화 · Q 방어막</span></button>
+      <div class="tcRoleHeading"><h1>직업 선택</h1><p class="crewSub" id="crewRoleSub">역할을 고르고 땅굴에 하강한다.</p></div>
+      <div class="roleGrid tcRoleSelectGrid" aria-label="직업 선택">
+        <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="../assets/menu/char-driller-select-v4.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">길을 연다 · 고압 드릴과 기반암 균열</span><span class="tcRoleStats"><span>지형 장비　고압 중형 드릴</span><span>전투 장비　리벳 권총</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="../assets/menu/char-gunner-select-v4.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">적을 지운다 · 중화기와 계획 발파</span><span class="tcRoleStats"><span>지형 장비　파쇄 발사기</span><span>전투 장비　벨트식 중화기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="../assets/menu/char-scout-select-v4.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">어둠을 연다 · 플레어와 기동 정찰</span><span class="tcRoleStats"><span>지형 장비　휴대 절삭기</span><span>전투 장비　정찰 카빈</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="../assets/menu/char-engineer-select-v4.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">공간을 만든다 · 설치물과 전력망</span><span class="tcRoleStats"><span>지형 장비　공학 커터·전력 노드</span><span>전투 장비　센트리·서비스 총기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
       </div>
-      <p class="crewSub" style="margin-top:14px">WASD 이동 · 마우스 조준 · Space 대시 · F 손전등</p>
+      <div class="tcRoleFeedback" id="crewRoleFeedback" aria-live="polite"></div>
       <button type="button" class="backLink" id="roleBackMission">← 바이옴</button>
     </div>
     <div class="crewPanel" id="crewResult">
@@ -6074,7 +6074,9 @@ function crewShow(which){
  else if(which==='result')CREW.phase='result';
  else CREW.phase='play';
  if(which==='role'){
-  const m=CREW_MISSIONS[CREW.missionId]||CREW_MISSIONS.harvest;
+   document.querySelectorAll('#crewRole .tcRoleChoice').forEach(btn=>{btn.classList.remove('selected');btn.setAttribute('aria-pressed','false');btn.disabled=false;});
+   const feedback=$('crewRoleFeedback');if(feedback)feedback.textContent='';
+   const m=CREW_MISSIONS[CREW.missionId]||CREW_MISSIONS.harvest;
   const b=CREW_BIOMES[CREW.biomeId]||CREW_BIOMES.purple;
   const sub=$('crewRoleSub');
   if(sub)sub.innerHTML='미션 <b style="color:#d4a8ff">'+m.name+'</b> · 바이옴 <b style="color:#7FEBD0">'+b.name+'</b>';
@@ -6538,8 +6540,14 @@ function drawCrewExtras(){
  }
 }
 
+let crewRoleLaunchTimer=0;
 document.querySelectorAll('#crewRole .roleBtn').forEach(btn=>{
- btn.addEventListener('click',()=>startCrewMission(btn.getAttribute('data-role')));
+ btn.addEventListener('click',()=>{
+  const roleId=btn.getAttribute('data-role');const meta=CREW_ROLES[roleId];
+  document.querySelectorAll('#crewRole .roleBtn').forEach(peer=>{const picked=peer===btn;peer.classList.toggle('selected',picked);peer.setAttribute('aria-pressed',picked?'true':'false');peer.disabled=true;});
+  const feedback=$('crewRoleFeedback');if(feedback)feedback.textContent=(meta?meta.name:roleId)+' SELECTED';
+  SFX.tick&&SFX.tick();clearTimeout(crewRoleLaunchTimer);crewRoleLaunchTimer=setTimeout(()=>startCrewMission(roleId),480);
+ });
 });
 $('crewAgain')&&$('crewAgain').addEventListener('click',()=>{
  if(CREW.lastMission)CREW.missionId=CREW.lastMission;

@@ -5,7 +5,7 @@
 > **라이트 미션 런(10~20분)** 으로 압축한 지하 탐험 게임.
 
 **문서 목적:** 전체 방향 고정 → 코어루프 데모로 재미 검증 → 본편 확장  
-**관련 프로토:** `tunnel-explorer-lab.html` (기존 FoW/LOS/드릴/적 실험 자산 활용)
+**관련 프로토:** `tunnel-explorer-demo.html` (기존 FoW/LOS/드릴/적 실험 자산 활용)
 
 ---
 
@@ -193,7 +193,7 @@
 역할 차이 체감 ≥ 70%, 한 판 더 ≥ 3.5/5, 길이 “적당” 비중 높음.
 
 ### 9.5 데모 기술 방침
-- 기존 `tunnel-explorer-lab.html`을 **포크**해 `tunnel-crew-loop-demo.html`로 제작.
+- 기존 `tunnel-explorer-demo.html`을 **포크**해 `tunnel-crew-loop-demo.html`로 제작.
 - 검증 통과 후 Unity/본편 엔진 이전을 검토 (지금은 루프가 우선).
 
 ### 9.6 데모 화면 흐름

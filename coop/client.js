@@ -55,6 +55,7 @@
     document.querySelectorAll('#coopRoles .roleBtn').forEach((btn) => {
       const id = btn.getAttribute('data-role');
       btn.classList.toggle('picked', COOP.myRole === id);
+      btn.setAttribute('aria-pressed', COOP.myRole === id ? 'true' : 'false');
       const taken =
         r &&
         ((COOP.seat === 'host' && r.guestRole === id) ||
@@ -464,7 +465,7 @@
   padding:10px 12px;font:700 16px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;
   width:8em;text-align:center;text-transform:uppercase}
 #coopCodeShow{font:800 28px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.2em;color:#d4a8ff;text-align:center;margin:8px 0}
-#coopRoles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+#coopRoles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
 #coopRoles .roleBtn{text-align:left;padding:10px}
 #coopRoles .roleBtn b{display:block;color:#d4a8ff;margin-bottom:2px}
 #coopRoles .roleBtn span{font-size:11px;color:#9a86b5}
@@ -493,11 +494,11 @@
         <p class="sub" id="coopPeer">대기 중…</p>
         <div id="coopMeta"><span>호스트 역할: <b id="coopHostRole">—</b></span>
           <span>게스트 역할: <b id="coopGuestRole">—</b></span></div>
-        <div id="coopRoles">
-          <button class="roleBtn" data-role="driller"><b>드릴러</b><span>채굴 · 돌파</span></button>
-          <button class="roleBtn" data-role="scout"><b>스카웃</b><span>시야 · 플레어</span></button>
-          <button class="roleBtn" data-role="engineer"><b>엔지니어</b><span>발판 · 터렛</span></button>
-          <button class="roleBtn" data-role="gunner"><b>거너</b><span>사격 · 방어막</span></button>
+        <div id="coopRoles" class="tcRoleSelectGrid" aria-label="코옵 직업 선택">
+          <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="/assets/menu/char-driller-select-v4.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">채굴 · 돌파</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+          <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="/assets/menu/char-gunner-select-v4.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">사격 · 방어막</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+          <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="/assets/menu/char-scout-select-v4.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">시야 · 플레어</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+          <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="/assets/menu/char-engineer-select-v4.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">발판 · 터렛</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
         </div>
         <div class="row" style="margin-top:14px">
           <button class="pri" id="coopStart" disabled>미션 시작 (호스트)</button>

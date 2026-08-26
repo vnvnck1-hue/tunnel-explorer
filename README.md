@@ -12,8 +12,7 @@ npx --yes serve . -p 5188
 ```
 
 - 코어루프 데모: http://127.0.0.1:5188/demos/tunnel-crew-loop-demo.html  
-- 코어루프 데모 v2 (랩 조율): http://127.0.0.1:5188/demos/tunnel-crew-loop-demo-v2.html  
-- 탐험가 랩: http://127.0.0.1:5188/demos/tunnel-explorer-lab.html  
+- 파라미터 튜닝 데모: http://127.0.0.1:5188/demos/tunnel-explorer-demo.html  
 
 또는 파일을 브라우저에 직접 열어도 됩니다 (일부 환경에서는 `file://` 제약이 있을 수 있음).
 
@@ -32,8 +31,7 @@ npm start
 | 경로 | 설명 |
 |------|------|
 | `demos/tunnel-crew-loop-demo.html` | **메인** — 역할 선택 → 채취 → 탈출 코어루프. 드릴러에 마이너 스프라이트 적용 |
-| `demos/tunnel-crew-loop-demo-v2.html` | 코어루프 **v2** — lab 조율값(드릴 예열·과부하·데미지로그·오디오 볼륨 등) 접목본. 원본은 유지 |
-| `demos/tunnel-explorer-lab.html` | **랩** — FoW / LOS / 드릴·카메라 연구용. crew와 동일 캐릭터 시트·조명 기본값 |
+| `demos/tunnel-explorer-demo.html` | FoW / LOS / 드릴·카메라 파라미터 튜닝 데모 |
 | `demos/tunnel-explorer-demo-sprite*.html` | 캐릭터 스프라이트 시트 실험 (좌향 수정본 포함) |
 | `demos/tunnel-explorer.html` | 탐험가 본체 HTML 변형 |
 | `docs/tunnel-crew-gdd.md` | 땅굴 크루 게임 확장 기획서 (GDD v0.1) |
