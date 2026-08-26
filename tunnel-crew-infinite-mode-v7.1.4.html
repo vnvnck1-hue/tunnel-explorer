@@ -618,7 +618,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
 
 <link rel="stylesheet" href="assets/menu/role-select.css">
 <style id="tcRoleActionV712">
-/* ── 무한 굴진 직업 선택 · v7.1.4 ── */
+/* ── 무한 모드 직업 선택 · v7.1.4 ── */
 #infRoleModal .infRoleBack{
   border-color:#ff7182;
   background:#a92b3c;
@@ -696,7 +696,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
             <h1><span class="menuLogoFx"><img class="menuLogo" src="assets/menu/title-tunnel-crew-v1.png" alt="TUNNEL CREW" draggable="false" decoding="async" onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false"><span class="menuLogoSheen" aria-hidden="true"></span></span><span class="menuLogoFallback" hidden>TUNNEL CREW</span></h1>
             <nav class="modeGrid" aria-label="게임 모드">
               <button class="modeBtn" id="menuSolo"><i>01</i><b>솔로 미션</b><span>MISSION / 드릴러 + 보조 드론</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 굴진</b><span>ENDLESS / 장악도 40%마다 보스</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 장악도 40%마다 보스</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn" id="menuProjectileLab"><i>03</i><b>투사체 연구소</b><span>LAB / 무기와 보스 패턴 테스트</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>04</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
             </nav>
@@ -1848,14 +1848,14 @@ const DEMO={
   enemyInterval:7.5,
   enemyChance:0.64,
   enemyMax:16,
-  enemySpeed:14,
-  enemyHp:162,
-  enemyDmg:11,
-  enemyAtkCd:0.75,
+  enemySpeed:9.8,
+  enemyHp:81,
+  enemyDmg:5.5,
+  enemyAtkCd:1.5,
   enemyAggro:320,
   enemyRadius:22,
   enemyTouch:12,
-  enemyKnock:140,
+  enemyKnock:70,
   enemyDrillMul:1.15,
   enemyGunDmg:22,
   playerHp:181,
@@ -4505,9 +4505,10 @@ function spawnEnemy(forceApex){
   G.enemies.push({
     x:p[0],y:p[1],vx:0,vy:0,
     hp,hpMax:hp,threatHpMul:timeHp,speedMul:apex?1.72:1,damageMul:apex?2.35:1,apex,kbx:0,kby:0,
+    jumpT:0,jumpDur:0,jumpCd:kind==='crawler'?4.8+Math.random()*5.5:Infinity,jumpVx:0,jumpVy:0,
     kind,animT:Math.random()*6.28,blinkCd:2.2+Math.random()*3.6,blinkT:0,
     cd:0, hurt:0, bob:Math.random()*6.28,
-    r:DEMO.enemyRadius*(apex?1.28:1),elite:apex?1:0
+    r:DEMO.enemyRadius*(apex?1.28:(kind==='crawler'?.86:1)),elite:apex?1:0
   });
   J.ring(p[0],p[1],apex?'#FF557D':'#C7A0FF',apex?11:6,CELL*(apex?1.35:.8),apex?4:2.4);
   J.burst(p[0],p[1],apex?18:8,apex?['#FF557D','#FFD36E','#FFF']:['#8B6BB8','#C7A0FF'],apex?190:90);
@@ -4564,7 +4565,18 @@ function updateEnemies(dt){
     else if((e.blinkCd-=dt)<=0){e.blinkT=.24;e.blinkCd=2.4+Math.random()*4.2;}
     e.cd=Math.max(0,e.cd-dt);
     const dx=sh.x-e.x, dy=sh.y-e.y, dist=Math.hypot(dx,dy)||1;
-    if(dist<aggro){
+    e.jumpCd=Math.max(0,(e.jumpCd||0)-dt);
+    if(e.jumpT>0)e.jumpT=Math.max(0,e.jumpT-dt);
+    const smallCrawler=e.kind==='crawler'&&!e.apex&&!e.boss;
+    if(smallCrawler&&e.jumpT<=0&&e.jumpCd<=0&&dist>CELL*2.4&&dist<aggro&&Math.random()<dt*.02){
+      const jumpDur=.30,jumpSpeed=teWorld(42+Math.random()*10);
+      e.jumpT=jumpDur;e.jumpDur=jumpDur;e.jumpCd=4.8+Math.random()*5.5;
+      e.jumpVx=(dx/dist)*jumpSpeed;e.jumpVy=(dy/dist)*jumpSpeed;
+      J.ring(e.x,e.y,'#C7A0FF',5,CELL*.52,1.6);
+    }
+    if(e.jumpT>0){
+      e.vx=e.jumpVx;e.vy=e.jumpVy;
+    }else if(dist<aggro){
       const nx=dx/dist, ny=dy/dist;
       const timeSpd=inf?1+Math.max(0,threat-1)*.13:1,baseSpd=e.boss ? .76 : 1;
       const unitSpd=Math.min(baseSpd*2,baseSpd*(e.speedMul||1)*timeSpd);e.vx=nx*spd*unitSpd; e.vy=ny*spd*unitSpd;
@@ -4635,10 +4647,12 @@ function drawEnemies(){
     if(DEMO.losOn&&typeof LOS!=='undefined'&&!LOS.seenAt(e.x,e.y))continue;
     const dim=lightAt(e.x,e.y);if(dim<=0.02)continue;
     const bob=Math.sin(e.bob)*2.2;
+    const jumpProgress=e.jumpT>0?1-e.jumpT/Math.max(.01,e.jumpDur||.3):0;
+    const jumpLift=e.jumpT>0?Math.sin(jumpProgress*Math.PI)*12:0;
     const flash=e.hurt>0;
     cx.save();
     cx.globalAlpha=Math.min(1,dim+((!DEMO.losOn||LOS.visibleAt(e.x,e.y))?0:.25));
-    cx.translate(e.x, e.y+bob);
+    cx.translate(e.x, e.y+bob-jumpLift);
     cx.fillStyle='rgba(0,0,0,.35)';
     cx.beginPath();cx.ellipse(0,e.r*.7,e.r*.9,e.r*.28,0,0,7);cx.fill();
     const moving=Math.hypot(e.vx,e.vy)>2;
@@ -5481,7 +5495,7 @@ function drawDrillHeatOnChar(shx,shy){
  cx.restore();
 }
 
-/* 무한 굴진 — 캐릭터 부착형 미니멀 재장전 게이지 */
+/* 무한 모드 — 캐릭터 부착형 미니멀 재장전 게이지 */
 function drawReloadOnChar(shx,shy){
  if(typeof INF==='undefined'||!INF.active||SCENE!=='depths')return;
  if(typeof CREW!=='undefined'&&CREW.phase!=='play')return;
@@ -7983,14 +7997,14 @@ body.infActive #infHud{display:block}
 
 <div class="infModal" id="infRoleModal" role="dialog" aria-modal="true" aria-labelledby="infRoleTitle">
   <div class="infPanel infRolePanel">
-   <div class="infRoleHead"><div class="tcRoleHeading"><h2 id="infRoleTitle">무한 굴진 · 직업 선택</h2><p>기본 장비와 역할 배율이 결정됩니다 · 런 도중 변경 불가</p></div><button class="infRoleBack" id="infRoleBack" type="button">← 메인 메뉴</button></div>
-   <div class="infRoleGrid tcRoleSelectGrid" id="infRoleGrid" aria-label="무한 굴진 직업 선택"></div>
+   <div class="infRoleHead"><div class="tcRoleHeading"><h2 id="infRoleTitle">무한 모드 · 직업 선택</h2><p>기본 장비와 역할 배율이 결정됩니다 · 런 도중 변경 불가</p></div><button class="infRoleBack" id="infRoleBack" type="button">← 메인 메뉴</button></div>
+   <div class="infRoleGrid tcRoleSelectGrid" id="infRoleGrid" aria-label="무한 모드 직업 선택"></div>
   <p class="infRoleNote">드릴러는 고압 드릴로 기반암에 지속 균열을 만들고, 거너는 지연 기폭식 파쇄 발사기, 스카우트는 독립 시야 플레어·그래플 훅, 엔지니어는 전력 노드와 자동 센트리를 운용합니다.</p>
  </div>
 </div>
 <div class="infModal" id="infLevelModal"><div class="infPanel"><h2 id="infLevelTitle">LEVEL UP</h2><p>이번 런의 특성을 하나 선택하세요.</p><div class="infCards" id="infLevelCards"></div></div></div>
 <div class="infModal" id="infRestModal"><div class="infPanel"><h2 id="infRestTitle">심층 정복</h2><p id="infRestSub">보스 전리품을 선택하고 다음 심층을 준비하세요.</p><div class="infCards" id="infLegendCards"></div><div class="infTreeHead"><b>암반 코어 특성 트리</b><span>선행 노드 필요 · 이번 런 전용　<strong id="infTreeCore">코어 0</strong></span></div><div class="infBranches" id="infBranches"></div><div class="infActions"><button class="infAction primary" id="infDescend" disabled>다음 심층으로</button></div></div></div>
-<div class="infModal" id="infResultModal"><div class="infPanel"><h2>무한 굴진 종료</h2><p id="infResultReason">굴착자가 쓰러졌습니다.</p><div id="infResultStats"></div><p id="infUnlockText"></p><div class="infActions"><button class="infAction" id="infRetry">다시 시작</button><button class="infAction primary" id="infMenu">메인 메뉴</button></div></div></div>
+<div class="infModal" id="infResultModal"><div class="infPanel"><h2>무한 모드 종료</h2><p id="infResultReason">굴착자가 쓰러졌습니다.</p><div id="infResultStats"></div><p id="infUnlockText"></p><div class="infActions"><button class="infAction" id="infRetry">다시 시작</button><button class="infAction primary" id="infMenu">메인 메뉴</button></div></div></div>
 
 <style id="projectileLabStyle">
 #projectileLab{--pl-bg:#090610;--pl-panel:#120d1c;--pl-line:#332642;--pl-text:#f6efff;--pl-dim:#9e8daf;position:fixed;inset:0;z-index:500;display:none;background:radial-gradient(circle at 68% 35%,rgba(91,48,126,.24),transparent 36%),var(--pl-bg);color:var(--pl-text);font-family:"Pretendard","Malgun Gothic",sans-serif}
@@ -8024,6 +8038,7 @@ const INF_META_KEY='tc_infinite_meta_v1';
 const INF_META=(()=>{try{return Object.assign({bestDepth:0,bestBlocks:0,totalBosses:0,unlocks:{}},JSON.parse(localStorage.getItem(INF_META_KEY)||'{}'));}catch(e){return {bestDepth:0,bestBlocks:0,totalBosses:0,unlocks:{}};}})();
 const INF_DOMINANCE_TARGET=.40;
 const INF_BOSS_POWER=10;
+const INF_GROWTH_SCALE=.5;
 const INF_ROLES={
  driller:{id:'driller',code:'EXCAVATION',name:'드릴러',tag:'길을 연다 · 기반암 균열 전문가',dig:2,gun:true,gunMul:.65,dash:1,weapon:'drill',qLabel:'돌파 파기',eLabel:null,qCd:7,eCd:0,color:'#ffd36e',terrain:'고압 중형 드릴',combat:'리벳 권총',keys:'<b>LMB</b> 고압 드릴·기반암 균열　<b>RMB</b> 보조총<br><b>Q</b> 돌파 파기　<b>SPACE</b> 대시'},
  gunner:{id:'gunner',code:'FIRE SUPPORT',name:'거너',tag:'적을 지운다 · 중화기와 계획 발파',dig:0,gun:true,gunMul:1.5,dash:.9,weapon:'gun',qLabel:'방어막',eLabel:'조기 기폭',qCd:8,eCd:0,color:'#ff8d72',terrain:'파쇄 발사기',combat:'벨트식 중화기',keys:'<b>LMB</b> 파쇄탄　<b>RMB</b> 중화기<br><b>Q</b> 방어막　<b>E</b> 조기 기폭'},
@@ -8115,8 +8130,8 @@ function infPickTraits(){
  for(let i=0;i<3&&pool.length;i++){const tier=infRollTier(pool,forceHigh&&i===0),same=pool.filter(t=>t.tier===tier),pick=same[(Math.random()*same.length)|0]||pool[0];out.push(pick);pool.splice(pool.indexOf(pick),1);}
  const best=out.reduce((m,t)=>Math.max(m,t.tier),1);INF.pity=best>=3?0:INF.pity+1;return out;
 }
-function infThreatValue(){if(!INF.active)return 1;return Math.min(9,1+Math.max(0,INF.depth-1)*.35+(INF.floorTime||0)/90+(INF.floorBroken||0)/28);}
-function infEnemyCap(){const threat=infThreatValue();return Math.min(64,18+Math.floor((INF.floorBroken||0)/3+(INF.floorTime||0)/15+threat*1.5));}
+function infThreatValue(){if(!INF.active)return 1;return Math.min(9,1+INF_GROWTH_SCALE*(Math.max(0,INF.depth-1)*.35+(INF.floorTime||0)/90+(INF.floorBroken||0)/28));}
+function infEnemyCap(){const threat=infThreatValue();return Math.min(64,18+Math.floor(INF_GROWTH_SCALE*((INF.floorBroken||0)/3+(INF.floorTime||0)/15)+threat*1.5));}
 function infSpawnInterval(){const threat=infThreatValue();return Math.max(.62,5.2/(1+Math.max(0,threat-1)*.55));}
 function infSpawnBurst(){return Math.min(5,1+Math.floor(Math.max(0,infThreatValue()-1)/1.75));}
 function infSetMag(delta){const old=INF.magSize;INF.magSize=Math.max(3,Math.min(40,Math.round(INF.magSize+delta)));INF.ammo=Math.max(0,Math.min(INF.magSize,INF.ammo+Math.max(0,INF.magSize-old)));}
@@ -8149,7 +8164,7 @@ function infStartRun(roleId){
  CREW.role=role;CREW.roleId=role.id;CREW.missionId='infinite';CREW.biomeId='purple';CREW.timeLeft=1e9;CREW.timeMax=1e9;CREW.qCd=0;CREW.eCd=0;CREW.shieldT=0;CREW.breachT=0;CREW.turrets.length=0;CREW.plats.length=0;CREW.drone=null;
  AU.init();AU.resume();startIncursion('tunnel');crewShow('play');DLG.on=false;G.weapon=role.weapon;G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;
  const keys=infEl('infKeyGuide');if(keys)keys.innerHTML=role.keys;
- infInitFloor();toast(role.name+' · 무한 굴진 시작');infPaint();
+ infInitFloor();toast(role.name+' · 무한 모드 시작');infPaint();
 }
 function infFindBreakerTarget(){
  const sh=G.sh,a=sh.aim,ca=Math.cos(a),sa=Math.sin(a),max=CELL*8;
@@ -8326,7 +8341,7 @@ function infDrawScoutOverlay(shx,shy){
 function infInitFloor(){
  INF.depth=G.depth;INF.floorBroken=0;INF.bossSpawned=false;INF.bossActive=false;INF.boss=null;
  INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
- INF.wallHpMul=Math.pow(2,Math.max(0,INF.depth-1));INF.enemyHpMul=Math.pow(1.65,Math.max(0,INF.depth-1));
+ INF.wallHpMul=Math.pow(2,Math.max(0,INF.depth-1));INF.enemyHpMul=Math.pow(1.65,Math.max(0,INF.depth-1)*INF_GROWTH_SCALE);
  INF.totalBreakable=Math.max(1,G.cell.reduce((n,t)=>n+(t&&!SOLIDX(t)?1:0),0));
  G.enemies.length=0;G.enemyCd=3.2;CREW.timeLeft=1e9;CREW.phase='play';
  if(INF.roleId==='scout'){const [c,r]=toCell(G.sh.x,G.sh.y),sw=Math.ceil(COLS/3);INF.scoutSectors.add(Math.floor(c/3)+Math.floor(r/3)*sw);}
@@ -8431,7 +8446,7 @@ function infOpenLevel(){
 }
 function infSpawnBoss(){
  INF.bossSpawned=true;INF.bossActive=true;const p=pickFarOpenSpot(CELL*5)||{x:G.sh.x+CELL*4,y:G.sh.y};
- const hp=DEMO.enemyHp*(9+INF.depth*2.2)*INF.enemyHpMul*INF_BOSS_POWER;
+ const hp=DEMO.enemyHp*(11.2+Math.max(0,INF.depth-1)*2.2*INF_GROWTH_SCALE)*INF.enemyHpMul*INF_BOSS_POWER;
  const e={x:p.x,y:p.y,vx:0,vy:0,hp,hpMax:hp,cd:0,hurt:0,bob:0,r:DEMO.enemyRadius*2.35,elite:1,boss:1,bossPower:INF_BOSS_POWER,speedMul:1.35,damageMul:1.55*INF_BOSS_POWER,kbx:0,kby:0,armorCells:[],armorStage:0,patternCd:4.2,attackCd:2.2};INF.boss=e;G.enemies.push(e);infBossSpawnArmor(e,6);
  INF.indicatorFlashUntil=performance.now()+1800;
  J.ring(e.x,e.y,'#FF557D',16,CELL*3.2,6);J.burst(e.x,e.y,30,['#FF557D','#C7A0FF','#FFF'],300);J.kick(9);toast('장악도 40% · 암반 포식자 출현');
@@ -8469,7 +8484,7 @@ function infBossStartPattern(e){
 function infBossProjectileHit(s){
  if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.impact(s.tx,s.ty,0,s.visualId||'bossScatter');else{J.ring(s.tx,s.ty,'#FF557D',10,s.rad*1.35,4);J.burst(s.tx,s.ty,18,['#FF557D','#FFB0B8','#3A0D1A'],230);J.kick(5);}
  const d=Math.hypot(G.sh.x-s.tx,G.sh.y-s.ty);if(d>s.rad||G.iframes>0)return;
- const dmg=Math.max(18,Math.round(DEMO.enemyDmg*(3.2+INF.depth*.35)));G.php=Math.max(0,G.php-dmg);G.iframes=DEMO.playerIFrame;G.flash=.65;G.pulse=1;J.text(G.sh.x,G.sh.y-32,'-'+dmg,'#FF557D',20);
+ const dmg=Math.max(9,Math.round(DEMO.enemyDmg*(3.55+Math.max(0,INF.depth-1)*.35*INF_GROWTH_SCALE)));G.php=Math.max(0,G.php-dmg);G.iframes=DEMO.playerIFrame;G.flash=.65;G.pulse=1;J.text(G.sh.x,G.sh.y-32,'-'+dmg,'#FF557D',20);
  if(G.php<=0)infEndRun('붕괴탄에 쓰러짐');
 }
 function infBossProjectileTick(dt){
@@ -8487,8 +8502,8 @@ function infBossTick(e,dt){
  if(!e||e.hp<=0)return;infBossProjectileTick(dt);e.patternCd=(e.patternCd||0)-dt;e.attackCd=(e.attackCd||0)-dt;const ratio=e.hp/e.hpMax;
  if(ratio<=.66&&e.armorStage<1){e.armorStage=1;infBossSpawnArmor(e,6);spawnEnemy();spawnEnemy();}
  else if(ratio<=.33&&e.armorStage<2){e.armorStage=2;infBossSpawnArmor(e,8);spawnEnemy();spawnEnemy();J.kick(7);}
- if(e.patternCd<=0){e.patternCd=Math.max(2.4,6.2-INF.depth*.24);J.ring(e.x,e.y,'#FF557D',6,CELL*1.8,2.4);for(let i=0;i<Math.min(5,1+INF.depth);i++)spawnEnemy();}
- if(e.attackCd<=0){e.attackCd=Math.max(2.25,5.2-INF.depth*.18);infBossStartPattern(e);}
+ if(e.patternCd<=0){e.patternCd=Math.max(2.4,5.96-Math.max(0,INF.depth-1)*.24*INF_GROWTH_SCALE);J.ring(e.x,e.y,'#FF557D',6,CELL*1.8,2.4);for(let i=0;i<Math.min(5,1+Math.floor((INF.depth+1)/2));i++)spawnEnemy();}
+ if(e.attackCd<=0){e.attackCd=Math.max(2.25,5.02-Math.max(0,INF.depth-1)*.18*INF_GROWTH_SCALE);infBossStartPattern(e);}
 }
 function infProjectileBurst(x,y){
  if(!INF.active||!Number.isFinite(x)||!Number.isFinite(y))return;const [c,r]=toCell(x,y);if(!window.TUNNEL_PROJECTILE_FX){J.ring(x,y,'#FFD36E',8,CELL*1.25,3);J.burst(x,y,10,['#FFD36E','#FFF'],180);}
@@ -8509,7 +8524,7 @@ function infPaintBranches(){
  }
 }
 function infNextDepth(){
- if(!INF.restChosen)return;infEl('infRestModal').classList.remove('on','highTier');INF.depth++;INF.wallHpMul=Math.pow(2,INF.depth-1);INF.enemyHpMul=Math.pow(1.65,INF.depth-1);CREW.phase='play';enterDepth(INF.depth);DLG.on=false;infInitFloor();toast('심층 '+INF.depth+' · 벽 내구도 ×'+INF.wallHpMul);
+ if(!INF.restChosen)return;infEl('infRestModal').classList.remove('on','highTier');INF.depth++;INF.wallHpMul=Math.pow(2,INF.depth-1);INF.enemyHpMul=Math.pow(1.65,(INF.depth-1)*INF_GROWTH_SCALE);CREW.phase='play';enterDepth(INF.depth);DLG.on=false;infInitFloor();toast('심층 '+INF.depth+' · 벽 내구도 ×'+INF.wallHpMul);
 }
 function infEndRun(reason){
  if(!INF.active||CREW.phase==='infiniteResult')return;CREW.phase='infiniteResult';INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
