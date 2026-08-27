@@ -35,6 +35,7 @@ npm start
 | `demos/tunnel-explorer-demo-sprite*.html` | 캐릭터 스프라이트 시트 실험 (좌향 수정본 포함) |
 | `demos/tunnel-explorer.html` | 탐험가 본체 HTML 변형 |
 | `docs/tunnel-crew-gdd.md` | 땅굴 크루 게임 확장 기획서 (GDD v0.1) |
+| `docs/tunnel-crew-main-game-structure.md` | **본편 누적 기준안** — 행성 원정, 런 성장, 영구 성장, 코옵 경제와 미결정 사항 |
 | `prototypes/` | SeedLoop FoW·트리, Hole-Is-Ours 등 선행 프로토 |
 
 ## 코어루프 데모 조작

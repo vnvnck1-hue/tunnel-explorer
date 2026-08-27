@@ -1,5 +1,7 @@
 # 땅굴 크루 (가칭) — 게임 기획서 v0.1
 
+> **문서 상태:** 초기 코어루프 데모 기준안. 2026-08-28 이후 본편의 행성 원정·성장·코옵 경제 방향은 [`tunnel-crew-main-game-structure.md`](./tunnel-crew-main-game-structure.md)를 우선한다. 이 문서는 데모 결정과 변경 이력을 보존한다.
+
 > **한 줄 포지션**  
 > Core Keeper식 **2D 타일 채굴·시야 비주얼** + Deep Rock Galactic식 **4역할 코옵**을  
 > **라이트 미션 런(10~20분)** 으로 압축한 지하 탐험 게임.
