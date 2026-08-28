@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>특성 카드 레이아웃 편집기 · v7.1.5</title>
+<style>
+:root{
+ --bg:#12101a; --panel:#1b1726; --panel2:#241f33; --line:#3b3350;
+ --ink:#efe9fb; --dim:#a396bd; --accent:#ffd36e; --accent2:#7fd8ff; --bad:#ff6b7a; --good:#6fe0a6;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+ font-size:13px;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);border-radius:7px;background:var(--panel2);padding:6px 10px}
+button:hover{border-color:#5b4f7a;background:#2e2742}
+button.on{border-color:var(--accent);background:#4a3a18;color:#ffe9b6}
+button.primary{border-color:var(--accent);background:#6b511f;color:#fff3cf;font-weight:800}
+button.ghost{background:none}
+input[type=number],input[type=text],select,textarea{
+ width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:#151221}
+input[type=number]{-moz-appearance:textfield}
+input[type=range]{width:100%;accent-color:var(--accent)}
+label{display:block;font-size:11px;color:var(--dim);margin:0 0 3px}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+
+#app{display:grid;grid-template-columns:1fr 344px;height:100vh}
+#left{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+#right{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;padding:14px}
+
+#topbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+#topbar .sep{width:1px;height:24px;background:var(--line);margin:0 2px}
+#topbar .grow{flex:1}
+.tierTabs{display:flex;gap:4px}
+#canvasWrap{flex:1;overflow:auto;display:grid;place-items:center;padding:28px;
+ background:
+  linear-gradient(45deg,#191527 25%,transparent 25%) 0 0/22px 22px,
+  linear-gradient(-45deg,#191527 25%,transparent 25%) 0 11px/22px 22px,
+  linear-gradient(45deg,transparent 75%,#191527 75%) 11px -11px/22px 22px,
+  linear-gradient(-45deg,transparent 75%,#191527 75%) -11px 0/22px 22px,
+  #141120}
+#gallery{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:flex-start}
+
+/* ---- the card stage: this box IS the frame image, so every % below is a % of the artwork ---- */
+.stage{position:relative;flex:none;user-select:none}
+.stage img.frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;
+ filter:drop-shadow(0 18px 22px rgba(0,0,0,.5))}
+.stage .layer{position:absolute;display:flex;overflow:hidden}
+.stage .layer .txt{width:100%;overflow-wrap:anywhere;word-break:keep-all;white-space:pre-wrap}
+.stage .iconArt{position:absolute;display:block}
+.stage .iconArt img{display:block;width:100%;height:100%;object-fit:contain;transform-origin:50% 50%}
+
+/* editing chrome — only on the interactive stage */
+.stage.editing .layer,.stage.editing .iconWin{outline:1px dashed rgba(127,216,255,.34);cursor:move}
+.stage.editing .layer:hover,.stage.editing .iconWin:hover{outline-color:rgba(127,216,255,.75)}
+.stage.editing .sel{outline:1.5px solid var(--accent)!important;z-index:60}
+.stage .over{outline:1.5px solid var(--bad)!important}
+.stage .hint{position:absolute;inset:0;pointer-events:none;z-index:70}
+.stage .refwin{position:absolute;border:1px solid rgba(111,224,166,.55);pointer-events:none}
+.stage .refwin.circle{border-radius:50%}
+.handle{position:absolute;width:9px;height:9px;margin:-5px 0 0 -5px;border:1px solid #1a1526;border-radius:2px;background:var(--accent);z-index:80}
+.handle.e,.handle.w{cursor:ew-resize}.handle.n,.handle.s{cursor:ns-resize}
+.handle.nw,.handle.se{cursor:nwse-resize}.handle.ne,.handle.sw{cursor:nesw-resize}
+.badge{position:absolute;left:0;top:-17px;padding:1px 5px;border-radius:4px;background:var(--bad);color:#fff;
+ font-size:10px;font-weight:800;white-space:nowrap;z-index:81}
+.galleryCard{display:flex;flex-direction:column;align-items:center;gap:5px}
+.galleryCard span{font-size:10px;color:var(--dim);max-width:180px;text-align:center}
+
+/* inspector */
+.grp{margin-bottom:12px}
+.grp h3{margin:0 0 7px;font-size:11px;letter-spacing:.09em;color:var(--accent);text-transform:uppercase}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.row.c3{grid-template-columns:1fr 1fr 1fr}
+.row.c1{grid-template-columns:1fr}
+.layerList{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.layerList button{display:flex;justify-content:space-between;align-items:center;text-align:left;font-size:12px}
+.layerList button .k{color:var(--dim);font-size:10px}
+#report{max-height:190px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:7px;
+ background:#151221;font-size:11px;line-height:1.5;white-space:pre-wrap}
+#report .ok{color:var(--good)}#report .no{color:var(--bad)}
+textarea#io{height:130px;font-family:ui-monospace,Consolas,monospace;font-size:11px;resize:vertical}
+.note{font-size:11px;color:var(--dim);line-height:1.55}
+.kbd{padding:1px 5px;border:1px solid var(--line);border-radius:4px;background:#151221;font-size:10px}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(12px);opacity:0;
+ padding:9px 16px;border:1px solid var(--accent);border-radius:9px;background:#33270f;color:#ffe9b6;
+ font-weight:700;pointer-events:none;transition:opacity .2s,transform .2s;z-index:999}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+ <div id="left">
+  <div id="topbar">
+   <div class="tierTabs" id="tierTabs"></div>
+   <div class="sep"></div>
+   <select id="traitPick" style="width:210px"></select>
+   <button id="btnLongest" title="이 등급에서 각 항목이 가장 긴 특성으로 전환">가장 긴 텍스트</button>
+   <div class="sep"></div>
+   <button id="btnGallery" title="이 등급의 모든 특성을 한 번에 보기">전체 보기</button>
+   <button id="btnRef" class="on" title="아트에서 실측한 원본 창 위치를 초록 선으로 표시">기준선</button>
+   <div class="grow"></div>
+   <label style="margin:0">카드 폭 <b id="cwLabel">250</b>px</label>
+   <input type="range" id="cardW" min="170" max="340" step="2" value="250" style="width:130px">
+  </div>
+  <div id="canvasWrap"><div id="gallery"></div></div>
+ </div>
+
+ <div id="right">
+  <div class="grp">
+   <h3>레이어</h3>
+   <div class="layerList" id="layerList"></div>
+  </div>
+  <div id="inspector"></div>
+  <hr>
+  <div class="grp">
+   <h3>검사</h3>
+   <div class="row"><button id="btnCheckTier">이 등급 검사</button><button id="btnCheckAll">전체 등급 검사</button></div>
+   <div id="report">아직 검사하지 않았습니다.</div>
+  </div>
+  <hr>
+  <div class="grp">
+   <h3>JSON</h3>
+   <div class="row"><button class="primary" id="btnExport">내보내기</button><button id="btnImport">불러오기</button></div>
+   <div class="row c1"><textarea id="io" spellcheck="false" placeholder="내보내기를 누르면 여기에 JSON이 나옵니다. 붙여넣고 [불러오기]를 누르면 그 값으로 되돌아갑니다."></textarea></div>
+   <div class="row"><button id="btnCopy">클립보드 복사</button><button id="btnDownload">파일로 저장</button></div>
+   <div class="row c1"><button class="ghost" id="btnReset">기본값으로 되돌리기</button></div>
+  </div>
+  <hr>
+  <div class="note">
+   <b>조작</b><br>
+   레이어를 드래그해서 이동, 모서리 손잡이로 크기 조절.<br>
+   <span class="kbd">↑↓←→</span> 0.1%씩 이동 · <span class="kbd">Shift</span>+방향키 1%씩<br>
+   <span class="kbd">Alt</span>+드래그 가로 중앙 스냅 해제 · <span class="kbd">Esc</span> 선택 해제<br><br>
+   <b>좌표계</b><br>
+   모든 값은 <b>카드 아트 이미지 기준 %</b>입니다. 글자 크기는 <b>카드 폭 250px 기준 px</b>이며, 실제 게임에서는 카드 폭에 비례해 자동으로 조정됩니다.<br><br>
+   빨간 테두리와 배지는 <b>글자가 상자를 넘친다</b>는 뜻입니다. 최소 크기까지 줄여도 안 들어가는 경우에만 표시됩니다.
+  </div>
+ </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   특성 카드 레이아웃 편집기
+   좌표계: 카드 아트(프레임 PNG) 박스 기준 % — 게임에 적용할 때 원근 보정은
+   tools/apply_trait_card_layout.py 가 처리합니다.
+   ══════════════════════════════════════════════════════════════════════════ */
+const ASSETS='assets/menu/trait-resources/';
+const CARD_PNG={1:'trait-card-common-v1.1.1.png',2:'trait-card-rare-v1.1.1.png',
+                3:'trait-card-hero-v1.1.1.png',4:'trait-card-legendary-v1.1.1.png'};
+const TIER_NAME={1:'일반',2:'희귀',3:'영웅',4:'전설'};
+const REF_W=250;                       // 글자 크기 기준 카드 폭
+const CARD_RATIO=1.5;                  // 2:3
+
+/* 아이콘 PNG 별 정규화값 [tx%, ty%, scale] — 게임과 같은 표 */
+const ICON_FIT={
+ 'trait-icon-control-network-v1.png':[8.61,7.89,1.1928],'trait-icon-core-bedrock-v1.png':[5.42,0.24,1.1473],
+ 'trait-icon-crack-fissure-v1.png':[-3.03,0.08,1.0877],'trait-icon-driller-torque-motor-v1.png':[-0.08,-1.16,1.1436],
+ 'trait-icon-dual-power-v1.png':[5.66,-2.23,0.9764],'trait-icon-engineer-high-density-battery-v1.png':[0.20,0.96,1.1166],
+ 'trait-icon-explosive-charge-v1.png':[8.05,9.65,1.1899],'trait-icon-fuse-detonator-v1.png':[-3.67,-1.04,1.0472],
+ 'trait-icon-grapple-winch-v1.png':[-1.67,4.47,1.1097],'trait-icon-gunner-chamber-cycler-v1.png':[-1.32,1.83,0.8570],
+ 'trait-icon-ore-refinery-v1.png':[2.87,1.20,1.1773],'trait-icon-piercing-round-v1.png':[-4.31,2.15,1.2938],
+ 'trait-icon-rapid-fire-turbo-v1.png':[0.56,7.74,1.1562],'trait-icon-ricochet-v1.png':[-3.51,3.11,0.9771],
+ 'trait-icon-scanner-radar-v1.png':[7.02,4.86,1.1090],'trait-icon-scout-high-luminosity-fuel-v1.png':[3.91,2.39,0.9552],
+ 'trait-icon-seismic-shockwave-v1.png':[-3.75,9.41,1.0291],'trait-icon-sentry-turret-v1.png':[-2.95,-3.99,1.0098],
+ 'trait-icon-shrapnel-v1.png':[3.83,-3.59,1.1274],'trait-icon-survival-bulkhead-v1.png':[4.31,3.51,1.0376]
+};
+const ICON_FIT_DEFAULT=[0,0,.78];
+
+/* 아트에서 실측한 원본 창 — 기준선 표시와 기본값 계산에만 씁니다 */
+const REF={
+ 1:{ring:[16.21,14.39,67.38],plate:[29.10,3.78,41.41,6.77],bar:[15.43,61.26,67.97,7.68],panel:[14.45,72.07,70.90,19.66]},
+ 2:{ring:[19.53,14.26,60.94],plate:[30.27,3.78,39.26,6.77],bar:[19.73,55.79,60.55,7.94],panel:[18.75,67.51,62.70,22.79]},
+ 3:{ring:[17.58,16.60,64.65],plate:[28.52,5.34,42.97,7.16],bar:[17.19,61.00,65.23,8.20],panel:[15.43,72.20,68.75,19.14]},
+ 4:{ring:[18.16,17.90,63.48],plate:[30.08,6.90,39.06,6.77],bar:[17.38,61.65,65.04,7.81],panel:[15.04,72.33,69.92,20.83]}
+};
+
+const LAYERS=[
+ {key:'icon', label:'아이콘',      kind:'icon'},
+ {key:'tier', label:'등급 명판',   kind:'text', field:'tierName'},
+ {key:'name', label:'특성 이름',   kind:'text', field:'name'},
+ {key:'kind', label:'분류',        kind:'text', field:'kind'},
+ {key:'desc', label:'설명',        kind:'text', field:'desc'}
+];
+
+/* ── 기본 레이아웃: 이름은 아이콘 아래 바, 분류+설명은 하단 판 ── */
+function defaultsFor(tier){
+ const r=REF[tier], [px,py,pw,ph]=r.panel, [bx,by,bw,bh]=r.bar, [tx,ty,tw,th]=r.plate;
+ const pad=ph*0.09, kindH=ph*0.27;
+ return {
+  icon:{x:r.ring[0],y:r.ring[1],size:r.ring[2],fill:.78},
+  tier:{x:tx,y:ty,w:tw,h:th,size:11,min:9,lh:1,ls:.13,weight:950,
+        color:tier===4?'#432500':'#fff6dc',align:'center',valign:'center',
+        shadow:tier===4?'0 1px rgba(255,255,255,.45)':'0 2px 3px rgba(0,0,0,.72)'},
+  name:{x:bx,y:by,w:bw,h:bh,size:16,min:12,lh:1.1,ls:0,weight:950,
+        color:'#f2f7ff',align:'center',valign:'center',shadow:'0 2px 4px rgba(0,0,0,.85)'},
+  kind:{x:px+pw*0.06,y:py+pad,w:pw*0.88,h:kindH,size:9.6,min:8,lh:1.15,ls:.03,weight:800,
+        color:'#6b7791',align:'center',valign:'center',shadow:'none'},
+  desc:{x:px+pw*0.05,y:py+pad+kindH,w:pw*0.90,h:ph-pad*2-kindH,size:12.4,min:9.6,lh:1.32,ls:0,weight:750,
+        color:'#37455b',align:'center',valign:'center',shadow:'none'}
+ };
+}
+
+/* ── 상태 ── */
+let TRAITS=[];
+let state={tier:1, sel:'name', gallery:false, ref:true, cardW:250, layout:{}};
+function resetLayout(){
+ state.layout={1:defaultsFor(1),2:defaultsFor(2),3:defaultsFor(3),4:defaultsFor(4)};
+ for(const t of [1,2,3,4])for(const g of Object.values(state.layout[t]))
+  for(const k in g)if(typeof g[k]==='number')g[k]=Math.round(g[k]*100)/100;
+}
+resetLayout();
+let current=null;   // 현재 미리보기 특성
+
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const r2=v=>Math.round(v*100)/100;
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');
+ clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),1700);}
+
+/* ── 저장 ── */
+const LS='traitCardLayout.v1';
+function save(){try{localStorage.setItem(LS,JSON.stringify({layout:state.layout}))}catch(e){}}
+function load(){try{const j=JSON.parse(localStorage.getItem(LS));if(j&&j.layout)state.layout=j.layout;}catch(e){}}
+
+/* ══════════ 카드 렌더 ══════════ */
+function textOf(trait,field){
+ if(field==='tierName')return TIER_NAME[trait.tier];
+ return trait[field]||'';
+}
+
+function buildStage(trait,cardW,editing){
+ const L=state.layout[trait.tier], scale=cardW/REF_W;
+ const st=document.createElement('div');
+ st.className='stage'+(editing?' editing':'');
+ st.style.width=cardW+'px';
+ st.style.height=Math.round(cardW*CARD_RATIO)+'px';
+
+ const frame=document.createElement('img');
+ frame.className='frame'; frame.src=ASSETS+'cards/'+CARD_PNG[trait.tier]; frame.draggable=false;
+ st.appendChild(frame);
+
+ // 기준선
+ if(state.ref&&editing){
+  const hint=document.createElement('div');hint.className='hint';
+  const r=REF[trait.tier];
+  const mk=(x,y,w,h,circle)=>{const d=document.createElement('div');d.className='refwin'+(circle?' circle':'');
+   d.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;hint.appendChild(d);};
+  mk(r.ring[0],r.ring[1],r.ring[2],r.ring[2]/CARD_RATIO,true);
+  mk(r.plate[0],r.plate[1],r.plate[2],r.plate[3]);
+  mk(r.bar[0],r.bar[1],r.bar[2],r.bar[3]);
+  mk(r.panel[0],r.panel[1],r.panel[2],r.panel[3]);
+  st.appendChild(hint);
+ }
+
+ // 아이콘
+ const ic=L.icon;
+ const win=document.createElement('div');
+ win.className='iconArt iconWin'; win.dataset.layer='icon';
+ win.style.cssText=`left:${ic.x}%;top:${ic.y}%;width:${ic.size}%;aspect-ratio:1;z-index:3`;
+ const img=document.createElement('img');
+ const fit=ICON_FIT[trait.icon]||ICON_FIT_DEFAULT;
+ const s=fit[2]*(ic.fill/.78);
+ img.src=ASSETS+'icons/'+trait.icon; img.draggable=false;
+ img.style.transform=`scale(${s}) translate(${fit[0]}%,${fit[1]}%)`;
+ win.appendChild(img); st.appendChild(win);
+
+ // 텍스트 레이어
+ for(const def of LAYERS){
+  if(def.kind!=='text')continue;
+  const c=L[def.key], box=document.createElement('div');
+  box.className='layer'; box.dataset.layer=def.key;
+  box.style.cssText=`left:${c.x}%;top:${c.y}%;width:${c.w}%;height:${c.h}%;z-index:${def.key==='name'?5:4};`
+   +`align-items:${c.valign==='top'?'flex-start':c.valign==='bottom'?'flex-end':'center'};`
+   +`justify-content:center`;
+  const t=document.createElement('div');
+  t.className='txt';
+  t.textContent=textOf(trait,def.field);
+  t.style.cssText=txtStyle(c);
+  box.appendChild(t); st.appendChild(box);
+  fitText(box,t,c,scale);
+ }
+ return st;
+}
+
+/* letter-spacing 은 마지막 글자 뒤에도 공백을 넣는다. 가운데 정렬이면 보이는 글자가
+   그만큼 왼쪽으로 밀리므로 절반을 되돌린다 (게임의 --*-lsfix 와 같은 계산). */
+const LS_FIX={center:.5,right:1,left:0};
+function txtStyle(c){
+ const fix=(c.ls*(LS_FIX[c.align]!=null?LS_FIX[c.align]:.5)).toFixed(4);
+ return `text-align:${c.align};color:${normHex(c.color)};font-weight:${c.weight};`
+  +`line-height:${c.lh};letter-spacing:${c.ls}em;text-shadow:${c.shadow||'none'};`
+  +`transform:translateX(${fix}em)`;
+}
+/* 색 입력이 자유 입력이라 # 을 빠뜨리기 쉽다 — 반영 스크립트와 같은 보정 */
+function normHex(v){
+ v=String(v).trim();
+ return /^([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(v)?'#'+v:v;
+}
+
+/* 런타임과 같은 축소 규칙: size 에서 시작해 min 까지 0.4px씩 줄인다 */
+function fitText(box,t,c,scale){
+ let px=c.size;
+ for(let i=0;i<40;i++){
+  t.style.fontSize=(px*scale).toFixed(2)+'px';
+  if(t.scrollHeight<=box.clientHeight+1&&t.scrollWidth<=box.clientWidth+1)break;
+  if(px<=c.min)break;
+  px=Math.max(c.min,px-0.4);
+ }
+ const over=t.scrollHeight>box.clientHeight+1||t.scrollWidth>box.clientWidth+1;
+ box.classList.toggle('over',over);
+ box.dataset.used=px.toFixed(1);
+ box.dataset.over=over?'1':'';
+ return {used:px,over};
+}
+
+/* ══════════ 화면 갱신 ══════════ */
+let stage=null;
+function render(){
+ const g=$('#gallery'); g.innerHTML='';
+ if(state.gallery){
+  for(const t of TRAITS.filter(x=>x.tier===state.tier)){
+   const w=document.createElement('div'); w.className='galleryCard';
+   w.appendChild(buildStage(t,state.cardW,false));
+   const cap=document.createElement('span'); cap.textContent=t.name; w.appendChild(cap);
+   g.appendChild(w);
+  }
+  stage=null;
+ }else{
+  stage=buildStage(current,state.cardW,true);
+  g.appendChild(stage);
+  attachEditing(stage);
+ }
+ renderInspector();
+ renderLayerList();
+}
+
+function renderLayerList(){
+ const el=$('#layerList'); el.innerHTML='';
+ for(const def of LAYERS){
+  const b=document.createElement('button');
+  b.className=state.sel===def.key?'on':'';
+  const used=stage&&stage.querySelector(`[data-layer="${def.key}"]`);
+  const info=def.kind==='icon'?`${r2(state.layout[state.tier].icon.size)}%`
+    :`${state.layout[state.tier][def.key].size}px`+(used&&used.dataset.used&&+used.dataset.used<state.layout[state.tier][def.key].size?` → ${used.dataset.used}`:'')
+     +(used&&used.dataset.over?' ⚠':'');
+  b.innerHTML=`<span>${def.label}</span><span class="k">${info}</span>`;
+  b.onclick=()=>{state.sel=def.key;render();};
+  el.appendChild(b);
+ }
+}
+
+function num(label,val,step,onch,bind){
+ const w=document.createElement('div');
+ w.innerHTML=`<label>${label}</label>`;
+ const i=document.createElement('input');
+ i.type='number'; i.step=step; i.value=r2(val);
+ if(bind)i.dataset.bind=bind;
+ i.oninput=()=>{const v=parseFloat(i.value); if(!isNaN(v))onch(v);};
+ w.appendChild(i); return w;
+}
+function sel(label,val,opts,onch){
+ const w=document.createElement('div');
+ w.innerHTML=`<label>${label}</label>`;
+ const s=document.createElement('select');
+ for(const [v,t] of opts){const o=document.createElement('option');o.value=v;o.textContent=t;s.appendChild(o);}
+ s.value=val; s.onchange=()=>onch(s.value);
+ w.appendChild(s); return w;
+}
+function txt(label,val,onch){
+ const w=document.createElement('div');
+ w.innerHTML=`<label>${label}</label>`;
+ const i=document.createElement('input'); i.type='text'; i.value=val;
+ i.oninput=()=>onch(i.value);
+ w.appendChild(i); return w;
+}
+function rowOf(...kids){const r=document.createElement('div');r.className='row'+(kids.length===3?' c3':kids.length===1?' c1':'');kids.forEach(k=>r.appendChild(k));return r;}
+
+function renderInspector(){
+ const box=$('#inspector'); box.innerHTML='';
+ const def=LAYERS.find(l=>l.key===state.sel);
+ const c=state.layout[state.tier][state.sel];
+ const set=(k,v)=>{c[k]=v;save();render();};
+
+ const g=document.createElement('div'); g.className='grp';
+ g.innerHTML=`<h3>${def.label} · ${TIER_NAME[state.tier]}</h3>`;
+
+ if(def.kind==='icon'){
+  g.appendChild(rowOf(num('x %',c.x,.1,v=>set('x',v),'x'),num('y %',c.y,.1,v=>set('y',v),'y')));
+  g.appendChild(rowOf(num('지름 %',c.size,.1,v=>set('size',v),'size')));
+  const fw=document.createElement('div');
+  fw.innerHTML=`<label>아이콘 채움 ${Math.round(c.fill*100)}% (원 지름 대비)</label>`;
+  const fr=document.createElement('input');fr.type='range';fr.min=.5;fr.max=1;fr.step=.01;fr.value=c.fill;
+  fr.oninput=()=>set('fill',parseFloat(fr.value));
+  fw.appendChild(fr); g.appendChild(fw);
+  const b=document.createElement('button');b.className='ghost';b.textContent='아트 원형에 정확히 맞추기';
+  b.onclick=()=>{const r=REF[state.tier].ring;c.x=r[0];c.y=r[1];c.size=r[2];save();render();};
+  g.appendChild(b);
+ }else{
+  g.appendChild(rowOf(num('x %',c.x,.1,v=>set('x',v),'x'),num('y %',c.y,.1,v=>set('y',v),'y')));
+  g.appendChild(rowOf(num('폭 %',c.w,.1,v=>set('w',v),'w'),num('높이 %',c.h,.1,v=>set('h',v),'h')));
+  g.appendChild(rowOf(num('글자 px',c.size,.1,v=>set('size',v),'size'),num('최소 px',c.min,.1,v=>set('min',v),'min')));
+  g.appendChild(rowOf(num('줄간격',c.lh,.01,v=>set('lh',v),'lh'),num('자간 em',c.ls,.005,v=>set('ls',v),'ls')));
+  g.appendChild(rowOf(
+   sel('굵기',String(c.weight),[['400','400'],['600','600'],['700','700'],['800','800'],['900','900'],['950','950']],v=>set('weight',+v)),
+   sel('가로',c.align,[['center','가운데'],['left','왼쪽'],['right','오른쪽']],v=>set('align',v))));
+  g.appendChild(rowOf(
+   sel('세로',c.valign,[['center','가운데'],['top','위'],['bottom','아래']],v=>set('valign',v)),
+   txt('색',c.color,v=>{c.color=v;save();if(stage){const t=stage.querySelector(`[data-layer="${state.sel}"] .txt`);if(t)t.style.color=normHex(v);}})));
+  g.appendChild(rowOf(txt('그림자 (CSS text-shadow)',c.shadow||'none',v=>set('shadow',v))));
+  const used=stage&&stage.querySelector(`[data-layer="${state.sel}"]`);
+  if(used){
+   const p=document.createElement('div');p.className='note';
+   p.innerHTML=used.dataset.over
+    ?`<span style="color:var(--bad)">⚠ 최소 ${c.min}px 로 줄여도 넘칩니다 — 상자를 키우거나 최소값을 낮추세요.</span>`
+    :`실제 적용 ${used.dataset.used}px ${(+used.dataset.used<c.size)?'(자동 축소됨)':''}`;
+   g.appendChild(p);
+  }
+ }
+ box.appendChild(g);
+
+ const acts=document.createElement('div'); acts.className='grp';
+ const b1=document.createElement('button'); b1.textContent='이 레이어를 전체 등급에 복사';
+ b1.onclick=()=>{for(const t of [1,2,3,4])if(+t!==state.tier)state.layout[t][state.sel]=JSON.parse(JSON.stringify(c));
+  save();render();toast('4개 등급에 복사했습니다');};
+ const b2=document.createElement('button'); b2.className='ghost'; b2.textContent='글자 설정만 전체 등급에 복사';
+ b2.onclick=()=>{if(def.kind==='icon'){toast('아이콘에는 글자 설정이 없습니다');return;}
+  for(const t of [1,2,3,4])if(+t!==state.tier)Object.assign(state.layout[t][state.sel],
+   {size:c.size,min:c.min,lh:c.lh,ls:c.ls,weight:c.weight,color:c.color,align:c.align,valign:c.valign,shadow:c.shadow});
+  save();render();toast('글자 설정을 복사했습니다');};
+ acts.appendChild(rowOf(b1)); acts.appendChild(rowOf(b2));
+ box.appendChild(acts);
+}
+
+/* ══════════ 드래그 / 리사이즈 ══════════
+   드래그 중에는 stage 를 다시 만들지 않고 syncStage() 로 위치만 갱신한다.
+   (다시 만들면 커서 밑의 손잡이가 사라져 드래그가 끊긴다) */
+function attachEditing(st){
+ st.querySelectorAll('[data-layer]').forEach(el=>{
+  if(el.dataset.layer===state.sel)el.classList.add('sel');
+  el.addEventListener('pointerdown',e=>{
+   if(e.target.classList.contains('handle'))return;
+   e.preventDefault();
+   if(state.sel!==el.dataset.layer){state.sel=el.dataset.layer;render();}
+   startDrag(e,'move');
+  });
+ });
+ const isIcon=state.sel==='icon';
+ const spots=isIcon?[['se',1,1]]:[['nw',0,0],['n',.5,0],['ne',1,0],['e',1,.5],['se',1,1],['s',.5,1],['sw',0,1],['w',0,.5]];
+ for(const [name,fx,fy] of spots){
+  const h=document.createElement('div'); h.className='handle '+name;
+  h.dataset.fx=fx; h.dataset.fy=fy;
+  h.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();startDrag(e,name);});
+  st.appendChild(h);
+ }
+ const b=document.createElement('div'); b.className='badge'; b.textContent='넘침'; b.hidden=true;
+ st.appendChild(b);
+ syncStage();
+}
+
+/* state -> 이미 그려진 stage 에 반영 (텍스트 재측정 포함) */
+function syncStage(){
+ const st=stage; if(!st)return;
+ const L=state.layout[state.tier], scale=state.cardW/REF_W;
+ const ic=L.icon, win=st.querySelector('.iconWin');
+ if(win){win.style.left=ic.x+'%';win.style.top=ic.y+'%';win.style.width=ic.size+'%';
+  const img=win.querySelector('img'), fit=ICON_FIT[current.icon]||ICON_FIT_DEFAULT;
+  img.style.transform=`scale(${fit[2]*(ic.fill/.78)}) translate(${fit[0]}%,${fit[1]}%)`;}
+ for(const def of LAYERS){
+  if(def.kind!=='text')continue;
+  const c=L[def.key], box=st.querySelector(`[data-layer="${def.key}"]`); if(!box)continue;
+  box.style.left=c.x+'%';box.style.top=c.y+'%';box.style.width=c.w+'%';box.style.height=c.h+'%';
+  box.style.alignItems=c.valign==='top'?'flex-start':c.valign==='bottom'?'flex-end':'center';
+  const t=box.querySelector('.txt');
+  t.style.cssText=txtStyle(c);
+  fitText(box,t,c,scale);
+ }
+ // 손잡이 · 배지
+ const c=L[state.sel], isIcon=state.sel==='icon';
+ const w=isIcon?c.size:c.w, hh=isIcon?c.size/CARD_RATIO:c.h;
+ st.querySelectorAll('.handle').forEach(h=>{
+  h.style.left=(c.x+w*+h.dataset.fx)+'%'; h.style.top=(c.y+hh*+h.dataset.fy)+'%';
+ });
+ const selEl=st.querySelector(`[data-layer="${state.sel}"]`), badge=st.querySelector('.badge');
+ if(badge){const over=selEl&&selEl.dataset.over;badge.hidden=!over;
+  badge.style.left=c.x+'%'; badge.style.top=`calc(${c.y}% - 17px)`;}
+ // 인스펙터 숫자 · 레이어 목록 갱신 (입력 포커스는 건드리지 않는다)
+ document.querySelectorAll('#inspector input[data-bind]').forEach(i=>{
+  if(document.activeElement===i)return;
+  const v=c[i.dataset.bind]; if(v!=null)i.value=r2(v);
+ });
+ renderLayerList();
+}
+
+function startDrag(e,mode){
+ const st=stage; if(!st)return;
+ const r=st.getBoundingClientRect();
+ const key=state.sel, c=state.layout[state.tier][key], isIcon=key==='icon';
+ const o={...c}, sx=e.clientX, sy=e.clientY;
+ const move=ev=>{
+  const dx=(ev.clientX-sx)/r.width*100, dy=(ev.clientY-sy)/r.height*100;
+  if(mode==='move'){
+   c.x=o.x+dx; c.y=o.y+dy;
+   if(!ev.altKey){ // 가로 중앙 스냅
+    const w=isIcon?c.size:c.w;
+    if(Math.abs(c.x+w/2-50)<1.2)c.x=50-w/2;
+   }
+  }else if(isIcon){
+   c.size=Math.max(6,o.size+dx);
+  }else{
+   if(mode.includes('e'))c.w=Math.max(3,o.w+dx);
+   if(mode.includes('s'))c.h=Math.max(2,o.h+dy);
+   if(mode.includes('w')){c.w=Math.max(3,o.w-dx);c.x=o.x+(o.w-c.w);}
+   if(mode.includes('n')){c.h=Math.max(2,o.h-dy);c.y=o.y+(o.h-c.h);}
+  }
+  c.x=r2(clamp(c.x,-20,115)); c.y=r2(clamp(c.y,-20,115));
+  if(isIcon)c.size=r2(c.size); else {c.w=r2(c.w);c.h=r2(c.h);}
+  syncStage();
+ };
+ const up=()=>{
+  window.removeEventListener('pointermove',move);
+  window.removeEventListener('pointerup',up);
+  save(); renderInspector(); syncStage();
+ };
+ window.addEventListener('pointermove',move);
+ window.addEventListener('pointerup',up);
+ try{st.setPointerCapture(e.pointerId);}catch(_){}
+}
+
+window.addEventListener('keydown',e=>{
+ if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;
+ if(e.key==='Escape'){state.sel='name';render();return;}
+ const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
+ if(!d||state.gallery)return;
+ e.preventDefault();
+ const step=e.shiftKey?1:0.1, c=state.layout[state.tier][state.sel];
+ c.x=r2(c.x+d[0]*step); c.y=r2(c.y+d[1]*step);
+ save(); syncStage();
+});
+
+/* ══════════ 검사 ══════════ */
+function checkTier(tier){
+ const probe=document.createElement('div');
+ probe.style.cssText='position:fixed;left:-9999px;top:0';
+ document.body.appendChild(probe);
+ const fails=[];
+ for(const t of TRAITS.filter(x=>x.tier===tier)){
+  const st=buildStage(t,REF_W,false);
+  probe.appendChild(st);
+  for(const def of LAYERS){
+   if(def.kind!=='text')continue;
+   const box=st.querySelector(`[data-layer="${def.key}"]`);
+   if(box&&box.dataset.over)fails.push(`${TIER_NAME[tier]} · ${t.name} · ${def.label}`);
+  }
+  probe.removeChild(st);
+ }
+ probe.remove();
+ return fails;
+}
+function runCheck(tiers){
+ const rep=$('#report'); let out='',bad=0,n=0;
+ for(const t of tiers){
+  const f=checkTier(t);
+  n+=TRAITS.filter(x=>x.tier===t).length;
+  bad+=f.length;
+  out+=f.length?f.map(x=>`✕ ${x}`).join('\n')+'\n':`✓ ${TIER_NAME[t]} ${TRAITS.filter(x=>x.tier===t).length}개 모두 정상\n`;
+ }
+ rep.innerHTML=(bad?`<span class="no">넘치는 항목 ${bad}건</span>\n`:`<span class="ok">특성 ${n}개 전부 이상 없습니다.</span>\n`)+out;
+}
+
+/* ══════════ JSON ══════════ */
+function exportJSON(){
+ return JSON.stringify({
+  version:1,
+  note:'좌표는 카드 아트 이미지 기준 %. 글자 크기(size/min)는 카드 폭 250px 기준 px.',
+  refCardWidth:REF_W,
+  cardRatio:CARD_RATIO,
+  layers:LAYERS.map(l=>({key:l.key,field:l.field||null,kind:l.kind})),
+  tiers:state.layout
+ },null,1);
+}
+$('#btnExport').onclick=()=>{$('#io').value=exportJSON();toast('JSON을 만들었습니다');};
+$('#btnImport').onclick=()=>{
+ try{
+  const j=JSON.parse($('#io').value);
+  if(!j.tiers)throw new Error('tiers 없음');
+  state.layout=j.tiers; save(); render(); toast('불러왔습니다');
+ }catch(e){toast('JSON을 읽지 못했습니다: '+e.message);}
+};
+$('#btnCopy').onclick=async()=>{
+ const s=$('#io').value||exportJSON(); $('#io').value=s;
+ try{await navigator.clipboard.writeText(s);toast('클립보드에 복사했습니다');}
+ catch(e){$('#io').select();toast('Ctrl+C 로 복사하세요');}
+};
+$('#btnDownload').onclick=()=>{
+ const s=$('#io').value||exportJSON(); $('#io').value=s;
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([s],{type:'application/json'}));
+ a.download='trait-card-layout.json'; a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+ toast('trait-card-layout.json 저장');
+};
+$('#btnReset').onclick=()=>{if(confirm('모든 등급을 기본값으로 되돌립니다.')){resetLayout();save();render();toast('기본값으로 되돌렸습니다');}};
+
+/* ══════════ 상단 컨트롤 ══════════ */
+function buildTabs(){
+ const el=$('#tierTabs'); el.innerHTML='';
+ for(const t of [1,2,3,4]){
+  const b=document.createElement('button');
+  b.textContent=TIER_NAME[t]; b.className=state.tier===t?'on':'';
+  b.onclick=()=>{state.tier=t;pickDefaultTrait();buildTabs();buildPicker();render();};
+  el.appendChild(b);
+ }
+}
+function buildPicker(){
+ const s=$('#traitPick'); s.innerHTML='';
+ for(const t of TRAITS.filter(x=>x.tier===state.tier)){
+  const o=document.createElement('option'); o.value=t.id; o.textContent=t.name; s.appendChild(o);
+ }
+ s.value=current.id;
+ s.onchange=()=>{current=TRAITS.find(x=>x.id===s.value);render();};
+}
+function pickDefaultTrait(){ current=TRAITS.find(x=>x.tier===state.tier); }
+$('#btnLongest').onclick=()=>{
+ const pool=TRAITS.filter(x=>x.tier===state.tier);
+ const score=t=>t.name.length*2+t.desc.length+t.kind.length;
+ current=pool.reduce((a,b)=>score(b)>score(a)?b:a);
+ buildPicker(); render(); toast('가장 긴 특성: '+current.name);
+};
+$('#btnGallery').onclick=e=>{state.gallery=!state.gallery;e.target.classList.toggle('on',state.gallery);render();};
+$('#btnRef').onclick=e=>{state.ref=!state.ref;e.target.classList.toggle('on',state.ref);render();};
+$('#cardW').oninput=e=>{state.cardW=+e.target.value;$('#cwLabel').textContent=e.target.value;render();};
+$('#btnCheckTier').onclick=()=>runCheck([state.tier]);
+$('#btnCheckAll').onclick=()=>runCheck([1,2,3,4]);
+
+/* ══════════ 시작 ══════════ */
+fetch('trait-sample-data.json')
+ .then(r=>{if(!r.ok)throw new Error('trait-sample-data.json 을 찾을 수 없습니다 ('+r.status+')');return r.json();})
+ .then(d=>{
+  TRAITS=d; load(); pickDefaultTrait(); buildTabs(); buildPicker();
+  // 웹폰트/아이콘 로드 후 한 번 더 그려 자동 축소 계산을 확정한다
+  render(); if(document.fonts&&document.fonts.ready)document.fonts.ready.then(render);
+  window.addEventListener('load',()=>setTimeout(render,150));
+ })
+ .catch(e=>{
+  document.getElementById('gallery').innerHTML=
+   '<div style="max-width:520px;color:#ff9aa6;line-height:1.7">'+e.message+
+   '<br><br>이 파일은 <b>로컬 서버</b>로 열어야 합니다 (file:// 로는 JSON/이미지를 읽지 못합니다).<br>'+
+   'claude-work 폴더에서:<br><code style="color:#ffd36e">python -m http.server 8777</code><br>'+
+   '그다음 <code style="color:#ffd36e">http://127.0.0.1:8777/trait-card-layout-editor.html</code></div>';
+ });
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{ print NR\": \"length\\($0\\) }' tunnel-crew-infinite-mode-v7.1.5.html)",
+      "Bash(sort -t: -k2 -rn)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

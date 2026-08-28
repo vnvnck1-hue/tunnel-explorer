@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>땅굴 크루 — 알파 기반 2D 라이팅 랩</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#07050C;
+  font-family:'Pretendard','Malgun Gothic',ui-sans-serif,system-ui,sans-serif;color:#E8E2F2}
+#wrap{position:fixed;inset:0}
+#cv{display:block;width:100%;height:100%;image-rendering:auto}
+#hud{position:fixed;left:12px;top:12px;z-index:10;pointer-events:none;
+  font:600 11px/1.6 ui-monospace,'Consolas',monospace;color:#BCA9E8;
+  text-shadow:0 1px 3px rgba(0,0,0,.9)}
+#hud b{color:#FFD9A0}
+#hud .warn{color:#FF8A7A}
+#splitTag{position:fixed;top:12px;z-index:10;pointer-events:none;display:none;
+  font:800 12px/1 ui-monospace,monospace;letter-spacing:.08em;
+  padding:5px 9px;border-radius:5px;background:rgba(8,5,14,.72);border:1px solid rgba(255,255,255,.14)}
+#tagOff{left:calc(50% - 220px)}
+#tagOn{left:calc(50% + 120px);color:#FFD9A0}
+
+#panel{position:fixed;right:0;top:0;bottom:0;width:296px;z-index:20;
+  background:rgba(10,7,17,.93);border-left:1px solid rgba(255,255,255,.09);
+  backdrop-filter:blur(8px);overflow-y:auto;padding:14px 14px 40px;
+  transition:transform .18s ease}
+#panel.hide{transform:translateX(296px)}
+#panel h1{font-size:13px;letter-spacing:.02em;color:#FFD9A0;margin-bottom:2px}
+#panel .sub{font-size:10px;color:#7E6FA0;margin-bottom:12px;line-height:1.5}
+#panel h2{font-size:10px;letter-spacing:.12em;color:#8B7ABF;margin:16px 0 7px;
+  padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.08);text-transform:uppercase}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.row label{flex:1;font-size:11px;color:#C4B7E0}
+.row output{font:700 10px ui-monospace,monospace;color:#FFD9A0;min-width:42px;text-align:right}
+.row input[type=range]{width:100%;height:3px;-webkit-appearance:none;appearance:none;
+  background:rgba(255,255,255,.13);border-radius:3px;outline:none;margin:1px 0 8px}
+.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;
+  border-radius:50%;background:#FFD9A0;cursor:pointer;border:none}
+.rowFull{display:block;margin-bottom:2px}
+.sw{position:relative;width:34px;height:18px;border-radius:9px;flex:none;cursor:pointer;
+  background:rgba(255,255,255,.13);border:none;transition:background .15s}
+.sw::after{content:'';position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;
+  background:#8B7ABF;transition:.15s}
+.sw.on{background:rgba(255,217,160,.3)}
+.sw.on::after{left:18px;background:#FFD9A0}
+.btnRow{display:flex;gap:6px;margin:9px 0 4px;flex-wrap:wrap}
+.btnRow button{flex:1;min-width:62px;padding:7px 4px;border-radius:5px;cursor:pointer;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);
+  color:#C4B7E0;font:700 10px ui-sans-serif,sans-serif}
+.btnRow button:hover{background:rgba(255,217,160,.14);color:#FFD9A0}
+.btnRow button.act{background:rgba(255,217,160,.2);border-color:rgba(255,217,160,.4);color:#FFD9A0}
+.note{font-size:10px;color:#6E6090;line-height:1.65;margin-top:8px}
+kbd{display:inline-block;padding:0 4px;border-radius:3px;background:rgba(255,255,255,.1);
+  font:700 10px ui-monospace,monospace;color:#D8CCF0}
+#toggleP{position:fixed;right:10px;top:10px;z-index:21;width:30px;height:30px;border-radius:6px;
+  background:rgba(10,7,17,.85);border:1px solid rgba(255,255,255,.14);color:#FFD9A0;
+  cursor:pointer;font:700 13px ui-sans-serif,sans-serif}
+#panel.hide + #toggleP{right:10px}
+#load{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:#07050C;font:700 13px ui-monospace,monospace;color:#8B7ABF;flex-direction:column;gap:10px}
+#load .bar{width:220px;height:3px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+#load .bar i{display:block;height:100%;width:0;background:#FFD9A0;transition:width .12s}
+</style>
+</head>
+<body>
+
+<div id="wrap"><canvas id="cv"></canvas></div>
+
+<div id="hud"></div>
+<div id="splitTag" class="tag"></div>
+<div id="tagOff" class="tag" style="position:fixed;top:12px;z-index:10;pointer-events:none;display:none;
+  font:800 12px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:5px;
+  background:rgba(8,5,14,.72);border:1px solid rgba(255,255,255,.14);color:#9C8FC0">기존 (OFF)</div>
+<div id="tagOn" style="position:fixed;top:12px;z-index:10;pointer-events:none;display:none;
+  font:800 12px/1 ui-monospace,monospace;letter-spacing:.08em;padding:5px 9px;border-radius:5px;
+  background:rgba(8,5,14,.72);border:1px solid rgba(255,217,160,.35);color:#FFD9A0">알파 라이팅 (ON)</div>
+
+<aside id="panel">
+  <h1>알파 기반 2D 라이팅 랩</h1>
+  <div class="sub">스프라이트/타일의 <b>알파 실루엣</b>만으로 방향성 음영·림라이트·캐스트 그림자를 만듭니다. 셰이더 없이 Canvas2D 합성만 사용합니다.</div>
+
+  <div class="btnRow" id="cmpBtns">
+    <button data-cmp="on" class="act">ON</button>
+    <button data-cmp="off">OFF</button>
+    <button data-cmp="split">좌우 비교</button>
+  </div>
+
+  <h2>스프라이트 (캐릭터·몬스터)</h2>
+  <div class="row"><label>알파 라이팅</label><button class="sw on" data-opt="spriteLit"></button></div>
+  <div id="grpSprite"></div>
+
+  <h2>벽 · 타일</h2>
+  <div class="row"><label>알파 라이팅</label><button class="sw on" data-opt="wallLit"></button></div>
+  <div class="row"><label>원본 베이크 그림자 유지</label><button class="sw" data-opt="bakedShadow"></button></div>
+  <div id="grpWall"></div>
+
+  <h2>광원 · 어둠</h2>
+  <div class="row"><label>어둠 · FoW</label><button class="sw on" data-opt="fog"></button></div>
+  <div id="grpLight"></div>
+
+  <h2>프리셋</h2>
+  <div class="btnRow" id="presetBtns">
+    <button data-pre="subtle">은은하게</button>
+    <button data-pre="default" class="act">기본</button>
+    <button data-pre="strong">과장</button>
+  </div>
+  <button style="width:100%;margin-top:6px;padding:7px;border-radius:5px;cursor:pointer;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);color:#C4B7E0;
+    font:700 10px ui-sans-serif,sans-serif" id="copyBtn">현재 수치 복사 (본편 이식용)</button>
+
+  <div class="note">
+    <kbd>WASD</kbd> 이동 · <kbd>마우스</kbd> 조준 · <kbd>클릭</kbd> 드릴<br>
+    <kbd>L</kbd> 라이팅 토글 · <kbd>Tab</kbd>(홀드) 원본 비교<br>
+    <kbd>C</kbd> 좌우 비교 · <kbd>H</kbd> 패널 · <kbd>R</kbd> 맵 재생성
+  </div>
+</aside>
+<button id="toggleP" title="패널 (H)">☰</button>
+
+<div id="load"><div>에셋 로딩…</div><div class="bar"><i id="loadBar"></i></div></div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+
+/* ═══════════════════════════════════════════════════════════════════
+   0. 튜닝 파라미터 — 본편 이식 시 이 블록만 옮기면 된다
+   ═══════════════════════════════════════════════════════════════════ */
+const TUNE={
+  /* 스프라이트 */
+  spRim     : 0.31,   // 림라이트 강도
+  spRimPx   : 4.2,    // 림 두께 (스프라이트 원본 px 기준)
+  spLite    : 0.67,   // 빛 쪽 틴트 강도
+  spShade   : 1.00,   // 그늘 쪽 음영 강도
+  spAmb     : 0.80,   // 광원에서 멀 때 전체 감광
+  /* 벽 */
+  wRim      : 0.36,   // 광원 쪽 모서리 하이라이트
+  wRimE     : 0.038,  // 하이라이트 두께 (광원 기준 방사 배율)
+  wShade    : 1.20,   // 광원 반대쪽 벽면 음영 (실루엣 안쪽)
+  wShadeE   : 0.038,  // 음영 두께
+  wShadow   : 1.20,   // 캐스트 그림자 농도 (바닥에 드리우는 그림자)
+  wShadowE  : 0.133,  // 그림자 길이 (광원 기준 방사 배율)
+  wSteps    : 3,      // 그림자 단계 (1=하드, 2~3=소프트)
+  wRes      : 0.25,   // 벽 라이팅 패스 해상도 배율
+  wLights   : 2,      // 벽 라이팅에 참여하는 광원 수 상한
+  /* 광원 */
+  lRadius   : 1.02,
+  lIntensity: 0.93,
+  flicker   : 0.70,
+  fogDensity: 0.67
+};
+const PRESETS={
+  subtle :{spRim:.34,spRimPx:2.0,spLite:.24,spShade:.32,spAmb:.16,wRim:.28,wRimE:.016,wShade:.32,wShadeE:.018,wShadow:.36,wShadowE:.040,wSteps:2},
+  default:{spRim:.31,spRimPx:4.2,spLite:.67,spShade:1.0,spAmb:.80,wRim:.36,wRimE:.038,wShade:1.2,wShadeE:.038,wShadow:1.2,wShadowE:.133,wSteps:3},
+  strong :{spRim:1.00,spRimPx:3.6,spLite:.66,spShade:.78,spAmb:.38,wRim:.82,wRimE:.030,wShade:.90,wShadeE:.038,wShadow:.92,wShadowE:.082,wSteps:3}
+};
+const OPT={spriteLit:true, wallLit:true, fog:true, bakedShadow:false};
+let CMP='on';          // 'on' | 'off' | 'split'
+let holdCompare=false; // Tab 홀드
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. 에셋
+   ═══════════════════════════════════════════════════════════════════ */
+const DIRS=['E','SE','S','SW','W','NW','N','NE'];
+const IMG={miner:{}, mon:{crawler:[],spitter:[]}, tile:{}};
+let assetsLeft=0, assetsTotal=0;
+
+function load(src){
+  const im=new Image(); assetsTotal++; assetsLeft++;
+  im.onload=im.onerror=()=>{ assetsLeft--; $('loadBar').style.width=
+    Math.round((1-assetsLeft/assetsTotal)*100)+'%'; if(assetsLeft===0)start(); };
+  im.src=src; return im;
+}
+function loadAssets(){
+  for(const d of DIRS){
+    IMG.miner[d]={idle:[load('lighting-lab-assets/miner/'+d+'_idle_0.png')], walk:[], drill:[]};
+    for(let i=0;i<4;i++){
+      IMG.miner[d].walk.push(load('lighting-lab-assets/miner/'+d+'_walk_'+i+'.png'));
+      IMG.miner[d].drill.push(load('lighting-lab-assets/miner/'+d+'_drill_'+i+'.png'));
+    }
+  }
+  for(const k of ['crawler','spitter'])
+    for(let i=1;i<=16;i++)
+      IMG.mon[k].push(load('../monster_assets_v1.5.4/frames/'+k+'/frame_'+String(i).padStart(2,'0')+'.png'));
+
+  const T='../tiles/purple/';
+  IMG.tile.floor=[load(T+'individual_50/purple_floor_base.png'),
+                  load(T+'individual_50/purple_floor_dark.png'),
+                  load(T+'individual_50/purple_floor_rim.png')];
+  IMG.tile.top=[];
+  for(let v=0;v<6;v++)IMG.tile.top.push(load(T+'individual_50/purple_core_top_b1_v'+v+'.png'));
+  IMG.tile.side  =load(T+'overlays/purple_core_side_b1_50x13.png');
+  IMG.tile.bottom=load(T+'overlays/purple_core_bottom_shadow_50x11.png');
+  IMG.tile.ore =load(T+'individual_50/purple_ore_b1_s0_d0.png');
+  IMG.tile.gem =load(T+'individual_50/purple_gem_b1_s0_d0.png');
+  IMG.tile.crys=load(T+'individual_50/purple_crys_b1_s0_d0.png');
+}
+const ready=im=>im&&im.complete&&im.naturalWidth>0;
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. 월드
+   ═══════════════════════════════════════════════════════════════════ */
+const CELL=50, COLS=46, ROWS=34, WW=COLS*CELL, WH=ROWS*CELL;
+const WALL_H=CELL*0.26;              // 벽이 솟아 보이는 높이
+const G={t:0, camX:0, camY:0, Z:1, cell:new Uint8Array(COLS*ROWS),
+         deco:new Uint8Array(COLS*ROWS), varn:new Uint8Array(COLS*ROWS),
+         player:{x:0,y:0,vx:0,vy:0,r:15,aim:0,moving:false,drilling:false},
+         mons:[], lamps:[], mouse:{x:0,y:0}};
+const ci=(c,r)=>r*COLS+c;
+const inB=(c,r)=>c>=0&&r>=0&&c<COLS&&r<ROWS;
+const isWall=(c,r)=>!inB(c,r)||G.cell[ci(c,r)]===1;
+const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
+
+function genMap(){
+  G.cell.fill(1);
+  let c=(COLS>>1), r=(ROWS>>1);
+  const carve=(cc,rr,rad)=>{
+    for(let y=-rad;y<=rad;y++)for(let x=-rad;x<=rad;x++){
+      if(x*x+y*y>rad*rad+rad)continue;
+      const nc=cc+x, nr=rr+y;
+      if(nc>1&&nr>1&&nc<COLS-2&&nr<ROWS-2)G.cell[ci(nc,nr)]=0;
+    }};
+  /* 방 몇 개 + 취객 보행으로 이어붙인 동굴 */
+  const rooms=[];
+  for(let i=0;i<7;i++){
+    const rc=3+((Math.random()*(COLS-8))|0), rr2=3+((Math.random()*(ROWS-8))|0);
+    rooms.push([rc,rr2]); carve(rc,rr2,2+((Math.random()*3)|0));
+  }
+  for(let i=0;i<rooms.length;i++){
+    let [x,y]=rooms[i]; const [tx,ty]=rooms[(i+1)%rooms.length];
+    for(let s=0;s<400;s++){
+      carve(x,y,1+(Math.random()<.3?1:0));
+      if(x===tx&&y===ty)break;
+      if(Math.random()<.5)x+=Math.sign(tx-x)||0; else y+=Math.sign(ty-y)||0;
+    }
+  }
+  c=rooms[0][0]; r=rooms[0][1]; carve(c,r,3);
+  for(let k=0;k<COLS*ROWS;k++){
+    G.varn[k]=(Math.random()*6)|0;
+    G.deco[k]=Math.random()<.06?(1+((Math.random()*3)|0)):0;
+  }
+  G.player.x=c*CELL+CELL/2; G.player.y=r*CELL+CELL/2;
+
+  /* 램프 — 빈 칸 중에서 골라 배치 */
+  G.lamps.length=0;
+  for(const [rc,rr2] of rooms.slice(1,5))
+    if(!isWall(rc,rr2))G.lamps.push({x:rc*CELL+CELL/2, y:rr2*CELL+CELL/2, ph:Math.random()*6.28});
+
+  /* 몬스터 */
+  G.mons.length=0;
+  for(let i=0;i<7;i++){
+    const [rc,rr2]=rooms[(i%(rooms.length-1))+1];
+    G.mons.push({x:rc*CELL+CELL/2+(Math.random()-.5)*60, y:rr2*CELL+CELL/2+(Math.random()-.5)*60,
+      kind:i%2?'spitter':'crawler', r:i%2?21:17, animT:Math.random()*9,
+      wa:Math.random()*6.28, vx:0, vy:0});
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. 광원
+   ═══════════════════════════════════════════════════════════════════ */
+/* [x, y, 반경, 강도, [r,g,b]] */
+const LIGHTS=[];
+const WARM=[255,214,150], COOL=[150,206,255];
+function collectLights(){
+  LIGHTS.length=0;
+  const fl=1+TUNE.flicker*(.030*Math.sin(G.t*4.1)+.020*Math.sin(G.t*6.7)+.014*Math.sin(G.t*11.3));
+  LIGHTS.push([G.player.x, G.player.y-CELL*.16,
+               CELL*4.6*TUNE.lRadius*fl, 1.0*TUNE.lIntensity, WARM]);
+  for(const L of G.lamps){
+    const pu=1+.10*Math.sin(G.t*.9+L.ph);
+    LIGHTS.push([L.x, L.y, CELL*2.6*TUNE.lRadius*pu, .62*TUNE.lIntensity, COOL]);
+  }
+}
+/* 월드 좌표에서 받는 빛: 방향 단위벡터 + 세기 + 색 */
+const _li={dx:0, dy:0, i:0, r:255, g:255, b:255};
+function lightInfo(wx,wy){
+  let ax=0, ay=0, amt=0, cr=0, cg=0, cb=0;
+  for(const L of LIGHTS){
+    const dx=wx-L[0], dy=wy-L[1], d=Math.hypot(dx,dy);
+    if(d>L[2])continue;
+    const f=1-d/L[2], w=f*f*L[3];
+    if(w<=0)continue;
+    const inv=d>0.01?1/d:0;
+    ax+=dx*inv*w; ay+=dy*inv*w; amt+=w;
+    cr+=L[4][0]*w; cg+=L[4][1]*w; cb+=L[4][2]*w;
+  }
+  const ll=Math.hypot(ax,ay);
+  _li.dx = ll>0 ? -ax/ll : 0;      // 스프라이트 → 광원 방향
+  _li.dy = ll>0 ? -ay/ll : -1;
+  _li.i  = clamp(amt,0,1);
+  if(amt>0){ _li.r=cr/amt|0; _li.g=cg/amt|0; _li.b=cb/amt|0; }
+  else { _li.r=WARM[0]; _li.g=WARM[1]; _li.b=WARM[2]; }
+  return _li;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. 캔버스 / 오프스크린
+   ═══════════════════════════════════════════════════════════════════ */
+const cv=$('cv'), cx=cv.getContext('2d');
+let VW=0, VH=0, DPR=1;
+const mkCv=()=>document.createElement('canvas');
+const floorCv=mkCv(), wallCv=mkCv(), tmpCv=mkCv(), fogCv=mkCv(), sceneCv=mkCv();
+const fg=floorCv.getContext('2d'), wg=wallCv.getContext('2d'),
+      tg=tmpCv.getContext('2d'),  gg=fogCv.getContext('2d'), sg=sceneCv.getContext('2d');
+/* 스프라이트 라이팅용 스크래치 2장 */
+const scA=mkCv(), scB=mkCv();
+const sa=scA.getContext('2d'), sb=scB.getContext('2d');
+function scratch(w,h){
+  if(scA.width<w||scA.height<h){
+    scA.width=scB.width=Math.max(scA.width,w);
+    scA.height=scB.height=Math.max(scA.height,h);
+  }
+}
+function resize(){
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth, h=cv.clientHeight;
+  VW=Math.max(2,Math.round(w*DPR)); VH=Math.max(2,Math.round(h*DPR));
+  for(const c of [cv,floorCv,wallCv,fogCv,sceneCv]){c.width=VW;c.height=VH;}
+  const q=clamp(TUNE.wRes,.25,1);
+  tmpCv.width=Math.max(2,Math.round(VW*q)); tmpCv.height=Math.max(2,Math.round(VH*q));
+  G.Z=DPR*1.55;
+}
+window.addEventListener('resize',resize);
+
+const w2sx=wx=>(wx-G.camX)*G.Z+VW/2;
+const w2sy=wy=>(wy-G.camY)*G.Z+VH/2;
+function applyCam(g){ g.setTransform(G.Z,0,0,G.Z, VW/2-G.camX*G.Z, VH/2-G.camY*G.Z); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. 알파 기반 스프라이트 라이팅
+   ───────────────────────────────────────────────────────────────────
+   ① 스크래치에 스프라이트를 그린다
+   ② source-atop + 선형 그라디언트 → 알파가 있는 픽셀만 그늘/빛 방향 착색
+   ③ 실루엣을 광원 반대로 밀어 destination-out → 빛 쪽 안쪽 초승달 = 림라이트
+   ④ 완성된 스크래치를 본 캔버스에 한 번 그린다
+   ═══════════════════════════════════════════════════════════════════ */
+function drawLitSprite(g, img, sx, sy, dw, dh, wx, wy, flipX, lit, extraAlpha){
+  const pad=Math.ceil(Math.abs(TUNE.spRimPx)*(dw/(img.naturalWidth||dw)))+3;
+  const W=Math.ceil(dw)+pad*2, H=Math.ceil(dh)+pad*2;
+
+  if(!lit){                                    // 원본(기존) 렌더 경로
+    g.save(); g.globalAlpha=extraAlpha==null?1:extraAlpha;
+    g.translate(sx,sy);
+    if(flipX)g.scale(-1,1);
+    g.drawImage(img, -dw/2, -dh/2, dw, dh);
+    g.restore(); return;
+  }
+
+  scratch(W,H);
+  const L=lightInfo(wx,wy);
+  const lx=L.dx, ly=L.dy, I=L.i;
+  const col=L.r+','+L.g+','+L.b;
+
+  /* ① 실루엣 */
+  sa.setTransform(1,0,0,1,0,0);
+  sa.globalCompositeOperation='source-over'; sa.globalAlpha=1;
+  sa.clearRect(0,0,W,H);
+  if(flipX){ sa.save(); sa.translate(W,0); sa.scale(-1,1); sa.drawImage(img,pad,pad,dw,dh); sa.restore(); }
+  else sa.drawImage(img,pad,pad,dw,dh);
+
+  /* ② 방향성 그늘 + 빛 틴트 (알파가 있는 픽셀에만) */
+  const cxp=pad+dw/2, cyp=pad+dh/2, R=Math.max(dw,dh)*0.62;
+  sa.globalCompositeOperation='source-atop';
+
+  const shade=TUNE.spShade*(0.35+0.65*I) + TUNE.spAmb*(1-I);
+  if(shade>0.002){
+    const gr=sa.createLinearGradient(cxp+lx*R, cyp+ly*R, cxp-lx*R, cyp-ly*R);
+    gr.addColorStop(0,   'rgba(10,6,22,0)');
+    gr.addColorStop(0.45,'rgba(10,6,22,'+(shade*0.22).toFixed(3)+')');
+    gr.addColorStop(1,   'rgba(10,6,22,'+Math.min(.94,shade).toFixed(3)+')');
+    sa.fillStyle=gr; sa.fillRect(0,0,W,H);
+  }
+  const lite=TUNE.spLite*I;
+  if(lite>0.002){
+    const gr=sa.createLinearGradient(cxp+lx*R, cyp+ly*R, cxp-lx*R*0.2, cyp-ly*R*0.2);
+    gr.addColorStop(0,  'rgba('+col+','+Math.min(.9,lite).toFixed(3)+')');
+    gr.addColorStop(0.6,'rgba('+col+','+(lite*0.22).toFixed(3)+')');
+    gr.addColorStop(1,  'rgba('+col+',0)');
+    sa.fillStyle=gr; sa.fillRect(0,0,W,H);
+  }
+
+  /* ③ 림라이트 — 실루엣에서 "광원 반대로 민 실루엣"을 빼면 빛 쪽 초승달만 남는다 */
+  const rim=TUNE.spRim*I;
+  if(rim>0.004&&TUNE.spRimPx>0.05){
+    const px=TUNE.spRimPx*(dw/(img.naturalWidth||dw));
+    sb.setTransform(1,0,0,1,0,0);
+    sb.globalCompositeOperation='source-over'; sb.globalAlpha=1;
+    sb.clearRect(0,0,W,H);
+    const put=(ox,oy)=>{
+      if(flipX){ sb.save(); sb.translate(W,0); sb.scale(-1,1); sb.drawImage(img,pad-ox,pad+oy,dw,dh); sb.restore(); }
+      else sb.drawImage(img,pad+ox,pad+oy,dw,dh);
+    };
+    put(0,0);
+    sb.globalCompositeOperation='destination-out';
+    put(-lx*px, -ly*px);
+    sb.globalCompositeOperation='source-in';
+    sb.fillStyle='rgba('+col+','+Math.min(1,rim).toFixed(3)+')';
+    sb.fillRect(0,0,W,H);
+    sa.globalCompositeOperation='lighter';
+    sa.drawImage(scB,0,0,W,H,0,0,W,H);
+  }
+  sa.globalCompositeOperation='source-over';
+
+  /* ④ 합성 */
+  g.save();
+  g.globalAlpha=extraAlpha==null?1:extraAlpha;
+  g.drawImage(scA, 0,0,W,H, sx-dw/2-pad, sy-dh/2-pad, W, H);
+  g.restore();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. 알파 기반 벽 라이팅 (스크린 스페이스)
+   ───────────────────────────────────────────────────────────────────
+   포인트 라이트는 "광원을 중심으로 실루엣을 방사 확대/축소"하면
+   모든 픽셀이 정확히 광원 반대/방향으로 밀린다.
+     · 확대본 − 원본 = 광원 반대편 바깥 초승달 → 바닥에 드리우는 캐스트 그림자
+     · 원본 − 확대본 = 광원 쪽 안쪽 초승달   → 벽 모서리 하이라이트
+     · 원본 − 축소본 = 광원 반대쪽 안쪽 초승달 → 벽면 음영
+   비용은 타일 수와 무관하게 광원당 전체화면 drawImage 몇 장이다.
+   ═══════════════════════════════════════════════════════════════════ */
+const WPASS={
+  shadow:{amt:'wShadow', e:'wShadowE', dir:+1, inside:false, dark:true },
+  rim   :{amt:'wRim',    e:'wRimE',    dir:+1, inside:true,  dark:false},
+  shade :{amt:'wShade',  e:'wShadeE',  dir:-1, inside:true,  dark:true }
+};
+function wallPass(g, mode){       // mode: 'shadow' | 'rim' | 'shade'
+  const P=WPASS[mode];
+  const q=clamp(TUNE.wRes,.25,1);
+  const n=Math.min(TUNE.wLights|0, LIGHTS.length);
+  const steps=mode==='shadow'?Math.max(1,TUNE.wSteps|0):1;
+
+  for(let i=0;i<n;i++){
+    const L=LIGHTS[i];
+    const lx=w2sx(L[0]), ly=w2sy(L[1]), R=L[2]*G.Z;
+    if(lx<-R||ly<-R||lx>VW+R||ly>VH+R)continue;
+    const amt=TUNE[P.amt]*L[3];
+    if(amt<=0.004)continue;
+
+    for(let s=1;s<=steps;s++){
+      const e=1 + P.dir*TUNE[P.e]*(s/steps);
+      const a=amt/steps*(mode==='shadow'?(1.25-0.5*(s-1)/Math.max(1,steps)):1);
+
+      tg.setTransform(1,0,0,1,0,0);
+      tg.globalCompositeOperation='source-over'; tg.globalAlpha=1;
+      tg.clearRect(0,0,tmpCv.width,tmpCv.height);
+      tg.setTransform(q,0,0,q,0,0);
+
+      /* inside=true → 원본에서 밀어낸 사본을 뺀다 (안쪽 밴드)
+         inside=false → 밀어낸 사본에서 원본을 뺀다 (바깥 밴드) */
+      const pushed=()=>{
+        tg.save(); tg.translate(lx,ly); tg.scale(e,e); tg.translate(-lx,-ly);
+        tg.drawImage(wallCv,0,0,VW,VH); tg.restore();
+      };
+      if(P.inside){
+        tg.drawImage(wallCv,0,0,VW,VH);
+        tg.globalCompositeOperation='destination-out';
+        pushed();
+      }else{
+        pushed();
+        tg.globalCompositeOperation='destination-out';
+        tg.drawImage(wallCv,0,0,VW,VH);
+      }
+
+      /* 광원 거리 감쇠로 마스킹 */
+      tg.globalCompositeOperation='source-in';
+      const col=P.dark?'6,3,14':(L[4][0]+','+L[4][1]+','+L[4][2]);
+      const gr=tg.createRadialGradient(lx,ly,0,lx,ly,R);
+      gr.addColorStop(0,   'rgba('+col+','+Math.min(1,a).toFixed(3)+')');
+      gr.addColorStop(0.55,'rgba('+col+','+Math.min(1,a*0.78).toFixed(3)+')');
+      gr.addColorStop(1,   'rgba('+col+',0)');
+      tg.fillStyle=gr; tg.fillRect(0,0,VW,VH);
+      tg.setTransform(1,0,0,1,0,0);
+      tg.globalCompositeOperation='source-over';
+
+      g.save();
+      g.setTransform(1,0,0,1,0,0);
+      if(!P.dark)g.globalCompositeOperation='lighter';
+      g.drawImage(tmpCv, 0,0,tmpCv.width,tmpCv.height, 0,0,VW,VH);
+      g.restore();
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. 타일 레이어
+   ═══════════════════════════════════════════════════════════════════ */
+function visRange(){
+  const pad=2;
+  const c0=Math.max(0,Math.floor((G.camX-VW/2/G.Z)/CELL)-pad);
+  const c1=Math.min(COLS-1,Math.ceil((G.camX+VW/2/G.Z)/CELL)+pad);
+  const r0=Math.max(0,Math.floor((G.camY-VH/2/G.Z)/CELL)-pad);
+  const r1=Math.min(ROWS-1,Math.ceil((G.camY+VH/2/G.Z)/CELL)+pad);
+  return [c0,c1,r0,r1];
+}
+function drawFloorLayer(){
+  fg.setTransform(1,0,0,1,0,0);
+  fg.fillStyle='#0A0713'; fg.fillRect(0,0,VW,VH);
+  applyCam(fg);
+  const [c0,c1,r0,r1]=visRange();
+  for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++){
+    if(isWall(c,r))continue;
+    const k=ci(c,r), v=G.varn[k];
+    const im=IMG.tile.floor[v>3?2:(v>1?0:1)];
+    if(ready(im))fg.drawImage(im, c*CELL, r*CELL, CELL+.6, CELL+.6);
+    else{ fg.fillStyle=v>3?'#3A2C46':'#2A1F34'; fg.fillRect(c*CELL,r*CELL,CELL+.6,CELL+.6); }
+  }
+  fg.setTransform(1,0,0,1,0,0);
+}
+function drawWallLayer(lit){
+  wg.setTransform(1,0,0,1,0,0);
+  wg.clearRect(0,0,VW,VH);
+  applyCam(wg);
+  const [c0,c1,r0,r1]=visRange();
+  const list=[];
+  for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++)if(isWall(c,r)&&inB(c,r))list.push([c,r]);
+
+  /* ① 베이크된 아래쪽 그림자 — 알파 라이팅을 켜면 방향이 충돌하므로 기본 OFF */
+  if(!lit||OPT.bakedShadow){
+    for(const [c,r] of list){
+      if(isWall(c,r+1))continue;
+      const x=c*CELL, y=r*CELL;
+      if(ready(IMG.tile.bottom))wg.drawImage(IMG.tile.bottom,x,y+CELL,CELL,CELL*.22);
+      else{ wg.fillStyle='rgba(24,14,10,.26)'; wg.fillRect(x+2,y+CELL,CELL-4,CELL*.13); }
+    }
+  }
+  /* ② 측면 */
+  for(const [c,r] of list){
+    if(isWall(c,r+1))continue;
+    const x=c*CELL, y=r*CELL;
+    if(ready(IMG.tile.side))wg.drawImage(IMG.tile.side,x,y+CELL-WALL_H,CELL,WALL_H);
+    else{ wg.fillStyle='#2E2440'; wg.fillRect(x,y+CELL-WALL_H,CELL,WALL_H); }
+  }
+  /* ③ 윗면 */
+  for(const [c,r] of list){
+    const k=ci(c,r), x=c*CELL, y=r*CELL-WALL_H;
+    const im=IMG.tile.top[G.varn[k]%IMG.tile.top.length];
+    if(ready(im))wg.drawImage(im,x,y,CELL,CELL);
+    else{ wg.fillStyle='#4A3A63'; wg.fillRect(x,y,CELL,CELL); }
+    const d=G.deco[k];
+    if(d){
+      const di=d===1?IMG.tile.ore:(d===2?IMG.tile.gem:IMG.tile.crys);
+      if(ready(di))wg.drawImage(di,x,y,CELL,CELL);
+    }
+  }
+  wg.setTransform(1,0,0,1,0,0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. 어둠 오버레이 (기존 게임과 같은 방식 — 원형 마스크)
+   ═══════════════════════════════════════════════════════════════════ */
+let _fogGrad=null;
+function bakeFog(){
+  const S=192, c=mkCv(); c.width=c.height=S;
+  const g=c.getContext('2d'), R=S/2;
+  const gr=g.createRadialGradient(R,R,0,R,R,R);
+  for(const [u,a] of [[0,1],[.30,.99],[.50,.94],[.66,.82],[.79,.58],[.88,.32],[.95,.11],[1,0]])
+    gr.addColorStop(u,'rgba(0,0,0,'+a+')');
+  g.fillStyle=gr; g.beginPath(); g.arc(R,R,R,0,7); g.fill();
+  _fogGrad=c;
+}
+function drawFog(g){
+  if(!OPT.fog)return;
+  if(!_fogGrad)bakeFog();
+  const q=.5, w=Math.max(2,Math.round(VW*q)), h=Math.max(2,Math.round(VH*q));
+  if(fogCv.width!==w||fogCv.height!==h){fogCv.width=w;fogCv.height=h;}
+  gg.setTransform(1,0,0,1,0,0);
+  gg.globalCompositeOperation='source-over'; gg.globalAlpha=1;
+  gg.clearRect(0,0,w,h);
+  gg.fillStyle='rgba(5,3,12,'+TUNE.fogDensity+')'; gg.fillRect(0,0,w,h);
+  gg.globalCompositeOperation='destination-out';
+  for(const L of LIGHTS){
+    const sx=w2sx(L[0])*q, sy=w2sy(L[1])*q, R=L[2]*G.Z*q;
+    if(sx<-R||sy<-R||sx>w+R||sy>h+R)continue;
+    gg.globalAlpha=Math.min(1,L[3]);
+    gg.drawImage(_fogGrad, sx-R, sy-R, R*2, R*2);
+  }
+  gg.globalAlpha=1; gg.globalCompositeOperation='source-over';
+  g.save(); g.setTransform(1,0,0,1,0,0);
+  g.drawImage(fogCv,0,0,w,h,0,0,VW,VH);
+  g.restore();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   9. 캐릭터 / 몬스터
+   ═══════════════════════════════════════════════════════════════════ */
+function dir8(a){
+  const tau=Math.PI*2; a=((a%tau)+tau)%tau;
+  return DIRS[Math.round(a/(Math.PI/4))&7];
+}
+function drawPlayer(g, lit){
+  const p=G.player;
+  const d=dir8(p.aim);
+  const anim=p.drilling?'drill':(p.moving?'walk':'idle');
+  const arr=IMG.miner[d]&&IMG.miner[d][anim];
+  if(!arr||!arr.length)return;
+  const fps=anim==='drill'?11:(anim==='walk'?8:1);
+  const im=arr[anim==='idle'?0:(Math.floor(G.t*fps)%arr.length)];
+  if(!ready(im))return;
+  /* 본편 규칙: 드릴 프레임은 서쪽 계열만 좌우 반전 */
+  const flip=anim==='drill'&&(d==='W'||d==='NW'||d==='SW');
+
+  const h=p.r*3.55*G.Z, w=h, baseline=.86*h;
+  let sx=w2sx(p.x), sy=w2sy(p.y);
+  if(anim==='drill'){
+    const kick=Math.sin(G.t*34)*p.r*.045*G.Z;
+    sx-=Math.cos(p.aim)*kick; sy-=Math.sin(p.aim)*kick;
+  }else if(anim==='walk') sy+=Math.sin(G.t*16)*p.r*.035*G.Z;
+
+  /* 접지 그림자 */
+  g.save(); g.setTransform(1,0,0,1,0,0);
+  g.fillStyle='rgba(0,0,0,.38)';
+  g.beginPath(); g.ellipse(w2sx(p.x), w2sy(p.y)+p.r*.62*G.Z, p.r*.95*G.Z, p.r*.3*G.Z, 0,0,7); g.fill();
+  g.restore();
+
+  /* drawImage 기준을 중심으로 맞추기 위해 dy 보정 */
+  const cy=sy + (p.r*G.Z - baseline) + h/2;
+  drawLitSprite(g, im, sx, cy, w, h, p.x, p.y-p.r*0.4, flip, lit, 1);
+}
+function drawMons(g, lit){
+  for(const m of G.mons){
+    const set=IMG.mon[m.kind];
+    if(!set||!set.length)continue;
+    const moving=Math.hypot(m.vx,m.vy)>2;
+    const idx=moving?(Math.floor(m.animT*10)%6):(6+(Math.floor(m.animT*2)&1));
+    const im=set[idx]||set[0];
+    if(!ready(im))continue;
+    const size=m.r*3.2*G.Z;
+    const sx=w2sx(m.x), sy=w2sy(m.y)+Math.sin(m.animT*3)*2.2*G.Z;
+    if(sx<-size||sy<-size||sx>VW+size||sy>VH+size)continue;
+
+    g.save(); g.setTransform(1,0,0,1,0,0);
+    g.fillStyle='rgba(0,0,0,.34)';
+    g.beginPath(); g.ellipse(w2sx(m.x), w2sy(m.y)+m.r*.7*G.Z, m.r*.9*G.Z, m.r*.28*G.Z, 0,0,7); g.fill();
+    g.restore();
+
+    drawLitSprite(g, im, sx, sy, size, size, m.x, m.y, false, lit, 1);
+  }
+}
+function drawLamps(g){
+  for(const L of G.lamps){
+    const pu=.72+.28*Math.sin(G.t*1.6+L.ph);
+    const x=w2sx(L.x), y=w2sy(L.y), s=G.Z;
+    g.save(); g.setTransform(1,0,0,1,0,0); g.translate(x,y);
+    g.globalAlpha=.16+pu*.13; g.fillStyle='#8CC8FF';
+    g.beginPath(); g.ellipse(0,CELL*.16*s,CELL*.7*s,CELL*.3*s,0,0,7); g.fill();
+    g.globalAlpha=1;
+    g.fillStyle='#2B3350'; g.fillRect(-3*s,-2*s,6*s,12*s);
+    g.fillStyle='#9AD8FF'; g.globalAlpha=.55+pu*.45;
+    g.beginPath(); g.arc(0,-8*s,6.5*s,0,7); g.fill();
+    g.globalAlpha=1; g.fillStyle='#EAF6FF';
+    g.beginPath(); g.arc(0,-8*s,3*s,0,7); g.fill();
+    g.restore();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   10. 씬 렌더 — lit 플래그 하나로 ON/OFF 전체 경로가 갈린다
+   ═══════════════════════════════════════════════════════════════════ */
+function renderScene(g, lit){
+  const litW = lit && OPT.wallLit;
+  const litS = lit && OPT.spriteLit;
+
+  drawFloorLayer();
+  drawWallLayer(lit);
+
+  g.setTransform(1,0,0,1,0,0);
+  g.globalCompositeOperation='source-over'; g.globalAlpha=1;
+  g.drawImage(floorCv,0,0);
+
+  if(litW)wallPass(g,'shadow');       // 바닥에 드리우는 그림자 → 벽보다 먼저
+  g.setTransform(1,0,0,1,0,0);
+  g.globalCompositeOperation='source-over'; g.globalAlpha=1;
+  g.drawImage(wallCv,0,0);
+  if(litW){
+    wallPass(g,'shade');              // 광원 반대쪽 벽면 음영
+    wallPass(g,'rim');                // 광원 쪽 모서리 하이라이트
+  }
+
+  g.setTransform(1,0,0,1,0,0);
+  g.globalCompositeOperation='source-over'; g.globalAlpha=1;
+  drawLamps(g);
+  drawMons(g,litS);
+  drawPlayer(g,litS);
+  drawFog(g);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   11. 업데이트
+   ═══════════════════════════════════════════════════════════════════ */
+const keys={};
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(e.key==='Tab'){holdCompare=true;e.preventDefault();return;}
+  keys[k]=true;
+  if(k==='l'){ setCmp(CMP==='off'?'on':'off'); }
+  if(k==='c'){ setCmp(CMP==='split'?'on':'split'); }
+  if(k==='h'){ $('panel').classList.toggle('hide'); }
+  if(k==='r'){ genMap(); }
+});
+addEventListener('keyup',e=>{
+  if(e.key==='Tab'){holdCompare=false;e.preventDefault();return;}
+  keys[e.key.toLowerCase()]=false;
+});
+cv.addEventListener('mousemove',e=>{
+  const b=cv.getBoundingClientRect();
+  G.mouse.x=(e.clientX-b.left)*DPR; G.mouse.y=(e.clientY-b.top)*DPR;
+});
+cv.addEventListener('mousedown',()=>{G.player.drilling=true;});
+addEventListener('mouseup',()=>{G.player.drilling=false;});
+addEventListener('blur',()=>{holdCompare=false;for(const k in keys)keys[k]=false;});
+
+function moveWithCollision(o,dx,dy,rad){
+  const try1=(nx,ny)=>{
+    const c0=Math.floor((nx-rad)/CELL), c1=Math.floor((nx+rad)/CELL);
+    const r0=Math.floor((ny-rad)/CELL), r1=Math.floor((ny+rad)/CELL);
+    for(let r=r0;r<=r1;r++)for(let c=c0;c<=c1;c++)if(isWall(c,r))return false;
+    return true;
+  };
+  if(try1(o.x+dx,o.y))o.x+=dx;
+  if(try1(o.x,o.y+dy))o.y+=dy;
+}
+function update(dt){
+  G.t+=dt;
+  const p=G.player;
+  let ax=(keys.d?1:0)-(keys.a?1:0), ay=(keys.s?1:0)-(keys.w?1:0);
+  const l=Math.hypot(ax,ay); if(l>0){ax/=l;ay/=l;}
+  const spd=190;
+  p.moving=l>0;
+  moveWithCollision(p, ax*spd*dt, ay*spd*dt, p.r*.72);
+  p.aim=Math.atan2((G.mouse.y-VH/2)/G.Z, (G.mouse.x-VW/2)/G.Z);
+
+  G.camX+= (p.x-G.camX)*Math.min(1,dt*7);
+  G.camY+= (p.y-G.camY)*Math.min(1,dt*7);
+
+  for(const m of G.mons){
+    m.animT+=dt;
+    const dx=p.x-m.x, dy=p.y-m.y, d=Math.hypot(dx,dy);
+    if(d<CELL*7&&d>CELL*1.1){ m.vx=dx/d*46; m.vy=dy/d*46; }
+    else{ m.wa+=(Math.random()-.5)*dt*4; m.vx=Math.cos(m.wa)*24; m.vy=Math.sin(m.wa)*24; }
+    moveWithCollision(m, m.vx*dt, m.vy*dt, m.r*.62);
+  }
+  collectLights();
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   12. 루프 + 비교 모드
+   ═══════════════════════════════════════════════════════════════════ */
+let lastT=0, fps=60, msLit=0, msTotal=0;
+function frame(ts){
+  requestAnimationFrame(frame);
+  const dt=Math.min(.05,(ts-lastT)/1000||.016); lastT=ts;
+  update(dt);
+
+  const t0=performance.now();
+  const effLit = holdCompare ? false : (CMP!=='off');
+  const split  = !holdCompare && CMP==='split';
+
+  cx.setTransform(1,0,0,1,0,0);
+  cx.globalCompositeOperation='source-over'; cx.globalAlpha=1;
+
+  if(split){
+    if(sceneCv.width!==VW||sceneCv.height!==VH){sceneCv.width=VW;sceneCv.height=VH;}
+    renderScene(sg,false);
+    cx.drawImage(sceneCv, 0,0,VW>>1,VH, 0,0,VW>>1,VH);
+    renderScene(sg,true);
+    cx.drawImage(sceneCv, VW>>1,0,VW-(VW>>1),VH, VW>>1,0,VW-(VW>>1),VH);
+    cx.fillStyle='rgba(255,217,160,.55)'; cx.fillRect((VW>>1)-1,0,2,VH);
+  }else{
+    renderScene(cx, effLit);
+  }
+  msTotal=msTotal*.9+(performance.now()-t0)*.1;
+  fps=fps*.92+(1/dt)*.08;
+
+  $('tagOff').style.display=split?'block':'none';
+  $('tagOn').style.display =split?'block':'none';
+  if(split){
+    const w=cv.clientWidth;
+    $('tagOff').style.left=(w*.25-40)+'px';
+    $('tagOn').style.left =(w*.75-56)+'px';
+  }
+  hud();
+}
+let hudN=0;
+function hud(){
+  if((hudN++&15)!==0)return;
+  const mode=holdCompare?'<span class="warn">원본 비교 중 (Tab)</span>':
+             (CMP==='split'?'좌우 비교':(CMP==='on'?'알파 라이팅 ON':'알파 라이팅 OFF'));
+  $('hud').innerHTML=
+    mode+'<br>'+
+    'FPS <b>'+fps.toFixed(0)+'</b> · 프레임 <b>'+msTotal.toFixed(1)+'ms</b><br>'+
+    '광원 <b>'+LIGHTS.length+'</b> · 몬스터 <b>'+G.mons.length+'</b> · 해상도 '+VW+'×'+VH;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   13. 컨트롤 패널
+   ═══════════════════════════════════════════════════════════════════ */
+const SLIDERS={
+  grpSprite:[
+    ['spRim','림라이트 강도',0,1.5,.01],
+    ['spRimPx','림 두께 (px)',0,8,.1],
+    ['spLite','빛 쪽 틴트',0,1,.01],
+    ['spShade','그늘 농도',0,1,.01],
+    ['spAmb','원거리 감광',0,.8,.01]
+  ],
+  grpWall:[
+    ['wRim','모서리 하이라이트',0,1.2,.01],
+    ['wRimE','하이라이트 두께',0,.06,.001],
+    ['wShade','반대쪽 벽면 음영',0,1.2,.01],
+    ['wShadeE','음영 두께',0,.08,.001],
+    ['wShadow','캐스트 그림자 농도',0,1.2,.01],
+    ['wShadowE','그림자 길이',0,.16,.001],
+    ['wSteps','그림자 단계',1,4,1],
+    ['wRes','패스 해상도',.25,1,.05],
+    ['wLights','참여 광원 수',1,6,1]
+  ],
+  grpLight:[
+    ['lRadius','광원 반경',.4,2,.01],
+    ['lIntensity','광원 강도',.2,1.6,.01],
+    ['flicker','흔들림',0,1.5,.01],
+    ['fogDensity','어둠 농도',0,1,.01]
+  ]
+};
+function buildPanel(){
+  for(const grp in SLIDERS){
+    const host=$(grp);
+    for(const [key,label,min,max,step] of SLIDERS[grp]){
+      const d=document.createElement('div'); d.className='rowFull';
+      d.innerHTML='<div class="row"><label>'+label+'</label><output id="o_'+key+'"></output></div>'+
+                  '<input type="range" id="s_'+key+'" min="'+min+'" max="'+max+'" step="'+step+'">';
+      host.appendChild(d);
+      const s=d.querySelector('input'), o=d.querySelector('output');
+      const sync=()=>{ o.textContent=(step>=1?TUNE[key].toFixed(0):TUNE[key].toFixed(step<.01?3:2)); s.value=TUNE[key]; };
+      s.addEventListener('input',()=>{ TUNE[key]=parseFloat(s.value); sync(); if(key==='wRes')resize(); });
+      sync(); s._sync=sync;
+    }
+  }
+  document.querySelectorAll('.sw[data-opt]').forEach(b=>{
+    b.classList.toggle('on',!!OPT[b.dataset.opt]);
+    b.addEventListener('click',()=>{ OPT[b.dataset.opt]=!OPT[b.dataset.opt]; b.classList.toggle('on',OPT[b.dataset.opt]); });
+  });
+  $('cmpBtns').addEventListener('click',e=>{ if(e.target.dataset.cmp)setCmp(e.target.dataset.cmp); });
+  $('presetBtns').addEventListener('click',e=>{
+    const p=e.target.dataset.pre; if(!p)return;
+    Object.assign(TUNE,PRESETS[p]);
+    document.querySelectorAll('#presetBtns button').forEach(b=>b.classList.toggle('act',b.dataset.pre===p));
+    syncAll();
+  });
+  $('toggleP').addEventListener('click',()=>$('panel').classList.toggle('hide'));
+  $('copyBtn').addEventListener('click',()=>{
+    const txt='const TUNE='+JSON.stringify(TUNE,null,2)+';';
+    navigator.clipboard?.writeText(txt).then(
+      ()=>{ $('copyBtn').textContent='복사 완료 ✓'; setTimeout(()=>$('copyBtn').textContent='현재 수치 복사 (본편 이식용)',1400); },
+      ()=>{ console.log(txt); $('copyBtn').textContent='콘솔에 출력됨'; });
+  });
+}
+function syncAll(){ for(const grp in SLIDERS)for(const [k] of SLIDERS[grp]){const s=$('s_'+k); if(s&&s._sync)s._sync();} }
+function setCmp(m){
+  CMP=m;
+  document.querySelectorAll('#cmpBtns button').forEach(b=>b.classList.toggle('act',b.dataset.cmp===m));
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   14. 시작
+   ═══════════════════════════════════════════════════════════════════ */
+function start(){
+  $('load').style.display='none';
+  resize(); genMap();
+  G.camX=G.player.x; G.camY=G.player.y;
+  G.mouse.x=VW*.62; G.mouse.y=VH*.5;
+  buildPanel();
+  requestAnimationFrame(ts=>{lastT=ts;requestAnimationFrame(frame);});
+}
+loadAssets();
+</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+/* Unified character selection: solo, endless, and LAN co-op. */
+:root{
+  --tc-role-yellow:#ffd36e;
+  --tc-role-mint:#7febd0;
+  --tc-role-violet:#c7a0ff;
+  --tc-role-coral:#ff8d72;
+}
+
+#crewRoot #crewRole.crewPanel{
+  justify-content:stretch;
+  padding:0;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% -18%,rgba(121,82,171,.34),transparent 42%),
+    linear-gradient(180deg,rgba(5,3,10,.72),rgba(5,3,10,.96));
+  backdrop-filter:blur(10px);
+}
+
+#crewRole .tcRoleHeading{
+  position:absolute;
+  z-index:8;
+  top:clamp(18px,3.4vh,42px);
+  left:50%;
+  width:min(720px,74vw);
+  transform:translateX(-50%);
+  pointer-events:none;
+  text-align:center;
+  filter:drop-shadow(0 4px 18px rgba(0,0,0,.88));
+}
+
+#crewRoot #crewRole .tcRoleHeading h1,
+#infRoleModal .tcRoleHeading h2{
+  margin:0 0 7px;
+  color:#fff4d8;
+  font:950 clamp(25px,3vw,43px)/1 "Pretendard","Malgun Gothic",sans-serif;
+  letter-spacing:.08em;
+}
+
+#crewRoot #crewRole .tcRoleHeading .crewSub,
+#infRoleModal .tcRoleHeading p{
+  max-width:none;
+  margin:0;
+  color:#c7b9d4;
+  font-size:clamp(11px,1.05vw,14px);
+}
+
+.tcRoleSelectGrid,
+#crewRoot .roleGrid.tcRoleSelectGrid,
+#infRoleModal .infRoleGrid.tcRoleSelectGrid,
+#coopRoles.tcRoleSelectGrid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(2px,.42vw,7px);
+  width:100%;
+}
+
+#crewRoot .roleGrid.tcRoleSelectGrid{
+  position:absolute;
+  inset:0;
+  max-width:none;
+}
+
+.tcRoleChoice,
+#crewRoot .roleBtn.tcRoleChoice,
+#infRoleModal .infRoleCard.tcRoleChoice,
+#coopRoles .roleBtn.tcRoleChoice{
+  --role:#c7a0ff;
+  appearance:none;
+  position:relative;
+  min-width:0;
+  min-height:clamp(460px,100vh,980px);
+  overflow:hidden;
+  isolation:isolate;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:#100b17;
+  color:#fff;
+  cursor:pointer;
+  text-align:left;
+  transform:none;
+  transition:width .28s ease,filter .25s ease,box-shadow .25s ease;
+}
+
+.tcRoleChoice::before{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  inset:0;
+  background:
+    linear-gradient(180deg,rgba(5,3,9,.82) 0%,rgba(9,6,14,.04) 27%,rgba(7,4,12,.18) 57%,rgba(5,3,9,.96) 91%),
+    radial-gradient(circle at 50% 56%,color-mix(in srgb,var(--role) 21%,transparent),transparent 49%),
+    linear-gradient(145deg,color-mix(in srgb,var(--role) 10%,#130d1c),#09060e 74%);
+  transition:filter .25s ease,background .25s ease;
+}
+
+.tcRoleChoice::after{
+  content:"";
+  position:absolute;
+  z-index:7;
+  inset:0;
+  border:1px solid rgba(231,219,244,.12);
+  box-shadow:inset 0 0 0 0 var(--role),inset 0 -90px 110px rgba(0,0,0,.32);
+  pointer-events:none;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+
+.tcRoleArt{
+  position:absolute;
+  z-index:-1;
+  left:50%;
+  bottom:clamp(65px,7vh,92px);
+  width:min(118%,620px);
+  height:88%;
+  object-fit:contain;
+  object-position:center bottom;
+  transform:translateX(-50%) scale(.95);
+  transform-origin:50% 88%;
+  filter:grayscale(1) saturate(.05) brightness(.5) contrast(1.13);
+  opacity:.84;
+  transition:filter .32s cubic-bezier(.2,.75,.25,1),transform .34s cubic-bezier(.2,.75,.25,1),opacity .28s ease;
+  pointer-events:none;
+  -webkit-user-drag:none;
+}
+
+.tcRoleChoice:hover,
+.tcRoleChoice:focus-visible,
+.tcRoleChoice.selected,
+.tcRoleChoice.picked{
+  z-index:3;
+  outline:0;
+  box-shadow:0 0 42px color-mix(in srgb,var(--role) 28%,transparent);
+}
+
+.tcRoleChoice:hover::after,
+.tcRoleChoice:focus-visible::after,
+.tcRoleChoice.selected::after,
+.tcRoleChoice.picked::after{
+  border-color:var(--role);
+  box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--role) 78%,transparent),inset 0 -105px 125px rgba(0,0,0,.43);
+}
+
+.tcRoleChoice:hover .tcRoleArt,
+.tcRoleChoice:focus-visible .tcRoleArt,
+.tcRoleChoice.selected .tcRoleArt,
+.tcRoleChoice.picked .tcRoleArt{
+  filter:grayscale(0) saturate(1.08) brightness(1.04) contrast(1.02);
+  opacity:1;
+  transform:translateX(-50%) scale(1.025);
+}
+
+.tcRoleCode{
+  position:absolute;
+  z-index:4;
+  top:clamp(112px,15vh,154px);
+  left:clamp(14px,1.5vw,25px);
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--role);
+  font:950 9px/1 ui-monospace,Consolas,monospace;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  text-shadow:0 2px 10px #000;
+}
+
+.tcRoleCode::before{content:"";width:22px;height:2px;background:currentColor;box-shadow:0 0 10px currentColor}
+
+.tcRoleCopy{
+  position:absolute;
+  z-index:4;
+  left:clamp(14px,1.5vw,25px);
+  right:clamp(14px,1.5vw,25px);
+  bottom:clamp(18px,3vh,35px);
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.95));
+}
+
+.tcRoleChoice .tcRoleName,
+#crewRoot .tcRoleChoice .tcRoleName,
+#infRoleModal .tcRoleChoice .tcRoleName,
+#coopRoles .tcRoleChoice .tcRoleName{
+  display:block;
+  margin:0 0 6px;
+  color:#fff4d8;
+  font:950 clamp(25px,2.5vw,43px)/1 "Pretendard","Malgun Gothic",sans-serif;
+  letter-spacing:-.04em;
+}
+
+.tcRoleChoice .tcRoleTag,
+#crewRoot .tcRoleChoice .tcRoleTag,
+#infRoleModal .tcRoleChoice .tcRoleTag,
+#coopRoles .tcRoleChoice .tcRoleTag{
+  display:block;
+  min-height:0;
+  color:#c9bdcf;
+  font-size:clamp(10px,.85vw,12px);
+  line-height:1.45;
+}
+
+.tcRoleStats{
+  display:grid;
+  gap:4px;
+  max-height:0;
+  margin-top:0;
+  padding-top:0;
+  overflow:hidden;
+  opacity:0;
+  border-top:1px solid color-mix(in srgb,var(--role) 36%,transparent);
+  transition:max-height .28s ease,margin .28s ease,padding .28s ease,opacity .22s ease;
+}
+
+.tcRoleChoice:hover .tcRoleStats,
+.tcRoleChoice:focus-visible .tcRoleStats,
+.tcRoleChoice.selected .tcRoleStats,
+.tcRoleChoice.picked .tcRoleStats{
+  max-height:80px;
+  margin-top:9px;
+  padding-top:8px;
+  opacity:1;
+}
+
+.tcRoleStats span,
+#crewRoot .tcRoleStats span,
+#infRoleModal .tcRoleStats span,
+#coopRoles .tcRoleStats span{color:#e7dced;font-size:10px;line-height:1.35}
+
+.tcRoleCheck{
+  position:absolute;
+  z-index:9;
+  top:clamp(106px,14.2vh,148px);
+  right:clamp(14px,1.5vw,25px);
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border:1px solid color-mix(in srgb,var(--role) 66%,transparent);
+  border-radius:50%;
+  background:rgba(8,5,13,.82);
+  color:var(--role);
+  font-size:17px;
+  opacity:0;
+  transform:scale(.45) rotate(-18deg);
+  box-shadow:0 0 20px color-mix(in srgb,var(--role) 36%,transparent);
+  transition:opacity .16s ease,transform .28s cubic-bezier(.18,.9,.25,1.35);
+}
+
+.tcRoleChoice.selected .tcRoleCheck,
+.tcRoleChoice.picked .tcRoleCheck{opacity:1;transform:scale(1) rotate(0)}
+
+.tcRoleChoice.selected,
+.tcRoleChoice.picked{animation:tcRoleConfirm .48s cubic-bezier(.16,.84,.3,1)}
+
+.tcRoleChoice.taken{filter:grayscale(1);opacity:.3;cursor:not-allowed}
+.tcRoleChoice:disabled:not(.taken){cursor:not-allowed}
+
+@keyframes tcRoleConfirm{
+  0%{filter:brightness(1);transform:scale(1)}
+  34%{filter:brightness(1.75);transform:scale(.985)}
+  72%{transform:scale(1.018)}
+  100%{filter:none;transform:scale(1)}
+}
+
+#crewRole #roleBackMission{
+  position:absolute;
+  z-index:12;
+  top:24px;
+  left:24px;
+  margin:0;
+  padding:9px 13px;
+  border:1px solid rgba(214,197,229,.3);
+  border-radius:999px;
+  background:rgba(10,7,16,.74);
+  color:#d2c5df;
+  text-decoration:none;
+}
+
+#crewRole .tcRoleFeedback{
+  position:absolute;
+  z-index:12;
+  right:24px;
+  top:24px;
+  min-height:32px;
+  color:#fff4d8;
+  font:900 11px/32px ui-monospace,Consolas,monospace;
+  letter-spacing:.08em;
+}
+
+/* Endless mode reuses the same full-screen selector. */
+#infRoleModal{background:rgba(5,3,10,.92);backdrop-filter:blur(10px)}
+#infRoleModal .infRolePanel{
+  position:absolute;
+  inset:0;
+  width:auto;
+  max-height:none;
+  overflow:hidden;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+#infRoleModal .infRoleHead{position:relative;z-index:12;margin:0}
+#infRoleModal .tcRoleHeading{position:absolute;z-index:8;top:clamp(18px,3.4vh,42px);left:50%;width:min(760px,70vw);transform:translateX(-50%);text-align:center;pointer-events:none}
+#infRoleModal .infRoleBack{position:absolute;z-index:12;top:24px;left:24px;margin:0}
+#infRoleModal .infRoleGrid.tcRoleSelectGrid{position:absolute;inset:0;gap:clamp(2px,.42vw,7px)}
+#infRoleModal .infRoleCard.tcRoleChoice{min-height:100vh;padding:0;border:0;border-radius:0;background:#100b17}
+#infRoleModal .infRoleCard.tcRoleChoice.selected::after{content:"";position:absolute;inset:0;padding:0;border-radius:0;background:transparent;color:transparent}
+#infRoleModal .infRoleActions{position:absolute;z-index:12;right:24px;top:20px;margin:0}
+#infRoleModal .infRolePick{display:none}
+#infRoleModal .infRoleStart{margin:0;padding:11px 18px}
+#infRoleModal .infRoleNote{display:none}
+
+/* Co-op keeps room controls compact while the same four portraits dominate. */
+#coopLobby{padding:14px!important}
+#coopCard{width:min(1180px,98vw)!important;max-height:96vh;overflow:auto;padding:14px 16px 12px!important;background:rgba(15,10,24,.94)!important}
+#coopCard h1{font-size:19px!important}
+#coopCard .sub{margin-bottom:7px!important}
+#coopCard .row{margin:6px 0!important}
+#coopCodeShow{font-size:20px!important;margin:4px 0!important}
+#coopMeta{margin-top:4px!important}
+#coopRoles.tcRoleSelectGrid{height:clamp(340px,55vh,560px);margin-top:9px}
+#coopRoles .roleBtn.tcRoleChoice{min-height:100%;height:100%;padding:0;border-radius:2px}
+#coopRoles .tcRoleCode{top:18px}
+#coopRoles .tcRoleCheck{top:14px}
+#coopRoles .tcRoleArt{bottom:56px;height:91%;width:112%}
+#coopRoles .tcRoleChoice .tcRoleName{font-size:clamp(22px,2.3vw,36px)}
+#coopRoles .tcRoleStats{display:none}
+
+@media(max-width:760px){
+  #crewRoot .roleGrid.tcRoleSelectGrid,
+  #infRoleModal .infRoleGrid.tcRoleSelectGrid,
+  #coopRoles.tcRoleSelectGrid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+  .tcRoleChoice,#crewRoot .roleBtn.tcRoleChoice,#infRoleModal .infRoleCard.tcRoleChoice{min-height:50vh}
+  .tcRoleArt{bottom:24px;height:92%;width:94%}
+  .tcRoleCode{top:76px;font-size:8px}
+  .tcRoleCheck{top:70px}
+  .tcRoleCopy{bottom:12px}
+  .tcRoleChoice .tcRoleName,#crewRoot .tcRoleChoice .tcRoleName,#infRoleModal .tcRoleChoice .tcRoleName{font-size:23px}
+  .tcRoleTag,.tcRoleStats{display:none!important}
+  #crewRole .tcRoleHeading,#infRoleModal .tcRoleHeading{top:12px;width:68vw}
+  #crewRoot #crewRole .tcRoleHeading h1,#infRoleModal .tcRoleHeading h2{font-size:20px}
+  #crewRoot #crewRole .tcRoleHeading .crewSub,#infRoleModal .tcRoleHeading p{display:none}
+  #crewRole #roleBackMission,#infRoleModal .infRoleBack{top:10px;left:10px;padding:7px 9px;font-size:10px}
+  #infRoleModal .infRoleActions{top:8px;right:8px}
+  #infRoleModal .infRoleStart{padding:8px 10px;font-size:10px}
+  #coopRoles.tcRoleSelectGrid{height:62vh}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .tcRoleChoice,.tcRoleArt,.tcRoleStats,.tcRoleCheck{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}

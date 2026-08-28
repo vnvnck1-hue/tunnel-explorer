@@ -1,0 +1,307 @@
+{
+ "version": 1,
+ "note": "좌표는 카드 아트 이미지 기준 %. 글자 크기(size/min)는 카드 폭 250px 기준 px.",
+ "refCardWidth": 250,
+ "cardRatio": 1.5,
+ "layers": [
+  {
+   "key": "icon",
+   "field": null,
+   "kind": "icon"
+  },
+  {
+   "key": "tier",
+   "field": "tierName",
+   "kind": "text"
+  },
+  {
+   "key": "name",
+   "field": "name",
+   "kind": "text"
+  },
+  {
+   "key": "kind",
+   "field": "kind",
+   "kind": "text"
+  },
+  {
+   "key": "desc",
+   "field": "desc",
+   "kind": "text"
+  }
+ ],
+ "tiers": {
+  "1": {
+   "icon": {
+    "x": 16.21,
+    "y": 14.39,
+    "size": 67.38,
+    "fill": 0.78
+   },
+   "tier": {
+    "x": 29.1,
+    "y": 3.08,
+    "w": 41.41,
+    "h": 6.77,
+    "size": 22.0,
+    "min": 9,
+    "lh": 1,
+    "ls": 0.13,
+    "weight": 950,
+    "color": "#fff6dc",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 3px rgba(0,0,0,.72)"
+   },
+   "name": {
+    "x": 15.43,
+    "y": 61.26,
+    "w": 67.97,
+    "h": 7.68,
+    "size": 16,
+    "min": 12,
+    "lh": 1.1,
+    "ls": 0,
+    "weight": 950,
+    "color": "#ffffff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 4px rgba(0,0,0,.85)"
+   },
+   "kind": {
+    "x": 18.81,
+    "y": 14.53,
+    "w": 62.39,
+    "h": 5.31,
+    "size": 9.6,
+    "min": 8,
+    "lh": 1.15,
+    "ls": 0.03,
+    "weight": 800,
+    "color": "ffffff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   },
+   "desc": {
+    "x": 18.1,
+    "y": 71.93,
+    "w": 63.81,
+    "h": 17.5,
+    "size": 15.2,
+    "min": 9.6,
+    "lh": 1.32,
+    "ls": 0,
+    "weight": 750,
+    "color": "#37455b",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   }
+  },
+  "2": {
+   "icon": {
+    "x": 19.53,
+    "y": 14.26,
+    "size": 60.94,
+    "fill": 0.78
+   },
+   "tier": {
+    "x": 30.27,
+    "y": 3.53,
+    "w": 39.26,
+    "h": 6.77,
+    "size": 22.0,
+    "min": 9,
+    "lh": 1,
+    "ls": 0.13,
+    "weight": 950,
+    "color": "#fff6dc",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 3px rgba(0,0,0,.72)"
+   },
+   "name": {
+    "x": 19.73,
+    "y": 55.79,
+    "w": 60.55,
+    "h": 7.94,
+    "size": 16,
+    "min": 12,
+    "lh": 1.1,
+    "ls": 0,
+    "weight": 950,
+    "color": "#88b7ff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 4px rgba(0,0,0,.85)"
+   },
+   "kind": {
+    "x": 18.81,
+    "y": 14.53,
+    "w": 62.39,
+    "h": 5.31,
+    "size": 9.6,
+    "min": 8,
+    "lh": 1.15,
+    "ls": 0.03,
+    "weight": 800,
+    "color": "ffffff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   },
+   "desc": {
+    "x": 18.1,
+    "y": 71.93,
+    "w": 63.81,
+    "h": 17.5,
+    "size": 15.2,
+    "min": 9.6,
+    "lh": 1.32,
+    "ls": 0,
+    "weight": 750,
+    "color": "#37455b",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   }
+  },
+  "3": {
+   "icon": {
+    "x": 17.58,
+    "y": 16.6,
+    "size": 64.65,
+    "fill": 0.78
+   },
+   "tier": {
+    "x": 28.52,
+    "y": 5.18,
+    "w": 42.97,
+    "h": 7.16,
+    "size": 22.0,
+    "min": 9,
+    "lh": 1,
+    "ls": 0.13,
+    "weight": 950,
+    "color": "#fff6dc",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 3px rgba(0,0,0,.72)"
+   },
+   "name": {
+    "x": 17.19,
+    "y": 61,
+    "w": 65.23,
+    "h": 8.2,
+    "size": 16,
+    "min": 12,
+    "lh": 1.1,
+    "ls": 0,
+    "weight": 950,
+    "color": "#d93dec",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 4px rgba(0,0,0,.85)"
+   },
+   "kind": {
+    "x": 18.81,
+    "y": 17.2,
+    "w": 62.39,
+    "h": 5.31,
+    "size": 9.6,
+    "min": 8,
+    "lh": 1.15,
+    "ls": 0.03,
+    "weight": 800,
+    "color": "ffffff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   },
+   "desc": {
+    "x": 18.1,
+    "y": 71.93,
+    "w": 63.81,
+    "h": 17.5,
+    "size": 15.2,
+    "min": 9.6,
+    "lh": 1.32,
+    "ls": 0,
+    "weight": 750,
+    "color": "#37455b",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   }
+  },
+  "4": {
+   "icon": {
+    "x": 18.16,
+    "y": 17.9,
+    "size": 63.48,
+    "fill": 0.78
+   },
+   "tier": {
+    "x": 30.08,
+    "y": 6.48,
+    "w": 39.06,
+    "h": 6.77,
+    "size": 22.0,
+    "min": 9,
+    "lh": 1,
+    "ls": 0.13,
+    "weight": 950,
+    "color": "#432500",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 1px rgba(255,255,255,.45)"
+   },
+   "name": {
+    "x": 17.48,
+    "y": 61.65,
+    "w": 65.04,
+    "h": 7.81,
+    "size": 16,
+    "min": 12,
+    "lh": 1.1,
+    "ls": 0,
+    "weight": 950,
+    "color": "#ffe447",
+    "align": "center",
+    "valign": "center",
+    "shadow": "0 2px 4px rgba(0,0,0,.85)"
+   },
+   "kind": {
+    "x": 18.81,
+    "y": 18.53,
+    "w": 62.39,
+    "h": 5.31,
+    "size": 9.6,
+    "min": 8,
+    "lh": 1.15,
+    "ls": 0.03,
+    "weight": 800,
+    "color": "ffffff",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   },
+   "desc": {
+    "x": 18.1,
+    "y": 71.93,
+    "w": 63.81,
+    "h": 17.5,
+    "size": 15.2,
+    "min": 9.6,
+    "lh": 1.32,
+    "ls": 0,
+    "weight": 750,
+    "color": "#37455b",
+    "align": "center",
+    "valign": "center",
+    "shadow": "none"
+   }
+  }
+ }
+}

@@ -599,3 +599,9 @@ Spawn은 페이드 인과 먼지·불씨로 등장감을 만든다. 몬스터 �
 - 외부 원본: `C:/Users/Loadcomplete/Downloads/walking.gif`
 - 프로젝트 출력: `assets/red-fire-dragon/walking-transparent.gif`
 - 출력 규격: 480×480, 37프레임, 프레임당 100ms, 무한 루프
+
+추가 외부 GIF도 동일한 방식으로 처리했다.
+
+- 외부 원본: `C:/Users/Loadcomplete/Downloads/reely-studio-260827-45318.gif`
+- 프로젝트 출력: `assets/red-fire-dragon/reely-studio-260827-45318-transparent.gif`
+- 출력 규격: 480×480, 26프레임, 프레임당 100ms, 무한 루프

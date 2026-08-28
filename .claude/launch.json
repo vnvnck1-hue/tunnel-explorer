@@ -1,0 +1,34 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tunnel-crew-static",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8899"
+      ],
+      "port": 8899
+    },
+    {
+      "name": "tunnel-crew-lighting-lab",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8901"
+      ],
+      "port": 8901,
+      "url": "http://localhost:8901"
+    },
+    {
+      "name": "tunnel-crew-coop",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "coop/server.mjs"
+      ],
+      "port": 5188
+    }
+  ]
+}
