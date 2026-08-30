@@ -10300,7 +10300,7 @@ function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='pl
   drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{},
   /* 도파민 콘텐츠 상태 (docs/design/dopamine-content-spec.md §5.3) — 잭팟 피티·피버 콤보·원정 기록 */
   jackpotPity:0,jackpotFx:null,comboN:0,comboIdle:9,feverT:0,feverCd:0,
-  runStats:{kills:0,jackpots:0,jackpotCores:0,maxCombo:0,fevers:0,relicsFound:0}});infResetXpLog();}
+  runStats:{kills:0,jackpots:0,jackpotCores:0,maxCombo:0,fevers:0,relicsFound:0,dividend:0}});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
  for(const role of Object.values(INF_ROLES)){
@@ -11549,6 +11549,9 @@ function infUpdateEscape(dt){
   return;
  }
  if(esc.state==='incoming'){esc.t+=dt;if(esc.t>=esc.need)infEscapeArrive();return;}
+ /* 도파민 콘텐츠 4 — 탈출 배당 (spec §5.4 이월분 조기 구현): 포트가 열린 뒤 탑승을 미룰수록
+    운반 코어 배당이 초당 +2%p, 상한 30%. 위협은 계속 오르므로 순수한 리스크 베팅이 된다(SDT 자율성). */
+ if(!esc.localBoarded)esc.divT=(esc.divT||0)+dt;
  /* ready — 접근 탑승. 솔로 판정은 그대로 두고, 코옵이면 전원 탑승 집계로 확장한다.
     COOP_escapeAllAboard(): null=솔로 · false=크루 대기 · true=생존자 전원 탑승 (§8.4-3·4) */
  if(esc.localBoarded){
@@ -11648,7 +11651,8 @@ function infPaintEscapeHud(){
  if(esc.state==='placing')t.textContent='탈출 지점 지정 중 · 좌클릭 확정 · 우클릭 취소';
  else if(esc.state==='incoming')t.textContent='탈출 포트 도착까지 '+Math.ceil(esc.need-esc.t)+'초 · 생존하세요';
  else{const cc=(typeof COOP_escapeCount==='function')?COOP_escapeCount():null;
-  t.textContent=cc?('탈출 포트 도착 · 탑승 '+cc.boarded+'/'+cc.total+(esc.localBoarded?' · 크루 대기 중':' · 접근해 탑승하세요')):'탈출 포트 도착 · 접근해 탑승하세요';}
+  const divPct=Math.round(Math.min(30,(esc.divT||0)*2)),divTxt=INF.core>0?' · 배당 +'+divPct+'%'+(divPct>=30?' (최대)':''):'';
+  t.textContent=(cc?('탈출 포트 도착 · 탑승 '+cc.boarded+'/'+cc.total+(esc.localBoarded?' · 크루 대기 중':' · 접근해 탑승하세요')):'탈출 포트 도착 · 접근해 탑승하세요')+divTxt;}
 }
 function infInitSettleState(){
  infInitPermanentMetaOnly();INF.settle={roleId:INF_ROLES[INF.roleId]?INF.roleId:'driller',returnedCores:0,keptCores:0,lostCores:0,remoteCores:0,escaped:false,fromMenu:false,view:'summary',busy:false,centerOnOpen:true,userDragged:false,buyStreak:0,lastBuyAt:0,fxNodeId:null,discovered:[],nodeCamera:null,nodeCameraRole:null};
@@ -12868,6 +12872,11 @@ function infEndRun(reason,escaped){
  if(typeof AICREW!=='undefined')AICREW.onRunEnd();   /* AI 크루 정리 */
  if(!escaped&&typeof infRelicTryPhoenix==='function'&&infRelicTryPhoenix())return;   /* 유물 — 불사조 깃털 (부활 노드와 별도 중첩) */
  if(!escaped&&infPermTryRevive())return;   /* 6.3 emergency restart - real death gate of infinite mode */
+ /* 탈출 배당 정산 — 코어 계정 확정 전에 지급한다 (spec §5.4) */
+ if(escaped&&INF.escape&&(INF.escape.divT||0)>.5&&INF.core>0){
+  const pct=Math.min(.30,INF.escape.divT*.02),bonus=Math.floor(INF.core*pct);
+  if(bonus>0){INF.core+=bonus;if(INF.runStats)INF.runStats.dividend=bonus;toast('탈출 배당 +'+bonus+' 코어 ('+Math.round(pct*100)+'%) — 버틴 만큼의 보수');SFX.buy&&SFX.buy();}
+ }
  CREW.phase='infiniteResult';INF.escape=null;INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
  if(typeof COOP_onInfEnd==='function')COOP_onInfEnd(reason,escaped);   /* 코옵 생환/다운 통지 — 트랙 F (훅 1줄) */
  const newly=[];INF_META.bestDepth=Math.max(INF_META.bestDepth,INF.depth);INF_META.bestBlocks=Math.max(INF_META.bestBlocks,INF.totalBlocks);INF_META.totalBosses+=INF.bosses;
@@ -12892,7 +12901,7 @@ function infEndRun(reason,escaped){
  if(INF.feverT>0)infEndFever();INF.jackpotFx=null;   /* 피버 비네트·잭팟 큐 정리 — 정산 화면에 새지 않게 */
  infEl('infResultStats').innerHTML='<div>도달 심층<b>'+INF.depth+'</b></div><div>처치 보스<b>'+INF.bosses+'</b></div><div>파괴 블록<b>'+INF.totalBlocks+'</b></div>'
   +'<div>'+(escaped?'확보 코어':'소실 코어')+'<b'+(escaped?'':' style="color:#ff8da8"')+'>'+(escaped?INF.core:lostCores)+'</b></div>'+(keptCores>0?'<div>회수 보존<b style="color:#7febd0">'+keptCores+'</b></div>':'')
-  +'<div style="grid-column:1/-1">이번 원정의 기록<b style="font-size:14px;line-height:1.6">최대 콤보 x'+(rs.maxCombo||0)+' · 노다지 '+(rs.jackpots||0)+'회'+(rs.jackpotCores?'(+'+rs.jackpotCores+' 코어)':'')+' · 피버 '+(rs.fevers||0)+'회 · 처치 '+(rs.kills||0)+' · 유물 발굴 '+(rs.relicsFound||0)+'</b></div>'
+  +'<div style="grid-column:1/-1">이번 원정의 기록<b style="font-size:14px;line-height:1.6">최대 콤보 x'+(rs.maxCombo||0)+' · 노다지 '+(rs.jackpots||0)+'회'+(rs.jackpotCores?'(+'+rs.jackpotCores+' 코어)':'')+' · 피버 '+(rs.fevers||0)+'회 · 처치 '+(rs.kills||0)+' · 유물 발굴 '+(rs.relicsFound||0)+(rs.dividend?' · 탈출 배당 +'+rs.dividend:'')+'</b></div>'
   +(escaped?'':'<div style="grid-column:1/-1">묘비명<b style="font-size:14px;color:#ff8da8">'+epitaph+'</b></div>')
   +'<div style="grid-column:1/-1">역할 행동별 경험치<b style="font-size:15px;line-height:1.6">'+(xpSummary||'없음')+'</b></div>';
  infEl('infUnlockText').textContent=(newly.length?'새 특성 해금: '+newly.join(', '):'최고 기록: 심층 '+INF_META.bestDepth+' · 블록 '+INF_META.bestBlocks)+' · 기지 보관 코어 '+(INF_META.bankedCores||0);
