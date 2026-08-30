@@ -10733,6 +10733,7 @@ function infAwardXp(base,kind,opts){
 /* 적 처치 경험치 — 센트리가 잡은 적은 엔지니어의 지원 기여로 정산한다. */
 function infAwardEnemyKillXp(e,src){
  if(!INF.active||!e)return;
+ if(INF.runStats)INF.runStats.kills++;   /* 원정 기록 (spec §5.3-3) */
  if(e.boss){infAwardXp(INF_XP_TABLE.killBoss,'combat',{x:e.x,y:e.y,dy:56,label:'보스 격파',color:'#FFD36E',size:18,check:false});return;}
  const tier=e.apex?INF_XP_TABLE.apexMul:(e.elite?INF_XP_TABLE.eliteMul:1);
  if(src==='turret')infAwardXp(INF_XP_TABLE.turretKill*tier,'support',{x:e.x,y:e.y,dy:30,label:'센트리 처치',color:'#C7A0FF',size:13});
@@ -11930,6 +11931,28 @@ function infShowPermanentTooltip(node,button){
  top=Math.max(48,Math.min(mr.height-tip.offsetHeight-10,top));
  tip.style.left=left+'px';tip.style.top=top+'px';
 }
+/* 도파민 콘텐츠 3 — 정산 카운트업 (spec §5.3-3, 명제 T1: 숫자는 세어서 준다)
+   DOM setInterval 구동이라 rAF 정지와 무관. reduced-motion·재방문 시 즉시 표시. */
+function infSettleCountUp(){
+ if(!INF.settle||INF.settle.counted)return;
+ INF.settle.counted=true;
+ if(infReducedMotion())return;
+ const cells=infEl('infSettleLedger').querySelectorAll('b');
+ cells.forEach((b,i)=>{
+  const target=parseInt(b.textContent,10);
+  if(!(target>0))return;
+  b.textContent='0';
+  const t0=performance.now(),dur=800,delay=i*140;let tick=0;
+  const iv=setInterval(()=>{
+   if(!b.isConnected){clearInterval(iv);return;}
+   const p=Math.min(1,(performance.now()-t0-delay)/dur);
+   if(p<=0)return;
+   const v=Math.round(target*(1-Math.pow(1-p,3)));
+   if(String(v)!==b.textContent){b.textContent=String(v);if(++tick%3===0)SFX.tick&&SFX.tick();}
+   if(p>=1){clearInterval(iv);if(i===cells.length-1)SFX.cache&&SFX.cache();}
+  },40);
+ });
+}
 function infPaintSettlement(){
  if(!INF.settle)infInitSettleState();
  const runRole=INF_ROLES[INF.settle.roleId]||INF_ROLES.driller,bank=INF_META.bankedCores||0,
@@ -11951,6 +11974,7 @@ function infPaintSettlement(){
   :(kept?'<b>회수 강화</b>'+(remote?'와 <b>원격 전송</b>('+remote+'개)':'')+' 덕분에 코어 '+kept+'개를 지켰습니다. 남은 자원은 소실되었습니다.':'회수 강화·원격 전송 노드를 활성화하면 쓰러져도 코어 일부를 지킬 수 있습니다.');
  infEl('infSettleRetry').hidden=!!INF.settle.fromMenu;
  infEl('infSettleDone').textContent=INF.settle.fromMenu?'메인 메뉴로':'기지 메뉴로';
+ if(view==='summary')infSettleCountUp();
  if(view==='relic'){if(typeof infPaintRelics==='function')infPaintRelics();return;}   /* ③ 유물 보관고 (v7.6.0) */
  if(view!=='map')return;
  /* ② 전체화면 성장 지도 — 직업 잠금 없음 */
@@ -12285,7 +12309,7 @@ function infRelicGrant(relic,x,y){
  const R=infRelicMeta();
  if(!relic){INF.core+=2;if(x!=null)J.text(x,y-40,'코어 +2 (도감 완성)','#7FEBD0',14);return;}
  R.owned.push(relic.id);infSaveMeta();
- INF.relicPityBlocks=0;INF.relicDropped=(INF.relicDropped||0)+1;
+ INF.relicPityBlocks=0;INF.relicDropped=(INF.relicDropped||0)+1;if(INF.runStats)INF.runStats.relicsFound++;
  const tc=INF_RELIC_TIER[relic.tier].col,el=relic.elem?INF_RELIC_ELEM[relic.elem]:null;
  if(x!=null){
   J.flash(x,y,CELL*1.4,'rgba(255,235,180,.95)');
@@ -12828,6 +12852,17 @@ function infPaintRelics(){
  bind('infRelicMapOpen',()=>{infRelicHideTip();infSettleShowMap();});
  bind('infRelicClose',()=>{infRelicHideTip();if(INF.settle&&INF.settle.relicBack==='map')infSettleShowMap();else if(INF.settle&&!INF.settle.fromMenu)infSettleShowSummary();else infCloseSettlement();});
 })();
+/* 실패의 재해석(명제 T3) — 전멸도 이야기가 되도록 상황 기반 묘비명을 뽑는다 */
+function infRunEpitaph(reason){
+ const rs=INF.runStats||{};
+ if(INF.jackpotFx)return '노다지를 세다가 순직 — 코어는 아직 따뜻했다';
+ if(INF.bossActive)return '보스의 눈을 똑바로 바라보다 산화';
+ if(INF.feverT>0)return '피버 드릴의 불꽃 속에서 — 멈추는 법을 몰랐다';
+ if(rs.maxCombo>=25)return '콤보 x'+rs.maxCombo+'의 전설로 지층에 새겨짐';
+ if(INF.depth>=4)return '심층 '+INF.depth+' — 아무도 내려가 본 적 없는 곳에서';
+ if((rs.kills|0)===0)return '싸움 한 번 없이 조용히 파다가 갔다';
+ return reason+' — 다음 굴착자는 더 깊이 간다';
+}
 function infEndRun(reason,escaped){
  if(!INF.active||CREW.phase==='infiniteResult')return;
  if(typeof AICREW!=='undefined')AICREW.onRunEnd();   /* AI 크루 정리 */
@@ -12853,9 +12888,12 @@ function infEndRun(reason,escaped){
  infEl('infResultReason').textContent=escaped
   ?(reason+' · 심층 '+INF.depth+'에서 생환 · 런 성장은 다음 출격에서 초기화됩니다.')
   :(reason+' · 다음 런에서는 모든 런 성장이 초기화됩니다.');
- const xpSummary=infXpLogSummary();
+ const xpSummary=infXpLogSummary(),rs=INF.runStats||{},epitaph=escaped?'':infRunEpitaph(reason);
+ if(INF.feverT>0)infEndFever();INF.jackpotFx=null;   /* 피버 비네트·잭팟 큐 정리 — 정산 화면에 새지 않게 */
  infEl('infResultStats').innerHTML='<div>도달 심층<b>'+INF.depth+'</b></div><div>처치 보스<b>'+INF.bosses+'</b></div><div>파괴 블록<b>'+INF.totalBlocks+'</b></div>'
   +'<div>'+(escaped?'확보 코어':'소실 코어')+'<b'+(escaped?'':' style="color:#ff8da8"')+'>'+(escaped?INF.core:lostCores)+'</b></div>'+(keptCores>0?'<div>회수 보존<b style="color:#7febd0">'+keptCores+'</b></div>':'')
+  +'<div style="grid-column:1/-1">이번 원정의 기록<b style="font-size:14px;line-height:1.6">최대 콤보 x'+(rs.maxCombo||0)+' · 노다지 '+(rs.jackpots||0)+'회'+(rs.jackpotCores?'(+'+rs.jackpotCores+' 코어)':'')+' · 피버 '+(rs.fevers||0)+'회 · 처치 '+(rs.kills||0)+' · 유물 발굴 '+(rs.relicsFound||0)+'</b></div>'
+  +(escaped?'':'<div style="grid-column:1/-1">묘비명<b style="font-size:14px;color:#ff8da8">'+epitaph+'</b></div>')
   +'<div style="grid-column:1/-1">역할 행동별 경험치<b style="font-size:15px;line-height:1.6">'+(xpSummary||'없음')+'</b></div>';
  infEl('infUnlockText').textContent=(newly.length?'새 특성 해금: '+newly.join(', '):'최고 기록: 심층 '+INF_META.bestDepth+' · 블록 '+INF_META.bestBlocks)+' · 기지 보관 코어 '+(INF_META.bankedCores||0);
  infEl('infResultModal').classList.add('on');infUpdateMenuRecord();
