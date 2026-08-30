@@ -1,0 +1,506 @@
+[
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "고압 드릴",
+  "id": "d_motor",
+  "tier": 1,
+  "n": "토크 증폭 모터",
+  "d": "일반 채굴과 기반암 균열 속도 +18%"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "균열 유지",
+  "id": "d_resin",
+  "tier": 1,
+  "n": "균열 고착 수지",
+  "d": "균열 유지 유예 +1.25초 · 소실 속도 -22%"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "기반암",
+  "id": "d_fault",
+  "tier": 2,
+  "n": "단층 추적 비트",
+  "d": "기반암과 코어 암반 균열 속도 +25%"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "돌파 파기",
+  "id": "d_pressure",
+  "tier": 2,
+  "n": "과압 실린더",
+  "d": "Q의 균열 압력 +25% · 재사용 대기시간 -15%"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "지층 붕괴",
+  "id": "d_seismic",
+  "tier": 3,
+  "n": "지진 공진축",
+  "d": "기반암 돌파 시 주변 일반 벽에 파쇄 충격파"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "균열 유지",
+  "id": "d_recirc",
+  "tier": 3,
+  "n": "열회수 균열기",
+  "d": "기반암 균열 +20% · 균열 소실 속도 절반"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "코어 암반",
+  "id": "d_mantle",
+  "tier": 4,
+  "n": "맨틀 천공 키",
+  "d": "코어 암반 필요 압력 -19% · 모든 기반암 균열 +12.5%"
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "기반암",
+  "id": "d_eternal",
+  "tier": 4,
+  "n": "장기 단층 각인",
+  "d": "균열 유지시간 2배 · 소실 속도 -50% · 균열 속도 +20%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "파쇄 발사기",
+  "id": "g_cycler",
+  "tier": 1,
+  "n": "고속 약실 순환기",
+  "d": "파쇄탄 재사용 대기시간 -14%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "성형 작약",
+  "id": "g_liner",
+  "tier": 1,
+  "n": "텅스텐 라이너",
+  "d": "파쇄탄의 벽 피해 +20%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "신관",
+  "id": "g_fuse",
+  "tier": 2,
+  "n": "가변 지연 신관",
+  "d": "자동 기폭 시간 -28% · 부착 즉시 조기 기폭 가능"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "폭파 범위",
+  "id": "g_radius",
+  "tier": 2,
+  "n": "파쇄 확장 슬리브",
+  "d": "파쇄 반경 +1칸 · 외곽 벽 피해 보정"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "조기 기폭",
+  "id": "g_remote",
+  "tier": 3,
+  "n": "원격 과충전 기폭기",
+  "d": "E 조기 기폭 시 파쇄 위력 +75%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "대인 파쇄",
+  "id": "g_hunter",
+  "tier": 3,
+  "n": "대인 파편 재킷",
+  "d": "파쇄탄의 적 피해 +65% · 중화기 피해 +12%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "광역 폭파",
+  "id": "g_cluster",
+  "tier": 4,
+  "n": "군집 파쇄 작약",
+  "d": "파쇄 반경 2칸 · 벽 피해 +17.5%"
+ },
+ {
+  "role": "gunner",
+  "req": null,
+  "kind": "파쇄 발사기",
+  "id": "g_zero",
+  "tier": 4,
+  "n": "무정지 발사 사이클",
+  "d": "파쇄탄 재사용 대기시간 -22.5% · 벽 피해 +12.5%"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "장거리 플레어",
+  "id": "s_flare",
+  "tier": 1,
+  "n": "고광도 연소제",
+  "d": "플레어 조명 반경과 지속시간 +18%"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "그래플 훅",
+  "id": "s_cable",
+  "tier": 1,
+  "n": "경량 인장 케이블",
+  "d": "그래플 최대 거리 +1칸 · 이동 속도 +5%"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "그래플 훅",
+  "id": "s_winch",
+  "tier": 2,
+  "n": "회생 제동 윈치",
+  "d": "그래플 재사용 대기시간 -28%"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "정찰 펄스",
+  "id": "s_spectrum",
+  "tier": 2,
+  "n": "다중 스펙트럼 스캐너",
+  "d": "정찰 반경 +1칸 · 신규 구역 탐사 경험치 +1"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "독립 시야",
+  "id": "s_watch",
+  "tier": 3,
+  "n": "감시자 광학계",
+  "d": "플레어 독립 시야 +2칸 · 정찰 표식 지속 +1.2초"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "구역 탐사",
+  "id": "s_relay",
+  "tier": 3,
+  "n": "원격 측량 릴레이",
+  "d": "플레어 지속시간 +35% · 탐사 경험치 +2"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "그래플 훅",
+  "id": "s_horizon",
+  "tier": 4,
+  "n": "수평선 견인 장치",
+  "d": "그래플 최대 거리 7칸 · 재사용 대기시간 -20% · 이동 +6%"
+ },
+ {
+  "role": "scout",
+  "req": null,
+  "kind": "장거리 플레어",
+  "id": "s_sun",
+  "tier": 4,
+  "n": "인공 태양 플레어",
+  "d": "플레어 반경·지속 +25% · 독립 시야 +1.5칸 · 정찰 반경 6.5칸"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "전력 노드",
+  "id": "e_cap",
+  "tier": 1,
+  "n": "고밀도 축전지",
+  "d": "전력 노드 지속시간 +25% · 공급 반경 +0.5칸"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "센트리",
+  "id": "e_mag",
+  "tier": 1,
+  "n": "확장 탄약 호퍼",
+  "d": "새 센트리 탄창 +6 · 설치된 센트리도 즉시 보급"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "센트리",
+  "id": "e_cooling",
+  "tier": 2,
+  "n": "능동 냉각 재킷",
+  "d": "센트리 발사 간격 -22%"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "전력망",
+  "id": "e_grid",
+  "tier": 2,
+  "n": "분산 전력 프로토콜",
+  "d": "전력 노드 최대 +1 · 공급 반경 +0.75칸"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "설치 한도",
+  "id": "e_twin",
+  "tier": 3,
+  "n": "쌍중 센트리 설계",
+  "d": "센트리 최대 설치 수 +1 · 지속시간 +25%"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "중 센트리",
+  "id": "e_heavy",
+  "tier": 3,
+  "n": "중량 레일 센트리",
+  "d": "센트리 피해 +45% · 사거리 +1칸 · 탄창 +6, 연사력 -11%"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "자율 전력",
+  "id": "e_auto",
+  "tier": 4,
+  "n": "폐쇄형 자율 동력로",
+  "d": "센트리가 전력망 밖에서 절반 출력으로 가동 · 재장전 시간 -15%"
+ },
+ {
+  "role": "engineer",
+  "req": null,
+  "kind": "요새화",
+  "id": "e_fortress",
+  "tier": 4,
+  "n": "심층 요새 네트워크",
+  "d": "센트리 최대 3, 공급 반경 5칸 · 센트리 탄창 +6·연사 +10%"
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "굴착 확장",
+  "id": "u_large_bit",
+  "tier": 1,
+  "n": "대형 비트",
+  "d": "드릴이 좌우 벽까지 함께 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "집중 굴착",
+  "id": "u_pierce_bit",
+  "tier": 1,
+  "n": "압쇄 비트",
+  "d": "같은 벽을 계속 깎으면 드릴 피해가 점점 강해집니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "파쇄",
+  "id": "u_shockwave",
+  "tier": 1,
+  "n": "파쇄 충격파",
+  "d": "벽을 부수면 주변 벽에도 충격이 퍼집니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "고속 회전",
+  "id": "u_fast_spin",
+  "tier": 1,
+  "n": "고속 회전",
+  "d": "드릴이 더 빠르게 회전하고 벽을 빠르게 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "자원 회수",
+  "id": "u_magnet",
+  "tier": 1,
+  "n": "자원 흡입기",
+  "d": "떨어진 자원이 먼 거리에서도 빠르게 끌려옵니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "굴진 이동",
+  "id": "u_drive",
+  "tier": 1,
+  "n": "굴진 가속",
+  "d": "드릴을 사용하는 동안 이동이 빨라집니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "굴착 확장",
+  "id": "u_triple",
+  "tier": 2,
+  "n": "삼중 드릴",
+  "d": "정면과 양옆의 벽을 동시에 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "자동 굴착",
+  "id": "u_aux",
+  "tier": 2,
+  "n": "보조 드릴",
+  "d": "작은 드릴이 가까운 벽을 자동으로 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "폭발 굴착",
+  "id": "u_explosive",
+  "tier": 2,
+  "n": "폭발 드릴",
+  "d": "벽을 부술 때마다 작은 굴착 폭발이 발생합니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "반복 굴착",
+  "id": "u_afterimage",
+  "tier": 2,
+  "n": "잔상 드릴",
+  "d": "벽을 깎은 자리를 잠시 후 한 번 더 파냅니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "파편 굴착",
+  "id": "u_shards",
+  "tier": 2,
+  "n": "파편 탄환",
+  "d": "벽을 부수면 굴착 파편이 사방으로 날아갑니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "굴착 방어",
+  "id": "u_guard",
+  "tier": 2,
+  "n": "굴착 보호막",
+  "d": "벽을 부술 때마다 짧은 보호막을 얻습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "연쇄 파괴",
+  "id": "u_chain",
+  "tier": 3,
+  "n": "연쇄 붕괴",
+  "d": "폭발로 부서진 벽에서도 새로운 폭발이 일어납니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "자동 굴착",
+  "id": "u_satellite",
+  "tier": 3,
+  "n": "드릴 위성",
+  "d": "두 개의 드릴이 주위를 돌며 벽을 자동으로 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "관통 굴착",
+  "id": "u_laser",
+  "tier": 3,
+  "n": "파쇄 레이저",
+  "d": "드릴이 굵은 관통 광선으로 뒤쪽 벽까지 깎습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "자동 포격",
+  "id": "u_auto_shell",
+  "tier": 3,
+  "n": "자동 굴착탄",
+  "d": "벽을 연속으로 부수면 굴착탄이 사방으로 발사됩니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "광역 파쇄",
+  "id": "u_vortex",
+  "tier": 3,
+  "n": "붕괴 소용돌이",
+  "d": "벽을 부수면 주변 자원과 벽을 끌어당기는 폭발이 생깁니다."
+ },
+ {
+  "role": "driller",
+  "req": null,
+  "kind": "돌파 파기",
+  "id": "u_wide_q",
+  "tier": 3,
+  "n": "광역 천공",
+  "d": "Q가 지나가는 넓은 통로를 한꺼번에 뚫습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "자동 굴착",
+  "id": "u_army",
+  "tier": 4,
+  "n": "무한 굴착 군단",
+  "d": "여러 자동 드릴이 벽을 파괴하지만 중량 때문에 이동 속도가 10% 감소합니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "초대형 굴착",
+  "id": "u_planet_breaker",
+  "tier": 4,
+  "n": "행성 파쇄기",
+  "d": "거대 드릴이 화면을 쓸어내지만 발동 충격으로 최대 HP의 1.5%를 잃습니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "대붕괴",
+  "id": "u_grand_collapse",
+  "tier": 4,
+  "n": "대붕괴",
+  "d": "넓은 지역을 무너뜨리지만 발동 충격으로 최대 HP의 2.5%를 잃습니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "초대형 굴착",
+  "id": "u_giant_bit",
+  "tier": 4,
+  "n": "초거대 비트",
+  "d": "2칸 폭·1칸 깊이로 갈아버리지만 드릴 열이 25% 빠르게 쌓입니다."
+ },
+ {
+  "role": "all",
+  "req": null,
+  "kind": "드릴 폭풍",
+  "id": "u_storm",
+  "tier": 4,
+  "n": "드릴 폭풍",
+  "d": "회전 드릴들이 벽을 깎지만 제어 부담으로 이동 속도가 12% 감소합니다."
+ },
+ {
+  "role": "all",
+  "req": "drill",
+  "kind": "무정지 과급",
+  "id": "u_endless",
+  "tier": 4,
+  "n": "무정지 과급",
+  "d": "과열 중 멈추지 않지만 출력이 50%가 되고 HP가 계속 감소합니다."
+ }
+]

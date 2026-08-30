@@ -26,6 +26,16 @@ npm start
 
 호스트 PC에 표시되는 **LAN 주소**를 맥에서 열고, 방 코드로 참가합니다. 자세한 절차는 [`coop/README.md`](coop/README.md).
 
+### AI 크루 (플레이어 AI)
+
+직업 선택 화면에서 카드 옆 **`+ AI`** 를 눌러 AI 동료를 편성합니다. 서버도 코옵도 필요 없습니다.
+
+```bash
+python ai/inject-ai-crew.py
+```
+
+최신 게임 HTML에 AI를 주입한 `...-ai.html` 이 만들어집니다. 자세한 내용은 [`ai/README.md`](ai/README.md).
+
 ## 구성
 
 | 경로 | 설명 |

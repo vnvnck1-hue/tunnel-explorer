@@ -58,6 +58,18 @@
   position:absolute;
   inset:0;
   max-width:none;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+
+#infRoleModal .infRoleGrid.tcRoleSelectGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+}
+
+#crewRoot .roleBtn.tcRoleChoice,
+#infRoleModal .infRoleCard.tcRoleChoice{
+  min-height:50vh!important;
 }
 
 .tcRoleChoice,
@@ -109,12 +121,12 @@
   position:absolute;
   z-index:-1;
   left:50%;
-  bottom:clamp(65px,7vh,92px);
-  width:min(118%,620px);
-  height:88%;
+  bottom:clamp(14px,2.2vh,28px);
+  width:min(90%,620px);
+  height:92%;
   object-fit:contain;
   object-position:center bottom;
-  transform:translateX(-50%) scale(.95);
+  transform:translateX(-50%) scale(.98);
   transform-origin:50% 88%;
   filter:grayscale(1) saturate(.05) brightness(.5) contrast(1.13);
   opacity:.84;
@@ -152,7 +164,7 @@
 .tcRoleCode{
   position:absolute;
   z-index:4;
-  top:clamp(112px,15vh,154px);
+  top:clamp(58px,8vh,82px);
   left:clamp(14px,1.5vw,25px);
   display:inline-flex;
   align-items:center;
@@ -227,7 +239,7 @@
 .tcRoleCheck{
   position:absolute;
   z-index:9;
-  top:clamp(106px,14.2vh,148px);
+  top:clamp(52px,7.2vh,76px);
   right:clamp(14px,1.5vw,25px);
   display:grid;
   place-items:center;

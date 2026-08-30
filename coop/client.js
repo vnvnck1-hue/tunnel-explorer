@@ -603,8 +603,23 @@
     };
   }
 
+  /* 메인 메뉴의 LAN 코옵 버튼은 마크업에서 '임시 잠금' 상태로 배포된다
+     (서버 없이 열면 눌러도 아무 일이 없으므로). 코옵 호스트로 서빙되는
+     경우에만 잠금을 푼다 — file:// 로 연 빌드는 잠긴 채로 남는다. */
+  function unlockMenuButton() {
+    const btn = $('menuCoop');
+    if (!btn) return;
+    btn.disabled = false;
+    btn.classList.remove('locked');
+    btn.removeAttribute('aria-disabled');
+    btn.removeAttribute('title');
+    const tag = btn.querySelector('.lockedTag');
+    if (tag) tag.remove();
+  }
+
   function boot() {
     if (location.protocol === 'file:') return;
+    unlockMenuButton();
     buildUI();
     connect();
   }

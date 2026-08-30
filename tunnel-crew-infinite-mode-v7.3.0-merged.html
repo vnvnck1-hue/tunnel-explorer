@@ -158,6 +158,12 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
 /* ══ 루프 데모: 사이드 튜너 숨김 · 풀스크린 플레이 ══ */
 #side{display:none!important}
 #shell{grid-template-columns:1fr!important}
+/* 실제 보이는 뷰포트에 게임 무대를 고정한다. 브라우저 UI·작업표시줄·모니터 배율 변경에도
+   하단이 레이아웃 뷰포트 밖으로 밀려나지 않도록 JS의 --tc-vh/--tc-vw와 함께 동작한다. */
+html,body{width:var(--tc-vw,100vw);height:var(--tc-vh,100dvh);min-width:0;min-height:0;max-width:100%;max-height:100%;overflow:hidden}
+body{position:fixed;inset:0}
+#shell,#stageWrap,#app{width:100%;height:100%;min-width:0;min-height:0;max-width:100%;max-height:100%;overflow:hidden}
+#stage{position:absolute;inset:0;width:100%;height:100%}
 #crewRoot{position:absolute;inset:0;z-index:50;pointer-events:none}
 #crewRoot .crewPanel{pointer-events:auto;position:absolute;inset:0;display:none;
   flex-direction:column;align-items:center;justify-content:center;
@@ -237,6 +243,24 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
 #resHud .chip .num{font:800 16px/1 ui-monospace,Menlo,Consolas,monospace;
   color:#f5edff;min-width:1.4em;text-align:right;font-variant-numeric:tabular-nums}
 #resHud .sep{width:1px;height:16px;background:rgba(160,120,220,.35)}
+/* Production currency art — transparent PNGs shared by every economy surface. */
+.currencyIcon,.ic.p,.ic.b,#tc-resources .tcDot.pulp,#tc-resources .tcDot.bloom{
+  display:inline-block;flex:0 0 auto;border:0;border-radius:0;background-color:transparent;
+  background-position:center;background-repeat:no-repeat;background-size:contain;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.55));
+}
+.currencyIcon.pulp,.ic.p,#tc-resources .tcDot.pulp{background-image:url('assets/ui/currency/currency-pulp.png')}
+.currencyIcon.bloom,.ic.b,#tc-resources .tcDot.bloom{background-image:url('assets/ui/currency/currency-bloom.png')}
+.currencyIcon.relic{background-image:url('assets/ui/currency/currency-relic.png')}
+.currencyIcon.core{background-image:url('assets/ui/currency/currency-core.png')}
+.rchip .ic,.cost .ic{width:22px;height:22px;border:0;border-radius:0;box-shadow:none}
+#resHud .chip .ic{width:25px;height:25px;border:0;border-radius:0;box-shadow:none;background-color:transparent;background-position:center;background-repeat:no-repeat;background-size:contain}
+#resHud .chip.pulp .ic{width:25px;height:25px;background-color:transparent;background-image:url('assets/ui/currency/currency-pulp.png')}
+#resHud .chip.bloom .ic{width:25px;height:25px;background-color:transparent;background-image:url('assets/ui/currency/currency-bloom.png')}
+#tc-resources .tcDot{width:calc(22px * var(--fit));height:calc(22px * var(--fit));min-width:12px;min-height:12px;border:0;border-radius:0}
+.tcSlot .ico.currencyIcon{width:clamp(24px,calc(38px * var(--fit)),54px);height:clamp(24px,calc(38px * var(--fit)),54px)}
+.tcSlot .ico.currencyIcon.empty{opacity:.28;filter:grayscale(.72) drop-shadow(0 1px 1px rgba(0,0,0,.45))}
+.tcLootCard .ico.currencyIcon{width:clamp(28px,calc(42px * var(--fit)),60px);height:clamp(28px,calc(42px * var(--fit)),60px)}
 #crewHud{position:absolute;left:12px;right:12px;top:calc(52px + env(safe-area-inset-top));z-index:45;pointer-events:none;
   display:none;font:700 13px "Pretendard","Malgun Gothic",sans-serif;color:#f0e6ff;
   text-shadow:0 1px 3px #000}
@@ -636,14 +660,14 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
 #infRoleModal .infRoleStartCard{
   position:absolute;
   z-index:11;
-  top:clamp(178px,20vh,255px);
-  left:50%;
+  right:clamp(14px,1.5vw,25px);
+  bottom:clamp(14px,2.5vh,28px);
   display:none;
   align-items:center;
   justify-content:center;
   min-width:clamp(132px,12vw,180px);
   padding:11px 20px;
-  transform:translateX(-50%);
+  transform:none;
   border:1px solid color-mix(in srgb,var(--role) 74%,#fff 18%);
   border-radius:999px;
   background:var(--role);
@@ -655,15 +679,16 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
   pointer-events:auto;
 }
 #infRoleModal .infRoleCard.selected .infRoleStartCard{display:inline-flex}
+#infRoleModal .infRoleCard.selected .tcRoleCopy{right:clamp(180px,16vw,220px)}
 #infRoleModal .infRoleStartCard:hover,#infRoleModal .infRoleStartCard:focus-visible{
   filter:brightness(1.12);
   outline:2px solid rgba(255,255,255,.72);
   outline-offset:3px;
 }
-#infRoleModal .infRoleStartCard:active{transform:translateX(-50%) scale(.97)}
+#infRoleModal .infRoleStartCard:active{transform:scale(.97)}
 #infRoleModal .infRoleActions{display:none}
-@media(max-width:760px){#infRoleModal .infRoleStartCard{top:clamp(150px,19vh,220px);padding:10px 16px;font-size:11px}}
-@media(max-width:560px){#infRoleModal .infRoleBack{top:10px;left:10px;padding:8px 11px;background:#a92b3c;color:#fff5f1}#infRoleModal .infRoleStartCard{top:clamp(132px,18vh,188px);min-width:126px}}
+@media(max-width:760px){#infRoleModal .infRoleStartCard{right:10px;bottom:10px;min-width:118px;padding:9px 14px;font-size:10px}#infRoleModal .infRoleCard.selected .tcRoleCopy{right:12px;bottom:62px}}
+@media(max-width:560px){#infRoleModal .infRoleBack{top:10px;left:10px;padding:8px 11px;background:#a92b3c;color:#fff5f1}#infRoleModal .infRoleStartCard{right:8px;bottom:8px;min-width:110px}}
 </style>
 </head>
 <body>
@@ -696,11 +721,12 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
             <h1><span class="menuLogoFx"><img class="menuLogo" src="assets/menu/title-tunnel-crew-v1.png" alt="TUNNEL CREW" draggable="false" decoding="async" onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false"><span class="menuLogoSheen" aria-hidden="true"></span></span><span class="menuLogoFallback" hidden>TUNNEL CREW</span></h1>
             <nav class="modeGrid" aria-label="게임 모드">
               <button class="modeBtn" id="menuSolo"><i>01</i><b>솔로 미션</b><span>MISSION / 드릴러 + 보조 드론</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 장악도 40%마다 보스</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn" id="menuNodeTree"><i>03</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매·발견 테스트</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn" id="menuProjectileLab"><i>04</i><b>투사체 연구소</b><span>LAB / 무기와 보스 패턴 테스트</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn bossLab" id="menuBossLab"><i>05</i><b>보스 등장 테스트</b><span>TEST / 무한 필드 즉시 등장·실시간 스펙 조절</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>06</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 일반·테스트 씬 선택</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn infinite" id="menuStarmap"><i>03</i><b>행성 원정</b><span>STARMAP / 행성을 골라 중심부까지</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn" id="menuNodeTree"><i>04</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매·발견 테스트</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn" id="menuProjectileLab"><i>05</i><b>투사체 연구소</b><span>LAB / 무기와 보스 패턴 테스트</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn bossLab" id="menuBossLab"><i>06</i><b>보스 등장 테스트</b><span>TEST / 무한 필드 즉시 등장·실시간 스펙 조절</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>07</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
             </nav>
             <div class="menuTools">
               <button type="button" id="menuMute">SOUND · ON</button>
@@ -781,10 +807,10 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
     <div class="crewPanel" id="crewRole">
       <div class="tcRoleHeading"><h1>직업 선택</h1><p class="crewSub" id="crewRoleSub">역할을 고르고 땅굴에 하강한다.</p></div>
       <div class="roleGrid tcRoleSelectGrid" aria-label="직업 선택">
-        <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="assets/menu/char-driller-select-v4.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">길을 연다 · 고압 드릴과 기반암 균열</span><span class="tcRoleStats"><span>지형 장비　고압 중형 드릴</span><span>전투 장비　리벳 권총</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="assets/menu/char-gunner-select-v4.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">적을 지운다 · 중화기와 계획 발파</span><span class="tcRoleStats"><span>지형 장비　파쇄 발사기</span><span>전투 장비　벨트식 중화기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="assets/menu/char-scout-select-v4.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">어둠을 연다 · 플레어와 기동 정찰</span><span class="tcRoleStats"><span>지형 장비　휴대 절삭기</span><span>전투 장비　정찰 카빈</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="assets/menu/char-engineer-select-v4.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">공간을 만든다 · 설치물과 전력망</span><span class="tcRoleStats"><span>지형 장비　공학 커터·전력 노드</span><span>전투 장비　센트리·서비스 총기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="assets/characters/driller-playable.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">길을 연다 · 고압 드릴과 기반암 균열</span><span class="tcRoleStats"><span>지형 장비　고압 중형 드릴</span><span>전투 장비　리벳 권총</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="assets/characters/gunner-playable.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">적을 지운다 · 중화기와 계획 발파</span><span class="tcRoleStats"><span>지형 장비　파쇄 발사기</span><span>전투 장비　벨트식 중화기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="assets/characters/scout-playable.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">어둠을 연다 · 플레어와 기동 정찰</span><span class="tcRoleStats"><span>지형 장비　휴대 절삭기</span><span>전투 장비　정찰 카빈</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="assets/characters/engineer-playable.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">공간을 만든다 · 설치물과 전력망</span><span class="tcRoleStats"><span>지형 장비　공학 커터·전력 노드</span><span>전투 장비　센트리·서비스 총기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
       </div>
       <div class="tcRoleFeedback" id="crewRoleFeedback" aria-live="polite"></div>
       <button type="button" class="backLink" id="roleBackMission">← 바이옴</button>
@@ -934,10 +960,10 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
  <div class="tcMod" id="tc-status"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcAvatar">⛏</div><div class="tcStatusBars"><div class="tcStatusMeta"><div><div class="tcTiny" id="tcRoleName">DRILLER</div><div class="tcTitle" id="tcHpText">HP 181 / 181</div></div><div class="tcWeapon" id="tcWeapon">DRILL</div></div><div class="tcGauge"><div class="tcGaugeFill" id="tcHpGauge" style="background:linear-gradient(90deg,#ff6b76,#ff9a7a)"></div></div><div class="tcRow"><span class="tcTiny tcGrow">DRILL HEAT</span><span class="tcTiny" id="tcHeatText">0%</span></div><div class="tcGauge"><div class="tcGaugeFill warn" id="tcHeatGauge"></div></div></div></div></div></div>
  <div class="tcMod" id="tc-skills"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcSkill ready" id="tcSkillQ"><b>Q</b><span id="tcSkillQText">돌파 파기</span></div><div class="tcSkill ready"><b>SPACE</b><span>대시</span></div><div class="tcSkill ready"><b>F</b><span>손전등</span></div><div class="tcSkill"><b>⛏</b><span id="tcSkillWeapon">DRILL</span></div></div></div></div>
  <div class="tcMod" id="tc-minimap"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcMiniWrap"><canvas class="tcMiniCanvas" id="tcMiniCanvas" width="220" height="190"></canvas><div class="tcMapLabel" id="tcMapLabel">L1</div></div></div></div></div>
- <div class="tcMod" id="tc-bag"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcRow"><div class="tcTitle tcGrow">가방 / 유물</div><span class="tcTiny" id="tcBagCount">0 / 4</span></div><div class="tcSlots"><div class="tcSlot relic" id="tcRelicSlot"><span class="ico" id="tcRelicIcon">◇</span><small>유물</small></div><div class="tcSlot"><span class="ico">●</span><small id="tcBagPulp">0</small></div><div class="tcSlot"><span class="ico">◆</span><small id="tcBagBloom">0</small></div><div class="tcSlot"><span class="ico" style="opacity:.22">＋</span></div></div></div></div></div>
+  <div class="tcMod" id="tc-bag"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcRow"><div class="tcTitle tcGrow">가방 / 유물</div><span class="tcTiny" id="tcBagCount">0 / 4</span></div><div class="tcSlots"><div class="tcSlot relic" id="tcRelicSlot"><span class="ico currencyIcon relic empty" id="tcRelicIcon" aria-hidden="true"></span><small>유물</small></div><div class="tcSlot"><span class="ico currencyIcon pulp" aria-hidden="true"></span><small id="tcBagPulp">0</small></div><div class="tcSlot"><span class="ico currencyIcon bloom" aria-hidden="true"></span><small id="tcBagBloom">0</small></div><div class="tcSlot"><span class="ico" style="opacity:.22">＋</span></div></div></div></div></div>
  <div class="tcMod" id="tc-interaction"><div class="tcSurface tcGlass"><div class="tcInner"><span class="tcKey" id="tcHintKey">E</span><div><div class="tcTitle" id="tcHintTitle">탐사 진행</div><div class="tcTiny" id="tcHintSub">목표를 완료하고 입구로 복귀</div></div></div></div></div>
  <div class="tcMod" id="tc-briefing"><div class="tcSurface tcPaper"><div class="tcInner"><div class="tcBriefEye">MISSION BRIEFING · 01</div><div class="tcBriefTitle" id="tcBriefTitle">채취 작전</div><div class="tcBriefDesc" id="tcBriefDesc">광물을 확보한 뒤 입구로 복귀한다.</div><div class="tcBriefRules"><span class="tcBriefTag" id="tcBriefGoal">목표 12</span><span class="tcBriefTag" id="tcBriefTime">제한 3:00</span><span class="tcBriefTag" id="tcBriefRole">DRILLER</span></div></div></div></div>
- <div class="tcMod" id="tc-settlement"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcSettleHead"><div><div class="tcTiny" id="tcSettleState">MISSION COMPLETE</div><b>획득 내역</b></div><div class="tcSettleScore" id="tcSettleScore">+ 0</div></div><div class="tcLootCards"><div class="tcLootCard"><span class="ico">●</span><b>PULP</b><span id="tcSetPulp">+0</span></div><div class="tcLootCard"><span class="ico">◆</span><b>BLOOM</b><span id="tcSetBloom">+0</span></div><div class="tcLootCard"><span class="ico">◇</span><b>RELIC</b><span id="tcSetRelic">+0</span></div></div><div class="tcRow"><span class="tcTiny tcGrow" id="tcSetMeta">탐사 완료</span><span class="tcObjectiveState" id="tcSetRank">A RANK</span></div></div></div></div>
+  <div class="tcMod" id="tc-settlement"><div class="tcSurface tcGlass"><div class="tcInner"><div class="tcSettleHead"><div><div class="tcTiny" id="tcSettleState">MISSION COMPLETE</div><b>획득 내역</b></div><div class="tcSettleScore" id="tcSettleScore">+ 0</div></div><div class="tcLootCards"><div class="tcLootCard"><span class="ico currencyIcon pulp" aria-hidden="true"></span><b>PULP</b><span id="tcSetPulp">+0</span></div><div class="tcLootCard"><span class="ico currencyIcon bloom" aria-hidden="true"></span><b>BLOOM</b><span id="tcSetBloom">+0</span></div><div class="tcLootCard"><span class="ico currencyIcon relic" aria-hidden="true"></span><b>RELIC</b><span id="tcSetRelic">+0</span></div></div><div class="tcRow"><span class="tcTiny tcGrow" id="tcSetMeta">탐사 완료</span><span class="tcObjectiveState" id="tcSetRank">A RANK</span></div></div></div></div>
 </div>
 
 </div></div>
@@ -1729,6 +1755,15 @@ const DRILL_TURN_IDLE=12;
 let DRILL_TURN_DIG=2.5; /* 채굴 중 방향 전환 저항 */
 const FQ={acc:0,n:0,flip:0};
 
+/* 필드 재화 스프라이트 — HUD와 동일한 투명 PNG를 캔버스 드롭에도 사용한다. */
+const CURRENCY_SPRITES={};
+for(const kind of ['pulp','bloom','relic','core']){
+ const img=new Image();img.decoding='async';
+ img.src='assets/ui/currency/currency-'+kind+'.png';
+ CURRENCY_SPRITES[kind]=img;
+}
+const currencySpriteReady=kind=>{const img=CURRENCY_SPRITES[kind];return img&&img.complete&&img.naturalWidth?img:null;};
+
 /* ══════════ 몬스터 스프라이트 ══════════ */
 const ENEMY_SPRITE_BASE='monster_assets_v1.5.4/frames';
 const ENEMY_SPRITES={crawler:[],spitter:[],broodBeast:[]};
@@ -1956,7 +1991,7 @@ function drillHitInterval(){
   return base/w;
 }
 function infDrillerRedline(){return typeof INF!=='undefined'&&INF.active&&INF.roleId==='driller'&&INF.drillerTraitRedline;}
-function drillCanUse(){return infDrillerRedline()||!(DEMO&&DEMO.drillHeatOn&&(G.drillHeatLock||0)>0);}
+function drillCanUse(){return (typeof INF!=='undefined'&&infTraitCardsEnabled()&&INF.endlessOverdrive)||infDrillerRedline()||!(DEMO&&DEMO.drillHeatOn&&(G.drillHeatLock||0)>0);}
 function drillHeatFx(){
   if(!(DEMO&&DEMO.drillHeatOn))return 0;
   if((G.drillHeatLock||0)>0)return 1;
@@ -2642,15 +2677,21 @@ function drawCache(q){
   cx.fillStyle=P.pulp;cx.beginPath();cx.arc(-3,-13,3.4,0,7);cx.fill();
   cx.beginPath();cx.arc(4,-14,2.8,0,7);cx.fill();
  }else{
-  /* 룬 조각 */
-  cx.fillStyle='rgba(40,20,8,.3)';cx.beginPath();
-  cx.moveTo(0,-16);cx.lineTo(12,-2);cx.lineTo(5,14);cx.lineTo(-7,12);cx.lineTo(-12,-4);cx.closePath();cx.fill();
-  cx.fillStyle='#E8EFD0';cx.beginPath();
-  cx.moveTo(0,-18);cx.lineTo(11,-4);cx.lineTo(4,12);cx.lineTo(-8,10);cx.lineTo(-12,-5);cx.closePath();cx.fill();
-  cx.fillStyle='#A9BFA0';cx.font='700 9px '+FNT;cx.textAlign='center';
-  cx.fillText('ᒥገ',0,-3);cx.fillText('XD',0,7);
-  cx.fillStyle=P.bloom;cx.globalAlpha=dim*(.5+.4*Math.sin(q.t*4));
-  cx.beginPath();cx.arc(9,-11,3.2,0,7);cx.fill();
+  /* 묻힌 유물 — UI와 동일한 투명 PNG 스프라이트 */
+  const relicImg=currencySpriteReady('relic');
+  if(relicImg){
+   const pulse=.78+.12*Math.sin(q.t*4),size=43*pulse;
+   cx.save();cx.globalAlpha=dim*(.16+.06*Math.sin(q.t*4));cx.fillStyle=P.bloom;
+   cx.beginPath();cx.arc(0,0,24,0,7);cx.fill();cx.restore();
+   cx.globalAlpha=dim;cx.drawImage(relicImg,-size/2,-size/2,size,size);
+  }else{
+   cx.fillStyle='rgba(40,20,8,.3)';cx.beginPath();
+   cx.moveTo(0,-16);cx.lineTo(12,-2);cx.lineTo(5,14);cx.lineTo(-7,12);cx.lineTo(-12,-4);cx.closePath();cx.fill();
+   cx.fillStyle='#E8EFD0';cx.beginPath();
+   cx.moveTo(0,-18);cx.lineTo(11,-4);cx.lineTo(4,12);cx.lineTo(-8,10);cx.lineTo(-12,-5);cx.closePath();cx.fill();
+   cx.fillStyle=P.bloom;cx.globalAlpha=dim*(.5+.4*Math.sin(q.t*4));
+   cx.beginPath();cx.arc(9,-11,3.2,0,7);cx.fill();
+  }
  }
  cx.restore();
  /* 반짝임 */
@@ -2662,22 +2703,26 @@ function drawCache(q){
 }
 function drawRes(x,y,r,kind,t,z){
  const col=kind==='bloom'?P.bloom:P.pulp;
+ const sprite=currencySpriteReady(kind),iconSize=r*(kind==='bloom'?4.05:3.75);
  const zz=z||0;
  const dim=typeof lightAt==='function'?lightAt(x,y):1;
  cx.save();
  /* 그림자 */
  const sh2=clamp(1-zz/70,.35,1);
  cx.globalAlpha=dim*.45*sh2;cx.fillStyle='rgba(0,0,0,.35)';
- cx.beginPath();cx.ellipse(x,y+6,r*1.35*sh2,r*.45*sh2,0,0,7);cx.fill();
+ cx.beginPath();cx.ellipse(x,y+6,(sprite?iconSize*.34:r*1.35)*sh2,(sprite?iconSize*.12:r*.45)*sh2,0,0,7);cx.fill();
  cx.globalAlpha=dim;
- cx.translate(x,y-zz);cx.rotate(Math.sin(t*4)*.28);
+ cx.translate(x,y-zz);cx.rotate(Math.sin(t*4)*(sprite ? .13 : .28));
  cx.globalAlpha=dim*.24;cx.fillStyle=col;cx.beginPath();cx.arc(0,0,r*1.8,0,7);cx.fill();
  cx.globalAlpha=dim;
- cx.fillStyle=col;cx.strokeStyle='rgba(70,40,25,.55)';cx.lineWidth=r*.22;
- if(kind==='pulp'){cx.beginPath();cx.ellipse(0,0,r,r*.68,0,0,7);cx.fill();cx.stroke();
-  cx.fillStyle='rgba(255,255,255,.5)';cx.beginPath();cx.arc(-r*.28,-r*.18,r*.2,0,7);cx.fill();}
- else{cx.beginPath();cx.ellipse(0,0,r*.95,r*.72,0,0,7);cx.fill();cx.stroke();
-  cx.fillStyle='rgba(255,255,255,.55)';cx.beginPath();cx.arc(-r*.2,-r*.2,r*.22,0,7);cx.fill();}
+ if(sprite){cx.imageSmoothingEnabled=true;cx.drawImage(sprite,-iconSize/2,-iconSize/2,iconSize,iconSize);}
+ else{
+  cx.fillStyle=col;cx.strokeStyle='rgba(70,40,25,.55)';cx.lineWidth=r*.22;
+  if(kind==='pulp'){cx.beginPath();cx.ellipse(0,0,r,r*.68,0,0,7);cx.fill();cx.stroke();
+   cx.fillStyle='rgba(255,255,255,.5)';cx.beginPath();cx.arc(-r*.28,-r*.18,r*.2,0,7);cx.fill();}
+  else{cx.beginPath();cx.ellipse(0,0,r*.95,r*.72,0,0,7);cx.fill();cx.stroke();
+   cx.fillStyle='rgba(255,255,255,.55)';cx.beginPath();cx.arc(-r*.2,-r*.2,r*.22,0,7);cx.fill();}
+ }
  cx.restore();
 }
 
@@ -4662,7 +4707,7 @@ function startIncursion(mode){
  function damage(c,r,d,hx,hy,quiet){
  if(!solid(c,r)||SOLIDX(G.cell[ci(c,r)]))return false;
  const k=ci(c,r),t=G.cell[k],full=HPT[t];
- const hpMul=(typeof INF!=='undefined'&&INF.active)?INF.wallHpMul:1;
+ const hpMul=(typeof INF!=='undefined'&&infTraitCardsEnabled())?INF.wallHpMul:1;
  let h=G.hp.has(k)?G.hp.get(k):full*hpMul;h-=d;
  const x=cxw(c),y=cyw(r),bd=G.band[k],dc=G.dec[k];
  const b=P.bands[bd];
@@ -4670,7 +4715,7 @@ function startIncursion(mode){
  const oreCol=t==='gem'?P.gem:t==='crys'?P.crys:t==='ore'?P.worm:null;
  if(h<=0){
   G.cell[k]=null;G.hp.delete(k);G.nBlk++;G.vib.delete(k);G.compDirty=true;
-  if(typeof INF!=='undefined'&&INF.active&&typeof infOnBlockBroken==='function')infOnBlockBroken(t,x,y);
+  if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&typeof infOnBlockBroken==='function')infOnBlockBroken(t,x,y);
   if(typeof COOP_onDamage==='function')COOP_onDamage(c,r,0);
   if(typeof LOS!=='undefined')LOS.markDirty();
   G.combo=(G.comboT>0?G.combo:0)+1;G.comboT=1.1;
@@ -5137,7 +5182,8 @@ function update(dt){
  {const mw=screenToWorld(G.mouse.sx,G.mouse.sy);
   if(!G.aimReady){G.aimX=mw.x;G.aimY=mw.y;G.aimReady=true;}
   else{const t=Math.min(1,TE.aimFollow*60*dt);G.aimX+=(mw.x-G.aimX)*t;G.aimY+=(mw.y-G.aimY)*t;}}
- const spd=teMovePx()*((typeof INF!=='undefined'&&INF.active)?INF.moveMul:1);
+ const traitMode=typeof INF!=='undefined'&&infTraitCardsEnabled(),traitDigMove=traitMode&&G.mouse.drillDown?(INF.traitDrillMoveMul||1):1;
+ const spd=teMovePx()*(traitMode?INF.moveMul:1)*traitDigMove;
  if(G.dash.active){
   const stepDt=Math.min(dt,G.dash.t);
   const slices=Math.max(1,Math.ceil((Math.hypot(G.dash.vx,G.dash.vy)*stepDt)/4));
@@ -5186,8 +5232,9 @@ function update(dt){
    G.drillWarm=Math.min(1,(G.drillWarm||0)+dt/wt);
   }else G.drillWarm=1;
   if(DEMO.drillHeatOn){
-    G.drillHeat=Math.min(1,(G.drillHeat||0)+(DEMO.drillHeatBuild||0.2)*dt*((typeof INF!=='undefined'&&INF.active&&INF.roleId==='driller')?(INF.drillerTraitHeatBuildMul||1):1));
-    if(G.drillHeat>=0.999&&(G.drillHeatLock||0)<=0&&!infDrillerRedline()){
+    const traitHeatMul=traitMode?(INF.traitHeatBuildMul||1):1,roleHeatMul=(typeof INF!=='undefined'&&INF.active&&INF.roleId==='driller')?(INF.drillerTraitHeatBuildMul||1):1;
+    G.drillHeat=Math.min(1,(G.drillHeat||0)+(DEMO.drillHeatBuild||0.2)*dt*roleHeatMul*traitHeatMul);
+    if(G.drillHeat>=0.999&&(G.drillHeatLock||0)<=0&&!infDrillerRedline()&&!(traitMode&&INF.endlessOverdrive)){
      G.drillHeat=1;G.drillHeatLock=DEMO.drillHeatLock||2.4;G.drillWarm*=0.35;
      SFX.drillOverload&&SFX.drillOverload();
    }
@@ -5204,7 +5251,7 @@ function update(dt){
     sh.drill=1;SFX.drillHum(true);SFX.drillHeat&&SFX.drillHeat(DEMO.drillHeatOn?(G.drillHeat||0):0);
    /* 드릴 축을 따라 끝/중간 샘플 — 끝이 벽에 닿을 때만 채굴 */
    const ca=Math.cos(sh.aim),sa=Math.sin(sh.aim);
-   const samples=[[DRILL_TIP,1],[DRILL_TIP*.72,.85],[DRILL_TIP*.45,.55]];
+   const reach=traitMode?(INF.drillReach||1):1,samples=[[DRILL_TIP*reach,1],[DRILL_TIP*reach*.72,.85],[DRILL_TIP*reach*.45,.55]];
    let best=null,bestD=1e9,bx=0,by=0;
    for(const [len] of samples){
     const px=sh.x+ca*len, py=sh.y+sa*len;
@@ -5219,9 +5266,12 @@ function update(dt){
     const dx=bx-sh.x,dy=by-sh.y,dd=Math.hypot(dx,dy)||1;
     const nx=dx/dd,ny=dy/dd;
     const digM=(typeof crewDigMul==='function')?crewDigMul():1;
-    const im=(typeof INF!=='undefined'&&INF.active)?INF.drillMul*(typeof infDrillerOutputMul==='function'?infDrillerOutputMul():1)*((G.mouse.drillDown&&G.mouse.gunDown)?(INF.syncMul||1):1):1;
-    const dv=shelDps()*DRILL_DMG()*digM*drillWarmMul()*im*dt;
+    const heatDrive=traitMode&&INF.endlessOverdrive?1+(G.drillHeat||0)*.1875:1,overheatOutput=traitMode&&INF.endlessOverdrive&&(G.drillHeat||0)>=.9 ? .5 : 1;
+    const im=traitMode?INF.drillMul*(typeof infDrillerOutputMul==='function'?infDrillerOutputMul():1)*((G.mouse.drillDown&&G.mouse.gunDown)?(INF.syncMul||1):1)*heatDrive*overheatOutput:1;
+    const focusMul=traitMode&&typeof infFocusDrillMul==='function'?infFocusDrillMul(c,r,dt):1;
+    const dv=shelDps()*DRILL_DMG()*digM*drillWarmMul()*im*focusMul*dt;
     damage(c,r,dv,nx,ny,true);
+    if(traitMode&&typeof infApplyDrillShape==='function')infApplyDrillShape(c,r,dv,nx,ny);
     G.dAcc=(G.dAcc||0)+dv;G.dT=(G.dT||0)+dt;
     if(G.dT>=drillHitInterval()){
      J.dmg(bx+nx*CELL*.32, by+ny*CELL*.34-CELL*.30, G.dAcc, false);
@@ -5286,13 +5336,14 @@ function update(dt){
    if(Math.hypot(q.vx,q.vy)>4){q.x+=q.vx*dt;q.y+=q.vy*dt;collide(q,8);}
    else{q.vx=q.vy=0;}
    const d=Math.hypot(q.x-sh.x,q.y-sh.y);
-   const canMag=q.landAge>=DEMO.lootMagnetDelay && DEMO.lootMagnet>0 && d<DEMO.lootMagnet;
+   const lootMagMul=traitMode?(INF.lootMagnetMul||1):1,lootPickMul=traitMode?(INF.lootPickupMul||1):1;
+   const canMag=q.landAge>=DEMO.lootMagnetDelay && DEMO.lootMagnet>0 && d<DEMO.lootMagnet*lootMagMul;
    if(canMag){
     q.x+=(sh.x-q.x)*Math.min(1,dt*DEMO.lootMagnetSpd);
     q.y+=(sh.y-q.y)*Math.min(1,dt*DEMO.lootMagnetSpd);
     if(q.tr){q.tr.push(q.x,q.y);if(q.tr.length>14)q.tr.splice(0,2);}
    }
-   if(d<DEMO.lootPickup){
+   if(d<DEMO.lootPickup*lootPickMul){
     q.gone=true;const v=Math.max(1,Math.round(q.val*depthMul()));
     const col2=q.kind==='bloom'?P.bloom:P.pulp;
     J.ring(sh.x,sh.y,col2,12,32+v*3,2.4);
@@ -5366,8 +5417,8 @@ function update(dt){
     const aimX=camCX+nx*pull, aimY=camCY+ny*pull;
     const t=Math.min(1,TE.followSpeed*60*dt);
     camCX+=(aimX-camCX)*t;camCY+=(aimY-camCY)*t;}}
-  G.camX=clamp(camCX-vw*.5,0,Math.max(0,WW-vw));
-  G.camY=clamp(camCY-vh*.42,0,Math.max(0,WH-vh));}
+  const bounded=tcClampCamera(camCX-vw*.5,camCY-vh*.42,vw,vh);
+  G.camX=bounded.x;G.camY=bounded.y;}
  for(const [k,v] of G.vib){v.t-=dt;if(v.t<=0)G.vib.delete(k);}
  for(const [k,v] of G.nudge){v.t-=dt;if(v.t<=0)G.nudge.delete(k);}
  if(G.comboT>0){G.comboT-=dt;if(G.comboT<=0)G.combo=0;}
@@ -7161,6 +7212,7 @@ addEventListener('keydown',e=>{AU.init();AU.resume();const k=e.key.toLowerCase()
   demoRegen(false);e.preventDefault();}
  if(k==='x'&&SCENE==='depths'&&typeof INF!=='undefined'&&INF.active&&typeof infToggleEscapePlacement==='function'){infToggleEscapePlacement();e.preventDefault();}
  if(SCENE==='depths'&&(k==='1'||k==='2'||k==='3')&&(()=>{const m=document.getElementById('infLevelModal');return m&&m.classList.contains('on');})()){const cb=document.querySelectorAll('#infLevelCards button')[+k-1];if(cb&&!cb.disabled){cb.click();e.preventDefault();}}
+ if(e.code==='Escape'&&typeof STARMAP!=='undefined'&&STARMAP.open){infCloseStarmap(true);e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'&&typeof INF!=='undefined'&&INF.active&&INF.escape&&INF.escape.state==='placing'){infCancelEscapePlacement();e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'&&typeof CREW!=='undefined'&&CREW.phase==='settings'){crewCloseSettings();e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'){
@@ -7305,18 +7357,41 @@ function refreshTitle(){
   :'브라우저 저장이 차단된 환경이다(시크릿 모드·미리보기 등). 이 세션 동안만 유지된다.';
 }
 /* ── 리사이즈 / 루프 ── */
+function tcSyncViewport(){
+ const vv=window.visualViewport,w=Math.max(1,Math.round(vv?vv.width:innerWidth)),h=Math.max(1,Math.round(vv?vv.height:innerHeight));
+ document.documentElement.style.setProperty('--tc-vw',w+'px');
+ document.documentElement.style.setProperty('--tc-vh',h+'px');
+}
+function tcClampCamera(x,y,vw,vh){
+ /* 월드 가장자리에서도 캐릭터와 하단 이펙트가 화면 밖으로 잘리지 않도록 여유 공간을 둔다. */
+ const padX=Math.min(vw*.18,teWorld(110)),padY=Math.min(vh*.18,teWorld(110));
+ return {
+  x:clamp(x,-padX,Math.max(-padX,WW-vw+padX)),
+  y:clamp(y,-padY,Math.max(-padY,WH-vh+padY))
+ };
+}
 function resize(){
+ tcSyncViewport();
  const r=cv.getBoundingClientRect();
+ if(r.width<2||r.height<2)return;
+ DPR=Math.min(2,window.devicePixelRatio||1);
  LW=Math.round(r.width);LH=Math.round(r.height);
  SC=DPR;cv.width=Math.round(LW*DPR);cv.height=Math.round(LH*DPR);
  cx.setTransform(DPR,0,0,DPR,0,0);
  if(uiCv){uiCv.width=Math.round(LW*DPR);uiCv.height=Math.round(LH*DPR);
   ux.setTransform(DPR,0,0,DPR,0,0);}
  if(FOW&&FOW.ok)FOW.resize(LW,LH);
- if(SCENE==='depths')setLayerSize(G.depth);
+ if(SCENE==='depths'){
+  setLayerSize(G.depth);
+  if(!G.fixed){const vw=LW/G.Z,vh=LH/G.Z,b=tcClampCamera(G.sh.x-vw*.5,G.sh.y-vh*.42,vw,vh);G.camX=b.x;G.camY=b.y;}
+ }
  if(VG.obj.length===0)buildVillage();
 }
-addEventListener('resize',resize);
+let tcResizeRaf=0;
+function tcQueueResize(){cancelAnimationFrame(tcResizeRaf);tcResizeRaf=requestAnimationFrame(resize);}
+addEventListener('resize',tcQueueResize);
+if(window.visualViewport){visualViewport.addEventListener('resize',tcQueueResize);visualViewport.addEventListener('scroll',tcQueueResize);}
+if(window.ResizeObserver)new ResizeObserver(tcQueueResize).observe(document.getElementById('stageWrap'));
 let last=performance.now();
 function loopStep(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;
@@ -8160,6 +8235,7 @@ function startCrewMission(roleId){
  CREW.turrets.length=0;CREW.plats.length=0;CREW.hudAcc=0;
  clearCrewDrone();
  startIncursion('tunnel');
+ if(typeof infStartModeTraitCards==='function')infStartModeTraitCards(roleId);
  DLG.on=false; /* 루프 데모: 튜토리얼 대사로 일시정지되지 않게 */
  G.weapon=r.weapon;
  /* 솔로 보정: 입구 보조등 */
@@ -8182,6 +8258,7 @@ function startCrewMission(roleId){
 function endCrewMission(kind){
  if(CREW.phase!=='play')return;
  CREW.result=kind;
+ if(typeof INF!=='undefined')INF.modeTraitCards=false;
  if(typeof COOP_endBroadcast==='function')COOP_endBroadcast(kind);
  clearCrewDrone();
  stopCrewTutorial(false);
@@ -8213,6 +8290,7 @@ function endCrewMission(kind){
 function crewSkillQ(){
  if(CREW.phase!=='play'||!CREW.role||CREW.qCd>0)return;
  const r=CREW.role,sh=G.sh;
+ if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&INF.wideQ&&typeof infWideQBlast==='function')infWideQBlast();
   if(r.id==='driller'){
    CREW.breachT=.55;INF.pinUsed=false;INF.drillerPinUsed=false;INF.drillerRecircReduced=0;CREW.qCd=r.qCd*((typeof INF!=='undefined'&&INF.active)?(INF.drillerQCdMul||1)*(INF.drillerTraitQCdMul||1):1);toast('돌파!');
   J.kick(6,Math.cos(sh.aim),Math.sin(sh.aim));SFX.brk&&SFX.brk();
@@ -8272,6 +8350,7 @@ function updateCrew(dt){
  CREW.shieldT=Math.max(0,CREW.shieldT-dt);
  CREW.breachT=Math.max(0,CREW.breachT-dt);
  if(typeof INF!=='undefined'&&INF.active&&typeof infUpdateRoleTools==='function')infUpdateRoleTools(dt);
+ if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&typeof infUpdateMiningTraits==='function')infUpdateMiningTraits(dt);
  updateCrewMission(dt);
  updateCrewTutorial(dt);
  if(CREW.canEscape&&!CREW.escapeChime){
@@ -8318,6 +8397,7 @@ function updateCrew(dt){
 function drawCrewExtras(){
  if(CREW.phase!=='play')return;
  if(typeof INF!=='undefined'&&INF.active&&typeof infDrawRoleTools==='function')infDrawRoleTools();
+ if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&typeof infDrawMiningTraits==='function')infDrawMiningTraits();
  drawCrewDrone();
  drawCrewHazards();
  if(CREW.relic&&!CREW.relic.carried){
@@ -8531,7 +8611,7 @@ function updateStatus(){
  el('tcSkillWeapon').textContent=(G.weapon||'drill').toUpperCase();const q=el('tcSkillQ');if(q){q.classList.toggle('cool',(CREW.qCd||0)>0);el('tcSkillQText').textContent=(CREW.qCd||0)>0?(CREW.qCd.toFixed(1)+'s'):(CREW.role&&CREW.role.qLabel||'역할 스킬');}
 }
 function updateResources(){el('tcPulp').textContent=String(G.gPulp|0);el('tcBloom').textContent=String(G.gBloom|0);el('tcBagPulp').textContent=String(G.gPulp|0);el('tcBagBloom').textContent=String(G.gBloom|0);}
-function updateBag(){const carrying=!!CREW.carrying;el('tcRelicIcon').textContent=carrying?'◆':'◇';el('tcRelicSlot').style.opacity=(CREW.missionId==='recover'||carrying)?'1':'.38';const used=(carrying?1:0)+(G.gPulp>0?1:0)+(G.gBloom>0?1:0);el('tcBagCount').textContent=used+' / 4';}
+function updateBag(){const carrying=!!CREW.carrying,relicIcon=el('tcRelicIcon');relicIcon.classList.toggle('empty',!carrying);el('tcRelicSlot').style.opacity=(CREW.missionId==='recover'||carrying)?'1':'.38';const used=(carrying?1:0)+(G.gPulp>0?1:0)+(G.gBloom>0?1:0);el('tcBagCount').textContent=used+' / 4';}
 function updateHint(){
  let key='WASD',title='탐사 진행',sub='목표를 완료하고 입구로 복귀';
  if(CREW.tut&&CREW_TUT_STEPS&&CREW_TUT_STEPS[CREW.tut.i]&&CREW_TUT_STEPS[CREW.tut.i].text){key='TIP';title=CREW_TUT_STEPS[CREW.tut.i].text.replace(/<[^>]+>/g,'');sub='30초 조작 가이드';}
@@ -8561,15 +8641,15 @@ window.addEventListener('resize',fitAll);setInterval(tick,150);setTimeout(tick,3
 body.infActive #tcHudPolish,body.infActive #crewHud,body.infActive #resHud{display:none!important}
 #infHud{position:absolute;inset:0;z-index:72;display:none;pointer-events:none;color:#f6efff;font-family:"Pretendard","Malgun Gothic",sans-serif}
 body.infActive #infHud{display:block}
-#infHud .ihTop{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:min(620px,72vw);padding:10px 14px;border:1px solid rgba(199,160,255,.48);border-radius:14px;background:rgba(12,8,22,.86);box-shadow:0 10px 32px rgba(0,0,0,.38)}
+#infHud .ihTop{position:absolute;left:50%;top:calc(18px + env(safe-area-inset-top));transform:translateX(-50%);width:min(620px,72vw);padding:10px 14px;border:1px solid rgba(199,160,255,.48);border-radius:14px;background:rgba(12,8,22,.86);box-shadow:0 10px 32px rgba(0,0,0,.38)}
 #infHud .ihRow{display:flex;align-items:center;gap:12px;font-size:12px;color:#b9a8cc}
 #infHud .ihRow strong{font-size:14px;color:#fff}
 #infThreatText{padding:3px 7px;border:1px solid rgba(255,85,125,.35);border-radius:999px;color:#ff9aae;font-size:10px;font-weight:900;letter-spacing:.03em}
 #infHud .ihGrow{flex:1}.ihGauge{height:8px;margin-top:7px;overflow:hidden;border-radius:999px;background:#211832}
 #infDomFill,#infXpFill,#infBossFill{height:100%;width:0;background:linear-gradient(90deg,#8b5bd0,#ffd36e);transition:width .18s}
-#infHud .ihLeft{position:absolute;left:18px;bottom:18px;padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
+#infHud .ihLeft{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
 #infAmmoRow{display:flex;align-items:center;gap:8px;margin-top:5px;color:#d8cce4;font-weight:900}#infAmmoText{min-width:76px;color:#ffd36e}.infReloadGauge{width:88px;height:5px;overflow:hidden;border-radius:999px;background:#2b2036}.infReloadGauge i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#7febd0,#ffd36e);transition:width .06s linear}#infAmmoRow.reloading #infAmmoText{color:#7febd0;animation:infAmmoPulse .55s ease-in-out infinite}@keyframes infAmmoPulse{50%{opacity:.55}}
-#infHud .ihKeys{position:absolute;right:18px;bottom:18px;padding:10px 13px;border-radius:14px;background:rgba(12,8,22,.82);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc}
+#infHud .ihKeys{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 36px - env(safe-area-inset-left) - env(safe-area-inset-right));padding:10px 13px;border-radius:14px;background:rgba(12,8,22,.82);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc}
 #infBossBox{display:none;margin-top:9px}#infBossBox.on{display:block}#infBossFill{background:linear-gradient(90deg,#ff557d,#ffb36b)}
 #infBossIndicator{--ang:0rad;position:absolute;left:50%;top:50%;z-index:4;display:none;align-items:center;gap:7px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 9px rgba(0,0,0,.7))}#infBossIndicator.on{display:flex;animation:infBossPing 1.15s ease-in-out infinite}#infBossIndicator.alert{animation:infBossArrive .7s cubic-bezier(.16,.84,.3,1) both,infBossPing 1.15s ease-in-out .7s infinite}
 .infBossArrow{width:27px;height:27px;color:#ff557d;font-size:27px;font-style:normal;font-weight:900;line-height:27px;text-align:center;transform:rotate(var(--ang));text-shadow:0 0 12px rgba(255,85,125,.85)}.infBossIndicatorText{padding:5px 8px;border:1px solid rgba(255,85,125,.72);border-radius:8px;background:rgba(28,7,16,.88);color:#ff8da8;font-size:10px;font-weight:900;white-space:nowrap;letter-spacing:.04em}.infBossIndicatorText b{margin-left:4px;color:#fff;font-size:11px}
@@ -8615,6 +8695,11 @@ body.infActive #infHud{display:block}
 /* Track A · return settlement and permanent character nodes */
 .infSettlementPanel{--settle-role:#ffd36e;display:flex;flex-direction:column;width:min(1180px,96vw);height:min(94vh,850px);max-height:94vh;padding:20px 24px 16px;overflow:hidden;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--settle-role) 10%,transparent),transparent 45%),linear-gradient(155deg,#171020,#0d0914 72%)}.infSettlementPanel.infSettleShake{animation:infSettleCameraShake .38s cubic-bezier(.2,.8,.2,1)}
 .infSettleHead{display:flex;align-items:flex-start;gap:18px}.infSettleHead>div:first-child{min-width:0;flex:1}.infSettleEyebrow{display:block;margin-bottom:7px;color:var(--settle-role);font:900 9px/1 ui-monospace,monospace;letter-spacing:.18em}.infSettleHead h2{font-size:26px;letter-spacing:.04em}.infSettleWallet{display:flex;gap:8px}.infSettleWallet>div{min-width:108px;padding:9px 12px;border:1px solid rgba(127,235,208,.2);border-radius:12px;background:rgba(5,9,13,.58);color:#8f809d;font-size:9px;text-align:right}.infSettleWallet b{display:block;margin-top:3px;color:#7febd0;font-size:18px}.infSettleWallet .lost b{color:#ff8da8}
+#infCoreText{display:inline-flex;align-items:center;gap:4px}
+#infCoreText::before{content:'';width:19px;height:19px;flex:0 0 auto;background:url('assets/ui/currency/currency-core.png') center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.65))}
+.infSettleWallet>div{position:relative;padding-left:43px}
+.infSettleWallet>div::before{content:'';position:absolute;left:8px;top:50%;width:31px;height:31px;transform:translateY(-50%);background:url('assets/ui/currency/currency-core.png') center/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+.infNodeTooltip .meta span:last-child::before{content:'';display:inline-block;width:16px;height:16px;margin-right:4px;vertical-align:-4px;background:url('assets/ui/currency/currency-core.png') center/contain no-repeat}
 .infSettleTabs{display:flex;gap:7px;margin:15px 0 10px}.infSettleTab{appearance:none;flex:1;padding:9px 8px;border:1px solid #40334c;border-radius:10px;background:#120c1a;color:#897b96;font:850 10px/1.15 inherit;cursor:pointer;transition:transform .18s,border-color .18s,color .18s,background .18s}.infSettleTab:hover{transform:translateY(-2px);color:#fff}.infSettleTab.active{border-color:var(--role);background:color-mix(in srgb,var(--role) 13%,#120c1a);color:var(--role);box-shadow:0 0 20px color-mix(in srgb,var(--role) 17%,transparent)}.infSettleTab small{display:block;margin-top:4px;color:inherit;opacity:.72}
 .infNodeTestTools{display:flex;align-items:center;gap:7px;margin:0 0 10px;padding:8px 10px;border:1px solid rgba(255,211,110,.18);border-radius:11px;background:linear-gradient(90deg,rgba(255,211,110,.055),rgba(127,235,208,.035))}.infNodeTestTools>span{margin-right:auto;color:#7febd0;font:900 9px/1 ui-monospace,monospace;letter-spacing:.13em}.infNodeTestTools button{appearance:none;padding:7px 10px;border:1px solid #4e3c5c;border-radius:8px;background:#17101f;color:#cdbfd8;font:850 9px/1 inherit;cursor:pointer}.infNodeTestTools button:hover,.infNodeTestTools button:focus-visible{border-color:#ffd36e;color:#ffe3a0;outline:0}.infNodeTestTools button.on{border-color:#7febd0;background:#153034;color:#7febd0}.infNodeTestHint{margin:-3px 3px 9px!important;color:#75677f!important;font-size:9px!important;text-align:right}
 .infNodeMap{position:relative;min-height:300px;flex:1;border:1px solid color-mix(in srgb,var(--settle-role) 27%,#332641);border-radius:18px;background:radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--settle-role) 9%,transparent),transparent 35%),linear-gradient(rgba(199,160,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(199,160,255,.028) 1px,transparent 1px),#08050d;background-size:auto,32px 32px,32px 32px;overflow:hidden;cursor:grab;touch-action:none;outline:0}.infNodeMap.dragging{cursor:grabbing}.infNodeMap:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb,var(--settle-role) 60%,transparent)}.infNodeMap:after{content:"";position:absolute;z-index:6;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(3,2,7,.54) 100%);pointer-events:none}.infNodeMapTitle{position:absolute;z-index:12;left:14px;top:12px;padding:7px 9px;border:1px solid rgba(112,94,129,.18);border-radius:8px;background:rgba(7,4,12,.78);color:#76677f;font:900 8px/1.3 ui-monospace,monospace;letter-spacing:.12em;pointer-events:none}.infNodeMapTitle b{color:var(--settle-role)}.infNodeMapControls{position:absolute;z-index:13;right:12px;top:11px;display:flex;gap:5px}.infNodeMapControls button{min-width:30px;height:29px;padding:0 9px;border:1px solid #4a3856;border-radius:8px;background:rgba(15,10,22,.88);color:#b9a9c6;font:900 10px/1 inherit;cursor:pointer}.infNodeMapControls button:hover,.infNodeMapControls button:focus-visible{border-color:var(--settle-role);color:var(--settle-role);outline:0}
@@ -8811,7 +8896,8 @@ const INF={active:false,testScene:false,growthMultiplier:1,traitMultiplier:1,rol
  syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,
 magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerQCdMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,
  xpLog:null,xpCappedFloor:0,xpGridT:0,escape:null};
-const infEl=id=>document.getElementById(id);
+ const infEl=id=>document.getElementById(id);
+ function infTraitCardsEnabled(){return !!(INF.active||INF.modeTraitCards);}
 const BOSS_LAB_STORAGE_KEY='tc_boss_lab_params_v2';          /* 현재 작업본 · 자동 저장 */
 const BOSS_LAB_PIN_KEY='tc_boss_lab_params_pinned';          /* 수동 저장 체크포인트 · 자동 저장이 건들지 않는다 */
 const BOSS_LAB_PREV_KEY='tc_boss_lab_params_prev';           /* 직전 자동 저장본 · 1단계 되돌리기 */
@@ -8950,8 +9036,8 @@ const INF_TRAITS=[
  {role:'driller',kind:'돌파 파기',id:'d_pressure',tier:2,n:'과압 실린더',d:'Q의 균열 압력 +25% · 재사용 대기시간 -15%',ok:()=>INF.drillerQMul<2,a:()=>{INF.drillerQMul*=1.25;INF.drillerQCdMul*=.85;}},
  {role:'driller',kind:'지층 붕괴',id:'d_seismic',tier:3,n:'지진 공진축',d:'기반암 돌파 시 주변 일반 벽에 파쇄 충격파',ok:()=>INF.drillerShockRadius<2,a:()=>{INF.drillerShockRadius++;INF.drillMul*=1.15;}},
  {role:'driller',kind:'균열 유지',id:'d_recirc',tier:3,n:'열회수 균열기',d:'기반암 균열 +20% · 균열 소실 속도 절반',ok:()=>INF.drillerCrackDecay>.001,a:()=>{INF.drillerFoundationMul*=1.2;INF.drillerCrackDecay*=.5;}},
- {role:'driller',kind:'코어 암반',id:'d_mantle',tier:4,n:'맨틀 천공 키',d:'코어 암반 필요 압력 -38% · 모든 기반암 균열 +25%',ok:()=>INF.drillerCoreNeedMul>.45,a:()=>{INF.drillerCoreNeedMul*=.62;INF.drillerFoundationMul*=1.25;}},
- {role:'driller',kind:'기반암',id:'d_eternal',tier:4,n:'영구 단층 각인',d:'생성한 균열이 더는 소실되지 않으며 균열 속도 +40%',ok:()=>INF.drillerCrackDecay>0,a:()=>{INF.drillerCrackDecay=0;INF.drillerCrackHold=999;INF.drillerFoundationMul*=1.4;}},
+ {role:'driller',kind:'코어 암반',id:'d_mantle',tier:4,n:'맨틀 천공 키',d:'코어 암반 필요 압력 -19% · 모든 기반암 균열 +12.5%',ok:()=>INF.drillerCoreNeedMul>.66,a:()=>{INF.drillerCoreNeedMul*=.81;INF.drillerFoundationMul*=1.125;}},
+ {role:'driller',kind:'기반암',id:'d_eternal',tier:4,n:'장기 단층 각인',d:'균열 유지시간 2배 · 소실 속도 -50% · 균열 속도 +20%',ok:()=>!INF.traitFx.includes('d_eternal'),a:()=>{INF.traitFx.push('d_eternal');INF.drillerCrackDecay*=.5;INF.drillerCrackHold*=2;INF.drillerFoundationMul*=1.2;}},
 
  {role:'gunner',kind:'파쇄 발사기',id:'g_cycler',tier:1,n:'고속 약실 순환기',d:'파쇄탄 재사용 대기시간 -14%',ok:()=>INF.breakerMaxCd>5,a:()=>INF.breakerMaxCd=Math.max(5,INF.breakerMaxCd*.86)},
  {role:'gunner',kind:'성형 작약',id:'g_liner',tier:1,n:'텅스텐 라이너',d:'파쇄탄의 벽 피해 +20%',ok:()=>INF.breakerDamageMul<3,a:()=>INF.breakerDamageMul*=1.2},
@@ -8959,8 +9045,8 @@ const INF_TRAITS=[
  {role:'gunner',kind:'폭파 범위',id:'g_radius',tier:2,n:'파쇄 확장 슬리브',d:'파쇄 반경 +1칸 · 외곽 벽 피해 보정',ok:()=>INF.breakerRadius<2,a:()=>INF.breakerRadius=2},
  {role:'gunner',kind:'조기 기폭',id:'g_remote',tier:3,n:'원격 과충전 기폭기',d:'E 조기 기폭 시 파쇄 위력 +75%',ok:()=>INF.breakerEarlyMul<1.7,a:()=>INF.breakerEarlyMul=1.75},
  {role:'gunner',kind:'대인 파쇄',id:'g_hunter',tier:3,n:'대인 파편 재킷',d:'파쇄탄의 적 피해 +65% · 중화기 피해 +12%',ok:()=>INF.breakerEnemyMul<1.6,a:()=>{INF.breakerEnemyMul=1.65;INF.gunMul*=1.12;}},
- {role:'gunner',kind:'광역 폭파',id:'g_cluster',tier:4,n:'군집 파쇄 작약',d:'파쇄 반경 3칸 · 벽 피해 +35%',ok:()=>INF.breakerRadius<3,a:()=>{INF.breakerRadius=3;INF.breakerDamageMul*=1.35;}},
- {role:'gunner',kind:'파쇄 발사기',id:'g_zero',tier:4,n:'무정지 발사 사이클',d:'파쇄탄 재사용 대기시간 대폭 감소 · 벽 피해 +25%',ok:()=>INF.breakerMaxCd>3.6,a:()=>{INF.breakerMaxCd=Math.max(3.5,INF.breakerMaxCd*.55);INF.breakerDamageMul*=1.25;}},
+ {role:'gunner',kind:'광역 폭파',id:'g_cluster',tier:4,n:'군집 파쇄 작약',d:'파쇄 반경 2칸 · 벽 피해 +17.5%',ok:()=>INF.breakerRadius<2,a:()=>{INF.breakerRadius=2;INF.breakerDamageMul*=1.175;}},
+ {role:'gunner',kind:'파쇄 발사기',id:'g_zero',tier:4,n:'무정지 발사 사이클',d:'파쇄탄 재사용 대기시간 -22.5% · 벽 피해 +12.5%',ok:()=>INF.breakerMaxCd>7.3,a:()=>{INF.breakerMaxCd=Math.max(7.2,INF.breakerMaxCd*.775);INF.breakerDamageMul*=1.125;}},
 
  {role:'scout',kind:'장거리 플레어',id:'s_flare',tier:1,n:'고광도 연소제',d:'플레어 조명 반경과 지속시간 +18%',ok:()=>INF.scoutFlareRadMul<2.2,a:()=>{INF.scoutFlareRadMul*=1.18;INF.scoutFlareLifeMul*=1.18;}},
  {role:'scout',kind:'그래플 훅',id:'s_cable',tier:1,n:'경량 인장 케이블',d:'그래플 최대 거리 +1칸 · 이동 속도 +5%',ok:()=>INF.scoutGrappleRange<9,a:()=>{INF.scoutGrappleRange++;INF.moveMul*=1.05;}},
@@ -8968,8 +9054,8 @@ const INF_TRAITS=[
  {role:'scout',kind:'정찰 펄스',id:'s_spectrum',tier:2,n:'다중 스펙트럼 스캐너',d:'정찰 반경 +1칸 · 신규 구역 탐사 경험치 +1',ok:()=>INF.scoutPulseRadius<8,a:()=>{INF.scoutPulseRadius++;INF.scoutExploreXp++;}},
  {role:'scout',kind:'독립 시야',id:'s_watch',tier:3,n:'감시자 광학계',d:'플레어 독립 시야 +2칸 · 정찰 표식 지속 +1.2초',ok:()=>INF.scoutVisionBonus<4,a:()=>{INF.scoutVisionBonus+=2;INF.scoutPulseMax+=1.2;}},
  {role:'scout',kind:'구역 탐사',id:'s_relay',tier:3,n:'원격 측량 릴레이',d:'플레어 지속시간 +35% · 탐사 경험치 +2',ok:()=>INF.scoutExploreXp<8,a:()=>{INF.scoutFlareLifeMul*=1.35;INF.scoutExploreXp+=2;}},
- {role:'scout',kind:'그래플 훅',id:'s_horizon',tier:4,n:'수평선 견인 장치',d:'그래플 최대 거리 9칸 · 재사용 대기시간 -40% · 이동 +12%',ok:()=>INF.scoutGrappleRange<9||INF.scoutGrappleCdMul>.45,a:()=>{INF.scoutGrappleRange=9;INF.scoutGrappleCdMul*=.6;INF.moveMul*=1.12;}},
- {role:'scout',kind:'장거리 플레어',id:'s_sun',tier:4,n:'인공 태양 플레어',d:'플레어 반경·지속 +50% · 독립 시야 +3칸 · 정찰 반경 8칸',ok:()=>INF.scoutVisionBonus<7,a:()=>{INF.scoutFlareRadMul*=1.5;INF.scoutFlareLifeMul*=1.5;INF.scoutVisionBonus+=3;INF.scoutPulseRadius=Math.max(8,INF.scoutPulseRadius);}},
+ {role:'scout',kind:'그래플 훅',id:'s_horizon',tier:4,n:'수평선 견인 장치',d:'그래플 최대 거리 7칸 · 재사용 대기시간 -20% · 이동 +6%',ok:()=>INF.scoutGrappleRange<7||INF.scoutGrappleCdMul>.81,a:()=>{INF.scoutGrappleRange=7;INF.scoutGrappleCdMul*=.8;INF.moveMul*=1.06;}},
+ {role:'scout',kind:'장거리 플레어',id:'s_sun',tier:4,n:'인공 태양 플레어',d:'플레어 반경·지속 +25% · 독립 시야 +1.5칸 · 정찰 반경 6.5칸',ok:()=>INF.scoutVisionBonus<3.1,a:()=>{INF.scoutFlareRadMul*=1.25;INF.scoutFlareLifeMul*=1.25;INF.scoutVisionBonus+=1.5;INF.scoutPulseRadius=Math.max(6.5,INF.scoutPulseRadius);}},
 
  {role:'engineer',kind:'전력 노드',id:'e_cap',tier:1,n:'고밀도 축전지',d:'전력 노드 지속시간 +25% · 공급 반경 +0.5칸',ok:()=>INF.engineerNodeRadius<7,a:()=>{INF.engineerNodeLife*=1.25;INF.engineerNodeRadius+=.5;}},
  {role:'engineer',kind:'센트리',id:'e_mag',tier:1,n:'확장 탄약 호퍼',d:'새 센트리 탄창 +6 · 설치된 센트리도 즉시 보급',ok:()=>INF.engineerTurretMag<42,a:()=>{INF.engineerTurretMag+=6;for(const t of CREW.turrets){t.mag+=6;t.ammo+=6;}}},
@@ -8977,9 +9063,36 @@ const INF_TRAITS=[
  {role:'engineer',kind:'전력망',id:'e_grid',tier:2,n:'분산 전력 프로토콜',d:'전력 노드 최대 +1 · 공급 반경 +0.75칸',ok:()=>INF.engineerMaxNodes<4,a:()=>{INF.engineerMaxNodes++;INF.engineerNodeRadius+=.75;}},
  {role:'engineer',kind:'설치 한도',id:'e_twin',tier:3,n:'쌍중 센트리 설계',d:'센트리 최대 설치 수 +1 · 지속시간 +25%',ok:()=>INF.engineerMaxTurrets<4,a:()=>{INF.engineerMaxTurrets++;INF.engineerTurretLife*=1.25;}},
  {role:'engineer',kind:'중 센트리',id:'e_heavy',tier:3,n:'중량 레일 센트리',d:'센트리 피해 +45% · 사거리 +1칸 · 탄창 +6, 연사력 -11%',ok:()=>INF.engineerTurretPower<1.4,a:()=>{INF.engineerTurretPower*=1.45;INF.engineerTurretRange++;INF.engineerTurretMag+=6;INF.engineerTurretInterval*=1.12;}},
- {role:'engineer',kind:'자율 전력',id:'e_auto',tier:4,n:'폐쇄형 자율 동력로',d:'센트리가 전력망 밖에서도 가동 · 재장전 시간 -30%',ok:()=>!INF.engineerAutonomous,a:()=>{INF.engineerAutonomous=true;INF.engineerTurretReload*=.7;}},
- {role:'engineer',kind:'요새화',id:'e_fortress',tier:4,n:'심층 요새 네트워크',d:'노드·센트리 최대 3, 공급 반경 6칸 · 센트리 탄창 +12·연사 +20%',ok:()=>INF.engineerNodeRadius<6||INF.engineerMaxTurrets<3,a:()=>{INF.engineerMaxNodes=Math.max(3,INF.engineerMaxNodes);INF.engineerMaxTurrets=Math.max(3,INF.engineerMaxTurrets);INF.engineerNodeRadius=Math.max(6,INF.engineerNodeRadius);INF.engineerTurretMag+=12;INF.engineerTurretInterval*=.8;}}
-];
+ {role:'engineer',kind:'자율 전력',id:'e_auto',tier:4,n:'폐쇄형 자율 동력로',d:'센트리가 전력망 밖에서 절반 출력으로 가동 · 재장전 시간 -15%',ok:()=>!INF.engineerAutonomous,a:()=>{INF.engineerAutonomous=true;INF.engineerTurretReload*=.85;}},
+ {role:'engineer',kind:'요새화',id:'e_fortress',tier:4,n:'심층 요새 네트워크',d:'센트리 최대 3, 공급 반경 5칸 · 센트리 탄창 +6·연사 +10%',ok:()=>INF.engineerNodeRadius<5||INF.engineerMaxTurrets<3,a:()=>{INF.engineerMaxTurrets=Math.max(3,INF.engineerMaxTurrets);INF.engineerNodeRadius=Math.max(5,INF.engineerNodeRadius);INF.engineerTurretMag+=6;INF.engineerTurretInterval*=.9;}}
+ ,{role:'all',kind:'굴착 확장',id:'u_large_bit',tier:1,n:'대형 비트',d:'드릴이 좌우 벽까지 함께 깎습니다.',ok:()=>!INF.traitFx.includes('u_large_bit'),a:()=>{INF.traitFx.push('u_large_bit');INF.drillWidth=Math.max(1,INF.drillWidth);}}
+ ,{role:'all',kind:'집중 굴착',id:'u_pierce_bit',tier:1,n:'압쇄 비트',d:'같은 벽을 계속 깎으면 드릴 피해가 점점 강해집니다.',ok:()=>!INF.traitFx.includes('u_pierce_bit'),a:()=>{INF.traitFx.push('u_pierce_bit');INF.focusDrill=true;}}
+ ,{role:'all',kind:'파쇄',id:'u_shockwave',tier:1,n:'파쇄 충격파',d:'벽을 부수면 주변 벽에도 충격이 퍼집니다.',ok:()=>!INF.traitFx.includes('u_shockwave'),a:()=>{INF.traitFx.push('u_shockwave');INF.breakShockRadius=Math.max(1,INF.breakShockRadius);INF.breakShockPower=Math.max(.16,INF.breakShockPower);}}
+ ,{role:'all',kind:'고속 회전',id:'u_fast_spin',tier:1,n:'고속 회전',d:'드릴이 더 빠르게 회전하고 벽을 빠르게 깎습니다.',ok:()=>!INF.traitFx.includes('u_fast_spin'),a:()=>{INF.traitFx.push('u_fast_spin');INF.drillMul*=1.09;}}
+ ,{role:'all',kind:'자원 회수',id:'u_magnet',tier:1,n:'자원 흡입기',d:'떨어진 자원이 먼 거리에서도 빠르게 끌려옵니다.',ok:()=>!INF.traitFx.includes('u_magnet'),a:()=>{INF.traitFx.push('u_magnet');INF.lootMagnetMul*=1.5;INF.lootPickupMul*=1.175;}}
+ ,{role:'all',kind:'굴진 이동',id:'u_drive',tier:1,n:'굴진 가속',d:'드릴을 사용하는 동안 이동이 빨라집니다.',ok:()=>!INF.traitFx.includes('u_drive'),a:()=>{INF.traitFx.push('u_drive');INF.traitDrillMoveMul*=1.14;}}
+
+ ,{role:'all',kind:'굴착 확장',id:'u_triple',tier:2,n:'삼중 드릴',d:'정면과 양옆의 벽을 동시에 깎습니다.',ok:()=>!INF.traitFx.includes('u_triple'),a:()=>{INF.traitFx.push('u_triple');INF.drillWidth=Math.max(2,INF.drillWidth);}}
+ ,{role:'all',kind:'자동 굴착',id:'u_aux',tier:2,n:'보조 드릴',d:'작은 드릴이 가까운 벽을 자동으로 깎습니다.',ok:()=>!INF.traitFx.includes('u_aux'),a:()=>{INF.traitFx.push('u_aux');INF.auxDrills=Math.max(1,INF.auxDrills);INF.auxDrillPower=Math.max(.085,INF.auxDrillPower);}}
+ ,{role:'all',kind:'폭발 굴착',id:'u_explosive',tier:2,n:'폭발 드릴',d:'벽을 부술 때마다 작은 굴착 폭발이 발생합니다.',ok:()=>!INF.traitFx.includes('u_explosive'),a:()=>{INF.traitFx.push('u_explosive');INF.explosiveDrill=Math.max(1,INF.explosiveDrill);}}
+ ,{role:'all',kind:'반복 굴착',id:'u_afterimage',tier:2,n:'잔상 드릴',d:'벽을 깎은 자리를 잠시 후 한 번 더 파냅니다.',ok:()=>!INF.traitFx.includes('u_afterimage'),a:()=>{INF.traitFx.push('u_afterimage');INF.afterDrill=Math.max(1,INF.afterDrill);}}
+ ,{role:'all',kind:'파편 굴착',id:'u_shards',tier:2,n:'파편 탄환',d:'벽을 부수면 굴착 파편이 사방으로 날아갑니다.',ok:()=>!INF.traitFx.includes('u_shards'),a:()=>{INF.traitFx.push('u_shards');INF.shardBurst=Math.max(6,INF.shardBurst);}}
+ ,{role:'all',kind:'굴착 방어',id:'u_guard',tier:2,n:'굴착 보호막',d:'벽을 부술 때마다 짧은 보호막을 얻습니다.',ok:()=>!INF.traitFx.includes('u_guard'),a:()=>{INF.traitFx.push('u_guard');INF.breakShield=Math.max(.225,INF.breakShield);}}
+
+ ,{role:'all',kind:'연쇄 파괴',id:'u_chain',tier:3,n:'연쇄 붕괴',d:'폭발로 부서진 벽에서도 새로운 폭발이 일어납니다.',ok:()=>!INF.traitFx.includes('u_chain'),a:()=>{INF.traitFx.push('u_chain');INF.chainCollapse=Math.max(1,INF.chainCollapse);}}
+ ,{role:'all',kind:'자동 굴착',id:'u_satellite',tier:3,n:'드릴 위성',d:'두 개의 드릴이 주위를 돌며 벽을 자동으로 깎습니다.',ok:()=>!INF.traitFx.includes('u_satellite'),a:()=>{INF.traitFx.push('u_satellite');INF.auxDrills=Math.max(2,INF.auxDrills);INF.auxDrillPower=Math.max(.115,INF.auxDrillPower);}}
+ ,{role:'all',kind:'관통 굴착',id:'u_laser',tier:3,n:'파쇄 레이저',d:'드릴이 굵은 관통 광선으로 뒤쪽 벽까지 깎습니다.',ok:()=>!INF.traitFx.includes('u_laser'),a:()=>{INF.traitFx.push('u_laser');INF.drillPenetration=Math.max(4,INF.drillPenetration);INF.drillWidth=Math.max(1,INF.drillWidth);}}
+ ,{role:'all',kind:'자동 포격',id:'u_auto_shell',tier:3,n:'자동 굴착탄',d:'벽을 연속으로 부수면 굴착탄이 사방으로 발사됩니다.',ok:()=>!INF.traitFx.includes('u_auto_shell'),a:()=>{INF.traitFx.push('u_auto_shell');INF.autoDigEvery=8;}}
+ ,{role:'all',kind:'광역 파쇄',id:'u_vortex',tier:3,n:'붕괴 소용돌이',d:'벽을 부수면 주변 자원과 벽을 끌어당기는 폭발이 생깁니다.',ok:()=>!INF.traitFx.includes('u_vortex'),a:()=>{INF.traitFx.push('u_vortex');INF.vortexMining=Math.max(1,INF.vortexMining);}}
+ ,{role:'all',kind:'돌파 파기',id:'u_wide_q',tier:3,n:'광역 천공',d:'Q가 지나가는 넓은 통로를 한꺼번에 뚫습니다.',ok:()=>!INF.traitFx.includes('u_wide_q'),a:()=>{INF.traitFx.push('u_wide_q');INF.wideQ=true;}}
+
+ ,{role:'all',kind:'자동 굴착',id:'u_army',tier:4,n:'무한 굴착 군단',d:'여러 자동 드릴이 벽을 파괴하지만 중량 때문에 이동 속도가 10% 감소합니다.',ok:()=>!INF.traitFx.includes('u_army'),a:()=>{INF.traitFx.push('u_army');INF.auxDrills=Math.max(6,INF.auxDrills);INF.auxDrillPower=Math.max(.0725,INF.auxDrillPower);INF.moveMul*=.9;}}
+ ,{role:'all',kind:'초대형 굴착',id:'u_planet_breaker',tier:4,n:'행성 파쇄기',d:'거대 드릴이 화면을 쓸어내지만 발동 충격으로 최대 HP의 1.5%를 잃습니다.',ok:()=>!INF.traitFx.includes('u_planet_breaker'),a:()=>{INF.traitFx.push('u_planet_breaker');INF.planetBreakerEvery=15;}}
+ ,{role:'all',kind:'대붕괴',id:'u_grand_collapse',tier:4,n:'대붕괴',d:'넓은 지역을 무너뜨리지만 발동 충격으로 최대 HP의 2.5%를 잃습니다.',ok:()=>!INF.traitFx.includes('u_grand_collapse'),a:()=>{INF.traitFx.push('u_grand_collapse');INF.grandCollapseEvery=12;}}
+ ,{role:'all',kind:'초대형 굴착',id:'u_giant_bit',tier:4,n:'초거대 비트',d:'2칸 폭·1칸 깊이로 갈아버리지만 드릴 열이 25% 빠르게 쌓입니다.',ok:()=>!INF.traitFx.includes('u_giant_bit'),a:()=>{INF.traitFx.push('u_giant_bit');INF.giantBit=true;INF.drillWidth=Math.max(2,INF.drillWidth);INF.drillPenetration=Math.max(1,INF.drillPenetration);INF.drillReach=Math.max(1.105,INF.drillReach);INF.traitHeatBuildMul*=1.25;}}
+ ,{role:'all',kind:'드릴 폭풍',id:'u_storm',tier:4,n:'드릴 폭풍',d:'회전 드릴들이 벽을 깎지만 제어 부담으로 이동 속도가 12% 감소합니다.',ok:()=>!INF.traitFx.includes('u_storm'),a:()=>{INF.traitFx.push('u_storm');INF.drillStorm=Math.max(4,INF.drillStorm);INF.auxDrills=Math.max(4,INF.auxDrills);INF.auxDrillPower=Math.max(.065,INF.auxDrillPower);INF.moveMul*=.88;}}
+ ,{role:'all',kind:'무정지 과급',id:'u_endless',tier:4,n:'무정지 과급',d:'과열 중 멈추지 않지만 출력이 50%가 되고 HP가 계속 감소합니다.',ok:()=>!INF.traitFx.includes('u_endless'),a:()=>{INF.traitFx.push('u_endless');INF.endlessOverdrive=true;}}
+ ];
 /* 예약 데이터 — 런 중 구매 트리는 폐기(§6.5). 노드 아이디어·아이콘·효과는
    메인 기지 영구 노드 프로토타입에서 재활용한다. */
 const INF_DRILLER_TREE=[
@@ -9006,12 +9119,12 @@ const INF_DRILLER_TREE=[
  ]}
 ];
 const INF_LEGENDS=[
- {id:'l_dual',tier:4,kind:'쌍동력',n:'쌍동력 융합',d:'드릴·총기 피해 +35% · 재장전 시간 +12%.',a:()=>{INF.drillMul*=1.35;INF.gunMul*=1.35;infAdjustReload(1.12);}},
- {id:'l_barrage',tier:4,kind:'광역 폭파',n:'파쇄 탄막',d:'폭발탄과 벽 피해 +60% · 재장전 시간 +18%.',a:()=>{INF.explosive=true;INF.gunWallMul*=1.6;infAdjustReload(1.18);}},
- {id:'l_feed',tier:4,kind:'다중 급탄',n:'다중 급탄',d:'투사체 +1, 연사력 +15%, 탄창 +3 · 재장전 +10%.',a:()=>{INF.shots=Math.min(5,INF.shots+1);INF.fireRate*=1.15;infSetMag(3);infAdjustReload(1.10);}},
- {id:'l_ricochet',tier:4,kind:'도탄',n:'무한 도탄',d:'도탄 +2 · 재장전 시간 +12%.',a:()=>{INF.bounces+=2;infAdjustReload(1.12);}},
- {id:'l_overdrive',tier:4,kind:'굴진 과급',n:'굴진 과급',d:'드릴 피해 +45%, 이동 속도 +12%.',a:()=>{INF.drillMul*=1.45;INF.moveMul*=1.12;}},
- {id:'l_survival',tier:4,kind:'생존 강화',n:'생존 격벽',d:'최대 체력 +40, 체력을 추가 회복한다.',a:()=>{G.phpMax+=40;G.php=Math.min(G.phpMax,G.php+40);}}
+ {id:'l_dual',tier:4,kind:'쌍동력',n:'쌍동력 융합',d:'드릴·총기 피해 +17.5% · 재장전 시간 +12%.',a:()=>{INF.drillMul*=1.175;INF.gunMul*=1.175;infAdjustReload(1.12);}},
+ {id:'l_barrage',tier:4,kind:'광역 폭파',n:'파쇄 탄막',d:'폭발탄과 벽 피해 +30% · 재장전 시간 +18%.',a:()=>{INF.explosive=true;INF.gunWallMul*=1.3;infAdjustReload(1.18);}},
+ {id:'l_feed',tier:4,kind:'다중 급탄',n:'다중 급탄',d:'투사체 +1, 연사력 +7.5%, 탄창 +2 · 재장전 +10%.',a:()=>{INF.shots=Math.min(5,INF.shots+1);INF.fireRate*=1.075;infSetMag(2);infAdjustReload(1.10);}},
+ {id:'l_ricochet',tier:4,kind:'도탄',n:'무한 도탄',d:'도탄 +1 · 재장전 시간 +12%.',a:()=>{INF.bounces+=1;infAdjustReload(1.12);}},
+ {id:'l_overdrive',tier:4,kind:'굴진 과급',n:'굴진 과급',d:'드릴 피해 +22.5%, 이동 속도 +6%.',a:()=>{INF.drillMul*=1.225;INF.moveMul*=1.06;}},
+ {id:'l_survival',tier:4,kind:'생존 강화',n:'생존 격벽',d:'최대 체력 +20, 체력을 추가 회복한다.',a:()=>{G.phpMax+=20;G.php=Math.min(G.phpMax,G.php+20);}}
 ];
 /* 예약 데이터 — 위와 같은 이유로 영구 노드 재료로만 남긴다. */
 const INF_BRANCHES={
@@ -9056,7 +9169,7 @@ function infApplyTraitEffect(effectId){switch(effectId){
  case'driller_recirculation':INF.drillerTraitRecirc=true;break;
  case'driller_mantle':INF.drillerTraitMantle=true;INF.drillerTraitBreachRange+=2;break;
  }}
-function infDrillerOutputMul(){if(!INF.active||INF.roleId!=='driller')return 1;const hot=G.drillHeat||0;return (INF.drillerTraitDrillMul||1)*(INF.drillerTraitRedline&&hot>=.9?1.45:1);}
+ function infDrillerOutputMul(){if(!infTraitCardsEnabled()||INF.roleId!=='driller')return 1;const hot=G.drillHeat||0;return (INF.drillerTraitDrillMul||1)*(INF.drillerTraitRedline&&hot>=.9?1.45:1);}
 function infDrillerCrackHold(){return 2.5+(INF.drillerTraitResin?1.25:0);}
 function infDrillerCrackDecay(){return .012*(INF.drillerTraitResin?.75:1);}
 /* infResetTraitTree 는 런 중 트리와 함께 제거했다 (§6.5) */
@@ -9068,8 +9181,8 @@ function infRollTier(pool,forceHigh){
  const w={1:Math.max(24,62-34*p),2:28,3:8+16*p,4:2+8*p};
  let total=available.reduce((n,t)=>n+w[t],0),r=Math.random()*total;for(const t of available){r-=w[t];if(r<=0)return t;}return available[0]||1;
 }
-function infPickTraits(){
- const pool=INF_TRAITS.filter(t=>t.role===INF.roleId&&t.ok()),out=[];const forceHigh=INF.pity>=4||INF.level%5===0;
+ function infPickTraits(){
+  const pool=INF_TRAITS.filter(t=>(t.role==='all'||(INF.active&&t.role===INF.roleId))&&t.ok()),out=[];const forceHigh=INF.pity>=4||INF.level%5===0;
  for(let i=0;i<3&&pool.length;i++){const tier=infRollTier(pool,forceHigh&&i===0),same=pool.filter(t=>t.tier===tier),pick=same[(Math.random()*same.length)|0]||pool[0];out.push(pick);pool.splice(pool.indexOf(pick),1);}
  const best=out.reduce((m,t)=>Math.max(m,t.tier),1);INF.pity=best>=3?0:INF.pity+1;return out;
 }
@@ -9081,37 +9194,44 @@ function infSetMag(delta){const old=INF.magSize;INF.magSize=Math.max(3,Math.min(
 function infAdjustReload(mult){INF.reloadTime=Math.max(.42,Math.min(3.5,INF.reloadTime*mult));}
 function infStartReload(manual){if(!INF.active||CREW.phase!=='play'||INF.reloadLeft>0||INF.ammo>=INF.magSize)return false;INF.reloadDuration=INF.reloadTime;INF.reloadLeft=INF.reloadDuration;INF.reloadCount++;J.text(G.sh.x,G.sh.y-32,manual?'전술 재장전':'재장전','#7FEBD0',15);SFX.reload&&SFX.reload(manual);return true;}
 function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='play')return;INF.reloadLeft=Math.max(0,INF.reloadLeft-dt);if(INF.reloadLeft<=0){INF.ammo=INF.magSize;J.text(G.sh.x,G.sh.y-32,'장전 완료','#FFD36E',14);SFX.reloadDone&&SFX.reloadDone();}}
-function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null});infResetXpLog();}
+ function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null,
+  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[]});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
  for(const role of Object.values(INF_ROLES)){
   const b=document.createElement('div');
   b.className='infRoleCard tcRoleChoice'+(INF.selectedRoleId===role.id?' selected':'');
   b.dataset.role=role.id;b.style.setProperty('--role',role.color);b.setAttribute('role','button');b.setAttribute('tabindex','0');b.setAttribute('aria-pressed',INF.selectedRoleId===role.id?'true':'false');
-  b.innerHTML='<span class="tcRoleCode">'+role.code+'</span><img class="tcRoleArt" src="assets/menu/char-'+role.id+'-select-v4.png" alt="'+role.name+' 직업 일러스트"><span class="tcRoleCopy"><b class="tcRoleName">'+role.name+'</b><span class="tcRoleTag">'+role.tag+'</span><span class="tcRoleStats"><span>지형 장비　'+role.terrain+'</span><span>전투 장비　'+role.combat+'</span><span>채굴 ×'+role.dig.toFixed(2)+'　전투 ×'+role.gunMul.toFixed(2)+'　기동 ×'+role.dash.toFixed(2)+'</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i><button type="button" class="infRoleStartCard" data-role="'+role.id+'">선택완료</button>';
+  b.innerHTML='<span class="tcRoleCode">'+role.code+'</span><img class="tcRoleArt" src="assets/characters/'+role.id+'-playable.png" alt="'+role.name+' 직업 일러스트"><span class="tcRoleCopy"><b class="tcRoleName">'+role.name+'</b><span class="tcRoleTag">'+role.tag+'</span><span class="tcRoleStats"><span>지형 장비　'+role.terrain+'</span><span>전투 장비　'+role.combat+'</span><span>채굴 ×'+role.dig.toFixed(2)+'　전투 ×'+role.gunMul.toFixed(2)+'　기동 ×'+role.dash.toFixed(2)+'</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i><button type="button" class="infRoleStartCard" data-role="'+role.id+'">선택완료</button>';
   const choose=()=>{INF.selectedRoleId=role.id;infPaintRoleSelect();SFX.tick&&SFX.tick();};
   b.onclick=e=>{if(e.target.closest('.infRoleStartCard'))return;choose();};
   b.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('.infRoleStartCard')){e.preventDefault();choose();}};
   const start=b.querySelector('.infRoleStartCard');
-  start.onclick=e=>{e.preventDefault();e.stopPropagation();SFX.ui&&SFX.ui();infStartRun(role.id);};
+  start.onclick=e=>{e.preventDefault();e.stopPropagation();SFX.ui&&SFX.ui();infLaunchFromRoleSelect(role.id);};
   root.appendChild(b);
  }
  const selected=INF_ROLES[INF.selectedRoleId]||INF_ROLES.driller;const pick=infEl('infRolePickName');if(pick)pick.textContent=selected.name;
 }
-function infOpenRoleSelect(){INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();INF.selectedRoleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';infPaintRoleSelect();infEl('infRoleModal').classList.add('on');}
-function infCloseRoleSelect(){infEl('infRoleModal').classList.remove('on');crewShow('menu');SCENE='title';show(null);clearUI();}
+function infOpenRoleSelect(){INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();INF.selectedRoleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';infPaintRoleSelect();infEl('infRoleBack').textContent=STARMAP.fromMap?'행성 지도로':'메인 메뉴';infEl('infRoleModal').classList.add('on');}
+function infCloseRoleSelect(){infEl('infRoleModal').classList.remove('on');
+ if(STARMAP.fromMap){STARMAP.fromMap=false;STARMAP.armed=false;infOpenStarmap();return;}   /* 행성 지도에서 온 흐름은 지도로 복귀 */
+ crewShow('menu');SCENE='title';show(null);clearUI();}
 function infOpenModeChoice(){
- INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();
+ INF.active=false;INF.planetRun=false;STARMAP.armed=false;STARMAP.fromMap=false;document.body.classList.remove('infActive');crewEnsureBgm();
  ['infModeChoiceModal','infRoleModal','infLevelModal','infRestModal','infResultModal','infSettlementModal'].forEach(id=>infEl(id).classList.remove('on'));
+ infEl('infModeChoiceBack').textContent='메인 메뉴';
  infEl('infModeChoiceModal').classList.add('on');
 }
 function infCloseModeChoice(){infEl('infModeChoiceModal').classList.remove('on');crewShow('menu');SCENE='title';show(null);clearUI();}
+function infStartModeTraitCards(roleId){
+ const role=INF_ROLES[roleId]||INF_ROLES.driller;INF.roleId=role.id;infResetBuild();infResetTraitProgress();INF.modeTraitCards=true;INF.active=false;INF.testScene=false;INF.growthMultiplier=1;INF.traitMultiplier=1;INF.cards={rerolls:1};INF.cardReturnPhase='play';
+}
 function infChooseMode(testScene){
  INF.testScene=!!testScene;INF.growthMultiplier=INF.testScene?3:1;INF.traitMultiplier=INF.testScene?1.5:1;
  infEl('infModeChoiceModal').classList.remove('on');infOpenRoleSelect();
 }
 function infStartRun(roleId){
- const role=INF_ROLES[roleId]||INF_ROLES[INF.selectedRoleId]||INF_ROLES.driller;INF.roleId=role.id;infResetBuild();infResetTraitProgress();INF.drillerQCdMul=1;INF.active=true;document.body.classList.add('infActive');
+ const role=INF_ROLES[roleId]||INF_ROLES[INF.selectedRoleId]||INF_ROLES.driller;INF.roleId=role.id;infResetBuild();infResetTraitProgress();INF.drillerQCdMul=1;INF.modeTraitCards=false;INF.active=true;document.body.classList.add('infActive');
  let modeText=infEl('infModeText');if(!modeText){modeText=document.createElement('span');modeText.id='infModeText';modeText.className='infModeBadge';const depthText=infEl('infDepth');if(depthText)depthText.after(modeText);}if(modeText){modeText.textContent=INF.testScene?'TEST SCENE · XP ×3.0':'';modeText.hidden=!INF.testScene;}
  /* 머지 v7.3.0 — A의 정산 모달 닫기 + F의 코옵 유지를 결합 */
  ['infRoleModal','infLevelModal','infRestModal','infResultModal','infSettlementModal'].forEach(id=>infEl(id).classList.remove('on'));
@@ -9254,7 +9374,7 @@ function infUpdateEngineer(dt){
  for(const t of CREW.turrets){
   t.life-=dt;t.cd=Math.max(0,t.cd-dt);let source=null,bd=1e9;
   for(const n of INF.engineerNodes){const d=Math.hypot(n.x-t.x,n.y-t.y);if(d<=n.rad&&d<bd){bd=d;source=n;}}
-  const playerPower=Math.hypot(G.sh.x-t.x,G.sh.y-t.y)<=CELL*2.25;t.powered=!!source||playerPower||INF.engineerAutonomous;t.linkNode=source;t.linkPlayer=!source&&playerPower;
+  const playerPower=Math.hypot(G.sh.x-t.x,G.sh.y-t.y)<=CELL*2.25;t.autonomousPowered=!source&&!playerPower&&INF.engineerAutonomous;t.powered=!!source||playerPower||t.autonomousPowered;t.linkNode=source;t.linkPlayer=!source&&playerPower;
   if(!t.powered)continue;
   if(t.ammo<=0){if(t.reload<=0)t.reload=INF.engineerTurretReload;t.reload-=dt;if(t.reload<=0){t.reload=0;t.ammo=t.mag;J.text(t.x,t.y-24,'자동 장전','#7FEBD0',12);}continue;}
   if(t.cd>0)continue;
@@ -9262,7 +9382,7 @@ function infUpdateEngineer(dt){
   for(const e of G.enemies){if(e.hp<=0)continue;const d=Math.hypot(e.x-t.x,e.y-t.y);if(d<bestD&&infEngineerLineClear(t.x,t.y,e.x,e.y)){best=e;bestD=d;}}
   if(!best)continue;
   const a=Math.atan2(best.y-t.y,best.x-t.x),c=Math.cos(a),s=Math.sin(a),sp=teWorld(285);t.aim=a;t.ammo--;t.cd=INF.engineerTurretInterval;
-  G.projectiles.push(projectileWithVisual({x:t.x+c*12,y:t.y+s*12,vx:c*sp,vy:s*sp,life:1.05,power:INF.engineerTurretPower,srcTurret:1,lastCell:-1},'support'));
+  G.projectiles.push(projectileWithVisual({x:t.x+c*12,y:t.y+s*12,vx:c*sp,vy:s*sp,life:1.05,power:INF.engineerTurretPower*(t.autonomousPowered ? .5 : 1),srcTurret:1,lastCell:-1},'support'));
   if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(t.x+c*12,t.y+s*12,a,'support');
  }
  /* 설치물 운용 경험치 — 반복 설치가 아니라 전력망을 실제로 유지·가동한 시간에 지급한다.
@@ -9331,23 +9451,63 @@ function infInitFloor(){
  toast(infDepthLabel(INF.depth)+' — '+(infIsAbyss(INF.depth)?'행성 중심을 지나 이상지대에 진입했다. 위험이 가파르게 오른다':infStratum(INF.depth).omen));
 }
 function infDrillerDeflectWalls(x,y){if(!INF.drillerTraitDeflector||INF.drillerPropagationLock||!G.mouse.drillDown)return;const [c,r]=toCell(x,y),a=G.sh.aim,dc=Math.round(-Math.sin(a)),dr=Math.round(Math.cos(a));INF.drillerPropagationLock=true;for(const side of [-1,1]){const cc=c+dc*side,rr=r+dr*side;if(inB(cc,rr)&&solid(cc,rr)){const t=G.cell[ci(cc,rr)];if(t&&!SOLIDX(t)&&(t==='dirt'||t==='stone'))damage(cc,rr,shelDps()*DRILL_DMG()*.65*INF.drillMul,dc*side,dr*side,true);}}INF.drillerPropagationLock=false;J.ring(x,y,'#FFF3D6',4,CELL*.85,2);}
+function infDamageTraitCell(c,r,power,nx,ny){if(!inB(c,r))return false;const type=G.cell[ci(c,r)];if(!type||SOLIDX(type))return false;return damage(c,r,(HPT[type]||100)*(INF.wallHpMul||1)*power,nx||0,ny||0,true);}
+function infFocusDrillMul(c,r,dt){
+ if(!INF.focusDrill)return 1;const k=ci(c,r);if(INF.focusDrillCell!==k){INF.focusDrillCell=k;INF.focusDrillT=0;}else INF.focusDrillT=Math.min(2.5,(INF.focusDrillT||0)+dt);return 1+Math.min(.2,(INF.focusDrillT||0)*.08);
+}
+function infTraitRiskDamage(amount,label,lethal){
+ const dmg=Math.max(1,amount||0);G.php=Math.max(lethal?0:1,G.php-dmg);if((INF.traitRiskTextCd||0)<=0){J.text(G.sh.x,G.sh.y-34,'-'+Math.ceil(dmg)+' · '+label,'#FF718A',15);INF.traitRiskTextCd=.55;}G.flash=Math.max(G.flash,.16);if(G.php>0)return false;if(INF.active)infEndRun(label);else endCrewMission('fail');return true;
+}
+function infApplyDrillShape(c,r,dv,nx,ny){
+ if(!infTraitCardsEnabled()||INF.miningShapeLock)return;const a=Math.atan2(ny,nx),dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc;
+ let width=INF.drillWidth|0;if(INF.giantBit)width=Math.max(width,2);if(INF.endlessOverdrive)width+=Math.floor((G.drillHeat||0)*1.01);INF.miningShapeLock=true;
+ for(let side=1;side<=width;side++)for(const sign of [-1,1]){const cc=c+pc*side*sign,rr=r+pr*side*sign;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,dv*Math.max(.17,.37-side*.05),pc*sign,pr*sign,true);}
+ for(let step=1;step<=(INF.drillPenetration|0);step++){const cc=c+dc*step,rr=r+dr*step;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,dv*Math.max(.21,.41-step*.035),dc,dr,true);}INF.miningShapeLock=false;
+}
+function infTraitBlast(x,y,radius,power,color){
+ const [c,r]=toCell(x,y),rad=Math.max(1,radius|0);INF.universalBlastLock=true;for(let rr=-rad;rr<=rad;rr++)for(let cc=-rad;cc<=rad;cc++){const dist=Math.hypot(cc,rr);if(dist>radius+.15)continue;infDamageTraitCell(c+cc,r+rr,power*Math.max(.38,1-dist/(radius+1)),cc,rr);}INF.universalBlastLock=false;J.ring(x,y,color||'#FFD36E',7,CELL*(radius+.35),3);J.burst(x,y,8+rad*5,[color||'#FFD36E','#FFF3D6',P.rim],150+rad*40);
+}
+function infWideQBlast(){
+ const sh=G.sh,a=sh.aim,dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc,[c,r]=toCell(sh.x,sh.y);INF.universalBlastLock=true;for(let step=1;step<=7;step++)for(let side=-1;side<=1;side++)infDamageTraitCell(c+dc*step+pc*side,r+dr*step+pr*side,.575,dc,dr);INF.universalBlastLock=false;J.ring(sh.x+Math.cos(a)*CELL*3.5,sh.y+Math.sin(a)*CELL*3.5,'#FFD36E',9,CELL*3.2,4);J.kick(8,Math.cos(a),Math.sin(a));
+}
+function infPlanetBreaker(x,y){
+ const a=G.sh.aim,dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc,[c,r]=toCell(x,y);INF.planetBreakerFx={x,y,a,t:.7,maxT:.7};INF.universalBlastLock=true;for(let step=-1;step<=8;step++)for(let side=-2;side<=2;side++)infDamageTraitCell(c+dc*step+pc*side,r+dr*step+pr*side,.375,dc,dr);INF.universalBlastLock=false;infTraitRiskDamage(G.phpMax*.015,'파쇄기 반동',false);J.ring(x,y,'#FF8D72',14,CELL*4.8,6);J.kick(13,dc,dr);SFX.brk&&SFX.brk();
+}
+function infUpdateMiningTraits(dt){
+ if(!infTraitCardsEnabled()||CREW.phase!=='play')return;INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
+ if(INF.endlessOverdrive&&(G.drillHeat||0)>=.9){INF.endlessBurnTick=(INF.endlessBurnTick||0)+dt;while(INF.endlessBurnTick>=.5){INF.endlessBurnTick-=.5;if(infTraitRiskDamage(G.phpMax*.006,'과급 손상',true))return;}}else INF.endlessBurnTick=0;
+ if(!Array.isArray(INF.afterHits))INF.afterHits=[];for(let i=INF.afterHits.length-1;i>=0;i--){const hit=INF.afterHits[i];hit.t-=dt;if(hit.t<=0){INF.afterHits.splice(i,1);infTraitBlast(hit.x,hit.y,1.25,.25,'#C7A0FF');}}
+ const count=Math.max(INF.auxDrills|0,INF.drillStorm|0);if(count<=0)return;INF.auxDrillCd=Math.max(0,(INF.auxDrillCd||0)-dt);if(INF.auxDrillCd>0)return;INF.auxDrillCd=Math.max(.12,.48-count*.035);const sh=G.sh,candidates=[];
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const type=G.cell[ci(c,r)];if(!type||SOLIDX(type))continue;const x=cxw(c),y=cyw(r),d=Math.hypot(x-sh.x,y-sh.y);if(d<=CELL*(3.2+Math.min(3,count*.25)))candidates.push({c,r,x,y,d});}candidates.sort((a,b)=>a.d-b.d);
+ for(let i=0;i<Math.min(count,candidates.length);i++){const q=candidates[i],dx=q.x-sh.x,dy=q.y-sh.y,d=q.d||1;damage(q.c,q.r,shelDps()*DRILL_DMG()*(INF.auxDrillPower||.34),dx/d,dy/d,true);if(i<3)J.spikes(q.x,q.y,3,'rgba(255,211,110,.82)',CELL*.22,dx/d,dy/d);}
+}
+function infDrawMiningTraits(){
+ if(INF.planetBreakerFx){const f=INF.planetBreakerFx,life=Math.max(0,f.t/f.maxT),travel=1-life,head=-CELL+travel*CELL*10;cx.save();cx.translate(f.x,f.y);cx.rotate(f.a);cx.globalCompositeOperation='lighter';cx.globalAlpha=.18+.72*life;const grad=cx.createLinearGradient(-CELL*1.5,0,CELL*9,0);grad.addColorStop(0,'rgba(255,113,138,0)');grad.addColorStop(.35,'rgba(255,141,114,.9)');grad.addColorStop(1,'rgba(255,224,150,0)');cx.strokeStyle=grad;cx.lineCap='round';cx.lineWidth=CELL*2.6;cx.beginPath();cx.moveTo(-CELL*1.5,0);cx.lineTo(CELL*9,0);cx.stroke();cx.globalAlpha=.9*life;cx.strokeStyle='#FFF0C2';cx.lineWidth=5;for(const side of [-1,0,1]){cx.beginPath();cx.moveTo(-CELL,side*CELL*.72);cx.lineTo(CELL*9,side*CELL*.72);cx.stroke();}cx.translate(head,0);cx.fillStyle='#FFD36E';cx.strokeStyle='#FFF3D6';cx.lineWidth=3;cx.beginPath();cx.moveTo(CELL*.78,0);cx.lineTo(-CELL*.42,-CELL*.85);cx.lineTo(-CELL*.08,0);cx.lineTo(-CELL*.42,CELL*.85);cx.closePath();cx.fill();cx.stroke();cx.restore();}
+ const count=Math.max(INF.auxDrills|0,INF.drillStorm|0);if(count<=0)return;const sh=G.sh,drawCount=Math.min(8,count);for(let i=0;i<drawCount;i++){const a=G.t*(1.6+(i%2)*.28)+Math.PI*2*i/drawCount,rad=CELL*(.75+(i%2)*.24),x=sh.x+Math.cos(a)*rad,y=sh.y+Math.sin(a)*rad;cx.save();cx.translate(x,y);cx.rotate(a+Math.PI*.5);cx.shadowColor='#FFD36E';cx.shadowBlur=10;cx.fillStyle='#24152F';cx.strokeStyle='#FFD36E';cx.lineWidth=2;cx.beginPath();cx.moveTo(13,0);cx.lineTo(-7,-7);cx.lineTo(-3,0);cx.lineTo(-7,7);cx.closePath();cx.fill();cx.stroke();cx.restore();}
+}
 function infOnBlockBroken(type,x,y){
- if(!INF.active)return;INF.floorBroken++;INF.totalBlocks++;INF.blockCounter++;
- INF.spawnDebt+=(.30+Math.min(.42,INF.floorBroken*.006));G.enemyCd=Math.min(G.enemyCd,Math.max(.35,2.1-INF.floorBroken*.018));
+ if(!infTraitCardsEnabled())return;if(INF.active){INF.floorBroken++;INF.spawnDebt+=(.30+Math.min(.42,INF.floorBroken*.006));G.enemyCd=Math.min(G.enemyCd,Math.max(.35,2.1-INF.floorBroken*.018));}INF.totalBlocks++;INF.blockCounter++;
  const rare=type==='ore'||type==='gem'||type==='crys';
  infAwardXp(type==='stone'?INF_XP_TABLE.stone:rare?INF_XP_TABLE.rare:INF_XP_TABLE.dirt,'dig',{check:false});
   if(INF.drillerTraitHeatRecovery&&INF.roleId==='driller'){G.drillHeat=Math.max(0,(G.drillHeat||0)-.12);G.drillHeatLock=Math.max(0,(G.drillHeatLock||0)-.08);}
   if(INF.drillerTraitDeflector&&INF.roleId==='driller'&&(type==='dirt'||type==='stone'))infDrillerDeflectWalls(x,y);
   if(INF.drillerTraitRecirc&&INF.roleId==='driller'&&CREW.breachT>0&&INF.drillerRecircReduced<1.5){const cut=Math.min(.25,1.5-INF.drillerRecircReduced);CREW.qCd=Math.max(0,CREW.qCd-cut);INF.drillerRecircReduced+=cut;}
   if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);}
- if(INF.shardBurst>0&&INF.blockCounter%5===0)infRadialBurst(x,y,INF.shardBurst);
+ if(INF.breakShield>0){CREW.shieldT=Math.max(CREW.shieldT,INF.breakShield);G.iframes=Math.max(G.iframes,Math.min(.28,INF.breakShield*.45));}
+ if(INF.afterDrill&&!INF.universalBlastLock)INF.afterHits.push({x,y,t:.32});
+ if(!INF.universalBlastLock){let rad=INF.breakShockRadius||0,pow=INF.breakShockPower||0;if(INF.explosiveDrill){rad=Math.max(rad,1.55);pow=Math.max(pow,.31);}if(INF.chainCollapse){rad+=.5;pow=Math.max(pow,.37);}if(rad>0)infTraitBlast(x,y,rad,pow,INF.chainCollapse?'#FF8D72':'#FFD36E');}
+ if(INF.shardBurst>0&&INF.blockCounter%5===0)infRadialBurst(x,y,INF.shardBurst,INF.traitFx.includes('u_shards')?.35:null);
+ if(INF.autoDigEvery>0&&INF.blockCounter%INF.autoDigEvery===0)infRadialBurst(x,y,10,.35);
+ if(INF.vortexMining>0&&INF.blockCounter%3===0&&!INF.universalBlastLock){for(const q of G.res){const d=Math.hypot(x-q.x,y-q.y)||1;if(d<CELL*5){q.vx+=(x-q.x)/d*75;q.vy+=(y-q.y)/d*75;}}infTraitBlast(x,y,2.25,.36,'#C7A0FF');}
+ if(INF.planetBreakerEvery>0&&INF.blockCounter%INF.planetBreakerEvery===0&&!INF.universalBlastLock)infPlanetBreaker(x,y);
+ if(INF.grandCollapseEvery>0&&INF.blockCounter%INF.grandCollapseEvery===0&&!INF.universalBlastLock){infTraitRiskDamage(G.phpMax*.025,'붕괴 충격',false);infTraitBlast(x,y,3.5,.3375,'#FF718A');}
  if(INF.singularityEvery>0&&!INF.novaLock&&!INF.breakerBlastLock&&G.mouse.drillDown&&INF.blockCounter%INF.singularityEvery===0)infDrillNova(x,y);
  if(INF.chainBlast>0&&!INF.chainLock&&!INF.novaLock&&!INF.breakerBlastLock&&G.mouse.drillDown){INF.chainLock=true;const [c,r]=toCell(x,y);for(const [dc,dr] of D4){const cc=c+dc,rr=r+dr;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,shelDps()*(.55+.22*INF.chainBlast)*INF.drillMul,dc,dr,true);}INF.chainLock=false;}
- if(!INF.bossSpawned&&INF.floorBroken/INF.totalBreakable>=infDominanceTarget())infSpawnBoss();
+ if(INF.active&&!INF.bossSpawned&&INF.floorBroken/INF.totalBreakable>=infDominanceTarget())infSpawnBoss();
  infCheckLevel();
 }
-function infRadialBurst(x,y,n){
- const count=Math.max(4,n|0),sp=teWorld(245);for(let i=0;i<count;i++){const a=Math.PI*2*i/count,c=Math.cos(a),s=Math.sin(a);G.projectiles.push(projectileWithVisual({x,y,vx:c*sp,vy:s*sp,life:.7,pierce:1,bounces:0,explosive:false,power:.7,lastCell:-1},'shard'));}if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(x,y,0,'shard');else J.ring(x,y,'#7FEBD0',4,CELL*.8,2);
+function infRadialBurst(x,y,n,power){
+ const count=Math.max(4,n|0),sp=teWorld(245),shotPower=power==null ? .7 : power;for(let i=0;i<count;i++){const a=Math.PI*2*i/count,c=Math.cos(a),s=Math.sin(a);G.projectiles.push(projectileWithVisual({x,y,vx:c*sp,vy:s*sp,life:.7,pierce:1,bounces:0,explosive:false,power:shotPower,lastCell:-1},'shard'));}if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(x,y,0,'shard');else J.ring(x,y,'#7FEBD0',4,CELL*.8,2);
 }
 function infDrillNova(x,y){
  INF.novaLock=true;const [c,r]=toCell(x,y);J.ring(x,y,'#FFD36E',12,CELL*2.5,5);J.burst(x,y,24,['#FFD36E','#FFF','#C7A0FF'],290);J.kick(6);
@@ -9387,7 +9547,7 @@ function infXpWeight(kind){
    획득처를 늘려도 가중치·상한·기록이 한곳에서 유지된다.
    opts.capped 를 준 지급만 지층당 상한을 소비한다. */
 function infAwardXp(base,kind,opts){
- if(!INF.active||!(base>0))return 0;
+ if(!infTraitCardsEnabled()||!(base>0))return 0;
  const o=opts||{};
  if(o.capped&&(INF.xpCappedFloor||0)>=INF_XP_FLOOR_CAP)return 0;
  const gain=Math.max(1,Math.round(base*infXpWeight(kind)*INF.xpMul*(INF.growthMultiplier||1)));
@@ -9418,7 +9578,7 @@ function infXpLogSummary(){
  return keys.map(k=>INF_XP_LOG_LABEL[k]+' '+log[k]+' ('+Math.round(log[k]/total*100)+'%)').join(' · ');
 }
 function infCheckLevel(){
- if(!INF.active||CREW.phase!=='play'||INF.bossActive)return;
+ if(!infTraitCardsEnabled()||CREW.phase!=='play'||(INF.active&&INF.bossActive))return;
  /* 코옵 비정지: 카드 모달이 이미 열려 있으면 적립만 하고 기다린다 */
  {const m=infEl('infLevelModal');if(m&&m.classList.contains('on'))return;}
  if(INF.xp<INF.xpNeed)return;INF.xp-=INF.xpNeed;INF.level++;INF.xpNeed=infXpNeedFor(INF.level);infOpenLevel();
@@ -9459,7 +9619,11 @@ const INF_TRAIT_ICON_ASSET={
  e_cap:'trait-icon-engineer-high-density-battery-v1.png',e_mag:'trait-icon-sentry-turret-v1.png',e_cooling:'trait-icon-sentry-turret-v1.png',e_grid:'trait-icon-engineer-high-density-battery-v1.png',e_twin:'trait-icon-sentry-turret-v1.png',e_heavy:'trait-icon-sentry-turret-v1.png',e_auto:'trait-icon-engineer-high-density-battery-v1.png',e_fortress:'trait-icon-engineer-high-density-battery-v1.png',
  l_dual:'trait-icon-dual-power-v1.png',l_barrage:'trait-icon-explosive-charge-v1.png',l_feed:'trait-icon-gunner-chamber-cycler-v1.png',l_ricochet:'trait-icon-ricochet-v1.png',l_overdrive:'trait-icon-driller-torque-motor-v1.png',l_survival:'trait-icon-survival-bulkhead-v1.png',
  b_diamond:'trait-icon-driller-torque-motor-v1.png',b_fault:'trait-icon-crack-fissure-v1.png',b_seismic:'trait-icon-seismic-shockwave-v1.png',b_pierce:'trait-icon-piercing-round-v1.png',b_feed:'trait-icon-gunner-chamber-cycler-v1.png',b_cluster:'trait-icon-explosive-charge-v1.png',b_turbo:'trait-icon-rapid-fire-turbo-v1.png',b_dual:'trait-icon-dual-power-v1.png',b_unlimited:'trait-icon-dual-power-v1.png',b_scan:'trait-icon-scanner-radar-v1.png',b_refinery:'trait-icon-ore-refinery-v1.png',b_control:'trait-icon-control-network-v1.png',
- d_pressure_torque:'trait-icon-driller-torque-motor-v1.png',d_pressure_flywheel:'trait-icon-rapid-fire-turbo-v1.png',d_pressure_deflector:'trait-icon-ricochet-v1.png',d_pressure_recovery:'trait-icon-ore-refinery-v1.png',d_pressure_redline:'trait-icon-driller-torque-motor-v1.png',d_fracture_resin:'trait-icon-crack-fissure-v1.png',d_fracture_tracker:'trait-icon-scanner-radar-v1.png',d_fracture_branch_pin:'trait-icon-seismic-shockwave-v1.png',d_fracture_relay:'trait-icon-control-network-v1.png',d_fracture_eternal:'trait-icon-crack-fissure-v1.png',d_breach_cylinder:'trait-icon-core-bedrock-v1.png',d_breach_longitudinal:'trait-icon-piercing-round-v1.png',d_breach_diffuser:'trait-icon-seismic-shockwave-v1.png',d_breach_recirculation:'trait-icon-rapid-fire-turbo-v1.png',d_breach_mantle_key:'trait-icon-core-bedrock-v1.png'
+ d_pressure_torque:'trait-icon-driller-torque-motor-v1.png',d_pressure_flywheel:'trait-icon-rapid-fire-turbo-v1.png',d_pressure_deflector:'trait-icon-ricochet-v1.png',d_pressure_recovery:'trait-icon-ore-refinery-v1.png',d_pressure_redline:'trait-icon-driller-torque-motor-v1.png',d_fracture_resin:'trait-icon-crack-fissure-v1.png',d_fracture_tracker:'trait-icon-scanner-radar-v1.png',d_fracture_branch_pin:'trait-icon-seismic-shockwave-v1.png',d_fracture_relay:'trait-icon-control-network-v1.png',d_fracture_eternal:'trait-icon-crack-fissure-v1.png',d_breach_cylinder:'trait-icon-core-bedrock-v1.png',d_breach_longitudinal:'trait-icon-piercing-round-v1.png',d_breach_diffuser:'trait-icon-seismic-shockwave-v1.png',d_breach_recirculation:'trait-icon-rapid-fire-turbo-v1.png',d_breach_mantle_key:'trait-icon-core-bedrock-v1.png',
+ u_large_bit:'trait-icon-driller-torque-motor-v1.png',u_pierce_bit:'trait-icon-driller-torque-motor-v1.png',u_shockwave:'trait-icon-seismic-shockwave-v1.png',u_fast_spin:'trait-icon-rapid-fire-turbo-v1.png',u_magnet:'trait-icon-ore-refinery-v1.png',u_drive:'trait-icon-dual-power-v1.png',
+ u_triple:'trait-icon-dual-power-v1.png',u_aux:'trait-icon-sentry-turret-v1.png',u_explosive:'trait-icon-explosive-charge-v1.png',u_afterimage:'trait-icon-rapid-fire-turbo-v1.png',u_shards:'trait-icon-shrapnel-v1.png',u_guard:'trait-icon-survival-bulkhead-v1.png',
+ u_chain:'trait-icon-crack-fissure-v1.png',u_satellite:'trait-icon-sentry-turret-v1.png',u_laser:'trait-icon-piercing-round-v1.png',u_auto_shell:'trait-icon-shrapnel-v1.png',u_vortex:'trait-icon-control-network-v1.png',u_wide_q:'trait-icon-seismic-shockwave-v1.png',
+ u_army:'trait-icon-sentry-turret-v1.png',u_planet_breaker:'trait-icon-core-bedrock-v1.png',u_grand_collapse:'trait-icon-explosive-charge-v1.png',u_giant_bit:'trait-icon-driller-torque-motor-v1.png',u_storm:'trait-icon-dual-power-v1.png',u_endless:'trait-icon-rapid-fire-turbo-v1.png'
 };
 const INF_TRAIT_ICON_FALLBACK='trait-icon-control-network-v1.png';
 const INF_ESCAPE_CHARS={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
@@ -9552,11 +9716,11 @@ function infOpenLevel(){
  /* 솔로는 전체 정지, 코옵은 비정지(§17.2-5 1차 답) — 게임은 계속 돌고
     선택은 1·2·3 키로 한다. 모달이 마우스를 덮는 동안에도 WASD 이동은 가능하다. */
  const coopLive=typeof COOP!=='undefined'&&COOP.active&&COOP._started;
- if(!coopLive){CREW.phase='infiniteLevel';G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;}
+ if(!coopLive){INF.cardReturnPhase=CREW.phase;CREW.phase='infiniteLevel';G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;}
  if(typeof COOP_onLevel==='function')COOP_onLevel(INF.level);
- const role=INF_ROLES[INF.roleId]||INF_ROLES.driller;infEl('infLevelTitle').textContent='LEVEL '+INF.level+' · '+role.name+' 전용 특성';
+ const role=INF_ROLES[INF.roleId]||INF_ROLES.driller;infEl('infLevelTitle').textContent='LEVEL '+INF.level+' · '+(INF.active?role.name+' 채굴 특성':'채굴 특성 선택');
  const root=infEl('infLevelCards'),modal=infEl('infLevelModal');root.innerHTML='';const best=pool.reduce((m,t)=>Math.max(m,t.tier),1);modal.classList.toggle('highTier',best>=3);
- for(let i=0;i<pool.length;i++){const t=pool[i],b=infBuildTraitCard(t);b.onclick=()=>{infApplyTraitChoice(t);modal.classList.remove('on','highTier');if(CREW.phase==='infiniteLevel')CREW.phase='play';SFX.buy&&SFX.buy();setTimeout(infCheckLevel,80);};root.appendChild(infMakeLevelCardStage(t,i,b));setTimeout(()=>{if(modal.classList.contains('on')){SFX.tick&&SFX.tick();if(t.tier>=3)SFX.ore&&SFX.ore();}},170+i*240);}
+ for(let i=0;i<pool.length;i++){const t=pool[i],b=infBuildTraitCard(t);b.onclick=()=>{infApplyTraitChoice(t);modal.classList.remove('on','highTier');if(CREW.phase==='infiniteLevel')CREW.phase=INF.cardReturnPhase||'play';SFX.buy&&SFX.buy();setTimeout(infCheckLevel,80);};root.appendChild(infMakeLevelCardStage(t,i,b));setTimeout(()=>{if(modal.classList.contains('on')){SFX.tick&&SFX.tick();if(t.tier>=3)SFX.ore&&SFX.ore();}},170+i*240);}
  const rb=infEl('infReroll');
  if(rb){const left=(INF.cards&&INF.cards.rerolls)||0;rb.textContent='다시 뽑기 ('+left+')';rb.disabled=left<=0;
   rb.onclick=()=>{if(!INF.cards||INF.cards.rerolls<=0)return;INF.cards.rerolls--;SFX.ui&&SFX.ui();infOpenLevel();};}
@@ -9609,6 +9773,272 @@ function infXpNeedFor(L){const n=INF_CARDS.need;return Math.round(n.base+n.linea
 function infDominanceTarget(){
  const d=(infIsAbyss(INF.depth)?INF_PLANET.abyss.dominance:infStratum(INF.depth).dominance);
  return d||INF_DOMINANCE_TARGET;
+}
+
+/* ══════════ 행성 지도 · 출격 — 트랙 G (기획서 §2·§3·§12) ══════════ */
+/* 허브는 메뉴형으로 1차 확정(§17.3-8): 메인 메뉴가 기지, 행성 지도가 출격 동선이다.
+   지도 월드는 화면보다 훨씬 넓고(3200×2000) 드래그로 이동한다 — 행성 간 거리로
+   우주의 공간감을 연출한다(확정 스펙). 잠긴 행성 10개를 실루엣으로 미리 보여
+   장기 목표를 만든다(§3.1). */
+const INF_PLANETS=[
+ {id:'purple',name:'퍼플 땅굴',x:560,y:1520,r:52,pal:['#d9b8ff','#8c5bd0','#2a1245'],
+  theme:'기본 광물 행성',hazard:'낮음 — 표층 붕괴 · 소형 군체',minerals:'일반 광맥 · 암반 코어',
+  boss:'암반 포식자',locked:false},
+ {id:'brine',name:'청록 염굴',x:1080,y:1300,r:44,pal:['#8ff0dd','#2e9a8b','#0d3b38'],
+  theme:'염수 장판 · 부식 환경',locked:true},
+ {id:'mantle',name:'적열 맨틀',x:1560,y:1480,r:58,pal:['#ffb37a','#e05a2b','#4a120a'],
+  theme:'화산 지열 · 화염 생태',locked:true},
+ {id:'glacier',name:'백야 빙굴',x:1980,y:1180,r:40,pal:['#dff3ff','#7fb8d8','#1c3a52'],
+  theme:'결빙 · 미끄러운 지반',locked:true},
+ {id:'mycel',name:'균사 심림',x:1420,y:900,r:46,pal:['#d8ff9e','#6f9a3e','#233a12'],
+  theme:'포자 군락 · 증식 지형',locked:true},
+ {id:'dust',name:'황사 협곡',x:2360,y:1420,r:42,pal:['#ffe2a8','#c89a4e','#4a3616'],
+  theme:'유사(流沙) · 붕괴 협곡',locked:true},
+ {id:'storm',name:'뇌운 부유암',x:2520,y:880,r:38,pal:['#cfd8ff','#7a86c8','#22284a'],
+  theme:'낙뢰 · 부유 지층',locked:true},
+ {id:'abyssal',name:'심해 압굴',x:880,y:640,r:48,pal:['#9fc4ff','#3e5fa0','#0c1a3a'],
+  theme:'수압 · 침수 구역',locked:true},
+ {id:'crystal',name:'수정 공동',x:1880,y:560,r:44,pal:['#ffc4f2','#b060c8','#3a1044'],
+  theme:'공명 수정 · 굴절 시야',locked:true},
+ {id:'wreck',name:'파묻힌 기계층',x:2760,y:520,r:50,pal:['#e0e6ea','#8a949c','#2c3238'],
+  theme:'고대 기계 · 가동 잔해',locked:true},
+ {id:'void',name:'공허 균열',x:2960,y:1080,r:36,pal:['#d8c8ff','#5b3f9a','#120a24'],
+  theme:'관측 불가',locked:true}
+];
+const STARMAP={open:false,world:{w:3200,h:2000},x:0,y:0,drag:null,sel:null,raf:0,stars:null,armed:false,fromMap:false};
+/* 임시 컷씬 — videoSrc 에 mp4/webm 경로를 넣으면 코드 연출 대신 영상을 재생한다 */
+const INF_CUTSCENE={videoSrc:'assets/cutscenes/planet-launch.mp4',duration:2.8};
+function infInitPlanetMeta(){
+ if(!INF_META.planets||typeof INF_META.planets!=='object')INF_META.planets={};
+ for(const p of INF_PLANETS)if(!INF_META.planets[p.id])INF_META.planets[p.id]={runs:0,clears:0,escapes:0,bestDepth:0};
+}
+/* 클리어 = 중심부 보스를 처치하고 생환 (§16.1-5). infEndRun 훅에서 호출된다. */
+function infRecordPlanetResult(escaped){
+ if(!INF.planetRun)return;
+ infInitPlanetMeta();const rec=INF_META.planets[INF_PLANET.id]||(INF_META.planets[INF_PLANET.id]={runs:0,clears:0,escapes:0,bestDepth:0});
+ rec.runs++;rec.bestDepth=Math.max(rec.bestDepth||0,INF.depth);
+ if(escaped){rec.escapes++;if(INF.depth>=infStratumCount()&&INF.bosses>0)rec.clears++;}
+}
+function starmapEl(id){return document.getElementById(id);}
+function infBuildStarmap(){
+ if(starmapEl('tcStarmap'))return;
+ const css=document.createElement('style');
+ css.textContent=`
+#tcStarmap{position:absolute;inset:0;z-index:56;display:none;overflow:hidden;background:radial-gradient(ellipse at 32% 18%,#181030 0%,#0b0716 52%,#050310 100%);cursor:grab;user-select:none}
+#tcStarmap.on{display:block}
+#tcStarmap.dragging{cursor:grabbing}
+#tcStarCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#tcStarWorld{position:absolute;left:0;top:0;will-change:transform}
+#tcStarRoutes{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.tcPlanet{position:absolute;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0;border:0;background:none;color:#e8ddf6;cursor:pointer;transform:translate(-50%,-50%);font:inherit}
+.tcPlanetBody{position:relative;border-radius:50%;box-shadow:0 0 26px 4px var(--glow),inset -14px -16px 26px rgba(0,0,0,.55);transition:transform .18s,box-shadow .18s}
+.tcPlanet:hover .tcPlanetBody,.tcPlanet.sel .tcPlanetBody{transform:scale(1.09);box-shadow:0 0 40px 8px var(--glow),inset -14px -16px 26px rgba(0,0,0,.5)}
+.tcPlanet.sel .tcPlanetBody:after{content:"";position:absolute;inset:-11px;border:2px dashed #ffd36e;border-radius:50%;animation:tcSelSpin 9s linear infinite}
+@keyframes tcSelSpin{to{transform:rotate(360deg)}}
+.tcPlanetName{padding:3px 10px;border-radius:999px;background:rgba(8,5,18,.72);border:1px solid rgba(200,160,255,.28);font-size:12px;font-weight:800;letter-spacing:.02em;white-space:nowrap}
+.tcPlanetSub{margin-top:-3px;font-size:10px;color:#9a86b5;white-space:nowrap}
+.tcPlanet.locked{cursor:pointer}
+.tcPlanet.locked .tcPlanetBody{filter:saturate(.16) brightness(.62)}
+.tcPlanet.locked .tcPlanetBody:before{content:"";position:absolute;inset:-7px;border:1.5px dashed rgba(180,160,210,.4);border-radius:50%}
+.tcPlanet.locked .tcPlanetName{color:#9a8ab0}
+.tcPlanetLock{position:absolute;top:-6px;right:-6px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#241736;border:1px solid #4a3568;font-size:11px}
+#tcStarHead{position:absolute;left:0;right:0;top:0;z-index:3;display:flex;align-items:center;gap:14px;padding:16px 20px;pointer-events:none}
+#tcStarHead .tcStarTitle{pointer-events:none}
+#tcStarHead .tcStarTitle b{display:block;font:800 22px/1.1 inherit;color:#f2e7ff;letter-spacing:.04em}
+#tcStarHead .tcStarTitle span{display:block;margin-top:3px;font-size:11px;color:#9a86b5}
+#tcStarBack{pointer-events:auto;margin-left:auto;padding:10px 16px;border:1px solid #4a3568;border-radius:10px;background:rgba(26,18,40,.9);color:#e4d4f5;font:700 12px/1 inherit;cursor:pointer}
+#tcStarBack:hover{border-color:#a878e0}
+#tcStarHint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;padding:7px 14px;border-radius:999px;background:rgba(8,5,18,.6);border:1px solid rgba(200,160,255,.2);color:#9a86b5;font-size:11px;pointer-events:none}
+#tcStarPanel{position:absolute;right:18px;top:74px;bottom:18px;z-index:4;width:min(330px,86vw);display:none;flex-direction:column;gap:11px;padding:18px 17px;border:1px solid #4a3568;border-radius:16px;background:rgba(16,10,26,.94);backdrop-filter:blur(8px);color:#e4d4f5;font-size:12.5px;line-height:1.55;overflow:auto}
+#tcStarPanel.on{display:flex}
+#tcStarPanel h2{margin:0;font:800 21px/1.2 inherit;color:#f2e7ff}
+#tcStarPanel .tcBadge{align-self:flex-start;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.06em}
+#tcStarPanel .tcBadge.openb{background:rgba(127,235,208,.14);border:1px solid rgba(127,235,208,.5);color:#9df0dd}
+#tcStarPanel .tcBadge.lockb{background:rgba(255,110,140,.1);border:1px solid rgba(255,110,140,.42);color:#ff9db4}
+#tcStarPanel dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:2px 0 0}
+#tcStarPanel dt{color:#8d789f;font-size:11px}
+#tcStarPanel dd{margin:0;color:#e8ddf6}
+#tcStarLaunch{margin-top:auto;padding:13px 16px;border:1px solid rgba(255,211,110,.55);border-radius:12px;background:rgba(255,211,110,.14);color:#ffe9c9;font:800 14px/1 inherit;letter-spacing:.04em;cursor:pointer}
+#tcStarLaunch:hover:not(:disabled){background:rgba(255,211,110,.24)}
+#tcStarLaunch:disabled{opacity:.42;cursor:default}
+#tcCutscene{position:fixed;inset:0;z-index:220;display:none;width:var(--tc-vw,100vw);height:var(--tc-vh,100dvh);overflow:hidden;place-items:center;background:#050310}
+#tcCutscene.on{display:grid}
+#tcCutscene canvas,#tcCutscene video{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;min-width:0;min-height:0;max-width:none;max-height:none;object-fit:contain;object-position:center center;background:#050310}
+#tcCutSkip{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:2;padding:8px 14px;border:1px solid rgba(200,160,255,.4);border-radius:999px;background:rgba(8,5,18,.6);color:#c9b8dd;font:700 11px/1 inherit;cursor:pointer}
+`;
+ document.head.appendChild(css);
+ const div=document.createElement('div');div.id='tcStarmap';
+ div.innerHTML=`
+  <canvas id="tcStarCanvas"></canvas>
+  <div id="tcStarWorld"><svg id="tcStarRoutes"></svg></div>
+  <div id="tcStarHead"><div class="tcStarTitle"><b>행성 지도</b><span>드래그로 우주를 이동 · 행성을 선택해 원정을 계획하세요</span></div><button id="tcStarBack" type="button">기지 메뉴로</button></div>
+  <div id="tcStarHint">🖱 드래그 — 지도 이동 · 행성 클릭 — 정보</div>
+  <aside id="tcStarPanel"></aside>`;
+ (document.getElementById('app')||document.body).appendChild(div);
+ const world=starmapEl('tcStarWorld');world.style.width=STARMAP.world.w+'px';world.style.height=STARMAP.world.h+'px';
+ /* 개척 경로 — 행성을 잇는 점선 (§3.1 클리어 경로 시각화) */
+ const svg=starmapEl('tcStarRoutes');svg.setAttribute('width',STARMAP.world.w);svg.setAttribute('height',STARMAP.world.h);
+ let path='';for(const p of INF_PLANETS)path+=(path?' L':'M')+p.x+' '+p.y;
+ svg.innerHTML='<path d="'+path+'" fill="none" stroke="rgba(190,160,255,.17)" stroke-width="2" stroke-dasharray="3 9"/>';
+ for(const p of INF_PLANETS){
+  const b=document.createElement('button');b.type='button';b.className='tcPlanet'+(p.locked?' locked':'');b.dataset.planet=p.id;
+  b.style.left=p.x+'px';b.style.top=p.y+'px';b.style.setProperty('--glow',p.pal[1]+'66');
+  b.innerHTML='<span class="tcPlanetBody" style="width:'+(p.r*2)+'px;height:'+(p.r*2)+'px;background:radial-gradient(circle at 34% 30%,'+p.pal[0]+' 0%,'+p.pal[1]+' 46%,'+p.pal[2]+' 100%)">'+(p.locked?'<i class="tcPlanetLock">🔒</i>':'')+'</span>'
+   +'<span class="tcPlanetName">'+p.name+'</span><span class="tcPlanetSub">'+(p.locked?p.theme:'개척 가능')+'</span>';
+  b.addEventListener('click',e=>{if(STARMAP.dragMoved)return;e.stopPropagation();infSelectPlanet(p.id);});
+  world.appendChild(b);
+ }
+ /* 드래그 패닝 */
+ div.addEventListener('pointerdown',e=>{if(e.target.closest('#tcStarPanel')||e.target.closest('#tcStarHead')||e.target.closest('.tcPlanet'))return;
+  STARMAP.drag={sx:e.clientX,sy:e.clientY,ox:STARMAP.x,oy:STARMAP.y};STARMAP.dragMoved=false;div.classList.add('dragging');try{div.setPointerCapture&&div.setPointerCapture(e.pointerId);}catch(err){}});
+ div.addEventListener('pointermove',e=>{const d=STARMAP.drag;if(!d)return;
+  const dx=e.clientX-d.sx,dy=e.clientY-d.sy;if(Math.hypot(dx,dy)>6)STARMAP.dragMoved=true;
+  starmapPan(d.ox+dx,d.oy+dy);});
+ const endDrag=()=>{STARMAP.drag=null;div.classList.remove('dragging');setTimeout(()=>{STARMAP.dragMoved=false;},0);};
+ div.addEventListener('pointerup',endDrag);div.addEventListener('pointercancel',endDrag);
+ div.addEventListener('wheel',e=>{e.preventDefault();starmapPan(STARMAP.x-(e.shiftKey?e.deltaY:e.deltaX||0),STARMAP.y-(e.shiftKey?0:e.deltaY));},{passive:false});
+ starmapEl('tcStarBack').addEventListener('click',()=>infCloseStarmap(true));
+ /* 별밭 3층 — 패럴랙스 계수로 깊이감 */
+ const stars=[];let seed=1234;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+ for(let L=0;L<3;L++){const f=[.25,.5,.85][L];for(let i=0;i<150;i++)stars.push({x:rnd()*STARMAP.world.w,y:rnd()*STARMAP.world.h,r:.5+rnd()*(L*.7+.8),f,tw:rnd()*6.28});}
+ STARMAP.stars=stars;
+}
+function starmapPan(x,y){
+ const vw=innerWidth,vh=innerHeight;
+ STARMAP.x=Math.min(60,Math.max(vw-STARMAP.world.w-60,x));
+ STARMAP.y=Math.min(60,Math.max(vh-STARMAP.world.h-60,y));
+ starmapEl('tcStarWorld').style.transform='translate('+STARMAP.x+'px,'+STARMAP.y+'px)';
+}
+function starmapDrawStars(t){
+ const c=starmapEl('tcStarCanvas');if(!c)return;
+ if(c.width!==innerWidth||c.height!==innerHeight){c.width=innerWidth;c.height=innerHeight;}
+ const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
+ for(const s of STARMAP.stars){
+  const sx=s.x*1+(STARMAP.x*s.f),sy=s.y*1+(STARMAP.y*s.f);
+  if(sx<-8||sy<-8||sx>c.width+8||sy>c.height+8)continue;
+  g.globalAlpha=.35+.5*Math.abs(Math.sin(t*.0012+s.tw));
+  g.fillStyle=s.f>.7?'#efe6ff':'#b9a8d8';
+  g.beginPath();g.arc(sx,sy,s.r,0,7);g.fill();
+ }
+ g.globalAlpha=1;
+}
+function starmapLoop(t){if(!STARMAP.open)return;starmapDrawStars(t||0);STARMAP.raf=requestAnimationFrame(starmapLoop);}
+function infOpenStarmap(){
+ infBuildStarmap();infInitPlanetMeta();
+ const menu=document.getElementById('crewMenu');if(menu)menu.classList.remove('on');
+ starmapEl('tcStarmap').classList.add('on');STARMAP.open=true;CREW.phase='starmap';
+ /* 첫 진입 카메라 — 개척 가능 행성이 화면 중앙 */
+ const cur=INF_PLANETS.find(p=>!p.locked)||INF_PLANETS[0];
+ starmapPan(innerWidth*.42-cur.x,innerHeight*.52-cur.y);
+ infSelectPlanet(cur.id);
+ cancelAnimationFrame(STARMAP.raf);starmapLoop();
+ crewEnsureBgm&&crewEnsureBgm();
+}
+function infCloseStarmap(toMenu){
+ starmapEl('tcStarmap')&&starmapEl('tcStarmap').classList.remove('on');STARMAP.open=false;cancelAnimationFrame(STARMAP.raf);
+ if(toMenu){crewShow('menu');SCENE='title';}
+}
+function infSelectPlanet(id){
+ const p=INF_PLANETS.find(x=>x.id===id);if(!p)return;STARMAP.sel=id;
+ document.querySelectorAll('#tcStarWorld .tcPlanet').forEach(b=>b.classList.toggle('sel',b.dataset.planet===id));
+ infInitPlanetMeta();const rec=INF_META.planets[id]||{},panel=starmapEl('tcStarPanel');
+ const strata=p.locked?null:infStratumCount();
+ panel.innerHTML=
+  '<span class="tcBadge '+(p.locked?'lockb':'openb')+'">'+(p.locked?'미개척 — 잠김':(rec.clears?'클리어 '+rec.clears+'회':'개척 가능'))+'</span>'
+  +'<h2>'+p.name+'</h2>'
+  +'<p style="margin:0;color:#b9a8d0">'+p.theme+'</p>'
+  +'<dl>'
+  +(p.locked
+    ?'<dt>환경</dt><dd>'+p.theme+'</dd><dt>지층</dt><dd>???</dd><dt>보스</dt><dd>???</dd><dt>해금</dt><dd>이전 행성의 중심부 보스를 처치하고 생환하면 개척 경로가 열립니다 (§3.3)</dd>'
+    :'<dt>지층</dt><dd>'+strata+'개 + 심층 이상지대</dd>'
+     +'<dt>목표 시간</dt><dd>'+INF_PLANET.targetMinutes+'분</dd>'
+     +'<dt>위험 요소</dt><dd>'+(p.hazard||'—')+'</dd>'
+     +'<dt>광물</dt><dd>'+(p.minerals||'—')+'</dd>'
+     +'<dt>중심부</dt><dd>'+(rec.clears?p.boss:'거대한 기척 — 실루엣만 관측됨')+'</dd>'
+     +'<dt>기록</dt><dd>출격 '+(rec.runs||0)+' · 생환 '+(rec.escapes||0)+' · 최고 심층 '+(rec.bestDepth||'-')+'</dd>')
+  +'</dl>'
+  +'<button id="tcStarLaunch" type="button" '+(p.locked?'disabled':'')+'>'+(p.locked?'개척 불가 — 경로 잠김':'출격 준비 → 직업 선택')+'</button>';
+ panel.classList.add('on');
+ const lb=starmapEl('tcStarLaunch');
+ if(lb&&!p.locked)lb.addEventListener('click',()=>{
+  STARMAP.armed=true;STARMAP.fromMap=true;
+  starmapEl('tcStarmap').classList.remove('on');STARMAP.open=false;cancelAnimationFrame(STARMAP.raf);
+  infOpenRoleSelect();
+ });
+}
+/* ── 출격 컷씬 (임시 코드 연출 · 영상 슬롯 지원) ── */
+function infPlayLaunchCutscene(done){
+ let host=starmapEl('tcCutscene');
+ if(!host){host=document.createElement('div');host.id='tcCutscene';(document.getElementById('app')||document.body).appendChild(host);}
+ /* 영상 사운드만 들리도록 출격 컷씬 동안 기존 BGM을 모두 정지한다. */
+ if(typeof BGM_ROUTE!=='undefined'){
+  BGM_ROUTE.current='cutscene';BGM_ROUTE.revision++;
+  if(typeof LOBBY_MUSIC!=='undefined')LOBBY_MUSIC.pause();
+  if(typeof PURPLE_MUSIC!=='undefined')PURPLE_MUSIC.pause();
+  if(typeof MUS!=='undefined'&&MUS.setExternal)MUS.setExternal(true);
+ }
+ host.innerHTML='';host.classList.add('on');
+ let finished=false;
+ const finish=()=>{if(finished)return;finished=true;host.classList.remove('on');host.innerHTML='';done&&done();};
+ if(INF_CUTSCENE.videoSrc){
+  const v=document.createElement('video');v.src=INF_CUTSCENE.videoSrc;v.autoplay=true;v.muted=false;v.playsInline=true;v.preload='auto';
+  v.addEventListener('ended',finish);v.addEventListener('error',finish);host.appendChild(v);
+  const playPromise=v.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{});
+ }else{
+  /* 임시 연출: 별밭 → 로켓이 행성으로 → 접근 플래시 → 착륙 텍스트 */
+  const cv=document.createElement('canvas');host.appendChild(cv);
+  const p=INF_PLANETS.find(x=>x.id===STARMAP.sel)||INF_PLANETS[0];
+  const t0=performance.now(),D=INF_CUTSCENE.duration*1000;
+  const stars=[];for(let i=0;i<130;i++)stars.push({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.6,s:.2+Math.random()*.8});
+  (function frame(now){
+   if(finished)return;
+   const u=Math.min(1,(now-t0)/D);
+   const cr=host.getBoundingClientRect(),cw=Math.max(1,Math.round(cr.width)),ch=Math.max(1,Math.round(cr.height));
+   if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch;}
+   const g=cv.getContext('2d'),W=cv.width,H=cv.height;
+   g.fillStyle='#050310';g.fillRect(0,0,W,H);
+   for(const s of stars){const sx=(s.x*W-(u*220*s.s))%W;g.globalAlpha=.4+.5*s.s;g.fillStyle='#cfc0e8';g.beginPath();g.arc((sx+W)%W,s.y*H,s.r+u*s.s*1.6,0,7);g.fill();}
+   g.globalAlpha=1;
+   /* 목적지 행성 — 커지며 접근 */
+   const pr=20+Math.pow(u,1.7)*(Math.min(W,H)*.62),px=W*.72,py=H*.44;
+   const grad=g.createRadialGradient(px-pr*.3,py-pr*.32,pr*.12,px,py,pr);
+   grad.addColorStop(0,p.pal[0]);grad.addColorStop(.48,p.pal[1]);grad.addColorStop(1,p.pal[2]);
+   g.fillStyle=grad;g.beginPath();g.arc(px,py,pr,0,7);g.fill();
+   /* 로켓 — 탈출 포트와 같은 실루엣 (타고 간 포트로 돌아온다) */
+   const rx=W*.16+u*(W*.4),ry=H*.6-u*H*.13,sc=1.1-u*.25;
+   g.save();g.translate(rx,ry);g.rotate(-.5);g.scale(sc,sc);
+   g.shadowColor='#FF8DA8';g.shadowBlur=16;
+   g.fillStyle='#2A1622';g.strokeStyle='#FF8DA8';g.lineWidth=3;
+   g.beginPath();g.ellipse(0,0,17,28,0,0,7);g.fill();g.stroke();g.shadowBlur=0;
+   g.fillStyle='#FFD8E2';g.beginPath();g.arc(0,-9,7,0,7);g.fill();
+   const fl=.6+.4*Math.sin(now*.03);
+   g.globalAlpha=.85;g.fillStyle='#FFD36E';g.beginPath();g.moveTo(-8,26);g.lineTo(0,44+12*fl);g.lineTo(8,26);g.closePath();g.fill();
+   g.restore();
+   /* 자막 */
+   g.globalAlpha=1;g.textAlign='center';
+   g.fillStyle='#9a86b5';g.font='800 12px '+FNT;g.fillText('EXPEDITION LAUNCH',W/2,H*.83);
+   g.fillStyle='#f2e7ff';g.font='800 26px '+FNT;g.fillText(p.name,W/2,H*.83+30);
+   if(u>.86){g.fillStyle='rgba(255,235,210,'+((u-.86)/.14)+')';g.fillRect(0,0,W,H);}
+   if(u>=1){finish();return;}
+   requestAnimationFrame(frame);
+  })(t0);
+ }
+ const skip=document.createElement('button');skip.id='tcCutSkip';skip.type='button';skip.textContent='건너뛰기 (클릭)';
+ skip.addEventListener('click',finish);host.appendChild(skip);
+ host.addEventListener('click',finish,{once:true});
+ setTimeout(finish,(INF_CUTSCENE.videoSrc?45000:INF_CUTSCENE.duration*1000+800));   /* 안전망 */
+}
+/* 직업 선택의 시작 버튼이 이 관문을 거친다 — 지도 출격이면 컷씬 후 시작 */
+function infLaunchFromRoleSelect(roleId){
+ if(STARMAP.armed){
+  STARMAP.armed=false;STARMAP.fromMap=false;INF.planetRun=true;INF.testScene=false;INF.growthMultiplier=1;INF.traitMultiplier=1;
+  infEl('infRoleModal').classList.remove('on');
+  infStartRun(roleId);
+  infPlayLaunchCutscene(()=>{
+   if(typeof BGM_ROUTE!=='undefined')BGM_ROUTE.usePurple(false);
+  });
+  /* 게임은 출격 버튼 입력으로 시작하고, 영상이 끝날 때까지 BGM만 정지한다. */
+ }else{INF.planetRun=false;infStartRun(roleId);}
 }
 
 /* ══════════ 보스 위계 — 트랙 B (기획서 §11.1) ══════════ */
@@ -9994,6 +10424,7 @@ function infEndRun(reason,escaped){
  if(!INF.active||CREW.phase==='infiniteResult')return;CREW.phase='infiniteResult';INF.escape=null;INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
  if(typeof COOP_onInfEnd==='function')COOP_onInfEnd(reason,escaped);   /* 코옵 생환/다운 통지 — 트랙 F (훅 1줄) */
  const newly=[];INF_META.bestDepth=Math.max(INF_META.bestDepth,INF.depth);INF_META.bestBlocks=Math.max(INF_META.bestBlocks,INF.totalBlocks);INF_META.totalBosses+=INF.bosses;if(escaped){INF_META.escapes=(INF_META.escapes||0)+1;INF_META.bankedCores=(INF_META.bankedCores||0)+INF.core;}   /* §8.2 — 보스 코어는 생환해야 획득 */
+ if(typeof infRecordPlanetResult==='function')infRecordPlanetResult(escaped);   /* 행성 도감·기록 — 트랙 G */
  if(INF_META.bestDepth>=2&&!INF_META.unlocks.ricochet){INF_META.unlocks.ricochet=true;newly.push('도탄 탄두');}
  if(INF_META.totalBosses>=3&&!INF_META.unlocks.explosive){INF_META.unlocks.explosive=true;newly.push('발파 탄두');}
  if(INF_META.bestDepth>=3&&!INF_META.unlocks.breach){INF_META.unlocks.breach=true;newly.push('돌파 규격');}
@@ -10032,6 +10463,7 @@ function infInstallTestPanel(){
  p.onclick=e=>{const k=e.target&&e.target.dataset.t;if(!k||!INF.active)return;if(k==='xp'){INF.xp=INF.xpNeed;infCheckLevel();}else if(k==='high'){INF.pity=4;INF.xp=INF.xpNeed;infCheckLevel();}else if(k==='laser'){INF.laserEvery=1;INF.gunMode='공명 레이저';infPaint();}else if(k==='core'){INF.core+=30;infPaint();toast('코어 +30 (운반 전리품)');}else if(k==='rock'){const [pc,pr]=toCell(G.sh.x,G.sh.y);let spot=null;for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){const c=pc+dc,r=pr+dr;if(!inB(c,r)||c<=0||r<=0||c>=COLS-1||r>=ROWS-1)continue;const q=ci(c,r);if(SOLIDX(G.cell[q]))continue;G.cell[q]='rock';G.band[q]=bandOf(r);G.dec[q]=0;G.hp.delete(q);spot=[c,r];break;}if(spot){G.compDirty=true;LOS.markDirty();G.aimX=cxw(spot[0]);G.aimY=cyw(spot[1]);G.aimReady=true;G.sh.aim=Math.atan2(G.aimY-G.sh.y,G.aimX-G.sh.x);toast('기반암 테스트 타일');}}else if(k==='time'){INF.floorTime+=180;INF.floorBroken+=35;G.enemyCd=0;infPaint();}else if(k==='apex'){spawnEnemy(true);}else if(k==='target'&&CREW.turrets.length){const t=CREW.turrets[0];G.enemies.length=0;let spot=null;for(let ring=2;ring<=5&&!spot;ring++)for(let i=0;i<16;i++){const a=i*Math.PI/8,x=t.x+Math.cos(a)*CELL*ring,y=t.y+Math.sin(a)*CELL*ring;if(!solidAt(x,y)&&infEngineerLineClear(t.x,t.y,x,y)){spot={x,y};break;}}if(spot)G.enemies.push({x:spot.x,y:spot.y,vx:0,vy:0,hp:999,hpMax:999,threatHpMul:1,speedMul:0,damageMul:0,apex:false,kbx:0,kby:0,cd:99,hurt:0,bob:0,r:DEMO.enemyRadius,elite:0});}else if(k==='boss'){if(!INF.bossSpawned)infSpawnBoss();}else if(k==='near'&&INF.boss){INF.boss.x=clamp(G.sh.x+CELL*3,CELL,WW-CELL);INF.boss.y=G.sh.y;infPaint();}else if(k==='dir'&&INF.boss){INF.indicatorTestDir=((INF.indicatorTestDir||0)+1)%4;const a=INF.indicatorTestDir*Math.PI*.5;INF.boss.x=clamp(G.sh.x+Math.cos(a)*CELL*18,CELL,WW-CELL);INF.boss.y=clamp(G.sh.y+Math.sin(a)*CELL*18,CELL,WH-CELL);infPaint();}else if(k==='shot'&&INF.boss){infBossStartPattern(INF.boss);}else if(k==='kill'){if(INF.boss){for(const q of INF.boss.armorCells||[])G.cell[q]=null;hurtEnemy(INF.boss,INF.boss.hp*10,1,0);}}else if(k==='return')infEndRun('테스트 생환',true);else if(k==='end')infEndRun('테스트 종료');};document.body.appendChild(p);
 }
 infEl('menuInfinite').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenModeChoice();});
+infEl('menuStarmap').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenStarmap();});
 infEl('menuNodeTree').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenNodeTree();});
 infEl('infModeStandard').addEventListener('click',()=>{SFX.ui&&SFX.ui();infChooseMode(false);});
 infEl('infModeTest').addEventListener('click',()=>{SFX.ui&&SFX.ui();infChooseMode(true);});
@@ -10330,4 +10762,561 @@ addEventListener('keydown',e=>{if(!state.active)return;if(e.code==='Space'){e.pr
 })();
 </script>
 
+<!-- ══════════ [FX7.3.1] UI 애니메이션 — 등장 · 눌림 피드백 ══════════ -->
+<style id="tcFxUiAnim">
+/* 원칙 — transform 대신 독립 속성인 translate / scale 로만 움직인다.
+   #toast · #gear · #resHud 처럼 transform:translateX(-50%) 로 가운데 맞춘 UI가 많아서,
+   transform 을 건드리면 정렬이 깨진다. translate/scale 은 그 위에 얹혀 합성된다.
+   시간은 전부 .14~.34s — '짧게'가 기준이다.
+   감속 모드(html.tcReducedMotion)는 기존 규칙이 animation-duration 을 0.01ms 로 덮어써서
+   여기 있는 연출이 자동으로 꺼진다. */
+#crewRoot,#infHud,.infModal,#projectileLab,#tcStarmap{
+  --tcFxEase:cubic-bezier(.2,.85,.3,1);
+  --tcFxPop:cubic-bezier(.18,.9,.28,1.14)}
+
+@keyframes tcFxIn    {from{opacity:0;translate:0 10px}       to{opacity:1;translate:0 0}}
+@keyframes tcFxInPop {from{opacity:0;translate:0 14px;scale:.976} to{opacity:1;translate:0 0;scale:1}}
+@keyframes tcFxInSoft{from{opacity:0}                        to{opacity:1}}
+@keyframes tcFxInSide{from{opacity:0;translate:16px 0}       to{opacity:1;translate:0 0}}
+@keyframes tcFxInDrop{from{opacity:0;translate:0 -8px}       to{opacity:1;translate:0 0}}
+
+/* ── 팝업 · 모달 ──
+   와이프를 걷어낸 자리를 대신 채운다. 배경은 딤만, 패널은 살짝 튀어오른다. */
+.infModal.on{animation:tcFxInSoft .18s ease-out backwards}
+.infModal.on>.infPanel{animation:tcFxInPop .26s var(--tcFxPop) backwards}
+/* 팝업 안의 선택 카드는 순서대로 */
+.infModal.on .infModeCard,.infModal.on .infAction{
+  animation:tcFxIn .28s var(--tcFxEase) backwards;animation-delay:.08s}
+.infModal.on .infModeCard:nth-of-type(2){animation-delay:.13s}
+/* 직업 선택 — role-select.css 가 inset:0 전체 화면으로 덮으므로 패널은 페이드만.
+   카드에는 등장 연출을 걸지 않는다: infPaintRoleSelect() 가 캐릭터를 고를 때마다
+   #infRoleGrid 를 통째로 다시 그려서, 카드에 애니메이션이 있으면 선택할 때마다
+   네 장이 전부 다시 나타난다. 화면 진입은 이미 와이프가 덮어 준다. */
+#infRoleModal.on>.infRolePanel{animation:tcFxInSoft .22s ease-out backwards}
+
+/* ── 전체 화면 패널 ──
+   화면 자체는 와이프가 덮고 있으니, 걷힌 뒤 내용만 살짝 올라오게 한다. */
+#crewRoot .crewPanel.on{animation:tcFxInSoft .2s ease-out backwards}
+#crewMenu.on .menuFrame{animation:tcFxIn .3s var(--tcFxEase) backwards}
+#crewMenu.on .modeBtn{animation:tcFxInSide .32s var(--tcFxEase) backwards}
+#crewMenu.on .modeBtn:nth-of-type(1){animation-delay:.05s}
+#crewMenu.on .modeBtn:nth-of-type(2){animation-delay:.09s}
+#crewMenu.on .modeBtn:nth-of-type(3){animation-delay:.13s}
+#crewMenu.on .modeBtn:nth-of-type(4){animation-delay:.17s}
+#crewMenu.on .modeBtn:nth-of-type(5){animation-delay:.21s}
+#crewMenu.on .modeBtn:nth-of-type(6){animation-delay:.25s}
+#crewMenu.on .modeBtn:nth-of-type(7){animation-delay:.29s}
+#crewMenu.on .menuTools button{animation:tcFxIn .3s var(--tcFxEase) backwards;animation-delay:.32s}
+
+/* 미션 · 바이옴 · 직업 선택 카드 */
+#crewMission.on [data-mission],#crewBiome.on [data-biome],#crewRole.on .tcRoleChoice{
+  animation:tcFxInPop .3s var(--tcFxPop) backwards;animation-delay:.06s}
+#crewMission.on [data-mission]:nth-of-type(2),#crewBiome.on [data-biome]:nth-of-type(2),
+#crewRole.on .tcRoleChoice:nth-of-type(2){animation-delay:.11s}
+#crewMission.on [data-mission]:nth-of-type(3),#crewRole.on .tcRoleChoice:nth-of-type(3){animation-delay:.16s}
+#crewRole.on .tcRoleChoice:nth-of-type(4){animation-delay:.21s}
+
+/* 설정 화면 — 행이 차례로 */
+#crewSettings.on .tcSettingsTop{animation:tcFxIn .28s var(--tcFxEase) backwards}
+#crewSettings.on .tcSettingsRow{animation:tcFxIn .3s var(--tcFxEase) backwards}
+#crewSettings.on .tcSettingsRow:nth-of-type(1){animation-delay:.05s}
+#crewSettings.on .tcSettingsRow:nth-of-type(2){animation-delay:.09s}
+#crewSettings.on .tcSettingsRow:nth-of-type(3){animation-delay:.13s}
+#crewSettings.on .tcSettingsRow:nth-of-type(4){animation-delay:.17s}
+#crewSettings.on .tcSettingsRow:nth-of-type(5){animation-delay:.21s}
+#crewSettings.on .tcSettingsRow:nth-of-type(6){animation-delay:.24s}
+#crewSettings.on .tcSettingsRow:nth-of-type(n+7){animation-delay:.27s}
+
+/* 투사체 연구소 · 행성 지도 */
+#projectileLab.on{animation:tcFxInSoft .2s ease-out backwards}
+#projectileLab.on>*{animation:tcFxIn .3s var(--tcFxEase) backwards;animation-delay:.06s}
+#tcStarmap.on{animation:tcFxInSoft .24s ease-out backwards}
+#tcStarBack{animation:tcFxInDrop .3s var(--tcFxEase) backwards;animation-delay:.1s}
+#tcStarPanel.on{animation:tcFxInSide .3s var(--tcFxEase) backwards}
+/* 행성을 고를 때마다 패널 내용이 새로 그려진다 — 삽입될 때 다시 재생된다 */
+#tcStarPanel.on>*{animation:tcFxIn .26s var(--tcFxEase) backwards}
+#tcStarPanel.on>*:nth-child(2){animation-delay:.04s}
+#tcStarPanel.on>*:nth-child(3){animation-delay:.07s}
+#tcStarPanel.on>*:nth-child(n+4){animation-delay:.1s}
+
+/* ── 떠 있는 UI · HUD ── */
+#crewHud.on,#resHud.on,#gear.on,#act.on,#crewTip.on,#toast.on{
+  animation:tcFxIn .22s var(--tcFxEase) backwards}
+#crewSettingsFab.on,#crewMuteFab.on{animation:tcFxInPop .24s var(--tcFxPop) backwards}
+#infHud.on .ihTop{animation:tcFxInDrop .28s var(--tcFxEase) backwards}
+#infHud.on .ihLeft{animation:tcFxIn .28s var(--tcFxEase) backwards;animation-delay:.05s}
+#infHud.on .ihKeys{animation:tcFxIn .28s var(--tcFxEase) backwards;animation-delay:.09s}
+/* 노드 툴팁 — hidden 이 풀릴 때마다 */
+#infNodeTooltip:not([hidden]){animation:tcFxInPop .16s var(--tcFxEase) backwards}
+
+/* ── 눌림 피드백 ──
+   이미 :active 를 정의해 둔 버튼(#crewMenu .modeBtn, #act, .infRoleStartCard …)은
+   그쪽 transform 이 그대로 살아 있고, 여기 scale 만 위에 더해진다. */
+button,[role="button"]{transition:filter .13s ease,scale .13s var(--tcFxEase),
+  opacity .13s ease,box-shadow .16s ease}
+button:not(:disabled):active,[role="button"]:not([aria-disabled="true"]):active{
+  scale:.972;filter:brightness(1.08)}
+button:disabled:active,button[aria-disabled="true"]:active{scale:1;filter:none}
+button:focus-visible,[role="button"]:focus-visible{
+  outline:2px solid rgba(183,154,215,.7);outline-offset:2px}
+/* 토글은 눌리는 느낌 대신 살짝 부푼다 */
+.tcSettingsToggle:not(:disabled):active{scale:1.06}
+</style>
+<!-- ══════════ [FX7.3.1] 화면 전환 — 그라데이션 와이프 ══════════ -->
+<style id="tcFxTransition">
+/* 큰 메뉴를 이동할 때 화면 전체를 덮는 2겹 그라데이션 시트.
+   시트 폭은 JS가 뷰포트의 3배로 잡고, 프레임마다 translate3d 로 밀어 준다.
+   (CSS 애니메이션을 쓰지 않는 이유 — tcReducedMotion 이 animation-duration 을
+    0.01ms 로 덮어써서 타이밍이 어긋난다. 감속 모드는 JS 에서 별도 처리.) */
+#tcFxWipe{position:fixed;left:0;top:0;width:100%;height:100%;z-index:900;
+  display:none;overflow:hidden;pointer-events:none;contain:layout paint;
+  transform-origin:50% 50%;backface-visibility:hidden}
+#tcFxWipe.on{display:block;pointer-events:auto}
+#tcFxWipe .tcFxSheet{position:absolute;left:0;top:-3%;height:106%;
+  will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden}
+/* 뒤 시트 — 보라 안개. 앞 시트보다 살짝 앞서 들어와 깊이를 만든다 */
+#tcFxWipe .tcFxBack{background:linear-gradient(to right,
+  rgba(168,120,224,0) 7%,
+  rgba(168,120,224,.26) 12%,
+  rgba(104,58,152,.52) 20%,
+  rgba(62,32,98,.66) 42%,
+  rgba(88,48,134,.50) 58%,
+  rgba(168,120,224,.26) 65%,
+  rgba(168,120,224,0) 72%)}
+/* 앞 시트 — 실제로 화면을 덮는 층.
+   17%~59% 구간이 완전 불투명이라 이동 중간(tx=-0.66W)에서 뷰포트를 전부 가린다. */
+#tcFxWipe .tcFxFront{background:
+  linear-gradient(to right,
+    rgba(214,186,255,0) 8%,
+    rgba(255,232,186,.24) 10.5%,
+    rgba(214,186,255,.44) 12.5%,
+    rgba(183,154,215,.14) 14.5%,
+    rgba(214,186,255,0) 17%,
+    rgba(214,186,255,0) 56%,
+    rgba(214,186,255,.30) 62%,
+    rgba(255,232,186,.20) 64%,
+    rgba(214,186,255,0) 70%),
+  linear-gradient(to right,
+    rgba(11,11,15,0) 8%,
+    rgba(11,11,15,1) 17%,
+    rgba(11,11,15,1) 59%,
+    rgba(11,11,15,0) 69%)}
+/* 완전히 덮인 순간에만 살짝 피어오르는 중앙 광원 — 검은 프레임이 밋밋하지 않게 */
+#tcFxWipe .tcFxCore{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 62% 42% at 50% 50%,rgba(183,154,215,.20),rgba(183,154,215,.06) 45%,transparent 72%)}
+</style>
+<script id="tcFxTransitionJs">
+(function(){
+ 'use strict';
+ /* ── 타이밍 (ms) ── */
+ var D={cover:260,hold:40,reveal:340};
+ /* ── 시트 위치 (뷰포트 폭 W 배수) ──
+    A: 우측 밖 대기 · B: 완전히 덮인 중간 · C: 좌측 밖 퇴장.
+    앞 시트의 17%~59% 구간이 불투명이라 B(-0.55W)에서 뷰포트가 전부 가려진다. */
+ var A_=0.78,B_=-0.55,C_=-2.12,LEAD=0.22;
+
+ var TCFX={busy:false,VERSION:'FX7.3.1'};
+ window.TCFX=TCFX;
+
+ var root=null,back=null,front=null,core=null,raf=0,safety=0;
+
+ function build(){
+  root=document.createElement('div');root.id='tcFxWipe';root.setAttribute('aria-hidden','true');
+  back=document.createElement('div');back.className='tcFxSheet tcFxBack';
+  front=document.createElement('div');front.className='tcFxSheet tcFxFront';
+  core=document.createElement('div');core.className='tcFxCore';
+  root.appendChild(back);root.appendChild(front);root.appendChild(core);
+  document.body.appendChild(root);
+ }
+ function reducedMotion(){return document.documentElement.classList.contains('tcReducedMotion');}
+ function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+ function smooth(p){return p*p*(3-2*p);}
+ function run(fn){try{if(fn)fn();}catch(err){if(window.console&&console.warn)console.warn('[FX7.3.1] 전환 중 오류',err);}}
+
+ /* 화면을 덮는 본체 — mid 는 완전히 덮인 순간에 한 번 호출된다 */
+ TCFX.wipe=function(mid,opts){
+  opts=opts||{};
+  if(TCFX.busy||reducedMotion()){run(mid);return;}   /* 중첩 호출·감속 모드는 즉시 실행 */
+  if(!root)build();
+
+  /* 폭을 못 재는 상황(숨겨진 탭·0 크기 뷰포트)에서 시트가 1px 로 접히면
+     화면이 덮이지 않은 채 전환이 끝난다 — 그럴 땐 연출을 건너뛰고 바로 이동한다. */
+  var W=root.clientWidth||document.documentElement.clientWidth||window.innerWidth||0;
+  if(!(W>=240)){run(mid);return;}   /* 아직 busy 를 켜기 전이라 그대로 빠져나가면 된다 */
+  var cover=opts.cover||D.cover,hold=(opts.hold==null?D.hold:opts.hold),reveal=opts.reveal||D.reveal;
+  var A=A_*W,B=B_*W,C=C_*W;
+
+  TCFX.busy=true;
+  front.style.width=back.style.width=(W*3)+'px';
+  root.style.transform=(opts.dir==='back')?'scaleX(-1)':'none';   /* 뒤로 가기는 반대 방향으로 쓸어낸다 */
+  place(W,A,0);
+  root.classList.add('on');
+
+  var t0=0,midDone=false;
+  function frame(now){
+   if(!t0)t0=now;
+   var e=now-t0;
+   if(e<cover){
+    var p=ease(e/cover);
+    place(W,A+(B-A)*p,smooth(p));
+   }else{
+    if(!midDone){midDone=true;place(W,B,1);run(mid);}
+    var r=e-cover-hold;
+    if(r<=0){place(W,B,1);}
+    else if(r<reveal){var q=ease(r/reveal);place(W,B+(C-B)*q,smooth(1-q));}
+    else{finish();return;}
+   }
+   raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+
+  /* 안전망 — 탭 전환 등으로 rAF 가 멈춰도 화면이 검은 채로 남지 않게 */
+  clearTimeout(safety);
+  safety=setTimeout(function(){
+   if(!TCFX.busy)return;
+   if(!midDone){midDone=true;run(mid);}
+   finish();
+  },cover+hold+reveal+2500);
+
+  function finish(){
+   cancelAnimationFrame(raf);clearTimeout(safety);
+   root.classList.remove('on');core.style.opacity='0';
+   TCFX.busy=false;
+  }
+ };
+ function place(W,tx,g){
+  front.style.transform='translate3d('+tx.toFixed(1)+'px,0,0)';
+  back.style.transform='translate3d('+(tx-LEAD*W).toFixed(1)+'px,0,0)';
+  core.style.opacity=(g*.55).toFixed(3);
+ }
+
+ /* ══════════ 어떤 버튼이 어느 방향으로 전환되는가 ══════════ */
+ /* 전체 화면끼리 갈아탈 때만 와이프를 건다. .infModal 처럼 기존 화면 위에 얹히는
+    팝업은 '화면 이동'이 아니라 '덧붙음'이라, 아래 #tcFxUiAnim 의 등장 애니메이션이 맡는다.
+    세 번째 항목은 조건 함수 — false 를 돌려주면 연출 없이 원래 동작만 한다. */
+ var ROUTES=[
+  /* 메인 메뉴 → 전체 화면 (무한 모드·성장 지도는 팝업이라 제외) */
+  ['#menuSolo,#menuStarmap,#menuProjectileLab,#menuBossLab,#menuSettings,#crewSettingsFab','fwd'],
+  /* 솔로 미션 — 미션 → 바이옴 → 직업. 모두 .crewPanel 전체 화면이다 */
+  ['#crewMission [data-mission],#crewBiome [data-biome]','fwd'],
+  /* 직업 선택은 .infModal 이지만 role-select.css 가 inset:0 으로 전체 화면을 덮는다 —
+     들고 나는 길목 모두 전체 화면 전환이다 */
+  ['#infModeStandard,#infModeTest,#tcStarLaunch','fwd'],
+  ['#infRoleBack','back'],
+  /* 런 시작 — 누르는 건 카드지만 결과는 직업 선택 → 인게임 전체 화면 전환 */
+  ['.infRoleStartCard,#infRetry,#infSettleRetry','fwd'],
+  /* 되돌아가기 */
+  ['#missionBackMenu,#biomeBackMission,#roleBackMission,#crewToMenu,#crewChange','back'],
+  ['#crewSettingsBack,#tcSetDone','back'],
+  /* 연구소·행성 지도 닫기, 결과 팝업에서 메인 메뉴로 (아래가 인게임이라 전체 화면이 바뀐다) */
+  ['#plClose,#tcStarBack,#infMenu','back'],
+  /* 정산 닫기 — 기지 메뉴에서 연 성장 지도라면 팝업만 닫는 것이라 연출을 걸지 않는다 */
+  ['#infSettleDone','back',function(){return !settleFromMenu();}]
+ ];
+ var SEL=ROUTES.map(function(r){return r[0];}).join(',');
+ function settleFromMenu(){return !!(typeof INF!=='undefined'&&INF&&INF.settle&&INF.settle.fromMenu);}
+ function routeFor(el){
+  for(var i=0;i<ROUTES.length;i++){
+   var r=ROUTES[i];
+   try{if(!el.matches(r[0]))continue;}catch(e){continue;}
+   return (r[2]&&!r[2]())?null:r[1];
+  }
+  return null;
+ }
+
+ /* 클릭을 캡처 단계에서 가로채 와이프로 감싼 뒤, 덮인 순간에 원래 핸들러를 다시 태운다.
+    (동적으로 다시 그려지는 버튼 — 행성 출격/직업 카드 — 까지 한 곳에서 처리하려고 위임 방식) */
+ var passthrough=false;
+ document.addEventListener('click',function(e){
+  if(passthrough)return;                       /* 재발행된 클릭은 그대로 통과 */
+  if(TCFX.busy){e.stopImmediatePropagation();e.preventDefault();return;}
+  var t=(e.target&&e.target.closest)?e.target.closest(SEL):null;
+  if(!t)return;
+  if(t.disabled||t.classList.contains('locked')||t.getAttribute('aria-disabled')==='true')return;
+  /* 지도 출격은 컷씬이 이미 화면을 덮는다 — 겹치지 않게 넘긴다 */
+  if(t.classList.contains('infRoleStartCard')&&typeof STARMAP!=='undefined'&&STARMAP&&STARMAP.armed)return;
+
+  var dir=routeFor(t);
+  if(!dir)return;                              /* 조건이 안 맞는 경로는 연출 없이 통과 */
+  e.stopImmediatePropagation();e.preventDefault();
+  if(window.SFX&&SFX.ui)SFX.ui();             /* 클릭음은 지금 — 전환이 끝날 때까지 기다리지 않게 */
+  TCFX.wipe(function(){
+   passthrough=true;
+   var savedUi=(window.SFX&&SFX.ui)?SFX.ui:null;
+   if(savedUi)SFX.ui=function(){};            /* 원래 핸들러가 클릭음을 한 번 더 내지 않게 */
+   try{t.click();}finally{if(savedUi)SFX.ui=savedUi;passthrough=false;}
+  },{dir:dir});
+ },true);
+
+ /* ── 클릭 경로가 아닌 진입점들 ── */
+ /* 솔로 직업 선택은 'SELECTED' 표시를 480ms 보여 준 뒤 시작한다.
+    클릭 시점이 아니라 실제 시작 시점을 덮어야 해서 함수 자체를 감싼다. */
+ if(typeof window.startCrewMission==='function'){
+  var _startCrew=window.startCrewMission;
+  window.startCrewMission=function(){
+   var a=arguments,self=this;
+   TCFX.wipe(function(){_startCrew.apply(self,a);},{dir:'fwd',cover:300,hold:80,reveal:420});
+  };
+ }
+ /* Esc 로 닫는 경로 — 행성 지도 / 정산 화면 */
+ if(typeof window.infCloseStarmap==='function'){
+  var _closeStar=window.infCloseStarmap;
+  window.infCloseStarmap=function(){
+   var a=arguments,self=this;
+   TCFX.wipe(function(){_closeStar.apply(self,a);},{dir:'back'});
+  };
+ }
+ if(typeof window.infCloseSettlement==='function'){
+  var _closeSettle=window.infCloseSettlement;
+  window.infCloseSettlement=function(){
+   var a=arguments,self=this;
+   if(settleFromMenu()){_closeSettle.apply(self,a);return;}   /* 팝업만 닫는 경우 */
+   TCFX.wipe(function(){_closeSettle.apply(self,a);},{dir:'back'});
+  };
+ }
+})();
+</script>
+
+
+<!-- ══════════ [FX7.3.1] 보스 등장 연출 ══════════ -->
+<style id="tcBossFxCss">
+/* 레터박스 · 비네트 · 이름 플레이트. 캔버스 위에 얹히는 층이라 DOM 으로 처리한다.
+   높이/투명도는 JS 타임라인이 매 프레임 직접 써 넣는다 (CSS 트랜지션과 어긋나지 않게). */
+#tcBossFx{position:fixed;left:0;top:0;width:100%;height:100%;z-index:600;
+  display:none;overflow:hidden;pointer-events:none;font-family:"Pretendard","Malgun Gothic",sans-serif}
+#tcBossFx.on{display:block;pointer-events:auto;cursor:pointer}
+#tcBossFx .tcbBar{position:absolute;left:0;width:100%;height:0;background:#05040a;
+  box-shadow:0 0 34px rgba(0,0,0,.85)}
+#tcBossFx .tcbTop{top:0;border-bottom:1px solid rgba(255,85,125,.16)}
+#tcBossFx .tcbBot{bottom:0;border-top:1px solid rgba(255,85,125,.16)}
+#tcBossFx .tcbVig{position:absolute;inset:0;opacity:0;
+  background:radial-gradient(ellipse 68% 54% at 50% 48%,transparent 38%,rgba(5,3,10,.62) 100%)}
+#tcBossFx .tcbFlash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 54% 46% at var(--tcb-fx,50%) var(--tcb-fy,50%),rgba(255,150,170,.85),rgba(255,85,125,.28) 46%,transparent 74%)}
+#tcBossFx .tcbName{position:absolute;left:0;right:0;bottom:14%;opacity:0;text-align:center;
+  translate:0 16px;text-shadow:0 6px 26px rgba(0,0,0,.9)}
+#tcBossFx .tcbTier{display:block;margin-bottom:7px;color:#ff8da8;
+  font:800 clamp(9px,.82vw,11px)/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.34em}
+#tcBossFx .tcbTitle{display:block;color:#fff2f4;
+  font:900 clamp(30px,3.6vw,54px)/1 inherit;letter-spacing:-.02em}
+#tcBossFx .tcbRule{display:block;width:clamp(120px,16vw,220px);height:1px;margin:13px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(255,85,125,.75),transparent)}
+#tcBossFx .tcbSkip{position:absolute;right:20px;opacity:0;color:#8d7f99;
+  font:700 10px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.16em}
+
+/* 연출 동안 게임 UI 를 잠시 걷어낸다.
+   등장 애니메이션이 아직 돌고 있어도 확실히 숨도록 !important 를 쓴다. */
+body.tcBossCine #infHud,body.tcBossCine #crewHud,body.tcBossCine #resHud,
+body.tcBossCine #crewTip,body.tcBossCine #act,body.tcBossCine #gear,
+body.tcBossCine #toast,body.tcBossCine #crewMuteFab,body.tcBossCine #crewSettingsFab,
+body.tcBossCine #infBossIndicator,body.tcBossCine #infTestPanel,
+body.tcBossCine #bossLabInspector{
+  opacity:0!important;pointer-events:none!important}
+#infHud,#crewHud,#resHud,#crewTip,#act,#gear,#crewMuteFab,#crewSettingsFab,#infBossIndicator,#bossLabInspector{
+  transition:opacity .34s ease}
+</style>
+<script id="tcBossFxJs">
+(function(){
+ 'use strict';
+ /* ── 구간 길이(초) ── */
+ var SEQ={dim:.55,pan:1.05,hold:.35,roar:1.75,back:.95};
+ var T1=SEQ.dim,T2=T1+SEQ.pan,T3=T2+SEQ.hold,T4=T3+SEQ.roar,T5=T4+SEQ.back;
+
+ var FX={active:false,VERSION:'FX7.3.1'};
+ window.TCBOSSFX=FX;
+
+ var root,barT,barB,vig,flash,name,tierEl,titleEl,skipEl;
+ var t=0,lastNow=0,roared=false,dustAcc=0,hintT=0;
+ var camB=null,baseZ=1,prevPhase='play',boss=null;
+
+ function mk(cls,tag){var d=document.createElement(tag||'div');d.className=cls;return d;}
+ function build(){
+  root=document.createElement('div');root.id='tcBossFx';root.setAttribute('aria-hidden','true');
+  barT=mk('tcbBar tcbTop');barB=mk('tcbBar tcbBot');vig=mk('tcbVig');flash=mk('tcbFlash');
+  name=mk('tcbName');tierEl=mk('tcbTier','span');titleEl=mk('tcbTitle','b');
+  name.appendChild(tierEl);name.appendChild(titleEl);name.appendChild(mk('tcbRule','span'));
+  skipEl=mk('tcbSkip');skipEl.textContent='CLICK / ESC — SKIP';
+  [vig,barT,barB,name,flash,skipEl].forEach(function(n){root.appendChild(n);});
+  document.body.appendChild(root);
+  root.addEventListener('click',function(){FX.stop();});
+ }
+ function reduced(){return document.documentElement.classList.contains('tcReducedMotion');}
+ function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+ function easeOut(p){return 1-Math.pow(1-p,3);}
+ function clamp01(v){return v<0?0:v>1?1:v;}
+ function seg(a,b){return clamp01((t-a)/Math.max(.0001,b-a));}
+
+ /* 대상을 화면 중앙에 두는 카메라 좌상단 좌표 — 게임의 카메라 규칙과 같은 식 */
+ function camFor(x,y){
+  var Z=G.Z||1,vw=LW/Z,vh=LH/Z;
+  return tcClampCamera(x-vw*.5,y-vh*.42,vw,vh);
+ }
+ function tierCopy(b){
+  var key=(b&&b.bossTier)||'apex';
+  var def=(typeof infBossTierDef==='function')?infBossTierDef(b):null;
+  return {name:(def&&def.name)||'암반 포식자',
+   tier:key==='guardian'?'DEEP GUARDIAN · 중심부의 전조'
+       :key==='variant' ?'VARIANT · 강화 개체'
+                        :'APEX PREDATOR · 중심부 보스'};
+ }
+
+ FX.start=function(b){
+  if(FX.active||!b||b.hp<=0)return;
+  if(reduced())return;                          /* 모션 줄이기 — 연출 없이 진행 */
+  if(typeof CREW==='undefined'||CREW.phase!=='play')return;
+  if(!root)build();
+
+  boss=b;t=0;lastNow=performance.now();roared=false;dustAcc=0;
+  hintT=G.hintT||0;G.hintT=0;              /* 캔버스에 직접 그리는 조작 힌트도 잠시 치운다 */
+  prevPhase=CREW.phase;CREW.phase='bossIntro';  /* loopStep 이 월드를 멈추고 렌더만 돌린다 */
+  G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;
+  baseZ=G.Z||1;
+  camB=camFor(b.x,b.y);
+  b.bossFireBreathT=0;b.bossAnimKey='idle';b.bossAnimT=0;b.bossAnimRate=1;
+
+  var c=tierCopy(b);tierEl.textContent=c.tier;titleEl.textContent=c.name;
+  barT.style.height=barB.style.height='0px';
+  vig.style.opacity=flash.style.opacity=name.style.opacity=skipEl.style.opacity='0';
+  document.body.classList.add('tcBossCine');
+  root.classList.add('on');
+  FX.active=true;
+  rumbleSfx();
+ };
+
+ function rumbleSfx(){
+  try{if(window.AU&&AU.ready&&!AU.muted){
+   AU.tone(41,1.5,{type:'sine',g:.13,slide:33,lp:190,cat:'sfx'});
+   AU.tone(63,1.2,{type:'triangle',g:.07,slide:47,lp:300,cat:'sfx'});
+  }}catch(e){}
+ }
+ function roarSfx(){
+  try{if(window.AU&&AU.ready&&!AU.muted){
+   AU.tone(84,1.15,{type:'sawtooth',g:.17,slide:39,lp:430,cat:'sfx'});
+   AU.tone(54,1.5,{type:'triangle',g:.14,slide:30,lp:250,cat:'sfx'});
+   if(AU.hit)AU.hit(.55,{f0:1100,f1:120,g:.12,q:.6,ft:'lowpass',cat:'sfx'});
+  }}catch(e){}
+ }
+
+ /* 매 프레임 — renderDepths 직전에 돈다 */
+ FX.tick=function(){
+  var now=performance.now(),dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;
+  t+=dt;
+  if(!boss||boss.hp<=0||typeof CREW==='undefined'||CREW.phase!=='bossIntro'){FX.stop();return;}
+
+  var C=(typeof CELL!=='undefined')?CELL:32;
+  var outP=seg(T4+.15,T5);
+
+  /* ── 레터박스 · 비네트 ── */
+  var barP=easeOut(seg(0,T1+.25));
+  var barH=LH*.115*barP*(1-easeOut(outP));
+  barT.style.height=barB.style.height=barH.toFixed(1)+'px';
+  vig.style.opacity=(barP*.9*(1-easeOut(outP))).toFixed(3);
+  skipEl.style.opacity=(barP*(1-easeOut(outP))*.75).toFixed(3);
+  skipEl.style.bottom=(barH*.36+6).toFixed(1)+'px';
+
+  /* ── 카메라 ── */
+  var panP=ease(seg(T1,T2)),backP=ease(seg(T4,T5));
+  var k=panP*(1-backP);                         /* 0 = 플레이어 · 1 = 보스 */
+  G.Z=baseZ*(1+.15*k);                          /* 다가가며 살짝 조인다 */
+  camB=camFor(boss.x,boss.y);
+  var pcam=camFor(G.sh.x,G.sh.y);
+  /* 저주파 흔들림 — J.kick 은 순간 충격용이라, 지속 진동은 카메라로 직접 만든다 */
+  var amp=2.4*easeOut(seg(0,T1))*(1-easeOut(outP))+(roared?5.5*Math.exp(-(t-T3)*2.6):0);
+  var wobX=(Math.sin(t*7.3)*.65+Math.sin(t*3.1)*.35)*amp/(G.Z||1);
+  var wobY=(Math.cos(t*5.9)*.6+Math.cos(t*2.7)*.4)*amp*.7/(G.Z||1);
+  G.camX=pcam.x+(camB.x-pcam.x)*k+wobX;
+  G.camY=pcam.y+(camB.y-pcam.y)*k+wobY;
+
+  /* ── 이름 플레이트 ── */
+  var nameIn=easeOut(seg(T2+.05,T3+.3)),nameOut=easeOut(seg(T4-.1,T4+.35));
+  name.style.opacity=(nameIn*(1-nameOut)).toFixed(3);
+  name.style.translate='0 '+(16*(1-nameIn)).toFixed(1)+'px';
+  name.style.bottom=(barH+LH*.055).toFixed(1)+'px';
+
+  /* ── 포효 ── */
+  if(!roared&&t>=T3){
+   roared=true;
+   boss.facing=(G.sh.x>=boss.x)?1:-1;
+   /* bossFireBreathT > 0 이면 bossDragonAnimation() 이 fireBreath 시트를 고른다 (26프레임 · 10fps) */
+   boss.bossFireBreathT=99;boss.bossAnimKey='fireBreath';boss.bossAnimT=0;boss.bossAnimRate=1.15;
+   roarSfx();
+   if(typeof J!=='undefined'){
+    J.kick(13);
+    J.ring(boss.x,boss.y,'#FF557D',10,C*4.6,7);
+    J.ring(boss.x,boss.y,'#FFD36E',6,C*2.8,4);
+    J.burst(boss.x,boss.y,42,['#FF557D','#FFB0B8','#C7A0FF','#FFF'],360);
+   }
+   var sx=(boss.x-G.camX)*(G.Z||1)+G.offX,sy=(boss.y-G.camY)*(G.Z||1)+G.offY;
+   flash.style.setProperty('--tcb-fx',(sx/Math.max(1,LW)*100).toFixed(1)+'%');
+   flash.style.setProperty('--tcb-fy',(sy/Math.max(1,LH)*100).toFixed(1)+'%');
+  }
+  flash.style.opacity=roared?(Math.exp(-(t-T3)*4.2)*.75).toFixed(3):'0';
+
+  /* 포효 중 — 천장에서 떨어지는 먼지와 잔여 충격 */
+  if(roared&&t<T4&&typeof J!=='undefined'){
+   dustAcc+=dt;
+   while(dustAcc>=.085){
+    dustAcc-=.085;
+    J.burst(boss.x+(Math.random()-.5)*C*7,boss.y-C*(1.6+Math.random()*2.4),
+            3,['#8A7566','#5A4638','#C9B3A0'],54);
+   }
+   if(t-T3>.34&&Math.random()<dt*4.2)J.kick(3.4);
+  }
+
+  /* update() 가 멈춰 있으니 보스 스프라이트 타이머는 여기서 직접 돌린다 */
+  boss.bossAnimT=(boss.bossAnimT||0)+dt*(boss.bossAnimRate||1);
+
+  if(t>=T5)FX.stop();
+ };
+
+ FX.stop=function(){
+  if(!FX.active)return;
+  FX.active=false;
+  if(root)root.classList.remove('on');
+  document.body.classList.remove('tcBossCine');
+  if(boss){boss.bossFireBreathT=0;boss.bossAnimKey='idle';boss.bossAnimT=0;boss.bossAnimRate=1;}
+  G.Z=baseZ;G.hintT=hintT;
+  if(typeof CREW!=='undefined'&&CREW.phase==='bossIntro')CREW.phase=prevPhase||'play';
+  boss=null;camB=null;
+ };
+
+ /* ── 훅 ── */
+ /* 스폰 직후 연출을 얹는다. 원래 함수의 링·버스트·토스트는 그대로 둔다. */
+ if(typeof window.infSpawnBoss==='function'){
+  var _spawn=window.infSpawnBoss;
+  window.infSpawnBoss=function(){
+   var out=_spawn.apply(this,arguments);
+   try{if(typeof INF!=='undefined'&&INF.boss)FX.start(INF.boss);}catch(e){}
+   return out;
+  };
+ }
+ /* 좌상단 게이지 같은 HUD 는 DOM 이 아니라 캔버스에 그려진다 (renderDepths 끝의 paintUI).
+    globalAlpha 를 곱해 DOM UI 와 같은 속도로 함께 사라지게 한다. */
+ FX.uiAlpha=function(){
+  return 1-easeOut(seg(0,.34))*(1-easeOut(seg(T4+.2,T5)));
+ };
+ if(typeof window.paintUI==='function'){
+  var _paintUI=window.paintUI;
+  window.paintUI=function(){
+   if(!FX.active)return _paintUI.apply(this,arguments);
+   var a=FX.uiAlpha();
+   if(a<=.004)return;
+   cx.save();cx.globalAlpha*=a;
+   try{return _paintUI.apply(this,arguments);}finally{cx.restore();}
+  };
+ }
+ /* renderDepths 는 월드가 멈춰 있어도 매 프레임 호출된다 — 여기에 타임라인을 태운다 */
+ if(typeof window.renderDepths==='function'){
+  var _render=window.renderDepths;
+  window.renderDepths=function(){
+   if(FX.active){try{FX.tick();}catch(e){FX.stop();}}
+   return _render.apply(this,arguments);
+  };
+ }
+ window.addEventListener('keydown',function(e){
+  if(!FX.active)return;
+  if(e.key==='Escape'||e.key===' '||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();FX.stop();}
+ },true);
+})();
+</script>
 </body></html>

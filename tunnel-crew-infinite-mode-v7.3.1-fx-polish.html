@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0B0B0F">
 <title>땅굴 크루</title>
+<!--
+  ================================================================
+  땅굴 크루 · v7.3.1 — 연출 폴리싱 브랜치 (FX POLISH)
+  ----------------------------------------------------------------
+  base : tunnel-crew-infinite-mode-v7.3.0-merged.html
+  목적 : 연출(컷씬 / 카메라 / 파티클 / 화면전환 / 라이팅 / 사운드 큐)만 손본다.
+         게임플레이 밸런스·시스템 로직은 건드리지 않는다.
+  머지 : 폴리싱이 확정되면 본 파일(-merged)에 역병합한다.
+  규칙 : 연출 수정에는 아래 마커를 붙여 역병합 diff 추적을 쉽게 한다.
+           /* [FX7.3.1] 무엇을 왜 바꿨는지 */
+  ================================================================
+  변경 로그
+  - 포크 생성 (내용은 v7.3.0-merged와 동일, 버전 라벨만 v7.3.1)
+  - [FX7.3.1] 화면 전환 추가 — 전체 화면끼리 갈아탈 때만 2겹 그라데이션 와이프.
+    팝업(.infModal)은 와이프 대신 등장 애니메이션을 쓴다.
+  - [FX7.3.1] UI 애니메이션 추가 — 모달·패널·HUD 등장, 버튼 눌림 피드백.
+    연출 코드는 파일 맨 끝 #tcFxUiAnim / #tcFxTransition / #tcFxTransitionJs 세 블록에만 있다.
+-->
 <style>
 @font-face{font-family:'ARCO';font-style:normal;font-weight:400 900;font-display:block;
   src:url(data:font/woff2;base64,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) format('woff2');}
@@ -158,6 +176,12 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
 /* ══ 루프 데모: 사이드 튜너 숨김 · 풀스크린 플레이 ══ */
 #side{display:none!important}
 #shell{grid-template-columns:1fr!important}
+/* 실제 보이는 뷰포트에 게임 무대를 고정한다. 브라우저 UI·작업표시줄·모니터 배율 변경에도
+   하단이 레이아웃 뷰포트 밖으로 밀려나지 않도록 JS의 --tc-vh/--tc-vw와 함께 동작한다. */
+html,body{width:var(--tc-vw,100vw);height:var(--tc-vh,100dvh);min-width:0;min-height:0;max-width:100%;max-height:100%;overflow:hidden}
+body{position:fixed;inset:0}
+#shell,#stageWrap,#app{width:100%;height:100%;min-width:0;min-height:0;max-width:100%;max-height:100%;overflow:hidden}
+#stage{position:absolute;inset:0;width:100%;height:100%}
 #crewRoot{position:absolute;inset:0;z-index:50;pointer-events:none}
 #crewRoot .crewPanel{pointer-events:auto;position:absolute;inset:0;display:none;
   flex-direction:column;align-items:center;justify-content:center;
@@ -578,7 +602,7 @@ body{display:block!important;align-items:stretch!important;justify-content:stret
 }
 </style>
 <style id="tcGameSettings">
-/* ── 크루 게임 설정 · v7.3.0 ── */
+/* ── 크루 게임 설정 · v7.3.1 ── */
 #crewRoot #crewSettings.tcSettingsPanel{align-items:stretch;justify-content:flex-start;padding:0;background:rgba(5,3,12,.9);backdrop-filter:blur(10px);overflow:hidden}
 #crewSettings .tcSettingsFrame{width:min(720px,100%);height:100%;margin:0 auto;padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;flex-direction:column;min-height:0}
 #crewSettings .tcSettingsTop{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
@@ -618,7 +642,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
 
 <link rel="stylesheet" href="assets/menu/role-select.css">
 <style id="tcRoleActionV712">
-/* ── 무한 모드 직업 선택 · v7.3.0 ── */
+/* ── 무한 모드 직업 선택 · v7.3.1 ── */
 #infRoleModal .infRoleBack{
   border-color:#ff7182;
   background:#a92b3c;
@@ -696,11 +720,12 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
             <h1><span class="menuLogoFx"><img class="menuLogo" src="assets/menu/title-tunnel-crew-v1.png" alt="TUNNEL CREW" draggable="false" decoding="async" onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false"><span class="menuLogoSheen" aria-hidden="true"></span></span><span class="menuLogoFallback" hidden>TUNNEL CREW</span></h1>
             <nav class="modeGrid" aria-label="게임 모드">
               <button class="modeBtn" id="menuSolo"><i>01</i><b>솔로 미션</b><span>MISSION / 드릴러 + 보조 드론</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 장악도 40%마다 보스</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn" id="menuNodeTree"><i>03</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매·발견 테스트</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn" id="menuProjectileLab"><i>04</i><b>투사체 연구소</b><span>LAB / 무기와 보스 패턴 테스트</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn bossLab" id="menuBossLab"><i>05</i><b>보스 등장 테스트</b><span>TEST / 무한 필드 즉시 등장·실시간 스펙 조절</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>06</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 일반·테스트 씬 선택</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn infinite" id="menuStarmap"><i>03</i><b>행성 원정</b><span>STARMAP / 행성을 골라 중심부까지</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn" id="menuNodeTree"><i>04</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매·발견 테스트</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn" id="menuProjectileLab"><i>05</i><b>투사체 연구소</b><span>LAB / 무기와 보스 패턴 테스트</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn bossLab" id="menuBossLab"><i>06</i><b>보스 등장 테스트</b><span>TEST / 무한 필드 즉시 등장·실시간 스펙 조절</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>07</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
             </nav>
             <div class="menuTools">
               <button type="button" id="menuMute">SOUND · ON</button>
@@ -726,7 +751,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
     <div class="crewPanel tcSettingsPanel" id="crewSettings" aria-label="게임 설정">
       <div class="tcSettingsFrame">
         <header class="tcSettingsTop">
-          <div><div class="tcSettingsEyebrow">Game settings · v7.3.0</div><h1 class="tcSettingsTitle">게임 설정</h1><p class="tcSettingsLead">소리와 화면 분위기, 플레이 힌트를 조절합니다. 설정은 이 브라우저에 자동 저장됩니다.</p></div>
+          <div><div class="tcSettingsEyebrow">Game settings · v7.3.1</div><h1 class="tcSettingsTitle">게임 설정</h1><p class="tcSettingsLead">소리와 화면 분위기, 플레이 힌트를 조절합니다. 설정은 이 브라우저에 자동 저장됩니다.</p></div>
           <button type="button" id="crewSettingsBack">돌아가기</button>
         </header>
         <div class="tcSettingsBody">
@@ -781,10 +806,10 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
     <div class="crewPanel" id="crewRole">
       <div class="tcRoleHeading"><h1>직업 선택</h1><p class="crewSub" id="crewRoleSub">역할을 고르고 땅굴에 하강한다.</p></div>
       <div class="roleGrid tcRoleSelectGrid" aria-label="직업 선택">
-        <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="assets/menu/char-driller-select-v4.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">길을 연다 · 고압 드릴과 기반암 균열</span><span class="tcRoleStats"><span>지형 장비　고압 중형 드릴</span><span>전투 장비　리벳 권총</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="assets/menu/char-gunner-select-v4.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">적을 지운다 · 중화기와 계획 발파</span><span class="tcRoleStats"><span>지형 장비　파쇄 발사기</span><span>전투 장비　벨트식 중화기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="assets/menu/char-scout-select-v4.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">어둠을 연다 · 플레어와 기동 정찰</span><span class="tcRoleStats"><span>지형 장비　휴대 절삭기</span><span>전투 장비　정찰 카빈</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-        <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="assets/menu/char-engineer-select-v4.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">공간을 만든다 · 설치물과 전력망</span><span class="tcRoleStats"><span>지형 장비　공학 커터·전력 노드</span><span>전투 장비　센트리·서비스 총기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e" aria-pressed="false"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="assets/characters/driller-playable.png" alt="대형 드릴을 든 드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">길을 연다 · 고압 드릴과 기반암 균열</span><span class="tcRoleStats"><span>지형 장비　고압 중형 드릴</span><span>전투 장비　리벳 권총</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72" aria-pressed="false"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="assets/characters/gunner-playable.png" alt="중화기를 든 거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">적을 지운다 · 중화기와 계획 발파</span><span class="tcRoleStats"><span>지형 장비　파쇄 발사기</span><span>전투 장비　벨트식 중화기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0" aria-pressed="false"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="assets/characters/scout-playable.png" alt="플레어를 든 스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">어둠을 연다 · 플레어와 기동 정찰</span><span class="tcRoleStats"><span>지형 장비　휴대 절삭기</span><span>전투 장비　정찰 카빈</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+        <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff" aria-pressed="false"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="assets/characters/engineer-playable.png" alt="공학 도구와 드론을 운용하는 엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">공간을 만든다 · 설치물과 전력망</span><span class="tcRoleStats"><span>지형 장비　공학 커터·전력 노드</span><span>전투 장비　센트리·서비스 총기</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
       </div>
       <div class="tcRoleFeedback" id="crewRoleFeedback" aria-live="polite"></div>
       <button type="button" class="backLink" id="roleBackMission">← 바이옴</button>
@@ -5366,8 +5391,8 @@ function update(dt){
     const aimX=camCX+nx*pull, aimY=camCY+ny*pull;
     const t=Math.min(1,TE.followSpeed*60*dt);
     camCX+=(aimX-camCX)*t;camCY+=(aimY-camCY)*t;}}
-  G.camX=clamp(camCX-vw*.5,0,Math.max(0,WW-vw));
-  G.camY=clamp(camCY-vh*.42,0,Math.max(0,WH-vh));}
+  const bounded=tcClampCamera(camCX-vw*.5,camCY-vh*.42,vw,vh);
+  G.camX=bounded.x;G.camY=bounded.y;}
  for(const [k,v] of G.vib){v.t-=dt;if(v.t<=0)G.vib.delete(k);}
  for(const [k,v] of G.nudge){v.t-=dt;if(v.t<=0)G.nudge.delete(k);}
  if(G.comboT>0){G.comboT-=dt;if(G.comboT<=0)G.combo=0;}
@@ -7161,6 +7186,7 @@ addEventListener('keydown',e=>{AU.init();AU.resume();const k=e.key.toLowerCase()
   demoRegen(false);e.preventDefault();}
  if(k==='x'&&SCENE==='depths'&&typeof INF!=='undefined'&&INF.active&&typeof infToggleEscapePlacement==='function'){infToggleEscapePlacement();e.preventDefault();}
  if(SCENE==='depths'&&(k==='1'||k==='2'||k==='3')&&(()=>{const m=document.getElementById('infLevelModal');return m&&m.classList.contains('on');})()){const cb=document.querySelectorAll('#infLevelCards button')[+k-1];if(cb&&!cb.disabled){cb.click();e.preventDefault();}}
+ if(e.code==='Escape'&&typeof STARMAP!=='undefined'&&STARMAP.open){infCloseStarmap(true);e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'&&typeof INF!=='undefined'&&INF.active&&INF.escape&&INF.escape.state==='placing'){infCancelEscapePlacement();e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'&&typeof CREW!=='undefined'&&CREW.phase==='settings'){crewCloseSettings();e.preventDefault();return;}
  if(e.code==='Escape'&&SCENE==='depths'){
@@ -7305,18 +7331,41 @@ function refreshTitle(){
   :'브라우저 저장이 차단된 환경이다(시크릿 모드·미리보기 등). 이 세션 동안만 유지된다.';
 }
 /* ── 리사이즈 / 루프 ── */
+function tcSyncViewport(){
+ const vv=window.visualViewport,w=Math.max(1,Math.round(vv?vv.width:innerWidth)),h=Math.max(1,Math.round(vv?vv.height:innerHeight));
+ document.documentElement.style.setProperty('--tc-vw',w+'px');
+ document.documentElement.style.setProperty('--tc-vh',h+'px');
+}
+function tcClampCamera(x,y,vw,vh){
+ /* 월드 가장자리에서도 캐릭터와 하단 이펙트가 화면 밖으로 잘리지 않도록 여유 공간을 둔다. */
+ const padX=Math.min(vw*.18,teWorld(110)),padY=Math.min(vh*.18,teWorld(110));
+ return {
+  x:clamp(x,-padX,Math.max(-padX,WW-vw+padX)),
+  y:clamp(y,-padY,Math.max(-padY,WH-vh+padY))
+ };
+}
 function resize(){
+ tcSyncViewport();
  const r=cv.getBoundingClientRect();
+ if(r.width<2||r.height<2)return;
+ DPR=Math.min(2,window.devicePixelRatio||1);
  LW=Math.round(r.width);LH=Math.round(r.height);
  SC=DPR;cv.width=Math.round(LW*DPR);cv.height=Math.round(LH*DPR);
  cx.setTransform(DPR,0,0,DPR,0,0);
  if(uiCv){uiCv.width=Math.round(LW*DPR);uiCv.height=Math.round(LH*DPR);
   ux.setTransform(DPR,0,0,DPR,0,0);}
  if(FOW&&FOW.ok)FOW.resize(LW,LH);
- if(SCENE==='depths')setLayerSize(G.depth);
+ if(SCENE==='depths'){
+  setLayerSize(G.depth);
+  if(!G.fixed){const vw=LW/G.Z,vh=LH/G.Z,b=tcClampCamera(G.sh.x-vw*.5,G.sh.y-vh*.42,vw,vh);G.camX=b.x;G.camY=b.y;}
+ }
  if(VG.obj.length===0)buildVillage();
 }
-addEventListener('resize',resize);
+let tcResizeRaf=0;
+function tcQueueResize(){cancelAnimationFrame(tcResizeRaf);tcResizeRaf=requestAnimationFrame(resize);}
+addEventListener('resize',tcQueueResize);
+if(window.visualViewport){visualViewport.addEventListener('resize',tcQueueResize);visualViewport.addEventListener('scroll',tcQueueResize);}
+if(window.ResizeObserver)new ResizeObserver(tcQueueResize).observe(document.getElementById('stageWrap'));
 let last=performance.now();
 function loopStep(now){
  const dt=Math.min(.05,(now-last)/1000);last=now;
@@ -8561,15 +8610,15 @@ window.addEventListener('resize',fitAll);setInterval(tick,150);setTimeout(tick,3
 body.infActive #tcHudPolish,body.infActive #crewHud,body.infActive #resHud{display:none!important}
 #infHud{position:absolute;inset:0;z-index:72;display:none;pointer-events:none;color:#f6efff;font-family:"Pretendard","Malgun Gothic",sans-serif}
 body.infActive #infHud{display:block}
-#infHud .ihTop{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:min(620px,72vw);padding:10px 14px;border:1px solid rgba(199,160,255,.48);border-radius:14px;background:rgba(12,8,22,.86);box-shadow:0 10px 32px rgba(0,0,0,.38)}
+#infHud .ihTop{position:absolute;left:50%;top:calc(18px + env(safe-area-inset-top));transform:translateX(-50%);width:min(620px,72vw);padding:10px 14px;border:1px solid rgba(199,160,255,.48);border-radius:14px;background:rgba(12,8,22,.86);box-shadow:0 10px 32px rgba(0,0,0,.38)}
 #infHud .ihRow{display:flex;align-items:center;gap:12px;font-size:12px;color:#b9a8cc}
 #infHud .ihRow strong{font-size:14px;color:#fff}
 #infThreatText{padding:3px 7px;border:1px solid rgba(255,85,125,.35);border-radius:999px;color:#ff9aae;font-size:10px;font-weight:900;letter-spacing:.03em}
 #infHud .ihGrow{flex:1}.ihGauge{height:8px;margin-top:7px;overflow:hidden;border-radius:999px;background:#211832}
 #infDomFill,#infXpFill,#infBossFill{height:100%;width:0;background:linear-gradient(90deg,#8b5bd0,#ffd36e);transition:width .18s}
-#infHud .ihLeft{position:absolute;left:18px;bottom:18px;padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
+#infHud .ihLeft{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
 #infAmmoRow{display:flex;align-items:center;gap:8px;margin-top:5px;color:#d8cce4;font-weight:900}#infAmmoText{min-width:76px;color:#ffd36e}.infReloadGauge{width:88px;height:5px;overflow:hidden;border-radius:999px;background:#2b2036}.infReloadGauge i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#7febd0,#ffd36e);transition:width .06s linear}#infAmmoRow.reloading #infAmmoText{color:#7febd0;animation:infAmmoPulse .55s ease-in-out infinite}@keyframes infAmmoPulse{50%{opacity:.55}}
-#infHud .ihKeys{position:absolute;right:18px;bottom:18px;padding:10px 13px;border-radius:14px;background:rgba(12,8,22,.82);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc}
+#infHud .ihKeys{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 36px - env(safe-area-inset-left) - env(safe-area-inset-right));padding:10px 13px;border-radius:14px;background:rgba(12,8,22,.82);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc}
 #infBossBox{display:none;margin-top:9px}#infBossBox.on{display:block}#infBossFill{background:linear-gradient(90deg,#ff557d,#ffb36b)}
 #infBossIndicator{--ang:0rad;position:absolute;left:50%;top:50%;z-index:4;display:none;align-items:center;gap:7px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 9px rgba(0,0,0,.7))}#infBossIndicator.on{display:flex;animation:infBossPing 1.15s ease-in-out infinite}#infBossIndicator.alert{animation:infBossArrive .7s cubic-bezier(.16,.84,.3,1) both,infBossPing 1.15s ease-in-out .7s infinite}
 .infBossArrow{width:27px;height:27px;color:#ff557d;font-size:27px;font-style:normal;font-weight:900;line-height:27px;text-align:center;transform:rotate(var(--ang));text-shadow:0 0 12px rgba(255,85,125,.85)}.infBossIndicatorText{padding:5px 8px;border:1px solid rgba(255,85,125,.72);border-radius:8px;background:rgba(28,7,16,.88);color:#ff8da8;font-size:10px;font-weight:900;white-space:nowrap;letter-spacing:.04em}.infBossIndicatorText b{margin-left:4px;color:#fff;font-size:11px}
@@ -9088,21 +9137,24 @@ function infPaintRoleSelect(){
   const b=document.createElement('div');
   b.className='infRoleCard tcRoleChoice'+(INF.selectedRoleId===role.id?' selected':'');
   b.dataset.role=role.id;b.style.setProperty('--role',role.color);b.setAttribute('role','button');b.setAttribute('tabindex','0');b.setAttribute('aria-pressed',INF.selectedRoleId===role.id?'true':'false');
-  b.innerHTML='<span class="tcRoleCode">'+role.code+'</span><img class="tcRoleArt" src="assets/menu/char-'+role.id+'-select-v4.png" alt="'+role.name+' 직업 일러스트"><span class="tcRoleCopy"><b class="tcRoleName">'+role.name+'</b><span class="tcRoleTag">'+role.tag+'</span><span class="tcRoleStats"><span>지형 장비　'+role.terrain+'</span><span>전투 장비　'+role.combat+'</span><span>채굴 ×'+role.dig.toFixed(2)+'　전투 ×'+role.gunMul.toFixed(2)+'　기동 ×'+role.dash.toFixed(2)+'</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i><button type="button" class="infRoleStartCard" data-role="'+role.id+'">선택완료</button>';
+  b.innerHTML='<span class="tcRoleCode">'+role.code+'</span><img class="tcRoleArt" src="assets/characters/'+role.id+'-playable.png" alt="'+role.name+' 직업 일러스트"><span class="tcRoleCopy"><b class="tcRoleName">'+role.name+'</b><span class="tcRoleTag">'+role.tag+'</span><span class="tcRoleStats"><span>지형 장비　'+role.terrain+'</span><span>전투 장비　'+role.combat+'</span><span>채굴 ×'+role.dig.toFixed(2)+'　전투 ×'+role.gunMul.toFixed(2)+'　기동 ×'+role.dash.toFixed(2)+'</span></span></span><i class="tcRoleCheck" aria-hidden="true">✓</i><button type="button" class="infRoleStartCard" data-role="'+role.id+'">선택완료</button>';
   const choose=()=>{INF.selectedRoleId=role.id;infPaintRoleSelect();SFX.tick&&SFX.tick();};
   b.onclick=e=>{if(e.target.closest('.infRoleStartCard'))return;choose();};
   b.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('.infRoleStartCard')){e.preventDefault();choose();}};
   const start=b.querySelector('.infRoleStartCard');
-  start.onclick=e=>{e.preventDefault();e.stopPropagation();SFX.ui&&SFX.ui();infStartRun(role.id);};
+  start.onclick=e=>{e.preventDefault();e.stopPropagation();SFX.ui&&SFX.ui();infLaunchFromRoleSelect(role.id);};
   root.appendChild(b);
  }
  const selected=INF_ROLES[INF.selectedRoleId]||INF_ROLES.driller;const pick=infEl('infRolePickName');if(pick)pick.textContent=selected.name;
 }
-function infOpenRoleSelect(){INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();INF.selectedRoleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';infPaintRoleSelect();infEl('infRoleModal').classList.add('on');}
-function infCloseRoleSelect(){infEl('infRoleModal').classList.remove('on');crewShow('menu');SCENE='title';show(null);clearUI();}
+function infOpenRoleSelect(){INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();INF.selectedRoleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';infPaintRoleSelect();infEl('infRoleBack').textContent=STARMAP.fromMap?'행성 지도로':'메인 메뉴';infEl('infRoleModal').classList.add('on');}
+function infCloseRoleSelect(){infEl('infRoleModal').classList.remove('on');
+ if(STARMAP.fromMap){STARMAP.fromMap=false;STARMAP.armed=false;infOpenStarmap();return;}   /* 행성 지도에서 온 흐름은 지도로 복귀 */
+ crewShow('menu');SCENE='title';show(null);clearUI();}
 function infOpenModeChoice(){
- INF.active=false;document.body.classList.remove('infActive');crewEnsureBgm();
+ INF.active=false;INF.planetRun=false;STARMAP.armed=false;STARMAP.fromMap=false;document.body.classList.remove('infActive');crewEnsureBgm();
  ['infModeChoiceModal','infRoleModal','infLevelModal','infRestModal','infResultModal','infSettlementModal'].forEach(id=>infEl(id).classList.remove('on'));
+ infEl('infModeChoiceBack').textContent='메인 메뉴';
  infEl('infModeChoiceModal').classList.add('on');
 }
 function infCloseModeChoice(){infEl('infModeChoiceModal').classList.remove('on');crewShow('menu');SCENE='title';show(null);clearUI();}
@@ -9611,6 +9663,272 @@ function infDominanceTarget(){
  return d||INF_DOMINANCE_TARGET;
 }
 
+/* ══════════ 행성 지도 · 출격 — 트랙 G (기획서 §2·§3·§12) ══════════ */
+/* 허브는 메뉴형으로 1차 확정(§17.3-8): 메인 메뉴가 기지, 행성 지도가 출격 동선이다.
+   지도 월드는 화면보다 훨씬 넓고(3200×2000) 드래그로 이동한다 — 행성 간 거리로
+   우주의 공간감을 연출한다(확정 스펙). 잠긴 행성 10개를 실루엣으로 미리 보여
+   장기 목표를 만든다(§3.1). */
+const INF_PLANETS=[
+ {id:'purple',name:'퍼플 땅굴',x:560,y:1520,r:52,pal:['#d9b8ff','#8c5bd0','#2a1245'],
+  theme:'기본 광물 행성',hazard:'낮음 — 표층 붕괴 · 소형 군체',minerals:'일반 광맥 · 암반 코어',
+  boss:'암반 포식자',locked:false},
+ {id:'brine',name:'청록 염굴',x:1080,y:1300,r:44,pal:['#8ff0dd','#2e9a8b','#0d3b38'],
+  theme:'염수 장판 · 부식 환경',locked:true},
+ {id:'mantle',name:'적열 맨틀',x:1560,y:1480,r:58,pal:['#ffb37a','#e05a2b','#4a120a'],
+  theme:'화산 지열 · 화염 생태',locked:true},
+ {id:'glacier',name:'백야 빙굴',x:1980,y:1180,r:40,pal:['#dff3ff','#7fb8d8','#1c3a52'],
+  theme:'결빙 · 미끄러운 지반',locked:true},
+ {id:'mycel',name:'균사 심림',x:1420,y:900,r:46,pal:['#d8ff9e','#6f9a3e','#233a12'],
+  theme:'포자 군락 · 증식 지형',locked:true},
+ {id:'dust',name:'황사 협곡',x:2360,y:1420,r:42,pal:['#ffe2a8','#c89a4e','#4a3616'],
+  theme:'유사(流沙) · 붕괴 협곡',locked:true},
+ {id:'storm',name:'뇌운 부유암',x:2520,y:880,r:38,pal:['#cfd8ff','#7a86c8','#22284a'],
+  theme:'낙뢰 · 부유 지층',locked:true},
+ {id:'abyssal',name:'심해 압굴',x:880,y:640,r:48,pal:['#9fc4ff','#3e5fa0','#0c1a3a'],
+  theme:'수압 · 침수 구역',locked:true},
+ {id:'crystal',name:'수정 공동',x:1880,y:560,r:44,pal:['#ffc4f2','#b060c8','#3a1044'],
+  theme:'공명 수정 · 굴절 시야',locked:true},
+ {id:'wreck',name:'파묻힌 기계층',x:2760,y:520,r:50,pal:['#e0e6ea','#8a949c','#2c3238'],
+  theme:'고대 기계 · 가동 잔해',locked:true},
+ {id:'void',name:'공허 균열',x:2960,y:1080,r:36,pal:['#d8c8ff','#5b3f9a','#120a24'],
+  theme:'관측 불가',locked:true}
+];
+const STARMAP={open:false,world:{w:3200,h:2000},x:0,y:0,drag:null,sel:null,raf:0,stars:null,armed:false,fromMap:false};
+/* 임시 컷씬 — videoSrc 에 mp4/webm 경로를 넣으면 코드 연출 대신 영상을 재생한다 */
+const INF_CUTSCENE={videoSrc:'assets/cutscenes/planet-launch.mp4',duration:2.8};
+function infInitPlanetMeta(){
+ if(!INF_META.planets||typeof INF_META.planets!=='object')INF_META.planets={};
+ for(const p of INF_PLANETS)if(!INF_META.planets[p.id])INF_META.planets[p.id]={runs:0,clears:0,escapes:0,bestDepth:0};
+}
+/* 클리어 = 중심부 보스를 처치하고 생환 (§16.1-5). infEndRun 훅에서 호출된다. */
+function infRecordPlanetResult(escaped){
+ if(!INF.planetRun)return;
+ infInitPlanetMeta();const rec=INF_META.planets[INF_PLANET.id]||(INF_META.planets[INF_PLANET.id]={runs:0,clears:0,escapes:0,bestDepth:0});
+ rec.runs++;rec.bestDepth=Math.max(rec.bestDepth||0,INF.depth);
+ if(escaped){rec.escapes++;if(INF.depth>=infStratumCount()&&INF.bosses>0)rec.clears++;}
+}
+function starmapEl(id){return document.getElementById(id);}
+function infBuildStarmap(){
+ if(starmapEl('tcStarmap'))return;
+ const css=document.createElement('style');
+ css.textContent=`
+#tcStarmap{position:absolute;inset:0;z-index:56;display:none;overflow:hidden;background:radial-gradient(ellipse at 32% 18%,#181030 0%,#0b0716 52%,#050310 100%);cursor:grab;user-select:none}
+#tcStarmap.on{display:block}
+#tcStarmap.dragging{cursor:grabbing}
+#tcStarCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#tcStarWorld{position:absolute;left:0;top:0;will-change:transform}
+#tcStarRoutes{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.tcPlanet{position:absolute;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0;border:0;background:none;color:#e8ddf6;cursor:pointer;transform:translate(-50%,-50%);font:inherit}
+.tcPlanetBody{position:relative;border-radius:50%;box-shadow:0 0 26px 4px var(--glow),inset -14px -16px 26px rgba(0,0,0,.55);transition:transform .18s,box-shadow .18s}
+.tcPlanet:hover .tcPlanetBody,.tcPlanet.sel .tcPlanetBody{transform:scale(1.09);box-shadow:0 0 40px 8px var(--glow),inset -14px -16px 26px rgba(0,0,0,.5)}
+.tcPlanet.sel .tcPlanetBody:after{content:"";position:absolute;inset:-11px;border:2px dashed #ffd36e;border-radius:50%;animation:tcSelSpin 9s linear infinite}
+@keyframes tcSelSpin{to{transform:rotate(360deg)}}
+.tcPlanetName{padding:3px 10px;border-radius:999px;background:rgba(8,5,18,.72);border:1px solid rgba(200,160,255,.28);font-size:12px;font-weight:800;letter-spacing:.02em;white-space:nowrap}
+.tcPlanetSub{margin-top:-3px;font-size:10px;color:#9a86b5;white-space:nowrap}
+.tcPlanet.locked{cursor:pointer}
+.tcPlanet.locked .tcPlanetBody{filter:saturate(.16) brightness(.62)}
+.tcPlanet.locked .tcPlanetBody:before{content:"";position:absolute;inset:-7px;border:1.5px dashed rgba(180,160,210,.4);border-radius:50%}
+.tcPlanet.locked .tcPlanetName{color:#9a8ab0}
+.tcPlanetLock{position:absolute;top:-6px;right:-6px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#241736;border:1px solid #4a3568;font-size:11px}
+#tcStarHead{position:absolute;left:0;right:0;top:0;z-index:3;display:flex;align-items:center;gap:14px;padding:16px 20px;pointer-events:none}
+#tcStarHead .tcStarTitle{pointer-events:none}
+#tcStarHead .tcStarTitle b{display:block;font:800 22px/1.1 inherit;color:#f2e7ff;letter-spacing:.04em}
+#tcStarHead .tcStarTitle span{display:block;margin-top:3px;font-size:11px;color:#9a86b5}
+#tcStarBack{pointer-events:auto;margin-left:auto;padding:10px 16px;border:1px solid #4a3568;border-radius:10px;background:rgba(26,18,40,.9);color:#e4d4f5;font:700 12px/1 inherit;cursor:pointer}
+#tcStarBack:hover{border-color:#a878e0}
+#tcStarHint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:3;padding:7px 14px;border-radius:999px;background:rgba(8,5,18,.6);border:1px solid rgba(200,160,255,.2);color:#9a86b5;font-size:11px;pointer-events:none}
+#tcStarPanel{position:absolute;right:18px;top:74px;bottom:18px;z-index:4;width:min(330px,86vw);display:none;flex-direction:column;gap:11px;padding:18px 17px;border:1px solid #4a3568;border-radius:16px;background:rgba(16,10,26,.94);backdrop-filter:blur(8px);color:#e4d4f5;font-size:12.5px;line-height:1.55;overflow:auto}
+#tcStarPanel.on{display:flex}
+#tcStarPanel h2{margin:0;font:800 21px/1.2 inherit;color:#f2e7ff}
+#tcStarPanel .tcBadge{align-self:flex-start;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.06em}
+#tcStarPanel .tcBadge.openb{background:rgba(127,235,208,.14);border:1px solid rgba(127,235,208,.5);color:#9df0dd}
+#tcStarPanel .tcBadge.lockb{background:rgba(255,110,140,.1);border:1px solid rgba(255,110,140,.42);color:#ff9db4}
+#tcStarPanel dl{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;margin:2px 0 0}
+#tcStarPanel dt{color:#8d789f;font-size:11px}
+#tcStarPanel dd{margin:0;color:#e8ddf6}
+#tcStarLaunch{margin-top:auto;padding:13px 16px;border:1px solid rgba(255,211,110,.55);border-radius:12px;background:rgba(255,211,110,.14);color:#ffe9c9;font:800 14px/1 inherit;letter-spacing:.04em;cursor:pointer}
+#tcStarLaunch:hover:not(:disabled){background:rgba(255,211,110,.24)}
+#tcStarLaunch:disabled{opacity:.42;cursor:default}
+#tcCutscene{position:fixed;inset:0;z-index:220;display:none;width:var(--tc-vw,100vw);height:var(--tc-vh,100dvh);overflow:hidden;place-items:center;background:#050310}
+#tcCutscene.on{display:grid}
+#tcCutscene canvas,#tcCutscene video{position:absolute;inset:0;display:block;width:100%!important;height:100%!important;min-width:0;min-height:0;max-width:none;max-height:none;object-fit:contain;object-position:center center;background:#050310}
+#tcCutSkip{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));z-index:2;padding:8px 14px;border:1px solid rgba(200,160,255,.4);border-radius:999px;background:rgba(8,5,18,.6);color:#c9b8dd;font:700 11px/1 inherit;cursor:pointer}
+`;
+ document.head.appendChild(css);
+ const div=document.createElement('div');div.id='tcStarmap';
+ div.innerHTML=`
+  <canvas id="tcStarCanvas"></canvas>
+  <div id="tcStarWorld"><svg id="tcStarRoutes"></svg></div>
+  <div id="tcStarHead"><div class="tcStarTitle"><b>행성 지도</b><span>드래그로 우주를 이동 · 행성을 선택해 원정을 계획하세요</span></div><button id="tcStarBack" type="button">기지 메뉴로</button></div>
+  <div id="tcStarHint">🖱 드래그 — 지도 이동 · 행성 클릭 — 정보</div>
+  <aside id="tcStarPanel"></aside>`;
+ (document.getElementById('app')||document.body).appendChild(div);
+ const world=starmapEl('tcStarWorld');world.style.width=STARMAP.world.w+'px';world.style.height=STARMAP.world.h+'px';
+ /* 개척 경로 — 행성을 잇는 점선 (§3.1 클리어 경로 시각화) */
+ const svg=starmapEl('tcStarRoutes');svg.setAttribute('width',STARMAP.world.w);svg.setAttribute('height',STARMAP.world.h);
+ let path='';for(const p of INF_PLANETS)path+=(path?' L':'M')+p.x+' '+p.y;
+ svg.innerHTML='<path d="'+path+'" fill="none" stroke="rgba(190,160,255,.17)" stroke-width="2" stroke-dasharray="3 9"/>';
+ for(const p of INF_PLANETS){
+  const b=document.createElement('button');b.type='button';b.className='tcPlanet'+(p.locked?' locked':'');b.dataset.planet=p.id;
+  b.style.left=p.x+'px';b.style.top=p.y+'px';b.style.setProperty('--glow',p.pal[1]+'66');
+  b.innerHTML='<span class="tcPlanetBody" style="width:'+(p.r*2)+'px;height:'+(p.r*2)+'px;background:radial-gradient(circle at 34% 30%,'+p.pal[0]+' 0%,'+p.pal[1]+' 46%,'+p.pal[2]+' 100%)">'+(p.locked?'<i class="tcPlanetLock">🔒</i>':'')+'</span>'
+   +'<span class="tcPlanetName">'+p.name+'</span><span class="tcPlanetSub">'+(p.locked?p.theme:'개척 가능')+'</span>';
+  b.addEventListener('click',e=>{if(STARMAP.dragMoved)return;e.stopPropagation();infSelectPlanet(p.id);});
+  world.appendChild(b);
+ }
+ /* 드래그 패닝 */
+ div.addEventListener('pointerdown',e=>{if(e.target.closest('#tcStarPanel')||e.target.closest('#tcStarHead')||e.target.closest('.tcPlanet'))return;
+  STARMAP.drag={sx:e.clientX,sy:e.clientY,ox:STARMAP.x,oy:STARMAP.y};STARMAP.dragMoved=false;div.classList.add('dragging');try{div.setPointerCapture&&div.setPointerCapture(e.pointerId);}catch(err){}});
+ div.addEventListener('pointermove',e=>{const d=STARMAP.drag;if(!d)return;
+  const dx=e.clientX-d.sx,dy=e.clientY-d.sy;if(Math.hypot(dx,dy)>6)STARMAP.dragMoved=true;
+  starmapPan(d.ox+dx,d.oy+dy);});
+ const endDrag=()=>{STARMAP.drag=null;div.classList.remove('dragging');setTimeout(()=>{STARMAP.dragMoved=false;},0);};
+ div.addEventListener('pointerup',endDrag);div.addEventListener('pointercancel',endDrag);
+ div.addEventListener('wheel',e=>{e.preventDefault();starmapPan(STARMAP.x-(e.shiftKey?e.deltaY:e.deltaX||0),STARMAP.y-(e.shiftKey?0:e.deltaY));},{passive:false});
+ starmapEl('tcStarBack').addEventListener('click',()=>infCloseStarmap(true));
+ /* 별밭 3층 — 패럴랙스 계수로 깊이감 */
+ const stars=[];let seed=1234;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+ for(let L=0;L<3;L++){const f=[.25,.5,.85][L];for(let i=0;i<150;i++)stars.push({x:rnd()*STARMAP.world.w,y:rnd()*STARMAP.world.h,r:.5+rnd()*(L*.7+.8),f,tw:rnd()*6.28});}
+ STARMAP.stars=stars;
+}
+function starmapPan(x,y){
+ const vw=innerWidth,vh=innerHeight;
+ STARMAP.x=Math.min(60,Math.max(vw-STARMAP.world.w-60,x));
+ STARMAP.y=Math.min(60,Math.max(vh-STARMAP.world.h-60,y));
+ starmapEl('tcStarWorld').style.transform='translate('+STARMAP.x+'px,'+STARMAP.y+'px)';
+}
+function starmapDrawStars(t){
+ const c=starmapEl('tcStarCanvas');if(!c)return;
+ if(c.width!==innerWidth||c.height!==innerHeight){c.width=innerWidth;c.height=innerHeight;}
+ const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
+ for(const s of STARMAP.stars){
+  const sx=s.x*1+(STARMAP.x*s.f),sy=s.y*1+(STARMAP.y*s.f);
+  if(sx<-8||sy<-8||sx>c.width+8||sy>c.height+8)continue;
+  g.globalAlpha=.35+.5*Math.abs(Math.sin(t*.0012+s.tw));
+  g.fillStyle=s.f>.7?'#efe6ff':'#b9a8d8';
+  g.beginPath();g.arc(sx,sy,s.r,0,7);g.fill();
+ }
+ g.globalAlpha=1;
+}
+function starmapLoop(t){if(!STARMAP.open)return;starmapDrawStars(t||0);STARMAP.raf=requestAnimationFrame(starmapLoop);}
+function infOpenStarmap(){
+ infBuildStarmap();infInitPlanetMeta();
+ const menu=document.getElementById('crewMenu');if(menu)menu.classList.remove('on');
+ starmapEl('tcStarmap').classList.add('on');STARMAP.open=true;CREW.phase='starmap';
+ /* 첫 진입 카메라 — 개척 가능 행성이 화면 중앙 */
+ const cur=INF_PLANETS.find(p=>!p.locked)||INF_PLANETS[0];
+ starmapPan(innerWidth*.42-cur.x,innerHeight*.52-cur.y);
+ infSelectPlanet(cur.id);
+ cancelAnimationFrame(STARMAP.raf);starmapLoop();
+ crewEnsureBgm&&crewEnsureBgm();
+}
+function infCloseStarmap(toMenu){
+ starmapEl('tcStarmap')&&starmapEl('tcStarmap').classList.remove('on');STARMAP.open=false;cancelAnimationFrame(STARMAP.raf);
+ if(toMenu){crewShow('menu');SCENE='title';}
+}
+function infSelectPlanet(id){
+ const p=INF_PLANETS.find(x=>x.id===id);if(!p)return;STARMAP.sel=id;
+ document.querySelectorAll('#tcStarWorld .tcPlanet').forEach(b=>b.classList.toggle('sel',b.dataset.planet===id));
+ infInitPlanetMeta();const rec=INF_META.planets[id]||{},panel=starmapEl('tcStarPanel');
+ const strata=p.locked?null:infStratumCount();
+ panel.innerHTML=
+  '<span class="tcBadge '+(p.locked?'lockb':'openb')+'">'+(p.locked?'미개척 — 잠김':(rec.clears?'클리어 '+rec.clears+'회':'개척 가능'))+'</span>'
+  +'<h2>'+p.name+'</h2>'
+  +'<p style="margin:0;color:#b9a8d0">'+p.theme+'</p>'
+  +'<dl>'
+  +(p.locked
+    ?'<dt>환경</dt><dd>'+p.theme+'</dd><dt>지층</dt><dd>???</dd><dt>보스</dt><dd>???</dd><dt>해금</dt><dd>이전 행성의 중심부 보스를 처치하고 생환하면 개척 경로가 열립니다 (§3.3)</dd>'
+    :'<dt>지층</dt><dd>'+strata+'개 + 심층 이상지대</dd>'
+     +'<dt>목표 시간</dt><dd>'+INF_PLANET.targetMinutes+'분</dd>'
+     +'<dt>위험 요소</dt><dd>'+(p.hazard||'—')+'</dd>'
+     +'<dt>광물</dt><dd>'+(p.minerals||'—')+'</dd>'
+     +'<dt>중심부</dt><dd>'+(rec.clears?p.boss:'거대한 기척 — 실루엣만 관측됨')+'</dd>'
+     +'<dt>기록</dt><dd>출격 '+(rec.runs||0)+' · 생환 '+(rec.escapes||0)+' · 최고 심층 '+(rec.bestDepth||'-')+'</dd>')
+  +'</dl>'
+  +'<button id="tcStarLaunch" type="button" '+(p.locked?'disabled':'')+'>'+(p.locked?'개척 불가 — 경로 잠김':'출격 준비 → 직업 선택')+'</button>';
+ panel.classList.add('on');
+ const lb=starmapEl('tcStarLaunch');
+ if(lb&&!p.locked)lb.addEventListener('click',()=>{
+  STARMAP.armed=true;STARMAP.fromMap=true;
+  starmapEl('tcStarmap').classList.remove('on');STARMAP.open=false;cancelAnimationFrame(STARMAP.raf);
+  infOpenRoleSelect();
+ });
+}
+/* ── 출격 컷씬 (임시 코드 연출 · 영상 슬롯 지원) ── */
+function infPlayLaunchCutscene(done){
+ let host=starmapEl('tcCutscene');
+ if(!host){host=document.createElement('div');host.id='tcCutscene';(document.getElementById('app')||document.body).appendChild(host);}
+ /* 영상 사운드만 들리도록 출격 컷씬 동안 기존 BGM을 모두 정지한다. */
+ if(typeof BGM_ROUTE!=='undefined'){
+  BGM_ROUTE.current='cutscene';BGM_ROUTE.revision++;
+  if(typeof LOBBY_MUSIC!=='undefined')LOBBY_MUSIC.pause();
+  if(typeof PURPLE_MUSIC!=='undefined')PURPLE_MUSIC.pause();
+  if(typeof MUS!=='undefined'&&MUS.setExternal)MUS.setExternal(true);
+ }
+ host.innerHTML='';host.classList.add('on');
+ let finished=false;
+ const finish=()=>{if(finished)return;finished=true;host.classList.remove('on');host.innerHTML='';done&&done();};
+ if(INF_CUTSCENE.videoSrc){
+  const v=document.createElement('video');v.src=INF_CUTSCENE.videoSrc;v.autoplay=true;v.muted=false;v.playsInline=true;v.preload='auto';
+  v.addEventListener('ended',finish);v.addEventListener('error',finish);host.appendChild(v);
+  const playPromise=v.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{});
+ }else{
+  /* 임시 연출: 별밭 → 로켓이 행성으로 → 접근 플래시 → 착륙 텍스트 */
+  const cv=document.createElement('canvas');host.appendChild(cv);
+  const p=INF_PLANETS.find(x=>x.id===STARMAP.sel)||INF_PLANETS[0];
+  const t0=performance.now(),D=INF_CUTSCENE.duration*1000;
+  const stars=[];for(let i=0;i<130;i++)stars.push({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.6,s:.2+Math.random()*.8});
+  (function frame(now){
+   if(finished)return;
+   const u=Math.min(1,(now-t0)/D);
+   const cr=host.getBoundingClientRect(),cw=Math.max(1,Math.round(cr.width)),ch=Math.max(1,Math.round(cr.height));
+   if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch;}
+   const g=cv.getContext('2d'),W=cv.width,H=cv.height;
+   g.fillStyle='#050310';g.fillRect(0,0,W,H);
+   for(const s of stars){const sx=(s.x*W-(u*220*s.s))%W;g.globalAlpha=.4+.5*s.s;g.fillStyle='#cfc0e8';g.beginPath();g.arc((sx+W)%W,s.y*H,s.r+u*s.s*1.6,0,7);g.fill();}
+   g.globalAlpha=1;
+   /* 목적지 행성 — 커지며 접근 */
+   const pr=20+Math.pow(u,1.7)*(Math.min(W,H)*.62),px=W*.72,py=H*.44;
+   const grad=g.createRadialGradient(px-pr*.3,py-pr*.32,pr*.12,px,py,pr);
+   grad.addColorStop(0,p.pal[0]);grad.addColorStop(.48,p.pal[1]);grad.addColorStop(1,p.pal[2]);
+   g.fillStyle=grad;g.beginPath();g.arc(px,py,pr,0,7);g.fill();
+   /* 로켓 — 탈출 포트와 같은 실루엣 (타고 간 포트로 돌아온다) */
+   const rx=W*.16+u*(W*.4),ry=H*.6-u*H*.13,sc=1.1-u*.25;
+   g.save();g.translate(rx,ry);g.rotate(-.5);g.scale(sc,sc);
+   g.shadowColor='#FF8DA8';g.shadowBlur=16;
+   g.fillStyle='#2A1622';g.strokeStyle='#FF8DA8';g.lineWidth=3;
+   g.beginPath();g.ellipse(0,0,17,28,0,0,7);g.fill();g.stroke();g.shadowBlur=0;
+   g.fillStyle='#FFD8E2';g.beginPath();g.arc(0,-9,7,0,7);g.fill();
+   const fl=.6+.4*Math.sin(now*.03);
+   g.globalAlpha=.85;g.fillStyle='#FFD36E';g.beginPath();g.moveTo(-8,26);g.lineTo(0,44+12*fl);g.lineTo(8,26);g.closePath();g.fill();
+   g.restore();
+   /* 자막 */
+   g.globalAlpha=1;g.textAlign='center';
+   g.fillStyle='#9a86b5';g.font='800 12px '+FNT;g.fillText('EXPEDITION LAUNCH',W/2,H*.83);
+   g.fillStyle='#f2e7ff';g.font='800 26px '+FNT;g.fillText(p.name,W/2,H*.83+30);
+   if(u>.86){g.fillStyle='rgba(255,235,210,'+((u-.86)/.14)+')';g.fillRect(0,0,W,H);}
+   if(u>=1){finish();return;}
+   requestAnimationFrame(frame);
+  })(t0);
+ }
+ const skip=document.createElement('button');skip.id='tcCutSkip';skip.type='button';skip.textContent='건너뛰기 (클릭)';
+ skip.addEventListener('click',finish);host.appendChild(skip);
+ host.addEventListener('click',finish,{once:true});
+ setTimeout(finish,(INF_CUTSCENE.videoSrc?45000:INF_CUTSCENE.duration*1000+800));   /* 안전망 */
+}
+/* 직업 선택의 시작 버튼이 이 관문을 거친다 — 지도 출격이면 컷씬 후 시작 */
+function infLaunchFromRoleSelect(roleId){
+ if(STARMAP.armed){
+  STARMAP.armed=false;STARMAP.fromMap=false;INF.planetRun=true;INF.testScene=false;INF.growthMultiplier=1;INF.traitMultiplier=1;
+  infEl('infRoleModal').classList.remove('on');
+  infStartRun(roleId);
+  infPlayLaunchCutscene(()=>{
+   if(typeof BGM_ROUTE!=='undefined')BGM_ROUTE.usePurple(false);
+  });
+  /* 게임은 출격 버튼 입력으로 시작하고, 영상이 끝날 때까지 BGM만 정지한다. */
+ }else{INF.planetRun=false;infStartRun(roleId);}
+}
+
 /* ══════════ 보스 위계 — 트랙 B (기획서 §11.1) ══════════ */
 /* 장악도 40% 출현자를 심층마다 풀 스펙 보스로 반복 배치하지 않는다.
    최종 심층 전에는 '심층 수호자'(같은 종의 아종 — 작고 빠르며 장갑·페이즈 없음),
@@ -9994,6 +10312,7 @@ function infEndRun(reason,escaped){
  if(!INF.active||CREW.phase==='infiniteResult')return;CREW.phase='infiniteResult';INF.escape=null;INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
  if(typeof COOP_onInfEnd==='function')COOP_onInfEnd(reason,escaped);   /* 코옵 생환/다운 통지 — 트랙 F (훅 1줄) */
  const newly=[];INF_META.bestDepth=Math.max(INF_META.bestDepth,INF.depth);INF_META.bestBlocks=Math.max(INF_META.bestBlocks,INF.totalBlocks);INF_META.totalBosses+=INF.bosses;if(escaped){INF_META.escapes=(INF_META.escapes||0)+1;INF_META.bankedCores=(INF_META.bankedCores||0)+INF.core;}   /* §8.2 — 보스 코어는 생환해야 획득 */
+ if(typeof infRecordPlanetResult==='function')infRecordPlanetResult(escaped);   /* 행성 도감·기록 — 트랙 G */
  if(INF_META.bestDepth>=2&&!INF_META.unlocks.ricochet){INF_META.unlocks.ricochet=true;newly.push('도탄 탄두');}
  if(INF_META.totalBosses>=3&&!INF_META.unlocks.explosive){INF_META.unlocks.explosive=true;newly.push('발파 탄두');}
  if(INF_META.bestDepth>=3&&!INF_META.unlocks.breach){INF_META.unlocks.breach=true;newly.push('돌파 규격');}
@@ -10032,6 +10351,7 @@ function infInstallTestPanel(){
  p.onclick=e=>{const k=e.target&&e.target.dataset.t;if(!k||!INF.active)return;if(k==='xp'){INF.xp=INF.xpNeed;infCheckLevel();}else if(k==='high'){INF.pity=4;INF.xp=INF.xpNeed;infCheckLevel();}else if(k==='laser'){INF.laserEvery=1;INF.gunMode='공명 레이저';infPaint();}else if(k==='core'){INF.core+=30;infPaint();toast('코어 +30 (운반 전리품)');}else if(k==='rock'){const [pc,pr]=toCell(G.sh.x,G.sh.y);let spot=null;for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){const c=pc+dc,r=pr+dr;if(!inB(c,r)||c<=0||r<=0||c>=COLS-1||r>=ROWS-1)continue;const q=ci(c,r);if(SOLIDX(G.cell[q]))continue;G.cell[q]='rock';G.band[q]=bandOf(r);G.dec[q]=0;G.hp.delete(q);spot=[c,r];break;}if(spot){G.compDirty=true;LOS.markDirty();G.aimX=cxw(spot[0]);G.aimY=cyw(spot[1]);G.aimReady=true;G.sh.aim=Math.atan2(G.aimY-G.sh.y,G.aimX-G.sh.x);toast('기반암 테스트 타일');}}else if(k==='time'){INF.floorTime+=180;INF.floorBroken+=35;G.enemyCd=0;infPaint();}else if(k==='apex'){spawnEnemy(true);}else if(k==='target'&&CREW.turrets.length){const t=CREW.turrets[0];G.enemies.length=0;let spot=null;for(let ring=2;ring<=5&&!spot;ring++)for(let i=0;i<16;i++){const a=i*Math.PI/8,x=t.x+Math.cos(a)*CELL*ring,y=t.y+Math.sin(a)*CELL*ring;if(!solidAt(x,y)&&infEngineerLineClear(t.x,t.y,x,y)){spot={x,y};break;}}if(spot)G.enemies.push({x:spot.x,y:spot.y,vx:0,vy:0,hp:999,hpMax:999,threatHpMul:1,speedMul:0,damageMul:0,apex:false,kbx:0,kby:0,cd:99,hurt:0,bob:0,r:DEMO.enemyRadius,elite:0});}else if(k==='boss'){if(!INF.bossSpawned)infSpawnBoss();}else if(k==='near'&&INF.boss){INF.boss.x=clamp(G.sh.x+CELL*3,CELL,WW-CELL);INF.boss.y=G.sh.y;infPaint();}else if(k==='dir'&&INF.boss){INF.indicatorTestDir=((INF.indicatorTestDir||0)+1)%4;const a=INF.indicatorTestDir*Math.PI*.5;INF.boss.x=clamp(G.sh.x+Math.cos(a)*CELL*18,CELL,WW-CELL);INF.boss.y=clamp(G.sh.y+Math.sin(a)*CELL*18,CELL,WH-CELL);infPaint();}else if(k==='shot'&&INF.boss){infBossStartPattern(INF.boss);}else if(k==='kill'){if(INF.boss){for(const q of INF.boss.armorCells||[])G.cell[q]=null;hurtEnemy(INF.boss,INF.boss.hp*10,1,0);}}else if(k==='return')infEndRun('테스트 생환',true);else if(k==='end')infEndRun('테스트 종료');};document.body.appendChild(p);
 }
 infEl('menuInfinite').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenModeChoice();});
+infEl('menuStarmap').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenStarmap();});
 infEl('menuNodeTree').addEventListener('click',()=>{SFX.ui&&SFX.ui();infOpenNodeTree();});
 infEl('infModeStandard').addEventListener('click',()=>{SFX.ui&&SFX.ui();infChooseMode(false);});
 infEl('infModeTest').addEventListener('click',()=>{SFX.ui&&SFX.ui();infChooseMode(true);});
@@ -10327,6 +10647,323 @@ addEventListener('keydown',e=>{if(!state.active)return;if(e.code==='Space'){e.pr
  menu.addEventListener('pointerleave',reset,{passive:true});
  addEventListener('blur',reset);
  reset();
+})();
+</script>
+
+
+
+<!-- ══════════ [FX7.3.1] UI 애니메이션 — 등장 · 눌림 피드백 ══════════ -->
+<style id="tcFxUiAnim">
+/* 원칙 — transform 대신 독립 속성인 translate / scale 로만 움직인다.
+   #toast · #gear · #resHud 처럼 transform:translateX(-50%) 로 가운데 맞춘 UI가 많아서,
+   transform 을 건드리면 정렬이 깨진다. translate/scale 은 그 위에 얹혀 합성된다.
+   시간은 전부 .14~.34s — '짧게'가 기준이다.
+   감속 모드(html.tcReducedMotion)는 기존 규칙이 animation-duration 을 0.01ms 로 덮어써서
+   여기 있는 연출이 자동으로 꺼진다. */
+#crewRoot,#infHud,.infModal,#projectileLab,#tcStarmap{
+  --tcFxEase:cubic-bezier(.2,.85,.3,1);
+  --tcFxPop:cubic-bezier(.18,.9,.28,1.14)}
+
+@keyframes tcFxIn    {from{opacity:0;translate:0 10px}       to{opacity:1;translate:0 0}}
+@keyframes tcFxInPop {from{opacity:0;translate:0 14px;scale:.976} to{opacity:1;translate:0 0;scale:1}}
+@keyframes tcFxInSoft{from{opacity:0}                        to{opacity:1}}
+@keyframes tcFxInSide{from{opacity:0;translate:16px 0}       to{opacity:1;translate:0 0}}
+@keyframes tcFxInDrop{from{opacity:0;translate:0 -8px}       to{opacity:1;translate:0 0}}
+
+/* ── 팝업 · 모달 ──
+   와이프를 걷어낸 자리를 대신 채운다. 배경은 딤만, 패널은 살짝 튀어오른다. */
+.infModal.on{animation:tcFxInSoft .18s ease-out both}
+.infModal.on>.infPanel{animation:tcFxInPop .26s var(--tcFxPop) both}
+/* 팝업 안의 선택 카드는 순서대로 */
+.infModal.on .infModeCard,.infModal.on .infAction{
+  animation:tcFxIn .28s var(--tcFxEase) both;animation-delay:.08s}
+.infModal.on .infModeCard:nth-of-type(2){animation-delay:.13s}
+/* 직업 선택 — role-select.css 가 inset:0 전체 화면으로 덮으므로 패널은 페이드만.
+   카드에는 등장 연출을 걸지 않는다: infPaintRoleSelect() 가 캐릭터를 고를 때마다
+   #infRoleGrid 를 통째로 다시 그려서, 카드에 애니메이션이 있으면 선택할 때마다
+   네 장이 전부 다시 나타난다. 화면 진입은 이미 와이프가 덮어 준다. */
+#infRoleModal.on>.infRolePanel{animation:tcFxInSoft .22s ease-out both}
+
+/* ── 전체 화면 패널 ──
+   화면 자체는 와이프가 덮고 있으니, 걷힌 뒤 내용만 살짝 올라오게 한다. */
+#crewRoot .crewPanel.on{animation:tcFxInSoft .2s ease-out both}
+#crewMenu.on .menuFrame{animation:tcFxIn .3s var(--tcFxEase) both}
+#crewMenu.on .modeBtn{animation:tcFxInSide .32s var(--tcFxEase) both}
+#crewMenu.on .modeBtn:nth-of-type(1){animation-delay:.05s}
+#crewMenu.on .modeBtn:nth-of-type(2){animation-delay:.09s}
+#crewMenu.on .modeBtn:nth-of-type(3){animation-delay:.13s}
+#crewMenu.on .modeBtn:nth-of-type(4){animation-delay:.17s}
+#crewMenu.on .modeBtn:nth-of-type(5){animation-delay:.21s}
+#crewMenu.on .modeBtn:nth-of-type(6){animation-delay:.25s}
+#crewMenu.on .modeBtn:nth-of-type(7){animation-delay:.29s}
+#crewMenu.on .menuTools button{animation:tcFxIn .3s var(--tcFxEase) both;animation-delay:.32s}
+
+/* 미션 · 바이옴 · 직업 선택 카드 */
+#crewMission.on [data-mission],#crewBiome.on [data-biome],#crewRole.on .tcRoleChoice{
+  animation:tcFxInPop .3s var(--tcFxPop) both;animation-delay:.06s}
+#crewMission.on [data-mission]:nth-of-type(2),#crewBiome.on [data-biome]:nth-of-type(2),
+#crewRole.on .tcRoleChoice:nth-of-type(2){animation-delay:.11s}
+#crewMission.on [data-mission]:nth-of-type(3),#crewRole.on .tcRoleChoice:nth-of-type(3){animation-delay:.16s}
+#crewRole.on .tcRoleChoice:nth-of-type(4){animation-delay:.21s}
+
+/* 설정 화면 — 행이 차례로 */
+#crewSettings.on .tcSettingsTop{animation:tcFxIn .28s var(--tcFxEase) both}
+#crewSettings.on .tcSettingsRow{animation:tcFxIn .3s var(--tcFxEase) both}
+#crewSettings.on .tcSettingsRow:nth-of-type(1){animation-delay:.05s}
+#crewSettings.on .tcSettingsRow:nth-of-type(2){animation-delay:.09s}
+#crewSettings.on .tcSettingsRow:nth-of-type(3){animation-delay:.13s}
+#crewSettings.on .tcSettingsRow:nth-of-type(4){animation-delay:.17s}
+#crewSettings.on .tcSettingsRow:nth-of-type(5){animation-delay:.21s}
+#crewSettings.on .tcSettingsRow:nth-of-type(6){animation-delay:.24s}
+#crewSettings.on .tcSettingsRow:nth-of-type(n+7){animation-delay:.27s}
+
+/* 투사체 연구소 · 행성 지도 */
+#projectileLab.on{animation:tcFxInSoft .2s ease-out both}
+#projectileLab.on>*{animation:tcFxIn .3s var(--tcFxEase) both;animation-delay:.06s}
+#tcStarmap.on{animation:tcFxInSoft .24s ease-out both}
+#tcStarBack{animation:tcFxInDrop .3s var(--tcFxEase) both;animation-delay:.1s}
+#tcStarPanel.on{animation:tcFxInSide .3s var(--tcFxEase) both}
+/* 행성을 고를 때마다 패널 내용이 새로 그려진다 — 삽입될 때 다시 재생된다 */
+#tcStarPanel.on>*{animation:tcFxIn .26s var(--tcFxEase) both}
+#tcStarPanel.on>*:nth-child(2){animation-delay:.04s}
+#tcStarPanel.on>*:nth-child(3){animation-delay:.07s}
+#tcStarPanel.on>*:nth-child(n+4){animation-delay:.1s}
+
+/* ── 떠 있는 UI · HUD ── */
+#crewHud.on,#resHud.on,#gear.on,#act.on,#crewTip.on,#toast.on{
+  animation:tcFxIn .22s var(--tcFxEase) both}
+#crewSettingsFab.on,#crewMuteFab.on{animation:tcFxInPop .24s var(--tcFxPop) both}
+#infHud.on .ihTop{animation:tcFxInDrop .28s var(--tcFxEase) both}
+#infHud.on .ihLeft{animation:tcFxIn .28s var(--tcFxEase) both;animation-delay:.05s}
+#infHud.on .ihKeys{animation:tcFxIn .28s var(--tcFxEase) both;animation-delay:.09s}
+/* 노드 툴팁 — hidden 이 풀릴 때마다 */
+#infNodeTooltip:not([hidden]){animation:tcFxInPop .16s var(--tcFxEase) both}
+
+/* ── 눌림 피드백 ──
+   이미 :active 를 정의해 둔 버튼(#crewMenu .modeBtn, #act, .infRoleStartCard …)은
+   그쪽 transform 이 그대로 살아 있고, 여기 scale 만 위에 더해진다. */
+button,[role="button"]{transition:filter .13s ease,scale .13s var(--tcFxEase),
+  opacity .13s ease,box-shadow .16s ease}
+button:not(:disabled):active,[role="button"]:not([aria-disabled="true"]):active{
+  scale:.972;filter:brightness(1.08)}
+button:disabled:active,button[aria-disabled="true"]:active{scale:1;filter:none}
+button:focus-visible,[role="button"]:focus-visible{
+  outline:2px solid rgba(183,154,215,.7);outline-offset:2px}
+/* 토글은 눌리는 느낌 대신 살짝 부푼다 */
+.tcSettingsToggle:not(:disabled):active{scale:1.06}
+</style>
+<!-- ══════════ [FX7.3.1] 화면 전환 — 그라데이션 와이프 ══════════ -->
+<style id="tcFxTransition">
+/* 큰 메뉴를 이동할 때 화면 전체를 덮는 2겹 그라데이션 시트.
+   시트 폭은 JS가 뷰포트의 3배로 잡고, 프레임마다 translate3d 로 밀어 준다.
+   (CSS 애니메이션을 쓰지 않는 이유 — tcReducedMotion 이 animation-duration 을
+    0.01ms 로 덮어써서 타이밍이 어긋난다. 감속 모드는 JS 에서 별도 처리.) */
+#tcFxWipe{position:fixed;left:0;top:0;width:100%;height:100%;z-index:900;
+  display:none;overflow:hidden;pointer-events:none;contain:layout paint;
+  transform-origin:50% 50%;backface-visibility:hidden}
+#tcFxWipe.on{display:block;pointer-events:auto}
+#tcFxWipe .tcFxSheet{position:absolute;left:0;top:-3%;height:106%;
+  will-change:transform;transform:translate3d(0,0,0);backface-visibility:hidden}
+/* 뒤 시트 — 보라 안개. 앞 시트보다 살짝 앞서 들어와 깊이를 만든다 */
+#tcFxWipe .tcFxBack{background:linear-gradient(to right,
+  rgba(168,120,224,0) 7%,
+  rgba(168,120,224,.26) 12%,
+  rgba(104,58,152,.52) 20%,
+  rgba(62,32,98,.66) 42%,
+  rgba(88,48,134,.50) 58%,
+  rgba(168,120,224,.26) 65%,
+  rgba(168,120,224,0) 72%)}
+/* 앞 시트 — 실제로 화면을 덮는 층.
+   17%~59% 구간이 완전 불투명이라 이동 중간(tx=-0.66W)에서 뷰포트를 전부 가린다. */
+#tcFxWipe .tcFxFront{background:
+  linear-gradient(to right,
+    rgba(214,186,255,0) 8%,
+    rgba(255,232,186,.24) 10.5%,
+    rgba(214,186,255,.44) 12.5%,
+    rgba(183,154,215,.14) 14.5%,
+    rgba(214,186,255,0) 17%,
+    rgba(214,186,255,0) 56%,
+    rgba(214,186,255,.30) 62%,
+    rgba(255,232,186,.20) 64%,
+    rgba(214,186,255,0) 70%),
+  linear-gradient(to right,
+    rgba(11,11,15,0) 8%,
+    rgba(11,11,15,1) 17%,
+    rgba(11,11,15,1) 59%,
+    rgba(11,11,15,0) 69%)}
+/* 완전히 덮인 순간에만 살짝 피어오르는 중앙 광원 — 검은 프레임이 밋밋하지 않게 */
+#tcFxWipe .tcFxCore{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 62% 42% at 50% 50%,rgba(183,154,215,.20),rgba(183,154,215,.06) 45%,transparent 72%)}
+</style>
+<script id="tcFxTransitionJs">
+(function(){
+ 'use strict';
+ /* ── 타이밍 (ms) ── */
+ var D={cover:260,hold:40,reveal:340};
+ /* ── 시트 위치 (뷰포트 폭 W 배수) ──
+    A: 우측 밖 대기 · B: 완전히 덮인 중간 · C: 좌측 밖 퇴장.
+    앞 시트의 17%~59% 구간이 불투명이라 B(-0.55W)에서 뷰포트가 전부 가려진다. */
+ var A_=0.78,B_=-0.55,C_=-2.12,LEAD=0.22;
+
+ var TCFX={busy:false,VERSION:'FX7.3.1'};
+ window.TCFX=TCFX;
+
+ var root=null,back=null,front=null,core=null,raf=0,safety=0;
+
+ function build(){
+  root=document.createElement('div');root.id='tcFxWipe';root.setAttribute('aria-hidden','true');
+  back=document.createElement('div');back.className='tcFxSheet tcFxBack';
+  front=document.createElement('div');front.className='tcFxSheet tcFxFront';
+  core=document.createElement('div');core.className='tcFxCore';
+  root.appendChild(back);root.appendChild(front);root.appendChild(core);
+  document.body.appendChild(root);
+ }
+ function reducedMotion(){return document.documentElement.classList.contains('tcReducedMotion');}
+ function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+ function smooth(p){return p*p*(3-2*p);}
+ function run(fn){try{if(fn)fn();}catch(err){if(window.console&&console.warn)console.warn('[FX7.3.1] 전환 중 오류',err);}}
+
+ /* 화면을 덮는 본체 — mid 는 완전히 덮인 순간에 한 번 호출된다 */
+ TCFX.wipe=function(mid,opts){
+  opts=opts||{};
+  if(TCFX.busy||reducedMotion()){run(mid);return;}   /* 중첩 호출·감속 모드는 즉시 실행 */
+  if(!root)build();
+
+  /* 폭을 못 재는 상황(숨겨진 탭·0 크기 뷰포트)에서 시트가 1px 로 접히면
+     화면이 덮이지 않은 채 전환이 끝난다 — 그럴 땐 연출을 건너뛰고 바로 이동한다. */
+  var W=root.clientWidth||document.documentElement.clientWidth||window.innerWidth||0;
+  if(!(W>=240)){run(mid);return;}   /* 아직 busy 를 켜기 전이라 그대로 빠져나가면 된다 */
+  var cover=opts.cover||D.cover,hold=(opts.hold==null?D.hold:opts.hold),reveal=opts.reveal||D.reveal;
+  var A=A_*W,B=B_*W,C=C_*W;
+
+  TCFX.busy=true;
+  front.style.width=back.style.width=(W*3)+'px';
+  root.style.transform=(opts.dir==='back')?'scaleX(-1)':'none';   /* 뒤로 가기는 반대 방향으로 쓸어낸다 */
+  place(W,A,0);
+  root.classList.add('on');
+
+  var t0=0,midDone=false;
+  function frame(now){
+   if(!t0)t0=now;
+   var e=now-t0;
+   if(e<cover){
+    var p=ease(e/cover);
+    place(W,A+(B-A)*p,smooth(p));
+   }else{
+    if(!midDone){midDone=true;place(W,B,1);run(mid);}
+    var r=e-cover-hold;
+    if(r<=0){place(W,B,1);}
+    else if(r<reveal){var q=ease(r/reveal);place(W,B+(C-B)*q,smooth(1-q));}
+    else{finish();return;}
+   }
+   raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+
+  /* 안전망 — 탭 전환 등으로 rAF 가 멈춰도 화면이 검은 채로 남지 않게 */
+  clearTimeout(safety);
+  safety=setTimeout(function(){
+   if(!TCFX.busy)return;
+   if(!midDone){midDone=true;run(mid);}
+   finish();
+  },cover+hold+reveal+2500);
+
+  function finish(){
+   cancelAnimationFrame(raf);clearTimeout(safety);
+   root.classList.remove('on');core.style.opacity='0';
+   TCFX.busy=false;
+  }
+ };
+ function place(W,tx,g){
+  front.style.transform='translate3d('+tx.toFixed(1)+'px,0,0)';
+  back.style.transform='translate3d('+(tx-LEAD*W).toFixed(1)+'px,0,0)';
+  core.style.opacity=(g*.55).toFixed(3);
+ }
+
+ /* ══════════ 어떤 버튼이 어느 방향으로 전환되는가 ══════════ */
+ /* 전체 화면끼리 갈아탈 때만 와이프를 건다. .infModal 처럼 기존 화면 위에 얹히는
+    팝업은 '화면 이동'이 아니라 '덧붙음'이라, 아래 #tcFxUiAnim 의 등장 애니메이션이 맡는다.
+    세 번째 항목은 조건 함수 — false 를 돌려주면 연출 없이 원래 동작만 한다. */
+ var ROUTES=[
+  /* 메인 메뉴 → 전체 화면 (무한 모드·성장 지도는 팝업이라 제외) */
+  ['#menuSolo,#menuStarmap,#menuProjectileLab,#menuBossLab,#menuSettings,#crewSettingsFab','fwd'],
+  /* 솔로 미션 — 미션 → 바이옴 → 직업. 모두 .crewPanel 전체 화면이다 */
+  ['#crewMission [data-mission],#crewBiome [data-biome]','fwd'],
+  /* 직업 선택은 .infModal 이지만 role-select.css 가 inset:0 으로 전체 화면을 덮는다 —
+     들고 나는 길목 모두 전체 화면 전환이다 */
+  ['#infModeStandard,#infModeTest,#tcStarLaunch','fwd'],
+  ['#infRoleBack','back'],
+  /* 런 시작 — 누르는 건 카드지만 결과는 직업 선택 → 인게임 전체 화면 전환 */
+  ['.infRoleStartCard,#infRetry,#infSettleRetry','fwd'],
+  /* 되돌아가기 */
+  ['#missionBackMenu,#biomeBackMission,#roleBackMission,#crewToMenu,#crewChange','back'],
+  ['#crewSettingsBack,#tcSetDone','back'],
+  /* 연구소·행성 지도 닫기, 결과 팝업에서 메인 메뉴로 (아래가 인게임이라 전체 화면이 바뀐다) */
+  ['#plClose,#tcStarBack,#infMenu','back'],
+  /* 정산 닫기 — 기지 메뉴에서 연 성장 지도라면 팝업만 닫는 것이라 연출을 걸지 않는다 */
+  ['#infSettleDone','back',function(){return !settleFromMenu();}]
+ ];
+ var SEL=ROUTES.map(function(r){return r[0];}).join(',');
+ function settleFromMenu(){return !!(typeof INF!=='undefined'&&INF&&INF.settle&&INF.settle.fromMenu);}
+ function routeFor(el){
+  for(var i=0;i<ROUTES.length;i++){
+   var r=ROUTES[i];
+   try{if(!el.matches(r[0]))continue;}catch(e){continue;}
+   return (r[2]&&!r[2]())?null:r[1];
+  }
+  return null;
+ }
+
+ /* 클릭을 캡처 단계에서 가로채 와이프로 감싼 뒤, 덮인 순간에 원래 핸들러를 다시 태운다.
+    (동적으로 다시 그려지는 버튼 — 행성 출격/직업 카드 — 까지 한 곳에서 처리하려고 위임 방식) */
+ var passthrough=false;
+ document.addEventListener('click',function(e){
+  if(passthrough)return;                       /* 재발행된 클릭은 그대로 통과 */
+  if(TCFX.busy){e.stopImmediatePropagation();e.preventDefault();return;}
+  var t=(e.target&&e.target.closest)?e.target.closest(SEL):null;
+  if(!t)return;
+  if(t.disabled||t.classList.contains('locked')||t.getAttribute('aria-disabled')==='true')return;
+  /* 지도 출격은 컷씬이 이미 화면을 덮는다 — 겹치지 않게 넘긴다 */
+  if(t.classList.contains('infRoleStartCard')&&typeof STARMAP!=='undefined'&&STARMAP&&STARMAP.armed)return;
+
+  var dir=routeFor(t);
+  if(!dir)return;                              /* 조건이 안 맞는 경로는 연출 없이 통과 */
+  e.stopImmediatePropagation();e.preventDefault();
+  if(window.SFX&&SFX.ui)SFX.ui();             /* 클릭음은 지금 — 전환이 끝날 때까지 기다리지 않게 */
+  TCFX.wipe(function(){
+   passthrough=true;
+   var savedUi=(window.SFX&&SFX.ui)?SFX.ui:null;
+   if(savedUi)SFX.ui=function(){};            /* 원래 핸들러가 클릭음을 한 번 더 내지 않게 */
+   try{t.click();}finally{if(savedUi)SFX.ui=savedUi;passthrough=false;}
+  },{dir:dir});
+ },true);
+
+ /* ── 클릭 경로가 아닌 진입점들 ── */
+ /* 솔로 직업 선택은 'SELECTED' 표시를 480ms 보여 준 뒤 시작한다.
+    클릭 시점이 아니라 실제 시작 시점을 덮어야 해서 함수 자체를 감싼다. */
+ if(typeof window.startCrewMission==='function'){
+  var _startCrew=window.startCrewMission;
+  window.startCrewMission=function(){
+   var a=arguments,self=this;
+   TCFX.wipe(function(){_startCrew.apply(self,a);},{dir:'fwd',cover:300,hold:80,reveal:420});
+  };
+ }
+ /* Esc 로 닫는 경로 — 행성 지도 / 정산 화면 */
+ if(typeof window.infCloseStarmap==='function'){
+  var _closeStar=window.infCloseStarmap;
+  window.infCloseStarmap=function(){
+   var a=arguments,self=this;
+   TCFX.wipe(function(){_closeStar.apply(self,a);},{dir:'back'});
+  };
+ }
+ if(typeof window.infCloseSettlement==='function'){
+  var _closeSettle=window.infCloseSettlement;
+  window.infCloseSettlement=function(){
+   var a=arguments,self=this;
+   if(settleFromMenu()){_closeSettle.apply(self,a);return;}   /* 팝업만 닫는 경우 */
+   TCFX.wipe(function(){_closeSettle.apply(self,a);},{dir:'back'});
+  };
+ }
 })();
 </script>
 

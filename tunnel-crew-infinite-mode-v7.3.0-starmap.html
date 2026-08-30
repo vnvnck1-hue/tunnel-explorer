@@ -9070,7 +9070,7 @@ function infPaintRoleSelect(){
   b.onclick=e=>{if(e.target.closest('.infRoleStartCard'))return;choose();};
   b.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('.infRoleStartCard')){e.preventDefault();choose();}};
   const start=b.querySelector('.infRoleStartCard');
-  start.onclick=e=>{e.preventDefault();e.stopPropagation();SFX.ui&&SFX.ui();infLaunchFromRoleSelect(role.id);};
+  start.onclick=e=>{e.preventDefault();e.stopPropagation();infLaunchFromRoleSelect(role.id);};
   root.appendChild(b);
  }
  const selected=INF_ROLES[INF.selectedRoleId]||INF_ROLES.driller;const pick=infEl('infRolePickName');if(pick)pick.textContent=selected.name;
@@ -9597,7 +9597,7 @@ const INF_PLANETS=[
 ];
 const STARMAP={open:false,world:{w:3200,h:2000},x:0,y:0,drag:null,sel:null,raf:0,stars:null,armed:false,fromMap:false};
 /* 임시 컷씬 — videoSrc 에 mp4/webm 경로를 넣으면 코드 연출 대신 영상을 재생한다 */
-const INF_CUTSCENE={videoSrc:null,duration:2.8};
+const INF_CUTSCENE={videoSrc:'assets/cutscenes/planet-launch.mp4',duration:2.8};
 function infInitPlanetMeta(){
  if(!INF_META.planets||typeof INF_META.planets!=='object')INF_META.planets={};
  for(const p of INF_PLANETS)if(!INF_META.planets[p.id])INF_META.planets[p.id]={runs:0,clears:0,escapes:0,bestDepth:0};
@@ -9759,12 +9759,20 @@ function infSelectPlanet(id){
 function infPlayLaunchCutscene(done){
  let host=starmapEl('tcCutscene');
  if(!host){host=document.createElement('div');host.id='tcCutscene';(document.getElementById('app')||document.body).appendChild(host);}
+ /* 영상 사운드만 들리도록 출격 컷씬 동안 기존 BGM을 모두 정지한다. */
+ if(typeof BGM_ROUTE!=='undefined'){
+  BGM_ROUTE.current='cutscene';BGM_ROUTE.revision++;
+  if(typeof LOBBY_MUSIC!=='undefined')LOBBY_MUSIC.pause();
+  if(typeof PURPLE_MUSIC!=='undefined')PURPLE_MUSIC.pause();
+  if(typeof MUS!=='undefined'&&MUS.setExternal)MUS.setExternal(true);
+ }
  host.innerHTML='';host.classList.add('on');
  let finished=false;
  const finish=()=>{if(finished)return;finished=true;host.classList.remove('on');host.innerHTML='';done&&done();};
  if(INF_CUTSCENE.videoSrc){
-  const v=document.createElement('video');v.src=INF_CUTSCENE.videoSrc;v.autoplay=true;v.muted=false;v.playsInline=true;
-  v.addEventListener('ended',finish);host.appendChild(v);
+  const v=document.createElement('video');v.src=INF_CUTSCENE.videoSrc;v.autoplay=true;v.muted=false;v.playsInline=true;v.preload='auto';
+  v.addEventListener('ended',finish);v.addEventListener('error',finish);host.appendChild(v);
+  const playPromise=v.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{});
  }else{
   /* 임시 연출: 별밭 → 로켓이 행성으로 → 접근 플래시 → 착륙 텍스트 */
   const cv=document.createElement('canvas');host.appendChild(cv);
@@ -9813,9 +9821,11 @@ function infLaunchFromRoleSelect(roleId){
  if(STARMAP.armed){
   STARMAP.armed=false;
   infEl('infRoleModal').classList.remove('on');
-  infPlayLaunchCutscene(()=>{});
-  /* 컷씬이 화면을 덮는 동안 뒤에서 맵 생성·출격을 끝낸다 — 페이드아웃이 곧 착륙 */
   infStartRun(roleId);
+  infPlayLaunchCutscene(()=>{
+   if(typeof BGM_ROUTE!=='undefined')BGM_ROUTE.usePurple(false);
+  });
+  /* 게임은 출격 버튼 입력으로 시작하고, 영상이 끝날 때까지 BGM만 정지한다. */
  }else infStartRun(roleId);
 }
 /* ══════════ 보스 위계 — 트랙 B (기획서 §11.1) ══════════ */
