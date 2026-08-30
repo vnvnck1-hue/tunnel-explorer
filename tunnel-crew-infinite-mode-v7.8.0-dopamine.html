@@ -10299,7 +10299,7 @@ function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='pl
  function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null,
   drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{},
   /* 도파민 콘텐츠 상태 (docs/design/dopamine-content-spec.md §5.3) — 잭팟 피티·피버 콤보·원정 기록 */
-  jackpotPity:0,jackpotFx:null,comboN:0,comboLast:-9,feverT:0,feverCd:0,
+  jackpotPity:0,jackpotFx:null,comboN:0,comboIdle:9,feverT:0,feverCd:0,
   runStats:{kills:0,jackpots:0,jackpotCores:0,maxCombo:0,fevers:0,relicsFound:0}});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
@@ -10582,7 +10582,7 @@ function infPlanetBreaker(x,y){
  const a=G.sh.aim,dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc,[c,r]=toCell(x,y);INF.planetBreakerFx={x,y,a,t:.7,maxT:.7};INF.universalBlastLock=true;for(let step=-1;step<=8;step++)for(let side=-2;side<=2;side++)infDamageTraitCell(c+dc*step+pc*side,r+dr*step+pr*side,.375,dc,dr);INF.universalBlastLock=false;infTraitRiskDamage(G.phpMax*.015,'파쇄기 반동',false);J.ring(x,y,'#FF8D72',14,CELL*4.8,6);J.kick(13,dc,dr);SFX.brk&&SFX.brk();
 }
 function infUpdateMiningTraits(dt){
- if(!infTraitCardsEnabled()||CREW.phase!=='play')return;infJackpotTick(dt);INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
+ if(!infTraitCardsEnabled()||CREW.phase!=='play')return;infJackpotTick(dt);infFeverTick(dt);INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
  if(INF.endlessOverdrive&&(G.drillHeat||0)>=.9){INF.endlessBurnTick=(INF.endlessBurnTick||0)+dt;while(INF.endlessBurnTick>=.5){INF.endlessBurnTick-=.5;if(infTraitRiskDamage(G.phpMax*.006,'과급 손상',true))return;}}else INF.endlessBurnTick=0;
  if(!Array.isArray(INF.afterHits))INF.afterHits=[];for(let i=INF.afterHits.length-1;i>=0;i--){const hit=INF.afterHits[i];hit.t-=dt;if(hit.t<=0){INF.afterHits.splice(i,1);infTraitBlast(hit.x,hit.y,1.25,.25,'#C7A0FF');}}
  const count=Math.max(INF.auxDrills|0,INF.drillStorm|0);if(count<=0)return;INF.auxDrillCd=Math.max(0,(INF.auxDrillCd||0)-dt);if(INF.auxDrillCd>0)return;INF.auxDrillCd=Math.max(.12,.48-count*.035);const sh=G.sh,candidates=[];
@@ -10595,6 +10595,7 @@ function infDrawMiningTraits(){
 }
 function infOnBlockBroken(type,x,y){
  if(!infTraitCardsEnabled())return;if(INF.active){INF.floorBroken++;INF.spawnDebt+=(.30+Math.min(.42,INF.floorBroken*.006));G.enemyCd=Math.min(G.enemyCd,Math.max(.35,2.1-INF.floorBroken*.018));}INF.totalBlocks++;INF.blockCounter++;
+ if(typeof infComboOnBreak==='function')infComboOnBreak(x,y);
  const rare=type==='ore'||type==='gem'||type==='crys';
  infAwardXp(type==='stone'?INF_XP_TABLE.stone:rare?INF_XP_TABLE.rare:INF_XP_TABLE.dirt,'dig',{check:false});
   if(INF.drillerTraitHeatRecovery&&INF.roleId==='driller'){G.drillHeat=Math.max(0,(G.drillHeat||0)-.12);G.drillHeatLock=Math.max(0,(G.drillHeatLock||0)-.08);}
@@ -10648,6 +10649,38 @@ function infJackpotTick(dt){
  J.text(jx,jy,'+1','#FFD36E',14);J.burst(fx.x,fx.y,3,['#FFD36E','#FFF3D6'],130);
  if(fx.tick%2===0)SFX.ore&&SFX.ore();
  if(fx.left<=0){J.text(fx.x,fx.y-56,'노다지 +'+fx.total,'#FFD36E',20);SFX.cache&&SFX.cache();INF.jackpotFx=null;}
+}
+/* ══════════ 도파민 콘텐츠 2 — 피버 드릴 (docs/design/dopamine-content-spec.md §5.3-2) ══════════
+   Flow 가시화: 이미 하고 있는 '연속 굴착'에 게이지를 단다 — 새 조작 요구 없음.
+   2.4초 이내 연속 파괴로 콤보 유지, 25콤보에 피버 6초(굴착 ×1.5 · 파괴 시 소형 파쇄), 재사용 대기 30초. */
+function infComboOnBreak(x,y){
+ if(!INF.active)return;
+ if((INF.comboIdle||0)>2.4)INF.comboN=0;
+ INF.comboN++;INF.comboIdle=0;
+ if(INF.runStats&&INF.comboN>INF.runStats.maxCombo)INF.runStats.maxCombo=INF.comboN;
+ if(INF.comboN>=10&&INF.comboN%10===0)J.text(x,y-30,'콤보 x'+INF.comboN,'#C7A0FF',13+Math.min(9,INF.comboN/10|0));
+ if(INF.comboN>=25&&INF.feverT<=0&&(INF.feverCd||0)<=0)infStartFever();
+ if(INF.feverT>0&&!INF.universalBlastLock)infTraitBlast(x,y,1.2,.28,'#FFD36E');
+}
+function infStartFever(){
+ INF.feverT=6;INF.feverCd=30;INF.drillMul*=1.5;INF.moveMul*=1.1;
+ if(INF.runStats)INF.runStats.fevers++;
+ infFeverVeil(true);J.kick(5);J.ring(G.sh.x,G.sh.y,'#FFD36E',9,CELL*2.2,4);
+ SFX.ready&&SFX.ready();toast('피버 드릴! 6초간 굴착 폭주');
+}
+function infEndFever(){
+ INF.feverT=0;INF.drillMul/=1.5;INF.moveMul/=1.1;infFeverVeil(false);SFX.back&&SFX.back();
+}
+/* 화면 금색 비네트 — DOM 오버레이라 update 정지·rAF 유무와 무관하게 동작한다 */
+function infFeverVeil(on){
+ let v=document.getElementById('infFeverVeil');
+ if(!v){v=document.createElement('div');v.id='infFeverVeil';v.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:40;opacity:0;transition:opacity .35s;box-shadow:inset 0 0 120px 26px rgba(255,211,110,.34),inset 0 0 42px 8px rgba(255,211,110,.18)';document.body.appendChild(v);}
+ v.style.opacity=on?'1':'0';
+}
+function infFeverTick(dt){
+ INF.comboIdle=(INF.comboIdle||0)+dt;   /* 콤보 유휴 클록 — floorTime은 지층 전환 시 리셋되므로 쓰지 않는다 */
+ if(INF.feverT<=0&&(INF.feverCd||0)>0)INF.feverCd-=dt;
+ if(INF.feverT>0){INF.feverT-=dt;if(INF.feverT<=0)infEndFever();}
 }
 /* ══════════ 역할 행동 개인 경험치 ══════════ */
 /* 기획서 §5.3 — 개인 경험치는 직업별 역할 행동에 가중치를 두어 지급한다.
