@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>땅굴크루 v7.7 UI 그레이박스</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#141416; color:#ddd; font-family:'Segoe UI','Malgun Gothic',sans-serif; overflow:hidden; }
+  #toolbar { position:fixed; top:0; left:0; right:0; background:#1d1d21; border-bottom:1px solid #333; z-index:10; padding:6px 12px; }
+  .row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; padding:3px 0; }
+  .lbl { font-size:11px; color:#888; margin:0 6px 0 10px; letter-spacing:1px; }
+  button { background:#2a2a30; color:#bbb; border:1px solid #444; padding:5px 12px; font-size:12.5px; cursor:pointer; border-radius:4px; }
+  button.on { background:#4a6a5a; color:#fff; border-color:#6a9a80; }
+  button.tab.on { background:#5a4a2a; border-color:#a8843a; }
+  button.warn { background:#5a3a2a; border-color:#a86a3a; color:#f0d0b0; }
+  #stageWrap { position:fixed; top:96px; left:0; right:340px; bottom:0; display:flex; align-items:center; justify-content:center; }
+  #stage { position:relative; width:1280px; height:720px; background:#3a3a3e; outline:2px solid #555; transform-origin:center center; flex:none; }
+  .world { position:absolute; inset:0; background:repeating-linear-gradient(45deg,#38383c 0 24px,#333337 24px 48px); }
+  .worldLabel { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#55555a; font-size:26px; letter-spacing:6px; font-weight:700; }
+  .gb { position:absolute; background:rgba(160,160,165,.22); border:1.5px dashed #9a9aa0; color:#e8e8ec;
+    font-size:12px; line-height:1.45; padding:6px 9px; border-radius:4px; cursor:pointer; }
+  .gb:hover { background:rgba(180,180,190,.32); border-color:#c8c8d0; }
+  .gb b { font-size:12.5px; display:block; }
+  .gb .sub { color:#b8b8be; font-size:10.5px; display:block; }
+  .gb .num { position:absolute; top:-11px; left:-11px; width:22px; height:22px; border-radius:50%;
+    background:#e8b04a; color:#1a1a1a; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .gb.ctx { border-color:#e8b04a; background:rgba(232,176,74,.14); }
+  .gb.faded { opacity:.4; }
+  .gb.vert { writing-mode:vertical-rl; text-align:center; }
+  .cbadge { position:absolute; top:-12px; right:-12px; width:24px; height:24px; border-radius:50% 50% 50% 4px;
+    background:#7fd0a8; color:#10241a; font-size:13px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.5); }
+  .bar { height:8px; background:#666; border-radius:4px; margin-top:4px; position:relative; overflow:hidden; }
+  .bar i { position:absolute; inset:0; background:#aaa; display:block; }
+  .segs { display:flex; gap:2px; margin-top:4px; }
+  .segs i { width:9px; height:9px; background:#aaa; border-radius:2px; display:block; }
+  .segs i.off { background:#555; }
+  .slot { display:inline-flex; width:44px; height:44px; background:rgba(200,200,205,.2); border:1.5px solid #9a9aa0;
+    border-radius:8px; align-items:center; justify-content:center; font-size:11px; color:#ddd; flex-direction:column; gap:1px; }
+  .slot small { font-size:9px; color:#999; }
+  .safeline { position:absolute; inset:32px; border:1px dotted rgba(120,180,220,.4); pointer-events:none; }
+  .safetag { position:absolute; top:34px; left:38px; font-size:10px; color:rgba(120,180,220,.7); pointer-events:none; }
+  #notes { position:fixed; top:96px; right:0; width:340px; bottom:0; background:#1a1a1e; border-left:1px solid #333;
+    padding:16px; overflow-y:auto; font-size:12.5px; line-height:1.6; }
+  #notes h2 { font-size:14px; color:#e8b04a; margin-bottom:10px; }
+  #notes .note { margin-bottom:11px; display:flex; gap:8px; }
+  #notes .note .n { flex:none; width:20px; height:20px; border-radius:50%; background:#e8b04a; color:#1a1a1a;
+    font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:2px; }
+  #notes .note.diag .n { background:#c86a5a; color:#fff; }
+  #notes .note p { color:#c8c8cd; }
+  #notes .note p b { color:#fff; }
+  #notes .tip { background:#22282a; border:1px solid #3a4a44; border-radius:6px; padding:8px 10px; color:#9ec8b0;
+    font-size:11.5px; margin-bottom:14px; }
+  .hidden { display:none !important; }
+  /* comment popup & export modal */
+  .modalBack { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:50; display:flex; align-items:center; justify-content:center; }
+  .modalBox { background:#222228; border:1px solid #555; border-radius:10px; padding:18px; width:460px; max-width:92vw;
+    box-shadow:0 12px 40px rgba(0,0,0,.6); }
+  .modalBox h3 { font-size:14px; color:#7fd0a8; margin-bottom:4px; }
+  .modalBox .where { font-size:11px; color:#888; margin-bottom:10px; }
+  .modalBox textarea { width:100%; height:110px; background:#1a1a1e; color:#ddd; border:1px solid #444; border-radius:6px;
+    padding:8px; font-size:13px; font-family:inherit; resize:vertical; }
+  .modalBox textarea.json { height:300px; font-family:ui-monospace,Consolas,monospace; font-size:11px; white-space:pre; }
+  .modalRow { display:flex; gap:8px; margin-top:12px; justify-content:flex-end; }
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <div class="row" id="screenTabs"><span class="lbl">화면</span></div>
+  <div class="row">
+    <span class="lbl">레이아웃</span>
+    <button id="btnCur" onclick="setLayout('cur')">현재</button>
+    <button id="btnNew" class="on" onclick="setLayout('new')">제안</button>
+    <span id="stateGrp"><span class="lbl">상황</span>
+      <button id="btnIdle" class="on" onclick="setMode('idle')">탐사</button>
+      <button id="btnCombat" onclick="setMode('combat')">전투</button>
+      <button id="btnBoss" onclick="setMode('boss')">보스</button>
+    </span>
+    <span class="lbl">가이드</span>
+    <button id="btnSafe" class="on" onclick="toggleSafe()">세이프 에어리어</button>
+    <span class="lbl">코멘트</span>
+    <button id="btnExport" class="warn" onclick="openExport()">💬 <span id="cCount">0</span>개 · JSON 내보내기</button>
+    <button onclick="clearComments()">전체 삭제</button>
+  </div>
+</div>
+
+<div id="stageWrap"><div id="stage">
+  <div class="world"><div class="worldLabel" id="worldLabel">1280×720</div></div>
+  <div id="boxes"></div>
+  <div class="safeline" id="safeline"></div><div class="safetag" id="safetag">SAFE AREA 32px</div>
+</div></div>
+
+<div id="notes">
+  <div class="tip">💬 <b>그레이박스 요소를 클릭하면 코멘트 말풍선</b>이 열립니다. 남긴 코멘트는 저장되며, 상단 <b>JSON 내보내기</b>로 한 번에 모아 Claude에게 전달할 수 있습니다.</div>
+  <h2 id="noteTitle"></h2>
+  <div id="noteList"></div>
+</div>
+
+<!-- 코멘트 말풍선 -->
+<div class="modalBack hidden" id="cpop">
+  <div class="modalBox">
+    <h3 id="cpopTitle">코멘트</h3>
+    <div class="where" id="cpopWhere"></div>
+    <textarea id="cpopText" placeholder="이 요소에 대한 코멘트를 남겨주세요…"></textarea>
+    <div class="modalRow">
+      <button onclick="deleteComment()">삭제</button>
+      <button onclick="closeComment()">취소</button>
+      <button class="on" onclick="saveComment()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- JSON 내보내기 -->
+<div class="modalBack hidden" id="expop">
+  <div class="modalBox" style="width:640px;">
+    <h3>코멘트 JSON 내보내기</h3>
+    <div class="where">아래 JSON을 복사해서 Claude에게 붙여넣으세요. (localStorage에도 저장되어 있습니다)</div>
+    <textarea class="json" id="expText" readonly></textarea>
+    <div class="modalRow">
+      <button onclick="copyExport()" id="btnCopy">클립보드 복사</button>
+      <button class="on" onclick="document.getElementById('expop').classList.add('hidden')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ 화면 정의 ============
+   box: [id, x, y, w, h, 제목, 부제, opts]
+   opts: {num, ctx, faded, vert, modes:['idle','combat','boss'], fadeIdle, html|htmlFn} */
+const SCREENS = {
+'main-menu': { name:'메인 메뉴 (로비)', states:false,
+  layouts:{
+  cur:[
+    ['brand',24,16,190,30,'브랜드 TC · TUNNEL CREW',''],
+    ['proto',1090,16,160,26,'PROTOTYPE / 0.7',''],
+    ['logo',70,50,340,150,'로고 이미지',''],
+    ['kicker',80,215,220,20,'Dig · Descend · Return',''],
+    ['menu',80,250,280,300,'모드 버튼 6개 세로 리스트','01 솔로 ~ 06 LAN(잠금 노출)'],
+    ['toolbar',80,600,320,34,'SOUND·ON / 조작 가이드 / 게임 설정',''],
+    ['visual',460,40,790,640,'4인 키아트 + 연기 레이어 + 틸트',''],
+    ['footer',1040,660,210,28,'WASD TO MOVE / MOUSE TO AIM',''],
+  ],
+  new:[
+    ['logo',48,40,300,110,'로고','',{num:1}],
+    ['profile',48,170,300,44,'플레이어 프로필 칩','최고 심층 · 보유 코어 · 플레이타임',{num:2}],
+    ['menu',48,240,320,300,'주 메뉴 리스트 (대형 포커스)','호버/포커스 시 우측 프리뷰 갱신',{num:3}],
+    ['preview',720,110,510,450,'선택 모드 컨텍스트 프리뷰','키아트 + 설명 + 최근 기록 + 추천 직업',{num:4}],
+    ['sysbar',980,660,268,30,'시스템 레인 (우하단)','버전 · 사운드 · 설정 · 크레딧',{num:5}],
+    ['hintbar',48,660,300,28,'조작 힌트 (좌하단, 페이드)','',{num:6,faded:true}],
+  ]},
+  notes:{
+  cur:[
+    '전면 키아트 위에 메뉴 텍스트가 얹혀 대비·가독성이 화면 상태에 따라 흔들림.',
+    '6개 버튼이 동급으로 나열 — 주 모드와 보조 기능(설정/가이드)의 위계 없음.',
+    '잠금 항목(LAN)이 이유 없이 노출 — 해금 조건 부재.',
+    '메타 진행(코어·최고 기록)이 로비에 전혀 없음 — 복귀 동기 미노출.',
+  ],
+  new:[
+    ['1','로고는 좌상단 축소 고정 — 첫 화면 이후 반복 노출은 작게.'],
+    ['2','프로필 칩으로 메타 진행 상시 노출 (복귀 동기, 콘솔 로비 문법).'],
+    ['3','메뉴는 포커스 확대 + 사운드 피드백. 잠금 항목은 해금 조건 표시.'],
+    ['4','선택-프리뷰 패턴: 포커스한 모드의 아트/기록/설명이 우측에 갱신 — 최근 콘솔 표준.'],
+    ['5','시스템 기능은 우하단 레인으로 분리 — 주 메뉴와 위계 구분.'],
+    ['6','조작 힌트는 입력 장치 감지해 자동 전환 (KBM/패드).'],
+  ]}
+},
+'mode-select': { name:'직업 선택', states:false,
+  layouts:{
+  cur:[
+    ['back',16,8,100,40,'메인 메뉴 버튼',''],
+    ['title',390,10,500,52,'무한 모드 · 직업 선택','타이틀 + 설명 (아트 위에 직접)'],
+    ['card-driller',2,66,636,262,'드릴러 카드 (좌상 1/4)','+ AI 슬라이더 (카드마다 반복)'],
+    ['card-gunner',642,66,636,262,'거너 카드 (우상 1/4)','+ AI 슬라이더'],
+    ['card-scout',2,332,636,318,'스카우트 카드 (선택됨)','체크 + 스탯 3줄 + 선택완료 버튼 내장'],
+    ['card-engineer',642,332,636,318,'엔지니어 카드 (우하 1/4)','+ AI 슬라이더'],
+  ],
+  new:[
+    ['back',32,24,340,44,'뒤로 + 타이틀 (좌상단)','',{num:1}],
+    ['list',32,90,270,540,'직업 리스트 (세로 슬림 카드 4)','키보드/패드 상하 탐색',{num:2}],
+    ['preview',340,80,560,560,'선택 직업 대형 프리뷰','풀 아트 + 대기 애니메이션',{num:3}],
+    ['detail',930,80,318,380,'상세 패널','역할 태그 · 스탯 바 · 시작 장비 · 시너지',{num:4}],
+    ['aicfg',930,480,318,80,'AI 크루 편성 (1곳으로 통합)','',{num:5}],
+    ['cta',930,584,318,60,'선택 완료 CTA (고정 위치)','',{num:6,ctx:true}],
+  ]},
+  notes:{
+  cur:[
+    '4분할 카드는 비교엔 좋지만 상세 정보 공간이 없음 — 스탯이 선택 카드에만 3줄.',
+    'AI 슬라이더가 카드마다 반복 배치 — 편성 개념이 분산됨.',
+    '타이틀이 아트 위에 직접 얹혀 대비 저하.',
+    '선택완료 버튼이 선택된 카드 내부에 묻혀 위치가 매번 변함.',
+  ],
+  new:[
+    ['1','뒤로가기·맥락은 좌상단 한 자리 고정.'],
+    ['2','리스트-프리뷰-상세 3열: 최근 콘솔 캐릭터 선택 표준 문법.'],
+    ['3','프리뷰는 크게 — 직업의 개성(애니메이션)을 파는 공간.'],
+    ['4','스탯은 텍스트가 아닌 바 비교 — 직업 간 차이가 한눈에.'],
+    ['5','AI 편성은 한 곳으로 통합, 선택 직업과 무관하게 유지.'],
+    ['6','CTA는 항상 우하단 고정 — 미스클릭·시선 이동 제거.'],
+  ]}
+},
+'hud': { name:'무한 모드 HUD', states:true,
+  layouts:{
+  cur:[
+    ['topbar',280,8,500,26,'지층 1/3 · 표층 지대 · 장악도 0%/22% · 위험 팽창 pill',''],
+    ['toplv',1040,8,180,26,'Lv.1 · 코어 0',''],
+    ['gear',1236,8,32,32,'⚙',''],
+    ['xpbar',24,44,1232,24,'갈진 경험 바 (전폭) 0/42',''],
+    ['escrow',24,78,1232,26,'귀환 안내 텍스트 (전폭) + 탈출 요청·X pill',''],
+    ['tuthint',460,410,360,24,'튜토리얼 힌트 (캐릭터 하단)',''],
+    ['vitals',24,610,280,86,'스카우트 · HP 181/181','그래플 준비 · 탐사 0구역 · ×1.00 · 탄창 12/12 (텍스트 4줄)'],
+    ['keys',990,632,266,64,'키 가이드 (상시)','LMB 절삭기 · RMB 카빈 · Q 플레어 · E 그래플 · SPACE 대시'],
+  ],
+  new:[
+    ['prog',32,32,210,58,'','',{num:1,fadeIdle:true,html:'<b>지층 1/3 · 표층 지대</b><span class="sub">장악도</span><div class="bar"><i style="width:22%"></i></div>'}],
+    ['res',1014,32,190,34,'Lv.1 · ◆ 코어 0 · 자원칩','',{num:2,fadeIdle:true}],
+    ['gear',1214,32,34,34,'⚙','',{fadeIdle:true}],
+    ['depth',32,150,26,420,'깊이 게이지 (지층 마커)','',{num:3,vert:true}],
+    ['vitals',32,614,280,74,'','',{num:4,htmlFn:m=>'<div style="display:flex;gap:8px;align-items:center;"><span class="slot" style="width:50px;height:50px;">초상<small>스카우트</small></span><div style="flex:1;"><b>HP</b><div class="bar"><i style="width:100%"></i></div><div class="segs">'+Array.from({length:12},(_,i)=>'<i'+(m==='combat'&&i>=7?' class="off"':'')+'></i>').join('')+'</div></div></div>'}],
+    ['skills',1032,614,216,74,'','',{num:5,fadeIdle:true,html:'<div style="display:flex;gap:6px;justify-content:flex-end;"><span class="slot">RMB<small>카빈</small></span><span class="slot">Q<small>플레어</small></span><span class="slot">E<small>그래플</small></span><span class="slot">SPC<small>대시</small></span></div>'}],
+    ['prompt',490,644,300,32,'[X] 탈출 포트 요청 — 상황부 프롬프트','',{num:6,ctx:true,modes:['idle','combat']}],
+    ['xp',0,712,1280,8,'','',{num:7}],
+    ['toast',1018,90,230,30,'토스트 / 획득 알림 (스택, 자동 소멸)','',{num:8,faded:true}],
+    ['reticle',560,250,160,56,'크로스헤어 탄약 링 + 재장전 게이지 (전투시)','',{num:9,ctx:true,modes:['combat']}],
+    ['boss',340,32,600,44,'보스 체력바 / 경보 배너 (등장시에만, 나머지 HUD는 축소·페이드)','',{num:10,ctx:true,modes:['boss']}],
+    ['keyshold',490,584,300,26,'키 가이드 — Tab 홀드시에만','',{faded:true}],
+  ]},
+  notes:{
+  cur:[
+    '상단 3줄 전폭 점유 (~110px) — 파내려가는 게임의 위쪽 시야 압박.',
+    '좌하단 패널이 텍스트 4줄 — 전투 중 파싱 비용 높음.',
+    '키 가이드 상시 노출, 상시/상황 정보 미분리 (탈출 요청).',
+    '깊이·진행의 시각화 부재 — 숫자(1/3)로만 존재.',
+    '[코드] HUD 3세대 중복 (캔버스/구 DOM/신 DOM) — 전환시 깜빡임 위험.',
+    '[코드] 앵커 체계 3종 혼재 (% / px / vw) — 창 크기 변경시 정렬 붕괴.',
+    '[코드] 보스 집중 모드가 탈출 버튼까지 display:none — 파괴적 숨김.',
+  ],
+  new:[
+    ['1','진행 모듈 좌상단 고정 — 전폭 3줄을 코너 1모듈로 압축.'],
+    ['2','읽기 전용 재화는 우상단 칩 — 행동 정보(좌)와 시선 분리.'],
+    ['3','세로 깊이 게이지 — 게임 정체성의 HUD화 (Dome Keeper 참고).'],
+    ['4','vitals 아이콘화 — 숫자는 호버/피격시에만.'],
+    ['5','스킬 슬롯 (콘솔 문법) — 키 내장, 쿨다운은 방사형 스윕.'],
+    ['6','상황부 프롬프트 — 조건 충족시에만 하단 중앙 등장.'],
+    ['7','XP는 하단 엣지 초박형 바 — 레벨업 순간에만 글로우.'],
+    ['8','토스트 우측 스택 — 3초 자동 소멸.'],
+    ['9','전투 컨텍스트: 탄약 링이 조준점 옆 — 시선 이동 0.'],
+    ['10','보스 배너는 등장시에만. 다른 HUD는 숨기지 않고 축소·페이드 (탈출 접근 유지).'],
+    ['＋','탐사 모드에선 HUD 60% 페이드, 상호작용시 즉시 복귀.'],
+  ]}
+},
+'crew-hud': { name:'크루 미션 HUD', states:false,
+  layouts:{
+  cur:[
+    ['objective',28,555,429,63,'목표 모듈 (좌하단 위층)','미션·바이옴 · 목표 문구 · 0/12 · 게이지 · 힌트'],
+    ['resources',510,39,261,41,'자원 칩 (상단 중앙)','PULP / BLOOM — bag과 중복 표시'],
+    ['status',28,626,432,71,'상태 (좌하단 아래층)','아바타 · DRILLER · HP 게이지 · 무기 · DRILL HEAT'],
+    ['bag',473,639,332,57,'가방/유물 0/4 (하단 중앙)','펄프·블룸 중복 표시'],
+    ['interaction',546,595,192,37,'상호작용 힌트 pill','bag 바로 위에 얹힘'],
+    ['skills',1035,639,217,58,'스킬 4칸 (우하단)','Q · SPACE · F · 무기(status와 중복)'],
+    ['minimap',1102,25,147,105,'미니맵 (우상단)','220×190 캔버스, 400ms 갱신'],
+    ['briefing',926,199,316,150,'미션 브리핑 (종이 스킨)','시작 후 3.2초만 표시'],
+  ],
+  new:[
+    ['objective',32,32,270,64,'목표 모듈 → 좌상단 이동','하단 밴드 과밀 해소',{num:1}],
+    ['minimap',1080,32,168,120,'미니맵 우상단 유지','',{num:2}],
+    ['resources',1080,164,168,34,'자원 칩 → 미니맵 아래','중복 제거: 표시는 1곳',{num:3}],
+    ['vitals',32,614,280,74,'좌하단 vitals (아이콘화)','무한 HUD와 동일 문법',{num:4}],
+    ['skills',1032,614,216,74,'우하단 스킬 슬롯','무기 표시 1곳으로 통합',{num:5}],
+    ['interaction',490,600,300,34,'상호작용 프롬프트 (상황부)','',{num:6,ctx:true}],
+    ['bag',440,240,400,240,'가방/유물 — Tab 홀드 오버레이','상시 표시 제거',{num:7,faded:true}],
+    ['briefing',32,120,320,140,'브리핑: 시작시 좌측 슬라이드 인 → 자동 축소','',{num:8,faded:true}],
+  ]},
+  notes:{
+  cur:[
+    '하단 77~97% 밴드에 5개 모듈 과밀 — objective/status 사이 여백 12px.',
+    '펄프/블룸이 상단·하단 2곳, 무기가 status·skills 2곳 중복 표시 — 시선 3방향 분산.',
+    'interaction 프롬프트가 bag 위에 얹혀 겹침 열 발생.',
+    '우측 정렬선 불일치 (skills 여백 2.14% vs minimap 2.42%).',
+    '[코드] 좌표가 레이아웃 에디터 산출 소수점 5자리 % 하드코딩.',
+  ],
+  new:[
+    ['1','목표는 좌상단 — 진행 정보는 상단, 생존 정보는 하단으로 층 분리.'],
+    ['2','미니맵 위치 유지하되 무한 HUD와 크기·스타일 통일.'],
+    ['3','자원 표시 1곳 원칙 — 획득 순간엔 토스트로 보강.'],
+    ['4','무한 모드 HUD와 동일 문법 — 모드 전환시 학습 비용 0.'],
+    ['5','스킬 슬롯 통일. 무기는 슬롯에서만.'],
+    ['6','상호작용은 상황부 — 대상 근처 월드 앵커 + 하단 프롬프트 병행.'],
+    ['7','가방은 Tab 홀드 오버레이 — 인벤토리는 필요할 때만.'],
+    ['8','브리핑은 슬라이드 인 후 목표 모듈로 축소 흡수.'],
+  ]}
+},
+'levelup': { name:'레벨업 카드', states:false,
+  layouts:{
+  cur:[
+    ['title',490,80,300,40,'LEVEL UP · 카드 선택',''],
+    ['card1',255,180,230,344,'특성 카드 1','티어 색상 (회/시안/보라/골드)'],
+    ['card2',525,180,230,344,'특성 카드 2','스탯 나열형 설명'],
+    ['card3',795,180,230,344,'특성 카드 3','지면 폭발 등장 연출'],
+  ],
+  new:[
+    ['title',440,60,400,44,'레벨업 — 남은 선택 1','배경은 블러 + 슬로모 (완전 암전 대신)',{num:1}],
+    ['card1',255,150,230,340,'카드: 아이콘 + 한 줄 효과','시너지 뱃지 · 호버시 상세 툴팁',{num:2}],
+    ['card2',525,150,230,340,'카드 2','',{}],
+    ['card3',795,150,230,340,'카드 3','',{}],
+    ['delta',60,200,180,240,'스탯 변화 미리보기 Δ','호버한 카드 기준 실시간',{num:3}],
+    ['build',255,560,770,60,'현재 빌드 요약 스트립','보유 특성 아이콘 나열',{num:4}],
+    ['reroll',1060,560,160,50,'리롤 / 스킵','코스트 표기',{num:5}],
+  ]},
+  notes:{
+  cur:[
+    '전면 모달이 게임 맥락을 완전히 차단.',
+    '카드 정보 밀도 높음 — 스탯 나열형이라 비교에 시간 소요.',
+    '현재 빌드와의 시너지를 기억에 의존해 판단해야 함.',
+  ],
+  new:[
+    ['1','배경 블러+슬로모로 맥락 유지 — Balatro식 “배경 변화 = 모드 전환” 앵커.'],
+    ['2','카드는 아이콘+한 줄 효과, 상세는 점진 공개(호버 툴팁).'],
+    ['3','호버 카드의 스탯 델타를 좌측에 — 선택 결과를 미리 보여줌.'],
+    ['4','빌드 요약 스트립 — 시너지 판단을 기억이 아닌 화면으로.'],
+    ['5','리롤/스킵은 우하단 보조 위치 — 주 선택과 위계 분리.'],
+  ]}
+},
+'settlement': { name:'정산 / 결과', states:false,
+  layouts:{
+  cur:[
+    ['modal',330,150,620,420,'정산 모달 min(880px)','COMPLETE/FAILED · 점수 · 전리품 카드3 · 랭크 — 한 패널에 순차 나열'],
+  ],
+  new:[
+    ['header',340,90,600,50,'결과 배너','COMPLETE/FAILED + 랭크 스탬프 연출',{num:1}],
+    ['left',150,170,380,400,'런 요약 타임라인','깊이 도달 그래프 · 킬/채굴 통계',{num:2}],
+    ['center',560,170,360,400,'보상 스택 (순차 카운트업)','코어 · XP · 유물 (Hades식 연출)',{num:3}],
+    ['right',950,170,200,400,'다음 행동 CTA 스택','노드맵 / 유물 / 재도전 / 로비',{num:4}],
+  ]},
+  notes:{
+  cur:[
+    '화면(뷰)마다 모달 폭이 880→1760px까지 튀어 프레임 불안정.',
+    '보상·통계·행동이 한 패널에 평면 나열 — 성취 연출 부재.',
+  ],
+  new:[
+    ['1','랭크는 스탬프 연출로 성취 강조 — 정산은 보상의 무대.'],
+    ['2','런을 그래프로 회고 — 다음 런 동기 부여.'],
+    ['3','보상 순차 카운트업 — 스킵 가능 (연출과 효율 양립).'],
+    ['4','다음 행동을 명시적 CTA로 — 정산 후 이탈 지점 제거.'],
+  ]}
+},
+'nodemap': { name:'성장 노드맵', states:false,
+  layouts:{
+  cur:[
+    ['panel',10,10,1260,700,'정산 패널의 map 뷰 (모달 안)','SVG 1900×1620 팬/줌 · 지역/허브/노드 · 툴팁 의존'],
+  ],
+  new:[
+    ['header',0,0,1280,48,'슬림 헤더','뒤로 · 타이틀 · 보유 코어 · 필터',{num:1}],
+    ['canvas',0,48,1000,672,'노드맵 캔버스 (팬/줌)','지역 색 구분 · 해금 가능 노드 펄스',{num:2}],
+    ['side',1000,48,280,672,'선택 노드 상세 (고정 패널)','효과 · 코스트 · 해금 조건 · 확정',{num:3}],
+    ['hint',400,676,480,30,'조작 힌트 (드래그/휠) — 첫 진입시만','',{num:4,faded:true}],
+  ]},
+  notes:{
+  cur:[
+    '정산 모달 안에 얹혀 있어 진입/이탈시 프레임이 크게 튐 (880→1760px).',
+    '노드 정보가 툴팁 의존 — 비교·계획이 어려움.',
+  ],
+  new:[
+    ['1','전용 풀스크린 화면으로 승격 — 모달 아님.'],
+    ['2','해금 가능 노드에 펄스 — “다음에 뭘 찍지”를 화면이 답함.'],
+    ['3','상세는 고정 패널 — 툴팁 대신 비교 가능한 상시 공간.'],
+    ['4','힌트는 학습 후 소멸. (미니 오버뷰는 코멘트 반영으로 제외)'],
+  ]}
+},
+'relic': { name:'유물 보관고', states:false,
+  layouts:{
+  cur:[
+    ['panel',20,20,1240,680,'정산 패널의 relic 뷰 (모달 안)','min(1240px)×94vh 유물 그리드'],
+  ],
+  new:[
+    ['top',0,0,1280,52,'헤더','검색 · 정렬 · 필터 칩',{num:1}],
+    ['left',0,52,240,668,'세트 / 카테고리 리스트','',{num:2}],
+    ['grid',240,52,720,668,'유물 그리드','희귀도 테두리 · 미획득 실루엣',{num:3}],
+    ['detail',960,52,320,668,'상세 패널','효과 · 획득처 · 세트 진행도',{num:4}],
+  ]},
+  notes:{
+  cur:[
+    '정산 모달의 한 뷰로 존재 — 컬렉션 감상 공간으로서 정체성 부족.',
+  ],
+  new:[
+    ['1','검색/필터 — 유물이 늘수록 필수.'],
+    ['2','세트 단위 탐색 — 수집 목표 제시.'],
+    ['3','미획득은 실루엣 — 수집욕 자극 (도감 문법).'],
+    ['4','획득처 표시 — 컬렉션이 플레이 가이드가 되게.'],
+  ]}
+},
+'starmap': { name:'스타맵 (행성 원정)', states:false,
+  layouts:{
+  cur:[
+    ['header',0,0,1280,60,'헤더 전폭','제목 22px + 부제 + 우측 뒤로 버튼'],
+    ['world',140,80,900,560,'팬/줌 월드','행성 노드 + 항로 SVG'],
+    ['panel',930,74,330,628,'우측 상세 패널 (세로 풀)','행성명 · 뱃지 · 스펙 표 · 출격 — world와 겹침'],
+    ['hint',490,676,300,28,'조작 힌트 pill (하단 중앙 상시)',''],
+  ],
+  new:[
+    ['back',32,32,220,40,'뒤로 + 타이틀 (전폭 헤더 제거)','',{num:1}],
+    ['world',0,0,950,720,'팬/줌 월드 (풀블리드)','선택 항로 하이라이트 프리뷰',{num:2}],
+    ['panel',960,80,288,480,'상세 패널 (선택시 슬라이드 인)','',{num:3}],
+    ['launch',960,580,288,60,'출격 CTA (패널 하단 고정)','',{num:4,ctx:true}],
+    ['shipbar',32,640,300,48,'함선/자원 상태 칩 (좌하단)','',{num:5}],
+    ['hint',500,684,280,26,'조작 힌트 — 첫 진입시만','',{num:6,faded:true}],
+  ]},
+  notes:{
+  cur:[
+    '전폭 헤더가 우주 공간의 몰입을 가름.',
+    '상세 패널이 상시 자리를 차지해 월드와 겹치는 구간 발생.',
+    '힌트가 상시 표시.',
+  ],
+  new:[
+    ['1','헤더 제거, 뒤로+타이틀만 좌상단 — 우주는 풀블리드.'],
+    ['2','선택 항로 프리뷰 — 이동 결과를 먼저 보여줌.'],
+    ['3','패널은 선택시에만 슬라이드 인 — 평시 월드 100%.'],
+    ['4','출격은 고정 CTA — 주 행동의 위치 불변.'],
+    ['5','원정 자원 상태를 좌하단에 — 출격 판단 정보.'],
+    ['6','힌트는 학습 후 소멸.'],
+  ]}
+},
+'pause': { name:'일시정지 / 설정', states:false,
+  layouts:{
+  cur:[
+    ['panel',0,0,1280,720,'레거시 풀스크린 패널 (inset:0 암전)','pSet/pHow/pRep 각각 별도 풀스크린 + 우상단 closeX'],
+  ],
+  new:[
+    ['dock',0,0,380,720,'좌측 도킹 패널','계속하기 / 설정 / 조작 / 로비로 — 게임은 블러+정지 유지',{num:1}],
+    ['subpage',420,120,480,480,'설정 서브페이지 인라인 전개','풀스크린 전환 없음 · 즉시 미리보기',{num:2}],
+    ['runinfo',960,32,288,200,'현재 런 요약 (우상단)','심층 · 장악도 · 획득 유물',{num:3}],
+  ]},
+  notes:{
+  cur:[
+    '풀스크린 암전이 게임 맥락을 완전히 차단 — 어디까지 왔는지 안 보임.',
+    '설정/조작/기록이 각각 별도 풀스크린 — 화면 전환 비용.',
+  ],
+  new:[
+    ['1','도킹 패널 + 배경 블러 — 컨텍스트 유지 (최근 콘솔 표준).'],
+    ['2','서브페이지 인라인 — 사운드 등 변경이 즉시 들리고 보이게.'],
+    ['3','일시정지는 런 현황판 겸용 — 유물/진행 확인 수요 흡수.'],
+  ]}
+},
+};
+
+/* ============ 상태 ============ */
+const ORDER=['main-menu','mode-select','hud','crew-hud','levelup','settlement','nodemap','relic','starmap','pause'];
+let curScreen='main-menu', curLayout='new', mode='idle', safe=true;
+const CKEY='tcGraybox77Comments';
+let store={}; try{ store=JSON.parse(localStorage.getItem(CKEY)||'{}'); }catch(e){ store={}; }
+let editing=null;
+
+/* ============ 렌더 ============ */
+const tabs=document.getElementById('screenTabs');
+ORDER.forEach(id=>{
+  const b=document.createElement('button'); b.className='tab'; b.textContent=SCREENS[id].name;
+  b.onclick=()=>{ curScreen=id; render(); }; b.dataset.scr=id; tabs.appendChild(b);
+});
+
+function ckey(id){ return curScreen+'|'+curLayout+'|'+id; }
+
+function render(){
+  const scr=SCREENS[curScreen];
+  document.querySelectorAll('#screenTabs .tab').forEach(b=>b.classList.toggle('on',b.dataset.scr===curScreen));
+  document.getElementById('btnCur').classList.toggle('on',curLayout==='cur');
+  document.getElementById('btnNew').classList.toggle('on',curLayout==='new');
+  document.getElementById('stateGrp').style.display=(scr.states&&curLayout==='new')?'':'none';
+  ['Idle','Combat','Boss'].forEach(x=>document.getElementById('btn'+x).classList.toggle('on',mode===x.toLowerCase()));
+  document.getElementById('worldLabel').textContent=scr.name+' · 1280×720';
+  const wrap=document.getElementById('boxes'); wrap.innerHTML='';
+  (scr.layouts[curLayout]||[]).forEach(row=>{
+    const [id,x,y,w,h,t,s]=row; const o=row[7]||{};
+    if(scr.states&&curLayout==='new'&&o.modes&&!o.modes.includes(mode)) return;
+    const d=document.createElement('div'); d.className='gb';
+    if(o.ctx)d.classList.add('ctx');
+    if(o.faded||(scr.states&&curLayout==='new'&&mode==='idle'&&o.fadeIdle))d.classList.add('faded');
+    if(o.vert)d.classList.add('vert');
+    d.style.cssText='left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px;';
+    let inner='';
+    if(o.num)inner+='<span class="num">'+o.num+'</span>';
+    if(o.htmlFn)inner+=o.htmlFn(mode); else if(o.html)inner+=o.html;
+    else{ if(t)inner+='<b>'+t+'</b>'; if(s)inner+='<span class="sub">'+s+'</span>'; }
+    if(store[ckey(id)])inner+='<span class="cbadge">💬</span>';
+    d.innerHTML=inner;
+    d.onclick=ev=>{ ev.stopPropagation(); openComment(id,t||id); };
+    wrap.appendChild(d);
+  });
+  // notes
+  document.getElementById('noteTitle').textContent=scr.name+' — '+(curLayout==='new'?'제안 노트':'현재 진단');
+  const nl=document.getElementById('noteList'); nl.innerHTML='';
+  (scr.notes[curLayout]||[]).forEach(n=>{
+    const div=document.createElement('div');
+    if(Array.isArray(n)){ div.className='note'; div.innerHTML='<span class="n">'+n[0]+'</span><p>'+n[1]+'</p>'; }
+    else { div.className='note diag'; div.innerHTML='<span class="n">!</span><p>'+n+'</p>'; }
+    nl.appendChild(div);
+  });
+  updateCount();
+}
+
+function setLayout(l){ curLayout=l; render(); }
+function setMode(m){ mode=m; render(); }
+function toggleSafe(){ safe=!safe;
+  document.getElementById('safeline').classList.toggle('hidden',!safe);
+  document.getElementById('safetag').classList.toggle('hidden',!safe);
+  document.getElementById('btnSafe').classList.toggle('on',safe);
+}
+
+/* ============ 코멘트 ============ */
+function openComment(id,label){
+  editing={id,label};
+  document.getElementById('cpopTitle').textContent='💬 '+label;
+  document.getElementById('cpopWhere').textContent=SCREENS[curScreen].name+' · '+(curLayout==='new'?'제안':'현재')+' 레이아웃 · 요소 id: '+id;
+  document.getElementById('cpopText').value=(store[ckey(id)]||{}).text||'';
+  document.getElementById('cpop').classList.remove('hidden');
+  document.getElementById('cpopText').focus();
+}
+function closeComment(){ document.getElementById('cpop').classList.add('hidden'); editing=null; }
+function saveComment(){
+  if(!editing)return;
+  const txt=document.getElementById('cpopText').value.trim();
+  const k=ckey(editing.id);
+  if(txt) store[k]={screen:curScreen,screenName:SCREENS[curScreen].name,layout:curLayout,element:editing.id,label:editing.label,text:txt,updatedAt:new Date().toISOString()};
+  else delete store[k];
+  persist(); closeComment(); render();
+}
+function deleteComment(){
+  if(!editing)return; delete store[ckey(editing.id)]; persist(); closeComment(); render();
+}
+function clearComments(){
+  if(!confirm('모든 코멘트를 삭제할까요?'))return;
+  store={}; persist(); render();
+}
+function persist(){ localStorage.setItem(CKEY,JSON.stringify(store)); }
+function updateCount(){ document.getElementById('cCount').textContent=Object.keys(store).length; }
+
+/* ============ 내보내기 ============ */
+function exportJSON(){
+  return JSON.stringify({exportedAt:new Date().toISOString(),tool:'tunnel-crew-ui-graybox-v7.7',comments:Object.values(store)},null,2);
+}
+function openExport(){
+  document.getElementById('expText').value=exportJSON();
+  document.getElementById('expop').classList.remove('hidden');
+}
+function copyExport(){
+  const ta=document.getElementById('expText'); ta.select();
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const b=document.getElementById('btnCopy'); b.textContent='복사됨 ✓'; setTimeout(()=>b.textContent='클립보드 복사',1500);
+  }).catch(()=>document.execCommand('copy'));
+}
+
+/* ============ 핏 ============ */
+function fit(){ const w=innerWidth-340, h=innerHeight-96;
+  document.getElementById('stage').style.transform='scale('+Math.min(w/1320,h/760)+')';
+}
+addEventListener('resize',fit); fit(); render();
+</script>
+</body>
+</html>
