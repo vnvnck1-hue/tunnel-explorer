@@ -602,7 +602,7 @@ body{position:fixed;inset:0}
 }
 </style>
 <style id="tcGameSettings">
-/* ── 크루 게임 설정 · v7.4.0 ── */
+/* ── 크루 게임 설정 · v7.5.1 ── */
 #crewRoot #crewSettings.tcSettingsPanel{align-items:stretch;justify-content:flex-start;padding:0;background:rgba(5,3,12,.9);backdrop-filter:blur(10px);overflow:hidden}
 #crewSettings .tcSettingsFrame{width:min(720px,100%);height:100%;margin:0 auto;padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;flex-direction:column;min-height:0}
 #crewSettings .tcSettingsTop{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
@@ -642,7 +642,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
 
 <link rel="stylesheet" href="assets/menu/role-select.css">
 <style id="tcRoleActionV712">
-/* ── 무한 모드 직업 선택 · v7.4.0 ── */
+/* ── 무한 모드 직업 선택 · v7.5.1 ── */
 #infRoleModal .infRoleBack{
   border-color:#ff7182;
   background:#a92b3c;
@@ -752,7 +752,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
     <div class="crewPanel tcSettingsPanel" id="crewSettings" aria-label="게임 설정">
       <div class="tcSettingsFrame">
         <header class="tcSettingsTop">
-          <div><div class="tcSettingsEyebrow">Game settings · v7.4.0</div><h1 class="tcSettingsTitle">게임 설정</h1><p class="tcSettingsLead">소리와 화면 분위기, 플레이 힌트를 조절합니다. 설정은 이 브라우저에 자동 저장됩니다.</p></div>
+          <div><div class="tcSettingsEyebrow">Game settings · v7.5.1</div><h1 class="tcSettingsTitle">게임 설정</h1><p class="tcSettingsLead">소리와 화면 분위기, 플레이 힌트를 조절합니다. 설정은 이 브라우저에 자동 저장됩니다.</p></div>
           <button type="button" id="crewSettingsBack">돌아가기</button>
         </header>
         <div class="tcSettingsBody">
@@ -1591,6 +1591,11 @@ function tryDash(){
  const mul=(typeof crewDashMul==='function')?crewDashMul():1;
  const dist=teWorld(TE.dashDist)*mul, dur=TE.dashDur, speed=dist/Math.max(.04,dur);
  G.dash.active=true;G.dash.vx=dx*speed;G.dash.vy=dy*speed;G.dash.t=dur;
+ if(typeof INF!=='undefined'&&INF.active){
+  if((INF.permDashDistMul||1)>1){G.dash.vx*=INF.permDashDistMul;G.dash.vy*=INF.permDashDistMul;}    /* 잔상 스텝 */
+  if((INF.permDashGuardDur||0)>0)INF.permDashGuardT=dur+INF.permDashGuardDur;                        /* 견고한 발판 */
+  if(INF.permGhostDash)G.iframes=Math.max(G.iframes,dur+.4);                                          /* 유령 걸음 */
+ }
  G.dash.cd=TE.dashCd/(mul>1.2?1.15:1);spawnDashDust(1);}
 function spawnDashDust(intensity){
  const den=TE.dustDen,life=TE.dustLife;
@@ -1645,7 +1650,11 @@ function tryFireGun(){
   }
   if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(G.sh.x+c*R_SHELLY*.9,G.sh.y+s*R_SHELLY*.9,a,visualId);
  const cd=(typeof CREW!=='undefined'&&CREW.roleId==='gunner')?.14:.22;
- _gunCd=cd/(inf?inf.fireRate:1);SFX.tick&&SFX.tick();if(inf&&inf.ammo<=0&&typeof infStartReload==='function')infStartReload(false);}
+ /* 예열 총열 — 연속 사격 램프 · 최후의 저항 — 저체력 연사 가속 */
+ if(inf&&(inf.permGunRampMax||0)>0)inf.permGunRamp=Math.min(1,(inf.permGunRamp||0)+.14);
+ const rampMul=inf?1+(inf.permGunRamp||0)*(inf.permGunRampMax||0):1;
+ const lastStandMul=inf&&inf.permLastStand&&G.php<=G.phpMax*.3?1.25:1;
+ _gunCd=cd/((inf?inf.fireRate:1)*rampMul*lastStandMul);SFX.tick&&SFX.tick();if(inf&&inf.ammo<=0&&typeof infStartReload==='function')infStartReload(false);}
 function updateProjectiles(dt){
  _gunCd=Math.max(0,_gunCd-dt);
  if(typeof INF!=='undefined'&&INF.active&&typeof infUpdateReload==='function')infUpdateReload(dt);
@@ -1659,16 +1668,24 @@ function updateProjectiles(dt){
   for(const e of G.enemies){
    if(e.hp<=0)continue;
    if(Math.hypot(p.x-e.x,p.y-e.y)<e.r+6){
-    const gm=(typeof crewGunMul==='function')?crewGunMul():1;
-    const im=(typeof INF!=='undefined'&&INF.active)?INF.gunMul:1;
-    hurtEnemy(e,DEMO.enemyGunDmg*gm*im*(p.power||1)*(p.laser?1.65:1),nx,ny,p.srcTurret?'turret':'weapon');
+    /* AI 크루의 탄은 AI 자신의 배율로 계산한다 — 사람 빌드와 분리 */
+    const gm=p.ai?1:((typeof crewGunMul==='function')?crewGunMul():1);
+    const im=p.ai?(p.aiMul||1):((typeof INF!=='undefined'&&INF.active)?INF.gunMul:1);
+    /* 처치 경험치를 쏜 크루에게 귀속시킨다 */
+    if(p.ai&&typeof AICREW!=='undefined')AICREW.dmgSrc=AICREW.ownerOf(p);
+    try{hurtEnemy(e,DEMO.enemyGunDmg*gm*im*(p.power||1)*(p.laser?1.65:1),nx,ny,p.srcTurret?'turret':'weapon');}
+    finally{if(typeof AICREW!=='undefined')AICREW.dmgSrc=null;}
     if(p.pierce>0){p.pierce--;p.x+=nx*12;p.y+=ny*12;}else hit=true;
     break;}}
   if(!hit){
    const [c,r]=toCell(p.x,p.y);
    if(inB(c,r)&&G.cell[ci(c,r)]&&!SOLIDX(G.cell[ci(c,r)])){
-    const k=ci(c,r),im=(typeof INF!=='undefined'&&INF.active)?INF.gunWallMul:1;
-    if(k!==p.lastCell){damage(c,r,shelDps()*.28*im*(p.power||1)*(p.laser?1.8:1),nx,ny,false);p.lastCell=k;}
+    const k=ci(c,r),im=p.ai?1:((typeof INF!=='undefined'&&INF.active)?INF.gunWallMul:1);
+    if(k!==p.lastCell){
+     if(p.ai&&typeof AICREW!=='undefined')AICREW.breakSrc=p;
+     try{damage(c,r,shelDps()*.28*im*(p.power||1)*(p.laser?1.8:1),nx,ny,false);}
+     finally{if(p.ai&&typeof AICREW!=='undefined')AICREW.breakSrc=null;}
+     p.lastCell=k;}
     if(p.pierce>0){p.pierce--;p.x+=nx*CELL*.72;p.y+=ny*CELL*.72;}
     else if(p.bounces>0){
      p.bounces--;const dx=p.x-cxw(c),dy=p.y-cyw(r);
@@ -3937,17 +3954,34 @@ const bandOf=r=>clamp(Math.floor(r/BANDROWS),0,P.bands.length-1);
 /* ══════════ 타일 Raycasting LOS + Explored ══════════ */
 const LOS={
  w:0,h:0,explored:null,visible:null,pixels:null,
- dirty:true,lastC:-999,lastR:-999,lastRange:-1,lastRays:-1,
+ dirty:true,lastC:-999,lastR:-999,lastRange:-1,lastRays:-1,lastBossKey:'',visOnly:false,
  reset(){
   this.w=COLS;this.h=ROWS;const n=COLS*ROWS;
   this.explored=new Uint8Array(n);
   this.visible=new Uint8Array(n);
   this.pixels=new Uint8Array(n*4);
-  this.dirty=true;this.lastC=-999;this.lastR=-999;
+  this.dirty=true;this.lastC=-999;this.lastR=-999;this.lastBossKey='';this.visOnly=false;
  },
  ensure(){if(!this.explored||this.w!==COLS||this.h!==ROWS)this.reset();},
  markDirty(){this.dirty=true;},
  memRange(){return Math.max(3,DEMO.losMemory!=null?DEMO.losMemory|0:DEMO.losRange|0);},
+ /* 보스가 등장하면 보스 주변은 플레이어 시야와 무관하게 밝혀둔다 —
+    등장 연출에서 보스가 어둠에 묻혀 아예 안 보이는 문제를 막는다. */
+ bossSources(){
+  const out=[];
+  if(typeof G==='undefined'||!G.enemies)return out;
+  for(const e of G.enemies){
+   if(!e||!e.boss||e.hp<=0)continue;
+   const rad=e.r*bossTune('lightRadiusMul');
+   out.push({x:e.x,y:e.y,range:Math.max(5,Math.round(rad/CELL)+2)});
+  }
+  return out;
+ },
+ sourceKey(list){
+  let k='';
+  for(const s of list){const [c,r]=toCell(s.x,s.y);k+=c+','+r+','+s.range+'|';}
+  return k;
+ },
  inMemory(c,r){
   const mem=this.memRange();
   const dc=c-this.lastC,dr=r-this.lastR;
@@ -3956,7 +3990,8 @@ const LOS={
  see(c,r){
   if(!inB(c,r))return;
   const k=ci(c,r);
-  this.visible[k]=1;this.explored[k]=1;
+  this.visible[k]=1;
+  if(!this.visOnly)this.explored[k]=1;   /* 보스 시야원은 탐색 기록을 남기지 않는다 */
  },
  /* Bresenham-ish tile ray — 벽 타일까지 표시 후 차단 */
  cast(c0,r0,c1,r1){
@@ -3981,7 +4016,8 @@ const LOS={
   const range=Math.max(4,DEMO.losRange|0);
   const rays=Math.max(60,DEMO.losRays|0);
   const mem=this.memRange();
-  if(!this.dirty&&pc===this.lastC&&pr===this.lastR&&range===this.lastRange&&rays===this.lastRays&&mem===this.lastMem)return;
+  const bossSrc=this.bossSources(),bossKey=this.sourceKey(bossSrc);
+  if(!this.dirty&&pc===this.lastC&&pr===this.lastR&&range===this.lastRange&&rays===this.lastRays&&mem===this.lastMem&&bossKey===this.lastBossKey)return;
   this.visible.fill(0);
   this.see(pc,pr);
   /* 주변 4칸은 항상 (구석 벽 보기) */
@@ -3995,8 +4031,11 @@ const LOS={
   }
   /* 코옵 피어 시야 합산 — 2~4인 (트랙 F). COOP_peersXY 가 없으면 v1 단일 피어로 동작 */
   {
-   const peerList=(typeof COOP_peersXY==='function'&&COOP_peersXY())
+   let peerList=(typeof COOP_peersXY==='function'&&COOP_peersXY())
     ||(typeof COOP_peerXY==='function'&&COOP_peerXY()?[COOP_peerXY()]:null);
+   /* AI 크루 시야 합산 — 동료가 비춘 곳은 팀 전체가 본다 */
+   {const ai=(typeof AICREW!=='undefined')&&AICREW.visionXY();
+    if(ai)peerList=peerList?peerList.concat(ai):ai;}
    if(peerList)for(const xy of peerList){
     const [pc2,pr2]=toCell(xy[0],xy[1]);
     if(!inB(pc2,pr2))continue;
@@ -4026,6 +4065,20 @@ const LOS={
     for(let i=0;i<flareRays;i++){const a=(i/flareRays)*Math.PI*2;this.cast(fc,fr,fc+Math.round(Math.cos(a)*flareRange),fr+Math.round(Math.sin(a)*flareRange));}
    }
   }
+  /* 보스 시야원 — 등장한 보스 주변은 항상 보이게 (탐색 기록은 남기지 않음) */
+  if(bossSrc.length){
+   this.visOnly=true;
+   for(const src of bossSrc){
+    let [bc,br]=toCell(src.x,src.y);if(!inB(bc,br))continue;
+    this.see(bc,br);
+    const bossRays=Math.max(56,Math.min(160,src.range*16));
+    for(let i=0;i<bossRays;i++){
+     const a=(i/bossRays)*Math.PI*2;
+     this.cast(bc,br,bc+Math.round(Math.cos(a)*src.range),br+Math.round(Math.sin(a)*src.range));
+    }
+   }
+   this.visOnly=false;
+  }
   /* 픽셀 버퍼 — visible=1, explored만=잔광 */
   const exp=Math.max(0,Math.min(255,Math.round((DEMO.losExplored||0)*255)));
   const px=this.pixels,vis=this.visible,expA=this.explored,n=this.w*this.h;
@@ -4043,7 +4096,7 @@ const LOS={
    }
    const o=i*4;px[o]=px[o+1]=px[o+2]=v;px[o+3]=255;
   }
-  this.lastC=pc;this.lastR=pr;this.lastRange=range;this.lastRays=rays;this.lastMem=mem;this.dirty=false;
+  this.lastC=pc;this.lastR=pr;this.lastRange=range;this.lastRays=rays;this.lastMem=mem;this.lastBossKey=bossKey;this.dirty=false;
  },
  visibleAt(x,y){
   if(!DEMO.losOn||!this.visible)return true;
@@ -4755,7 +4808,11 @@ function startIncursion(mode){
  const oreCol=t==='gem'?P.gem:t==='crys'?P.crys:t==='ore'?P.worm:null;
  if(h<=0){
   G.cell[k]=null;G.hp.delete(k);G.nBlk++;G.vib.delete(k);G.compDirty=true;
-  if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&typeof infOnBlockBroken==='function')infOnBlockBroken(t,x,y);
+  if(typeof INF!=='undefined'&&infTraitCardsEnabled()&&typeof infOnBlockBroken==='function'){
+   /* AI 크루가 부순 블록은 장악도만 올린다 — 개인 성장은 사람만 (§5.2) */
+   if(typeof AICREW!=='undefined'&&AICREW.breakSrc)AICREW.creditBreak(t,x,y);
+   else infOnBlockBroken(t,x,y);
+  }
   if(typeof COOP_onDamage==='function')COOP_onDamage(c,r,0);
   if(typeof LOS!=='undefined')LOS.markDirty();
   G.combo=(G.comboT>0?G.combo:0)+1;G.comboT=1.1;
@@ -4987,7 +5044,11 @@ function hurtEnemy(e,dmg,nx,ny,src){
      J.ring(e.x,e.y,'#C7A0FF',8,CELL*1.2,3);
      J.kick(3.2,nx||0,ny||0);
      if(SFX.ore)SFX.ore();
-     if(typeof INF!=='undefined'&&INF.active&&typeof infAwardEnemyKillXp==='function')infAwardEnemyKillXp(e,src);
+     /* AI 크루가 낸 피해로 죽었으면 그 크루가 경험치를 가져간다 (§5.2) */
+     if(typeof AICREW!=='undefined'&&AICREW.dmgSrc)AICREW.awardKill(e,src);
+     else if(typeof INF!=='undefined'&&INF.active&&typeof infAwardEnemyKillXp==='function')infAwardEnemyKillXp(e,src);
+     /* 전투 자극제 — 적 처치 시 체력 회복 */
+     if(typeof INF!=='undefined'&&INF.active&&(INF.permKillHeal||0)>0&&G.php>0&&G.php<G.phpMax){G.php=Math.min(G.phpMax,G.php+INF.permKillHeal);J.text(G.sh.x,G.sh.y-30,'+'+INF.permKillHeal,'#7FEBD0',12);}
      if(e.boss&&typeof INF!=='undefined'&&INF.active&&typeof infBossDefeated==='function')infBossDefeated(e);
   }
 }
@@ -5087,7 +5148,7 @@ function sightClear(x0,y0,x1,y1){
 
 /* 시야 판정 — 근접 반경은 전방위, 그 밖은 바라보는 방향의 원뿔 안에서만 */
 function enemySeesPlayer(e){
- const sh=G.sh,dx=sh.x-e.x,dy=sh.y-e.y,dist=Math.hypot(dx,dy)||1;
+ const sh=(typeof AI_TGT==='function')?AI_TGT(e):G.sh,dx=sh.x-e.x,dy=sh.y-e.y,dist=Math.hypot(dx,dy)||1;
  const range=teWorld(DEMO.enemyAggro)*(DEMO.enemyVisionMul!=null?DEMO.enemyVisionMul:1);
  if(dist>range)return false;
  if(dist>CELL*(DEMO.enemyNearSense||1.5)){
@@ -5149,9 +5210,25 @@ function applyPlayerDamage(raw,nx,ny){
  if(typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active&&BOSS_LAB.invincible)dmg=0;
  else if(typeof CREW!=='undefined'&&CREW.phase==='play'){
   dmg=Math.max(4,Math.round(dmg*.85));
-  if(CREW.shieldT>0)dmg=Math.max(1,Math.round(dmg*.35));
+  if(CREW.shieldT>0)dmg=Math.max(1,Math.round(dmg*.35*(1-((typeof INF!=='undefined'&&INF.active&&INF.permShieldAbsorb)||0))));   /* 에너지 장벽 코일 */
+  if(typeof INF!=='undefined'&&INF.active){
+   if((INF.permDashGuardT||0)>0)dmg=Math.max(1,Math.round(dmg*.7));                                  /* 견고한 발판 */
+   if(INF.permStoneheart&&G.php<=G.phpMax*.5)dmg=Math.max(1,Math.round(dmg*.85));                    /* 암반 심장 */
+  }
  }
  G.php=Math.max(0,G.php-dmg);
+ /* 비상 전력 프로토콜 — 원정당 한 번, 체력 25% 이하로 떨어지면 보호막 + 무료 센트리 */
+ if(typeof INF!=='undefined'&&INF.active&&INF.permEmergency&&!INF.permEmergencyUsed&&G.php>0&&G.php<=G.phpMax*.25){
+  INF.permEmergencyUsed=true;CREW.shieldT=Math.max(CREW.shieldT||0,2.5);G.iframes=Math.max(G.iframes,1.2);
+  if(INF.roleId==='engineer'&&typeof infEngineerPlacement==='function'){
+   const p=infEngineerPlacement(1.2);
+   if(p){if(CREW.turrets.length>=INF.engineerMaxTurrets)CREW.turrets.shift();
+    CREW.turrets.push({x:p.x,y:p.y,cd:.1,life:INF.engineerTurretLife,maxLife:INF.engineerTurretLife,ammo:INF.engineerTurretMag,mag:INF.engineerTurretMag,reload:0,powered:false,aim:p.a,engineer:1,linkNode:null});
+    J.burst(p.x,p.y,12,['#C7A0FF','#FFF'],140);}
+  }
+  J.text(G.sh.x,G.sh.y-44,'비상 전력 프로토콜','#C7A0FF',17);J.ring(G.sh.x,G.sh.y,'#C7A0FF',10,CELL*2.4,4);
+  if(typeof toast==='function')toast('비상 전력 프로토콜 가동 — 보호막 전개');if(SFX.ready)SFX.ready();
+ }
  G.iframes=DEMO.playerIFrame;
  G.flash=.55; G.pulse=1;
  const kb=DEMO.enemyKnock;
@@ -5176,12 +5253,14 @@ function enemyContactDamage(e,nx,ny,mul){
  let dmg=bspec?bspec.contactDamage*bossSpecTierMul(e,'dmgMul')
               :DEMO.enemyDmg*(e.damageMul||(e.boss?1.55:1))*(e.boss?1:timeDmg);
  if(e.boss&&e.bossDashState==='charge')dmg*=bossTune('dashDamageMul');
+ /* AI 크루가 맞은 경우 그쪽 체력을 깎는다 — 사람은 기존 경로 그대로 */
+ if(typeof AI_TGT_HURT==='function'){const r=AI_TGT_HURT(e,dmg*(mul==null?1:mul),nx,ny);if(r!==null)return r;}
  return applyPlayerDamage(dmg*(mul==null?1:mul),nx,ny);
 }
 
 /* 근접 타격 — 선딜이 끝난 순간에만 판정한다. 옆으로 빠지면 헛스윙 */
 function enemyMeleeStrike(e){
- const sh=G.sh,dx=sh.x-e.x,dy=sh.y-e.y,d=Math.hypot(dx,dy)||1;
+ const sh=(typeof AI_TGT==='function')?AI_TGT(e):G.sh,dx=sh.x-e.x,dy=sh.y-e.y,d=Math.hypot(dx,dy)||1;
  e.kbx=(e.kbx||0)+e.atkDirX*teWorld(22);e.kby=(e.kby||0)+e.atkDirY*teWorld(22);
  J.spikes(e.x+e.atkDirX*e.r*.8,e.y+e.atkDirY*e.r*.8,4,'rgba(255,154,107,.9)',e.r*.55,e.atkDirX,e.atkDirY);
  const reach=e.r+R_SHELLY+DEMO.enemyReach*1.7;
@@ -5192,7 +5271,7 @@ function enemyMeleeStrike(e){
 
 /* 원거리 침 발사 */
 function enemyFireShot(e){
- const sh=G.sh,dx=sh.x-e.x,dy=sh.y-e.y;
+ const sh=(typeof AI_TGT==='function')?AI_TGT(e):G.sh,dx=sh.x-e.x,dy=sh.y-e.y;
  const a=Math.atan2(dy,dx)+(Math.random()-.5)*.11,ca=Math.cos(a),sa=Math.sin(a);
  const sp=teWorld(DEMO.enemyShotSpeed||60);
  G.eshots.push({x:e.x+ca*e.r*.85,y:e.y+sa*e.r*.85,vx:ca*sp,vy:sa*sp,
@@ -5209,6 +5288,11 @@ function updateEnemyShots(dt){
   if(!dead){
    const c=Math.floor(s.x/CELL),r=Math.floor(s.y/CELL);
    if(!inB(c,r)||G.cell[ci(c,r)]){dead=true;J.burst(s.x,s.y,5,['#8BE38F','#DFF7D0'],90);}
+  }
+  if(!dead&&typeof AICREW!=='undefined'&&AICREW.members.length){
+   const hitM=AICREW.hitTest(s.x,s.y,s.r);
+   if(hitM){const d=Math.hypot(s.vx,s.vy)||1;
+    if(AICREW.hurt(hitM,s.dmg,s.vx/d,s.vy/d)){dead=true;J.burst(s.x,s.y,8,['#8BE38F','#FFF'],140);}}
   }
   if(!dead&&Math.hypot(s.x-sh.x,s.y-sh.y)<R_SHELLY+s.r){
    const d=Math.hypot(s.vx,s.vy)||1;
@@ -5267,13 +5351,14 @@ function separateEnemies(dt){
 }
 
 function updateEnemyAI(e,dt,spd,timeSpd,dist,dx,dy){
- const sh=G.sh;
+ const sh=(typeof AI_TGT==='function')?AI_TGT(e):G.sh;   /* AI 크루 타깃 */
  if(e.ai==null)e.ai='wander';
  if(e.homeX==null){e.homeX=e.x;e.homeY=e.y;}
  if(e.wanderX==null){e.wanderX=e.x;e.wanderY=e.y;e.wanderIdle=true;e.wanderT=0;}
  /* 기절 — 넉백만 남고 스스로는 아무것도 못 한다 */
  if((e.stunT||0)>0){e.stunT-=dt;e.vx=0;e.vy=0;e.atkState=null;e.sightCd=Math.max(e.sightCd||0,.06);return;}
- const mul=Math.min(2,(e.speedMul==null?1:e.speedMul)*timeSpd);
+ const flareSlow=(typeof INF!=='undefined'&&INF.active&&(INF.permFlareSlow||0)>0&&!e.boss&&typeof infEnemyInFlare==='function'&&infEnemyInFlare(e))?1-INF.permFlareSlow:1;   /* 연막 화합물 */
+ const mul=Math.min(2,(e.speedMul==null?1:e.speedMul)*timeSpd)*flareSlow;
  const move=(nx,ny,scale)=>{e.vx=nx*spd*mul*scale;e.vy=ny*spd*mul*scale;if(scale>.05)e.faceA=Math.atan2(ny,nx);};
 
  /* 시야는 매 프레임이 아니라 0.1초 간격으로만 다시 계산한다 */
@@ -5521,7 +5606,8 @@ function updateEnemies(dt){
     if(e.blinkT>0)e.blinkT=Math.max(0,e.blinkT-dt);
     else if((e.blinkCd-=dt)<=0){e.blinkT=.24;e.blinkCd=2.4+Math.random()*4.2;}
     e.cd=Math.max(0,e.cd-dt);
-    const dx=sh.x-e.x, dy=sh.y-e.y, dist=Math.hypot(dx,dy)||1;
+    const tgt=(typeof AI_TGT==='function')?AI_TGT(e):sh;   /* AI 크루 — 가장 가까운 크루를 노린다 */
+    const dx=tgt.x-e.x, dy=tgt.y-e.y, dist=Math.hypot(dx,dy)||1;
     e.jumpCd=Math.max(0,(e.jumpCd||0)-dt);
     if(e.jumpT>0)e.jumpT=Math.max(0,e.jumpT-dt);
     const smallCrawler=e.kind==='crawler'&&!e.apex&&!e.boss;
@@ -5652,7 +5738,7 @@ function update(dt){
   if(!G.aimReady){G.aimX=mw.x;G.aimY=mw.y;G.aimReady=true;}
   else{const t=Math.min(1,TE.aimFollow*60*dt);G.aimX+=(mw.x-G.aimX)*t;G.aimY+=(mw.y-G.aimY)*t;}}
  const traitMode=typeof INF!=='undefined'&&infTraitCardsEnabled(),traitDigMove=traitMode&&G.mouse.drillDown?(INF.traitDrillMoveMul||1):1;
- const spd=teMovePx()*(traitMode?INF.moveMul:1)*traitDigMove;
+ const spd=teMovePx()*(traitMode?INF.moveMul:1)*traitDigMove*((typeof INF!=='undefined'&&INF.active&&(INF.permDarkMoveT||0)>0)?1+(INF.permDarkMove||0):1);   /* 암순응 가속 */
  if(G.dash.active){
   const stepDt=Math.min(dt,G.dash.t);
   const slices=Math.max(1,Math.ceil((Math.hypot(G.dash.vx,G.dash.vy)*stepDt)/4));
@@ -5888,6 +5974,7 @@ function update(dt){
     enterDepth(G.depth+1);}}
   else G.descend=Math.max(0,G.descend-dt*2);}
  if(typeof updateCrew==='function')updateCrew(dt);
+ if(typeof AICREW!=='undefined')AICREW.update(dt);   /* AI 크루 */
  /* 카메라 — 마우스 룩어헤드 + 데드존 + followSpeed */
  if(!G.fixed){
   G.Z=teZoomZ();
@@ -6631,6 +6718,7 @@ function renderDepths(){
   drawShelly(G.sh.x,G.sh.y,R_SHELLY,G.t,G.sh.face,G.weapon==='drill'?G.sh.drill:0,G.sh.aim,G.weapon!=='drill',Math.hypot(G.sh.vx||0,G.sh.vy||0)>1);
   cx.globalAlpha=1;cx.restore();}
  if((G.stunT||0)>0)drawStunSpin({x:G.sh.x,y:G.sh.y,r:R_SHELLY});
+ if(typeof AICREW!=='undefined')AICREW.draw();   /* AI 크루 */
  if(typeof COOP_drawPeer==='function')COOP_drawPeer();
  drawBats();
  J.draw();
@@ -8718,6 +8806,8 @@ function updateCrewTutorial(dt){
  }
 }
 function startCrewMission(roleId){
+ /* AI 크루 — 미션 모드에서도 같이 나간다 */
+ setTimeout(()=>{if(typeof AICREW!=='undefined')AICREW.onRunStart();},0);
  const r=CREW_ROLES[roleId];if(!r)return;
  AU.init();AU.resume();SFX.ui&&SFX.ui();
  if(typeof COOP!=='undefined'&&COOP.active){CREW.missionId='harvest';CREW.biomeId='purple';}
@@ -9135,16 +9225,24 @@ window.addEventListener('resize',fitAll);setInterval(tick,150);setTimeout(tick,3
 body.infActive #tcHudPolish,body.infActive #crewHud,body.infActive #resHud{display:none!important}
 #infHud{position:absolute;inset:0;z-index:72;display:none;pointer-events:none;color:#f6efff;font-family:"Pretendard","Malgun Gothic",sans-serif}
 body.infActive #infHud{display:block}
-#infHud .ihTop{position:absolute;left:50%;top:calc(18px + env(safe-area-inset-top));transform:translateX(-50%);width:min(620px,72vw);padding:10px 14px;border:1px solid rgba(199,160,255,.48);border-radius:14px;background:rgba(12,8,22,.86);box-shadow:0 10px 32px rgba(0,0,0,.38)}
+#infHud .ihTop{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);width:min(560px,68vw);padding:0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65)}
 #infHud .ihRow{display:flex;align-items:center;gap:12px;font-size:12px;color:#b9a8cc}
 #infHud .ihRow strong{font-size:14px;color:#fff}
 #infThreatText{padding:3px 7px;border:1px solid rgba(255,85,125,.35);border-radius:999px;color:#ff9aae;font-size:10px;font-weight:900;letter-spacing:.03em}
-#infHud .ihGrow{flex:1}.ihGauge{height:8px;margin-top:7px;overflow:hidden;border-radius:999px;background:#211832}
+#infHud .ihGrow{flex:1}.ihGauge{height:7px;margin-top:6px;overflow:hidden;border-radius:999px;background:rgba(20,13,32,.62);box-shadow:0 0 0 1px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.4)}
 #infDomFill,#infXpFill,#infBossFill{height:100%;width:0;background:linear-gradient(90deg,#8b5bd0,#ffd36e);transition:width .18s}
 #infHud .ihLeft{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
 #infAmmoRow{display:flex;align-items:center;gap:8px;margin-top:5px;color:#d8cce4;font-weight:900}#infAmmoText{min-width:76px;color:#ffd36e}.infReloadGauge{width:88px;height:5px;overflow:hidden;border-radius:999px;background:#2b2036}.infReloadGauge i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#7febd0,#ffd36e);transition:width .06s linear}#infAmmoRow.reloading #infAmmoText{color:#7febd0;animation:infAmmoPulse .55s ease-in-out infinite}@keyframes infAmmoPulse{50%{opacity:.55}}
 #infHud .ihKeys{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 36px - env(safe-area-inset-left) - env(safe-area-inset-right));padding:10px 13px;border-radius:14px;background:rgba(12,8,22,.82);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc}
 #infBossBox{display:none;margin-top:9px}#infBossBox.on{display:block}#infBossFill{background:linear-gradient(90deg,#ff557d,#ffb36b)}
+/* ── 보스 집중 모드 — 보스 출현 시 상단엔 보스 이름 + 체력 게이지만 볼드하게 ── */
+#infHud.bossFocus .ihTop>*:not(#infBossBox){display:none!important}
+#infHud.bossFocus #infBossBox{display:block;margin-top:0;animation:infBossFocusIn .4s cubic-bezier(.16,.84,.3,1) both}
+#infHud.bossFocus #infBossName{font-size:24px;font-weight:950;letter-spacing:.07em;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 18px rgba(255,85,125,.55)}
+#infHud.bossFocus #infBossText{font-size:16px;font-weight:900;color:#ffc2d0;text-shadow:0 2px 4px rgba(0,0,0,.95)}
+#infHud.bossFocus #infBossBox .ihGauge{height:15px;margin-top:8px;background:rgba(22,7,14,.7);box-shadow:0 0 0 1.5px rgba(255,85,125,.6),0 4px 16px rgba(0,0,0,.55),0 0 22px rgba(255,85,125,.28)}
+#infHud.bossFocus #infBossFill{box-shadow:inset 0 -3px 6px rgba(0,0,0,.3),inset 0 2px 3px rgba(255,255,255,.28)}
+@keyframes infBossFocusIn{0%{opacity:0;transform:translateY(-14px) scale(.92)}100%{opacity:1;transform:none}}
 #infBossIndicator{--ang:0rad;position:absolute;left:50%;top:50%;z-index:4;display:none;align-items:center;gap:7px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 9px rgba(0,0,0,.7))}#infBossIndicator.on{display:flex;animation:infBossPing 1.15s ease-in-out infinite}#infBossIndicator.alert{animation:infBossArrive .7s cubic-bezier(.16,.84,.3,1) both,infBossPing 1.15s ease-in-out .7s infinite}
 .infBossArrow{width:27px;height:27px;color:#ff557d;font-size:27px;font-style:normal;font-weight:900;line-height:27px;text-align:center;transform:rotate(var(--ang));text-shadow:0 0 12px rgba(255,85,125,.85)}.infBossIndicatorText{padding:5px 8px;border:1px solid rgba(255,85,125,.72);border-radius:8px;background:rgba(28,7,16,.88);color:#ff8da8;font-size:10px;font-weight:900;white-space:nowrap;letter-spacing:.04em}.infBossIndicatorText b{margin-left:4px;color:#fff;font-size:11px}
 @keyframes infBossPing{0%,100%{filter:drop-shadow(0 4px 9px rgba(0,0,0,.7));opacity:.84}50%{filter:drop-shadow(0 0 16px rgba(255,85,125,.7));opacity:1}}@keyframes infBossArrive{0%{transform:translate(-50%,-50%) scale(.35);filter:brightness(3)}65%{transform:translate(-50%,-50%) scale(1.18)}100%{transform:translate(-50%,-50%) scale(1)}}
@@ -9237,6 +9335,13 @@ body.infActive #infHud{display:block}
 /* 행동 변형·전문 분야는 프레임 형태로도 구분한다 — 색만으로 구분하지 않는다 (§6.4.6) */
 .infPermanentNode.behavior{border-radius:50%}
 .infPermanentNode.behavior img{border-radius:50%}
+/* 주요 노드 (v7.5.1) — 팔각 프레임 + 이중 링 글로우로 일반·캡스톤 모두와 구분한다 */
+.infPermanentNode.major{width:58px;height:58px;border-width:3px;border-radius:15px;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+.infPermanentNode.major::before{content:"";position:absolute;inset:-7px;border:1px dashed color-mix(in srgb,var(--own) 55%,transparent);border-radius:18px;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);pointer-events:none}
+.infPermanentNode.major img{width:36px;height:36px}
+.infPermanentNode.major.available{box-shadow:0 0 0 4px color-mix(in srgb,var(--settle-role) 16%,transparent),0 0 30px color-mix(in srgb,var(--settle-role) 44%,transparent)}
+.infPermanentNode.major.maxed{border-color:#ffd36e;box-shadow:0 0 32px rgba(255,211,110,.42),inset 0 0 20px rgba(255,211,110,.12)}
+.infPermanentNode.major .infNodeCost{top:-13px}
 /* 발견 시퀀스 — 연결선 완성 뒤 70ms 간격 출현 (§6.4.5) */
 .infPermanentNode.incoming{opacity:0;pointer-events:none}
 .infPermanentNode.discovered{animation:infNodeDiscover .3s cubic-bezier(.13,.88,.22,1.2) both}
@@ -9459,23 +9564,35 @@ const INF_META=(()=>{try{return Object.assign({bestDepth:0,bestBlocks:0,totalBos
    - 한 런에 적용되는 노드 = 공용 16 + 그 직업 16 = 32 (§6.4.1 목표 유지)
 
    §6.4.7 규약대로 화면 좌표(GRID/OFFSETS)와 공개 관계(reveal)를 정체성과 분리한다. */
-const INF_NODE_LAYOUT_VERSION='role-arc-v2-compact';
+const INF_NODE_LAYOUT_VERSION='role-arc-v3-extended';
 const INF_NODE_GRID={cx:88,cy:88,crestX:950,crestY:1110,busY:1180,worldW:1900,worldH:1620};
 /* 군집 안의 슬롯 골격 — 열 군집이 같은 위상을 공유한다.
-   i → m1·m2 → m3·m4 → m5·m6 → 캡스톤. 두 갈래를 모두 올려야 캡스톤이 열린다. */
+   공용 군집: i → m1·m2 → m3·m4 → m5·m6 → 캡스톤 (8노드).
+   직업 군집(v7.5.1 확장): i → m1·m2 → s1·s2 → m3·m4 → s3·s4 → m5·m6 → 캡스톤
+   + 두 갈래 사이 중앙축의 '주요' 노드(key). 두 갈래를 모두 올려야 캡스톤이 열린다.
+   s·key 슬롯은 정의(INF_NODE_DEFS)가 있는 군집에서만 생성된다 — 공용은 8노드 그대로. */
 const INF_NODE_SLOTS={
  i  :{type:'기초 강화',initial:true,maxRank:3,costByRank:[1,2,3],           reveal:['m1','m2']},
- m1 :{type:'전문화',   maxRank:2,costByRank:[3,5],  requires:['i'],  reveal:['m3'],  ties:['m2']},
- m2 :{type:'전문화',   maxRank:2,costByRank:[3,5],  requires:['i'],  reveal:['m4']},
- m3 :{type:'전문화',   maxRank:2,costByRank:[4,7],  requires:['m1'], reveal:['m5'],  ties:['m4']},
- m4 :{type:'전문화',   maxRank:2,costByRank:[4,7],  requires:['m2'], reveal:['m6']},
+ m1 :{type:'전문화',   maxRank:2,costByRank:[3,5],  requires:['i'],  reveal:['m3','s1'],  ties:['m2']},
+ m2 :{type:'전문화',   maxRank:2,costByRank:[3,5],  requires:['i'],  reveal:['m4','s2']},
+ s1 :{type:'전문화',   maxRank:2,costByRank:[4,6],  requires:['m1']},
+ s2 :{type:'전문화',   maxRank:2,costByRank:[4,6],  requires:['m2']},
+ m3 :{type:'전문화',   maxRank:2,costByRank:[4,7],  requires:['m1'], reveal:['m5','s3','key'],  ties:['m4']},
+ m4 :{type:'전문화',   maxRank:2,costByRank:[4,7],  requires:['m2'], reveal:['m6','s4','key']},
+ s3 :{type:'전문화',   maxRank:2,costByRank:[4,6],  requires:['m3']},
+ s4 :{type:'전문화',   maxRank:2,costByRank:[4,6],  requires:['m4']},
+ key:{type:'주요',     maxRank:1,costByRank:[12],   requires:['m3','m4'],requiresCount:1},
  m5 :{type:'행동 변형',maxRank:1,costByRank:[9],    requires:['m3'], reveal:['cap'], ties:['m6']},
  m6 :{type:'행동 변형',maxRank:1,costByRank:[9],    requires:['m4'], reveal:['cap']},
  cap:{type:'캡스톤',   maxRank:1,costByRank:[14],   requires:['m5','m6'],requiresCount:2}
 };
-/* 방향 벡터를 따라 두 갈래가 벌어지는 방사형 군집 오프셋 */
+/* 방향 벡터를 따라 두 갈래가 벌어지는 방사형 군집 오프셋.
+   공용(4스텝)과 직업(6스텝 확장) 레이아웃을 분리한다 — 슬롯 골격은 공유하되
+   좌표만 다르게 두어 인접 군집끼리 겹치지 않는다 (레이아웃 검증 스크립트로 확인). */
 const infNodeRadialOffsets=(dx,dy)=>{const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;const px=-dy,py=dx,spread=.48,at=(step,side)=>[dx*step+px*spread*side,dy*step+py*spread*side];return {i:[0,0],m1:at(1,1),m2:at(1,-1),m3:at(2,1),m4:at(2,-1),m5:at(3,1),m6:at(3,-1),cap:[dx*4,dy*4]};};
+const infNodeRadialOffsetsExt=(dx,dy)=>{const len=Math.hypot(dx,dy)||1;dx/=len;dy/=len;const px=-dy,py=dx,spread=.48,at=(step,side)=>[dx*step+px*spread*side,dy*step+py*spread*side];return {i:[0,0],m1:at(1,1),m2:at(1,-1),s1:at(2,1),s2:at(2,-1),m3:at(3,1),m4:at(3,-1),s3:at(4,1),s4:at(4,-1),key:[dx*3.5,dy*3.5],m5:at(5,1),m6:at(5,-1),cap:[dx*6,dy*6]};};
 const INF_NODE_OFFSETS={n:infNodeRadialOffsets(0,-1),nw:infNodeRadialOffsets(-1,-1),ne:infNodeRadialOffsets(1,-1),sw:infNodeRadialOffsets(-1,1),s:infNodeRadialOffsets(0,1),se:infNodeRadialOffsets(1,1)};
+const INF_NODE_OFFSETS_EXT={n:infNodeRadialOffsetsExt(0,-1),nw:infNodeRadialOffsetsExt(-1,-1),ne:infNodeRadialOffsetsExt(1,-1),sw:infNodeRadialOffsetsExt(-1,1),s:infNodeRadialOffsetsExt(0,1),se:infNodeRadialOffsetsExt(1,1)};
 /* 공용은 아래, 네 직업 시작 뱃지는 위쪽 반원. 각 뱃지에서 두 가지가 바깥쪽으로 방사된다. */
 const INF_NODE_ROLE_HUBS=[
  {role:'driller', x:675, y:945, badge:'assets/ui/role-badges/role-badge-driller.png'},
@@ -9504,10 +9621,15 @@ const INF_PERM_CAPS={
  dmgDrill:.35,dmgGun:.35,move:.12,xp:.30,coreChance:.30,hp:72,mag:8,reloadCut:.25,
  shield:.45,oreHeal:4,pierce:2,shards:12,shock:2,magnet:1,
  foundation:.45,coreNeedCut:.25,qPower:.45,qCdCut:.30,drillerShock:2,
- breakerCdCut:.35,breakerRadius:2,breakerDmg:.40,breakerEarly:.40,
+ breakerCdCut:.35,breakerRadius:2,breakerDmg:.60,breakerEarly:.40,
  flare:.45,grappleRange:3,grappleCdCut:.35,vision:2.5,pulseRadius:2.5,exploreXp:4,
  turrets:2,nodes:2,nodeRadius:2,turretMag:9,turretRate:.20,turretLife:.40,
- keepRate:.60,keepMin:8,reroll:3,startCards:2,revive:1
+ keepRate:.60,keepMin:8,reroll:3,startCards:2,revive:1,
+ /* v7.5.1 확장 노드 (s1~s4 · 주요) */
+ rampDrill:.16,oreSonar:.10,crackHold:.50,drillPen:1,regen:2,dashGuard:1,depthHp:4,shieldDur:.60,
+ rampGun:.12,breakerEnemy:.24,killHeal:2,
+ flareSlow:.30,dashDist:.20,darkMove:.10,
+ nodeLife:.30,turretRange:1,turretPower:.16,shieldAbsorb:.40,engQCdCut:.16
 };
 
 const INF_NODE_DEFS={
@@ -9539,6 +9661,11 @@ const INF_NODE_DEFS={
   i  :N('토크 보정기','trait-icon-driller-torque-motor-v1.png',['굴착 위력 +5%','굴착 위력 +10%','굴착 위력 +15%'],(P,r)=>{P.dmgDrill+=.05*r;}),
   m1 :N('단층 추적 비트','trait-icon-crack-fissure-v1.png',['기반암 균열 +10%','기반암 균열 +20%'],(P,r)=>{P.foundation+=.10*r;}),
   m2 :N('내열 구동축','trait-icon-rapid-fire-turbo-v1.png',['굴착 위력 +6%','굴착 위력 +12%'],(P,r)=>{P.dmgDrill+=.06*r;}),
+  s1 :N('과열 배출구','trait-icon-rapid-fire-turbo-v1.png',['같은 벽 연속 굴착 시 균열 압력 최대 +8%','같은 벽 연속 굴착 시 균열 압력 최대 +16%'],(P,r)=>{P.rampDrill+=.08*r;}),
+  s2 :N('광맥 감지 소나','trait-icon-scanner-radar-v1.png',['광석 채굴 시 추가 코어 확률 +5%','광석 채굴 시 추가 코어 확률 +10%'],(P,r)=>{P.oreSonar+=.05*r;}),
+  s3 :N('정밀 천공 리그','trait-icon-crack-fissure-v1.png',['균열 유지 시간 +25%','균열 유지 시간 +50%'],(P,r)=>{P.crackHold+=.25*r;}),
+  s4 :N('진동 증폭 코일','trait-icon-seismic-shockwave-v1.png',['벽 파괴 시 반경 0.8칸 충격파','벽 파괴 시 반경 1.2칸 충격파'],(P,r)=>{P.shock=Math.max(P.shock,.4+.4*r);}),
+  key:N('지각 관통 드릴','trait-icon-driller-torque-motor-v1.png',['드릴이 벽을 부수면 <b>그 뒤 벽까지 관통 피해</b>를 줍니다'],(P)=>{P.drillPen=Math.max(P.drillPen,1);}),
   m3 :N('맨틀 천공 키','trait-icon-core-bedrock-v1.png',['코어 암반 필요 압력 -8%','코어 암반 필요 압력 -16%'],(P,r)=>{P.coreNeedCut+=.08*r;}),
   m4 :N('공진 헤드','trait-icon-seismic-shockwave-v1.png',['굴착 +5% · 기반암 +8%','굴착 +10% · 기반암 +16%'],(P,r)=>{P.dmgDrill+=.05*r;P.foundation+=.08*r;}),
   m5 :N('돌파 파기 개조','trait-icon-seismic-shockwave-v1.png',['Q 압력 +30% · Q 대기 -20% · 기반암을 뚫으면 파쇄 충격파가 퍼집니다'],(P)=>{P.qPower+=.30;P.qCdCut+=.20;P.drillerShock=Math.max(P.drillerShock,1);}),
@@ -9549,6 +9676,11 @@ const INF_NODE_DEFS={
   i  :N('압력 라이닝','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20','최대 체력 +30'],(P,r)=>{P.hp+=10*r;}),
   m1 :N('비상 격벽','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20'],(P,r)=>{P.hp+=10*r;}),
   m2 :N('보행 서보','trait-icon-ricochet-v1.png',['이동 +2%','이동 +4%'],(P,r)=>{P.move+=.02*r;}),
+  s1 :N('재생 라이닝','trait-icon-ore-refinery-v1.png',['5초마다 체력 +1','5초마다 체력 +2'],(P,r)=>{P.regen+=r;}),
+  s2 :N('견고한 발판','trait-icon-survival-bulkhead-v1.png',['대시 후 0.5초간 받는 피해 -30%','대시 후 1초간 받는 피해 -30%'],(P,r)=>{P.dashGuard=Math.max(P.dashGuard,.5*r);}),
+  s3 :N('심층 적응','trait-icon-core-bedrock-v1.png',['10층마다 최대 체력 +2','10층마다 최대 체력 +4'],(P,r)=>{P.depthHp=Math.max(P.depthHp,2*r);}),
+  s4 :N('완충 실드 코팅','trait-icon-survival-bulkhead-v1.png',['파쇄 보호막 지속 +30%','파쇄 보호막 지속 +60%'],(P,r)=>{P.shieldDur+=.3*r;}),
+  key:N('암반 심장','trait-icon-dual-power-v1.png',['체력 50% 이하일 때 <b>굴착 위력 +25% · 받는 피해 -15%</b>'],(P)=>{P.stoneheart=true;}),
   m3 :N('충격 흡수 골격','trait-icon-survival-bulkhead-v1.png',['체력 +8 · 이동 +2%','체력 +16 · 이동 +4%'],(P,r)=>{P.hp+=8*r;P.move+=.02*r;}),
   m4 :N('광석 정제 회로','trait-icon-ore-refinery-v1.png',['광석 회수 시 체력 +1','광석 회수 시 체력 +2'],(P,r)=>{P.oreHeal+=r;}),
   m5 :N('파쇄 보호막','trait-icon-survival-bulkhead-v1.png',['벽을 부술 때마다 짧은 보호막을 얻습니다'],(P)=>{P.shield=Math.max(P.shield,.28);}),
@@ -9561,6 +9693,11 @@ const INF_NODE_DEFS={
   i  :N('총열 정렬','trait-icon-gunner-chamber-cycler-v1.png',['전투 위력 +5%','전투 위력 +10%','전투 위력 +15%'],(P,r)=>{P.dmgGun+=.05*r;}),
   m1 :N('약실 순환기','trait-icon-rapid-fire-turbo-v1.png',['파쇄탄 재사용 -8%','파쇄탄 재사용 -15%'],(P,r)=>{P.breakerCdCut+=[0,.08,.15][r];}),
   m2 :N('강선 가공','trait-icon-piercing-round-v1.png',['전투 위력 +6%','전투 위력 +12%'],(P,r)=>{P.dmgGun+=.06*r;}),
+  s1 :N('이중 급탄 벨트','trait-icon-rapid-fire-turbo-v1.png',['재장전 -5%','재장전 -10%'],(P,r)=>{P.reloadCut+=.05*r;}),
+  s2 :N('고폭 화약 배합','trait-icon-explosive-charge-v1.png',['파쇄탄 벽 피해 +12%','파쇄탄 벽 피해 +24%'],(P,r)=>{P.breakerDmg+=.12*r;}),
+  s3 :N('예열 총열','trait-icon-gunner-chamber-cycler-v1.png',['연속 사격 시 연사 최대 +6%','연속 사격 시 연사 최대 +12%'],(P,r)=>{P.rampGun+=.06*r;}),
+  s4 :N('파쇄 관측경','trait-icon-scanner-radar-v1.png',['파쇄탄 적 피해 +12%','파쇄탄 적 피해 +24%'],(P,r)=>{P.breakerEnemy+=.12*r;}),
+  key:N('점착 파쇄탄','trait-icon-fuse-detonator-v1.png',['파쇄탄이 <b>적에게도 박혀 직격 피해</b>를 줍니다. 적에게 박힌 파쇄탄이 터지면 주변 적이 밀려나며 <b>1초 기절</b>합니다'],(P)=>{P.breakerStick=true;}),
   m3 :N('관통 탄자','trait-icon-piercing-round-v1.png',['전투 +4%','전투 +8% · 관통 +1'],(P,r)=>{P.dmgGun+=.04*r;if(r>=2)P.pierce+=1;}),
   m4 :N('조기 기폭 회로','trait-icon-fuse-detonator-v1.png',['조기 기폭 위력 +15%','조기 기폭 위력 +30%'],(P,r)=>{P.breakerEarly+=.15*r;}),
   m5 :N('성형 작약 개조','trait-icon-explosive-charge-v1.png',['파쇄탄 반경 +1 · 벽 피해 +20%'],(P)=>{P.breakerRadius+=1;P.breakerDmg+=.20;}),
@@ -9571,6 +9708,11 @@ const INF_NODE_DEFS={
   i  :N('방탄 라이닝','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20','최대 체력 +30'],(P,r)=>{P.hp+=10*r;}),
   m1 :N('중장갑 흉갑','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20'],(P,r)=>{P.hp+=10*r;}),
   m2 :N('보조 추진기','trait-icon-ricochet-v1.png',['이동 +2%','이동 +4%'],(P,r)=>{P.move+=.02*r;}),
+  s1 :N('반동 제어 프레임','trait-icon-ricochet-v1.png',['이동 +1.5%','이동 +3%'],(P,r)=>{P.move+=.015*r;}),
+  s2 :N('탄약 조끼','trait-icon-piercing-round-v1.png',['탄창 +1','탄창 +2'],(P,r)=>{P.mag+=r;}),
+  s3 :N('전투 자극제','trait-icon-ore-refinery-v1.png',['적 처치 시 체력 +1','적 처치 시 체력 +2'],(P,r)=>{P.killHeal+=r;}),
+  s4 :N('강화 방탄판','trait-icon-survival-bulkhead-v1.png',['최대 체력 +8','최대 체력 +16'],(P,r)=>{P.hp+=8*r;}),
+  key:N('최후의 저항','trait-icon-dual-power-v1.png',['체력 30% 이하일 때 <b>연사 +25% · 재장전 -25%</b>'],(P)=>{P.lastStand=true;}),
   m3 :N('전장 정비','trait-icon-survival-bulkhead-v1.png',['체력 +8 · 이동 +2%','체력 +16 · 이동 +4%'],(P,r)=>{P.hp+=8*r;P.move+=.02*r;}),
   m4 :N('충격 흡수 패드','trait-icon-ore-refinery-v1.png',['광석 회수 시 체력 +1','광석 회수 시 체력 +2'],(P,r)=>{P.oreHeal+=r;}),
   m5 :N('전개형 방어막','trait-icon-survival-bulkhead-v1.png',['벽을 부술 때마다 짧은 보호막을 얻습니다'],(P)=>{P.shield=Math.max(P.shield,.28);}),
@@ -9583,6 +9725,11 @@ const INF_NODE_DEFS={
   i  :N('절삭기 조율','trait-icon-crack-fissure-v1.png',['절삭·사격 +4%','절삭·사격 +8%','절삭·사격 +12%'],(P,r)=>{P.dmgDrill+=.04*r;P.dmgGun+=.04*r;}),
   m1 :N('고광도 연소제','trait-icon-scout-high-luminosity-fuel-v1.png',['플레어 반경·지속 +12%','플레어 반경·지속 +24%'],(P,r)=>{P.flare+=.12*r;}),
   m2 :N('카빈 정밀 조정','trait-icon-piercing-round-v1.png',['전투 위력 +6%','전투 위력 +12%'],(P,r)=>{P.dmgGun+=.06*r;}),
+  s1 :N('연막 화합물','trait-icon-scout-high-luminosity-fuel-v1.png',['플레어 범위 안 적 이동 -15%','플레어 범위 안 적 이동 -30%'],(P,r)=>{P.flareSlow+=.15*r;}),
+  s2 :N('확장 렌즈','trait-icon-scanner-radar-v1.png',['독립 시야 +0.4칸','독립 시야 +0.8칸'],(P,r)=>{P.vision+=.4*r;}),
+  s3 :N('신속 장전 훈련','trait-icon-rapid-fire-turbo-v1.png',['재장전 -8%','재장전 -16%'],(P,r)=>{P.reloadCut+=.08*r;}),
+  s4 :N('지형 기록계','trait-icon-control-network-v1.png',['탐사 경험치 +1','탐사 경험치 +2'],(P,r)=>{P.exploreXp+=r;}),
+  key:N('위상 그래플','trait-icon-grapple-winch-v1.png',['그래플 훅이 <b>한 칸 두께의 벽을 관통</b>해 반대편 공간까지 끌어당깁니다'],(P)=>{P.phaseGrapple=true;}),
   m3 :N('광학 증폭기','trait-icon-scanner-radar-v1.png',['독립 시야 +0.6칸','독립 시야 +1.2칸'],(P,r)=>{P.vision+=.6*r;}),
   m4 :N('반향 측량기','trait-icon-scanner-radar-v1.png',['정찰 반경 +0.8칸 · 탐사 경험치 +1','정찰 반경 +1.6칸 · 탐사 경험치 +2'],(P,r)=>{P.pulseRadius+=.8*r;P.exploreXp+=r;}),
   m5 :N('그래플 윈치 개조','trait-icon-grapple-winch-v1.png',['그래플 사거리 +2칸 · 재사용 -25%'],(P)=>{P.grappleRange+=2;P.grappleCdCut+=.25;}),
@@ -9593,6 +9740,11 @@ const INF_NODE_DEFS={
   i  :N('경량 방호복','trait-icon-survival-bulkhead-v1.png',['체력 +7 · 이동 +1%','체력 +14 · 이동 +2%','체력 +21 · 이동 +3%'],(P,r)=>{P.hp+=7*r;P.move+=.01*r;}),
   m1 :N('주자 강화','trait-icon-survival-bulkhead-v1.png',['최대 체력 +8','최대 체력 +16'],(P,r)=>{P.hp+=8*r;}),
   m2 :N('가속 부츠','trait-icon-ricochet-v1.png',['이동 +2.5%','이동 +5%'],(P,r)=>{P.move+=.025*r;}),
+  s1 :N('잔상 스텝','trait-icon-ricochet-v1.png',['대시 거리 +10%','대시 거리 +20%'],(P,r)=>{P.dashDist+=.10*r;}),
+  s2 :N('응급 수액 키트','trait-icon-ore-refinery-v1.png',['광석 회수 시 체력 +1','광석 회수 시 체력 +2'],(P,r)=>{P.oreHeal+=r;}),
+  s3 :N('경량 탄소 프레임','trait-icon-survival-bulkhead-v1.png',['이동 +1.5%','이동 +3%'],(P,r)=>{P.move+=.015*r;}),
+  s4 :N('암순응','trait-icon-scanner-radar-v1.png',['새 구역 발견 시 3초간 이동 +5%','새 구역 발견 시 3초간 이동 +10%'],(P,r)=>{P.darkMove+=.05*r;}),
+  key:N('유령 걸음','trait-icon-dual-power-v1.png',['대시 중과 직후 0.4초간 <b>무적이 되어 적을 통과</b>합니다'],(P)=>{P.ghostDash=true;}),
   m3 :N('지구력 훈련','trait-icon-survival-bulkhead-v1.png',['체력 +6 · 이동 +1.5%','체력 +12 · 이동 +3%'],(P,r)=>{P.hp+=6*r;P.move+=.015*r;}),
   m4 :N('생체 회복 팩','trait-icon-ore-refinery-v1.png',['광석 회수 시 체력 +1','광석 회수 시 체력 +2'],(P,r)=>{P.oreHeal+=r;}),
   m5 :N('회피 기동','trait-icon-survival-bulkhead-v1.png',['벽을 부술 때마다 짧은 보호막을 얻습니다'],(P)=>{P.shield=Math.max(P.shield,.32);}),
@@ -9605,6 +9757,11 @@ const INF_NODE_DEFS={
   i  :N('공학 커터 조율','trait-icon-engineer-high-density-battery-v1.png',['커터·사격 +4%','커터·사격 +8%','커터·사격 +12%'],(P,r)=>{P.dmgDrill+=.04*r;P.dmgGun+=.04*r;}),
   m1 :N('고밀도 전지','trait-icon-engineer-high-density-battery-v1.png',['센트리 탄창 +3 · 연사 +4%','센트리 탄창 +6 · 연사 +8%'],(P,r)=>{P.turretMag+=3*r;P.turretRate+=.04*r;}),
   m2 :N('서비스 총기 조정','trait-icon-piercing-round-v1.png',['전투 위력 +6%','전투 위력 +12%'],(P,r)=>{P.dmgGun+=.06*r;}),
+  s1 :N('확장 탄창 드럼','trait-icon-piercing-round-v1.png',['센트리 탄창 +2','센트리 탄창 +4'],(P,r)=>{P.turretMag+=2*r;}),
+  s2 :N('고효율 콘덴서','trait-icon-engineer-high-density-battery-v1.png',['전력 노드 지속 +15%','전력 노드 지속 +30%'],(P,r)=>{P.nodeLife+=.15*r;}),
+  s3 :N('사거리 증폭기','trait-icon-control-network-v1.png',['센트리 사거리 +0.5칸','센트리 사거리 +1칸'],(P,r)=>{P.turretRange+=.5*r;}),
+  s4 :N('정밀 조준 모듈','trait-icon-sentry-turret-v1.png',['센트리 위력 +8%','센트리 위력 +16%'],(P,r)=>{P.turretPower+=.08*r;}),
+  key:N('오버클럭 프로토콜','trait-icon-dual-power-v1.png',['전력 노드에 연결된 센트리의 <b>연사가 2배</b>가 되지만 내구가 20% 빨리 닳습니다'],(P)=>{P.overclock=true;}),
   m3 :N('내구 프레임','trait-icon-sentry-turret-v1.png',['센트리 지속 +12%','센트리 지속 +24%'],(P,r)=>{P.turretLife+=.12*r;}),
   m4 :N('전력망 중계기','trait-icon-control-network-v1.png',['전력 노드 최대 +1 · 반경 +1칸','전력 노드 최대 +1 · 반경 +2칸'],(P,r)=>{P.nodes=Math.max(P.nodes,1);P.nodeRadius+=r;}),
   m5 :N('자율 가동 회로','trait-icon-sentry-turret-v1.png',['센트리 최대 +1 · 센트리가 스스로 표적을 찾습니다'],(P)=>{P.turrets+=1;P.autonomous=true;}),
@@ -9615,6 +9772,11 @@ const INF_NODE_DEFS={
   i  :N('외골격 프레임','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20','최대 체력 +30'],(P,r)=>{P.hp+=10*r;}),
   m1 :N('보강 장갑판','trait-icon-survival-bulkhead-v1.png',['최대 체력 +10','최대 체력 +20'],(P,r)=>{P.hp+=10*r;}),
   m2 :N('보조 구동계','trait-icon-ricochet-v1.png',['이동 +2%','이동 +4%'],(P,r)=>{P.move+=.02*r;}),
+  s1 :N('자동 수리 드론','trait-icon-sentry-turret-v1.png',['5초마다 체력 +1','5초마다 체력 +2'],(P,r)=>{P.regen+=r;}),
+  s2 :N('강화 합금판','trait-icon-survival-bulkhead-v1.png',['최대 체력 +8','최대 체력 +16'],(P,r)=>{P.hp+=8*r;}),
+  s3 :N('에너지 장벽 코일','trait-icon-survival-bulkhead-v1.png',['보호막 피해 흡수 +20%','보호막 피해 흡수 +40%'],(P,r)=>{P.shieldAbsorb+=.2*r;}),
+  s4 :N('휴대용 발전기','trait-icon-engineer-high-density-battery-v1.png',['전력 노드 재사용 -8%','전력 노드 재사용 -16%'],(P,r)=>{P.engQCdCut+=.08*r;}),
+  key:N('비상 전력 프로토콜','trait-icon-control-network-v1.png',['원정당 한 번, 체력이 25% 아래로 떨어지면 <b>보호막을 얻고 무료 센트리가 자동 전개</b>됩니다'],(P)=>{P.emergency=true;}),
   m3 :N('구조 공학','trait-icon-survival-bulkhead-v1.png',['체력 +8 · 이동 +2%','체력 +16 · 이동 +4%'],(P,r)=>{P.hp+=8*r;P.move+=.02*r;}),
   m4 :N('정비 나노팩','trait-icon-ore-refinery-v1.png',['광석 회수 시 체력 +1','광석 회수 시 체력 +2'],(P,r)=>{P.oreHeal+=r;}),
   m5 :N('현장 용접 보호막','trait-icon-survival-bulkhead-v1.png',['벽을 부술 때마다 짧은 보호막을 얻습니다'],(P)=>{P.shield=Math.max(P.shield,.28);}),
@@ -9626,7 +9788,7 @@ const INF_NODE_DEFS={
 const INF_PERMANENT_NODES=(()=>{
  const G=INF_NODE_GRID,out=[];
  for(const C of INF_NODE_CLUSTERS){
-  const defs=INF_NODE_DEFS[C.key],off=INF_NODE_OFFSETS[C.ori];
+  const defs=INF_NODE_DEFS[C.key],off=(C.owner==='crew'?INF_NODE_OFFSETS:INF_NODE_OFFSETS_EXT)[C.ori];
   for(const sKey of Object.keys(INF_NODE_SLOTS)){
    const S=INF_NODE_SLOTS[sKey],d=defs[sKey],o=off[sKey],full=k=>C.key+'_'+k;
    if(!d)continue;
@@ -9643,7 +9805,8 @@ const INF_PERMANENT_NODES=(()=>{
  }
  return out;
 })();
-/* 총 80노드 · 140랭크 · 코어 760 / 한 런 적용 32노드 · 56랭크 (§6.4.9) */
+/* 총 120노드 · 212랭크 · 코어 1176 / 한 런 적용 42노드(공용 16 + 직업 26) · 74랭크
+   (v7.5.1 — 직업 군집당 전문화 s1~s4 + 주요 노드 1개 확장, §6.4.9 개정) */
 const INF_DOMINANCE_TARGET=.40;
 const INF_BOSS_POWER=10;
 const INF_GROWTH_SCALE=.5;
@@ -9849,7 +10012,7 @@ async function bossLabBake(silent){
 async function bossLabChooseGameFile(){const fh=await bossLabFileHandle(true);toast(fh?'게임 파일 지정 · '+(fh.name||'HTML')+' · 이제 자동으로 구워진다':'게임 파일 지정 취소');}
 function bossLabPaint(){if(!BOSS_LAB.active)return;const boss=INF.boss&&INF.boss.hp>0?INF.boss:null,status=infEl('blStatusText'),dist=infEl('blDistance'),animNow=infEl('blAnimNow'),attackNow=infEl('blAttackNow');if(status)status.textContent=boss?((BOSS_LAB.paused?'AI 일시정지':BOSS_LAB.wanderOnly?'배회 전용':'보스 연결됨')+' · 벽 '+(BOSS_LAB.wallsCrushed||0)):'보스 없음 · 재등장 가능';if(dist)dist.textContent=boss?Math.round(Math.hypot(boss.x-G.sh.x,boss.y-G.sh.y)/CELL)+' CELLS':'--';if(boss){BOSS_LAB.values.hpPercent=Math.max(0,Math.min(100,boss.hp/boss.hpMax*100));boss.r=DEMO.enemyRadius*BOSS_LAB.values.size;boss.speedMul=BOSS_LAB.paused?0:BOSS_LAB.values.moveSpeed;}if(animNow)animNow.textContent=boss?((boss.bossAnimKey||'LOADING').toUpperCase()+(boss.bossAnimFrame?' · F'+String(boss.bossAnimFrame).padStart(2,'0'):'')):'NONE';if(attackNow)attackNow.textContent=!boss?'NONE':boss.bossDashState==='windup'?'DASH WINDUP · '+Math.max(0,boss.bossDashT||0).toFixed(2)+'s':boss.bossDashState==='charge'?'DASH CHARGE · '+Math.max(0,boss.bossDashT||0).toFixed(2)+'s':boss.bossFireBreathT>0?'FIRE BREATH · LEAD '+Number(boss.bossLastLead||0).toFixed(2)+'s':'READY · NEXT '+Math.max(0,boss.attackCd||0).toFixed(2)+'s';bossLabSyncInputs();}
 function bossLabFindSpawnPoint(){const [pc,pr]=toCell(G.sh.x,G.sh.y),angles=[Math.PI,Math.PI*.75,-Math.PI*.75,-Math.PI*.5,Math.PI*.5,0];for(let ring=4;ring<=7;ring++)for(const a of angles){const c=Math.round(pc+Math.cos(a)*ring),r=Math.round(pr+Math.sin(a)*ring);if(!inB(c,r)||c<3||r<3||c>COLS-4||r>ROWS-4)continue;let blocked=false;for(let s=1;s<=ring;s++){const cc=Math.round(pc+(c-pc)*s/ring),rr=Math.round(pr+(r-pr)*s/ring);if(!inB(cc,rr)||SOLIDX(G.cell[ci(cc,rr)])){blocked=true;break;}}if(blocked)continue;for(let s=0;s<=ring;s++){const cc=Math.round(pc+(c-pc)*s/ring),rr=Math.round(pr+(r-pr)*s/ring);for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const q=ci(cc+dc,rr+dr);if(inB(cc+dc,rr+dr)&&!SOLIDX(G.cell[q]))G.cell[q]=null;}}G.compDirty=true;LOS.markDirty();return {x:cxw(c),y:cyw(r)};}return pickFarOpenSpot(CELL*4)||{x:clamp(G.sh.x+CELL*4,CELL,WW-CELL),y:G.sh.y};}
-function bossLabRespawn(){if(!BOSS_LAB.active)return;for(const e of G.enemies)if(e.boss)e.hp=0;G.enemies=G.enemies.filter(e=>!e.boss);INF.boss=null;INF.bossActive=false;INF.bossSpawned=false;INF.bossShots=[];INF.bossShotQueue=[];infSpawnBoss();bossLabPaint();}
+function bossLabRespawn(){if(!BOSS_LAB.active)return;for(const e of G.enemies)if(e.boss)e.hp=0;G.enemies=G.enemies.filter(e=>!e.boss);INF.boss=null;INF.bossActive=false;INF.bossSpawned=false;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];infSpawnBoss();bossLabPaint();}
 function bossLabToggleWander(){BOSS_LAB.wanderOnly=!BOSS_LAB.wanderOnly;const button=infEl('blWander');button.classList.toggle('on',BOSS_LAB.wanderOnly);button.textContent='배회만 반복 · '+(BOSS_LAB.wanderOnly?'ON':'OFF');if(BOSS_LAB.wanderOnly){BOSS_LAB.paused=false;infEl('blPause').checked=false;INF.bossShots=[];INF.bossShotQueue=[];if(INF.boss){INF.boss.bossFireBreathT=0;INF.boss.bossDashState=null;INF.boss.bossAnimRate=1;INF.boss.speedMul=BOSS_LAB.values.moveSpeed;bossBeginWanderIdle(INF.boss,true);}toast('배회 전용 · 공격 없이 Idle ↔ Walking 반복');}else{if(INF.boss)bossBeginWanderIdle(INF.boss,false);toast('배회 전용 해제 · 보스 공격 재개');}bossLabPaint();}
 function bossLabStart(){const saved=bossLabReadSaved();BOSS_LAB.active=true;BOSS_LAB.paused=false;BOSS_LAB.wanderOnly=false;BOSS_LAB.wallsCrushed=0;document.body.classList.add('bossLabActive');bossLabBuildInspector();bossLabAdopt(saved);infEl('blPause').checked=false;infEl('blWander').classList.remove('on');infEl('blWander').textContent='배회만 반복 · OFF';bossLabPaintModes();infStartRun('driller');G.php=G.phpMax;bossLabRespawn();toast(saved?'보스 등장 테스트 · 저장 파라미터 복원됨':'보스 등장 테스트 · 기본 파라미터로 시작');}
 function bossLabExit(){bossLabFlush();if(BOSS_LAB.autoBake)bossLabBake(true);BOSS_LAB.active=false;BOSS_LAB.paused=false;document.body.classList.remove('bossLabActive');infGoMenu();}
@@ -10038,8 +10201,8 @@ function infApplyTraitEffect(effectId){switch(effectId){
  case'driller_recirculation':INF.drillerTraitRecirc=true;break;
  case'driller_mantle':INF.drillerTraitMantle=true;INF.drillerTraitBreachRange+=2;break;
  }}
- function infDrillerOutputMul(){if(!infTraitCardsEnabled()||INF.roleId!=='driller')return 1;const hot=G.drillHeat||0;return (INF.drillerTraitDrillMul||1)*(INF.drillerTraitRedline&&hot>=.9?1.45:1);}
-function infDrillerCrackHold(){return 2.5+(INF.drillerTraitResin?1.25:0);}
+ function infDrillerOutputMul(){if(!infTraitCardsEnabled()||INF.roleId!=='driller')return 1;const hot=G.drillHeat||0;return (INF.drillerTraitDrillMul||1)*(INF.drillerTraitRedline&&hot>=.9?1.45:1)*(INF.permStoneheart&&G.php<=G.phpMax*.5?1.25:1);}   /* 암반 심장 — 저체력 굴착 보너스 */
+function infDrillerCrackHold(){return (2.5+(INF.drillerTraitResin?1.25:0))*(INF.drillerCrackHoldMul||1);}   /* 정밀 천공 리그 반영 */
 function infDrillerCrackDecay(){return .012*(INF.drillerTraitResin?.75:1);}
 /* infResetTraitTree 는 런 중 트리와 함께 제거했다 (§6.5) */
 function infShuffle(a){for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -10061,10 +10224,12 @@ function infSpawnInterval(){const threat=infThreatValue();return Math.max(.62,5.
 function infSpawnBurst(){return Math.min(5,1+Math.floor(Math.max(0,infThreatValue()-1)/1.75));}
 function infSetMag(delta){const old=INF.magSize;INF.magSize=Math.max(3,Math.min(40,Math.round(INF.magSize+delta)));INF.ammo=Math.max(0,Math.min(INF.magSize,INF.ammo+Math.max(0,INF.magSize-old)));}
 function infAdjustReload(mult){INF.reloadTime=Math.max(.42,Math.min(3.5,INF.reloadTime*mult));}
-function infStartReload(manual){if(!INF.active||CREW.phase!=='play'||INF.reloadLeft>0||INF.ammo>=INF.magSize)return false;INF.reloadDuration=INF.reloadTime;INF.reloadLeft=INF.reloadDuration;INF.reloadCount++;J.text(G.sh.x,G.sh.y-32,manual?'전술 재장전':'재장전','#7FEBD0',15);SFX.reload&&SFX.reload(manual);return true;}
+function infStartReload(manual){if(!INF.active||CREW.phase!=='play'||INF.reloadLeft>0||INF.ammo>=INF.magSize)return false;INF.reloadDuration=INF.reloadTime*(INF.permLastStand&&G.php<=G.phpMax*.3?.75:1);INF.reloadLeft=INF.reloadDuration;INF.reloadCount++;J.text(G.sh.x,G.sh.y-32,manual?'전술 재장전':'재장전','#7FEBD0',15);SFX.reload&&SFX.reload(manual);return true;}
 function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='play')return;INF.reloadLeft=Math.max(0,INF.reloadLeft-dt);if(INF.reloadLeft<=0){INF.ammo=INF.magSize;J.text(G.sh.x,G.sh.y-32,'장전 완료','#FFD36E',14);SFX.reloadDone&&SFX.reloadDone();}}
  function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null,
-  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{}});infResetXpLog();}
+  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{},
+  /* v7.5.1 확장 노드 런 상태 */
+  drillerRampMax:0,oreSonarChance:0,drillerCrackHoldMul:1,permRegenAmt:0,permRegenT:0,permDashGuardDur:0,permDashGuardT:0,permDepthHp:0,permDepthHpApplied:0,permStoneheart:false,permGunRampMax:0,permGunRamp:0,permKillHeal:0,permLastStand:false,permBreakerStick:false,permFlareSlow:0,permPhaseGrapple:false,permDashDistMul:1,permDarkMove:0,permDarkMoveT:0,permGhostDash:false,permOverclock:false,permShieldAbsorb:0,engineerQCdMul:1,permEmergency:false,permEmergencyUsed:false});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
  for(const role of Object.values(INF_ROLES)){
@@ -10110,30 +10275,48 @@ function infStartRun(roleId){
  AU.init();AU.resume();startIncursion('tunnel');infApplyPermanentNodes(role.id);crewShow('play');DLG.on=false;G.weapon=role.weapon;G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;
  const keys=infEl('infKeyGuide');if(keys)keys.innerHTML=role.keys;
  infInitFloor();toast(role.name+' · 무한 모드 시작');infPaint();
+ if(typeof AICREW!=='undefined')AICREW.onRunStart();   /* AI 크루 편성 투입 */
  if((infPermState().startCards||0)>0)setTimeout(()=>{if(INF.active&&CREW.phase==='play')infOpenLevel();},460);   /* 6.3 start preset card */
 }
 function infFindBreakerTarget(){
  const sh=G.sh,a=sh.aim,ca=Math.cos(a),sa=Math.sin(a),max=CELL*8;
- for(let d=R_SHELLY+10;d<=max;d+=Math.max(5,CELL*.14)){const x=sh.x+ca*d,y=sh.y+sa*d,[c,r]=toCell(x,y);if(!inB(c,r))break;if(solid(c,r))return {c,r,x:cxw(c),y:cyw(r),type:G.cell[ci(c,r)],a};}
+ for(let d=R_SHELLY+10;d<=max;d+=Math.max(5,CELL*.14)){const x=sh.x+ca*d,y=sh.y+sa*d;
+  /* 점착 파쇄탄 — 조준선 위의 적이 벽보다 먼저 걸리면 적에게 부착한다 */
+  if(INF.permBreakerStick)for(const e of G.enemies){if(e.hp<=0)continue;if(Math.hypot(x-e.x,y-e.y)<e.r+7)return {enemy:e,x:e.x,y:e.y,a};}
+  const [c,r]=toCell(x,y);if(!inB(c,r))break;if(solid(c,r))return {c,r,x:cxw(c),y:cyw(r),type:G.cell[ci(c,r)],a};}
  return null;
 }
 function infTryFireBreaker(){
  if(!INF.active||INF.roleId!=='gunner'||CREW.phase!=='play'||INF.breakerLatch)return false;
  INF.breakerLatch=true;if(INF.breakerCd>0||INF.breakerDryCd>0)return false;
- const target=infFindBreakerTarget();if(!target){INF.breakerDryCd=.35;toast('파쇄탄을 부착할 벽이 필요합니다');SFX.tick&&SFX.tick();return false;}
+ const target=infFindBreakerTarget();if(!target){INF.breakerDryCd=.35;toast(INF.permBreakerStick?'파쇄탄을 부착할 벽이나 적이 필요합니다':'파쇄탄을 부착할 벽이 필요합니다');SFX.tick&&SFX.tick();return false;}
  const sh=G.sh,ca=Math.cos(target.a),sa=Math.sin(target.a),sx=sh.x+ca*(R_SHELLY*.8),sy=sh.y+sa*(R_SHELLY*.8);
- INF.breakerCharges.push({sx,sy,x:target.x,y:target.y,c:target.c,r:target.r,type:target.type,a:target.a,travel:.18,travelMax:.18,t:INF.breakerFuse,stuck:false,unbreakable:!!SOLIDX(target.type)});
- INF.breakerCd=INF.breakerMaxCd;J.burst(sx,sy,9,['#ff8d72','#ffd36e','#fff3d6'],190);J.kick(2.6,-ca,-sa);SFX.tick&&SFX.tick();toast('파쇄탄 발사 · '+INF.breakerFuse.toFixed(1)+'초 신관');return true;
+ INF.breakerCharges.push(target.enemy
+  ?{sx,sy,x:target.x,y:target.y,enemy:target.enemy,enemyStick:true,a:target.a,travel:.18,travelMax:.18,t:INF.breakerFuse,stuck:false,unbreakable:false}
+  :{sx,sy,x:target.x,y:target.y,c:target.c,r:target.r,type:target.type,a:target.a,travel:.18,travelMax:.18,t:INF.breakerFuse,stuck:false,unbreakable:!!SOLIDX(target.type)});
+ INF.breakerCd=INF.breakerMaxCd;J.burst(sx,sy,9,['#ff8d72','#ffd36e','#fff3d6'],190);J.kick(2.6,-ca,-sa);SFX.tick&&SFX.tick();toast((target.enemy?'점착 파쇄탄 발사':'파쇄탄 발사')+' · '+INF.breakerFuse.toFixed(1)+'초 신관');return true;
 }
 function infExplodeBreaker(charge,early){
  if(!charge)return;const x=charge.x,y=charge.y,rad=Math.max(1,INF.breakerRadius|0),blastMul=(INF.breakerDamageMul||1)*(early?(INF.breakerEarlyMul||1):1);
  if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.impact(x,y,charge.a||0,'explosive');
  J.ring(x,y,'#ff8d72',12,CELL*(1.2+rad*.55),5);J.ring(x,y,'#ffd36e',7,CELL*(.75+rad*.4),3);J.burst(x,y,28+rad*6,['#ff6f45','#ffd36e','#fff3d6',P.rim],310);J.kick(7+rad,Math.cos(charge.a||0),Math.sin(charge.a||0));SFX.brk&&SFX.brk();
  if(charge.unbreakable){J.text(x,y-28,'기반암 · 파괴 불가','#c8b8e8',16);toast('기반암에는 파쇄 효과가 없습니다');return;}
- INF.breakerBlastLock=true;
- for(let dr=-rad;dr<=rad;dr++)for(let dc=-rad;dc<=rad;dc++){const ring=Math.max(Math.abs(dc),Math.abs(dr));if(ring>rad)continue;const c=charge.c+dc,r=charge.r+dr;if(!inB(c,r))continue;const type=G.cell[ci(c,r)];if(!type||SOLIDX(type))continue;const base=!dc&&!dr?1.12:(dc&&dr?.55:.72),mul=base*Math.max(.42,1-(ring-1)*.28)*blastMul,full=(HPT[type]||100)*INF.wallHpMul;damage(c,r,full*mul,dc||Math.cos(charge.a||0),dr||Math.sin(charge.a||0),true);}
- INF.breakerBlastLock=false;
- const enemyRad=CELL*(1.6+(rad-1)*.65);for(const e of G.enemies){if(e.hp<=0)continue;const dx=e.x-x,dy=e.y-y,d=Math.hypot(dx,dy);if(d<enemyRad){const fall=1-d/enemyRad;hurtEnemy(e,DEMO.enemyGunDmg*(.28+.34*fall)*INF.gunMul*(INF.breakerEnemyMul||1),dx/(d||1),dy/(d||1));}}
+ if(charge.c!=null){
+  INF.breakerBlastLock=true;
+  for(let dr=-rad;dr<=rad;dr++)for(let dc=-rad;dc<=rad;dc++){const ring=Math.max(Math.abs(dc),Math.abs(dr));if(ring>rad)continue;const c=charge.c+dc,r=charge.r+dr;if(!inB(c,r))continue;const type=G.cell[ci(c,r)];if(!type||SOLIDX(type))continue;const base=!dc&&!dr?1.12:(dc&&dr?.55:.72),mul=base*Math.max(.42,1-(ring-1)*.28)*blastMul,full=(HPT[type]||100)*INF.wallHpMul;damage(c,r,full*mul,dc||Math.cos(charge.a||0),dr||Math.sin(charge.a||0),true);}
+  INF.breakerBlastLock=false;
+ }
+ const enemyRad=CELL*(1.6+(rad-1)*.65);
+ for(const e of G.enemies){if(e.hp<=0)continue;const dx=e.x-x,dy=e.y-y,d=Math.hypot(dx,dy);if(d>=enemyRad)continue;
+  const fall=1-d/enemyRad,direct=charge.enemyStick&&e===charge.enemy;
+  hurtEnemy(e,DEMO.enemyGunDmg*(direct?.95:(.28+.34*fall))*INF.gunMul*(INF.breakerEnemyMul||1),dx/(d||1),dy/(d||1));
+  /* 점착 파쇄탄 — 적 몸에서 터지면 주변이 밀려나며 1초 기절 */
+  if(charge.enemyStick&&e.hp>0){
+   if(!e.boss){e.stunT=Math.max(e.stunT||0,1);J.text(e.x,e.y-e.r-14,'기절','#FFD36E',13);}
+   e.kbx=(e.kbx||0)+dx/(d||1)*teWorld(210);e.kby=(e.kby||0)+dy/(d||1)*teWorld(210);
+  }
+ }
+ if(charge.enemyStick)J.ring(x,y,'#fff3d6',9,enemyRad,4);
  if(early)J.text(x,y-30,'조기 기폭','#ffd36e',15);
 }
 function infDetonateBreaker(){
@@ -10162,7 +10345,8 @@ function infDrillerPressure(c,r,dt,hx,hy,boost){
  if(c<=0||r<=0||c>=COLS-1||r>=ROWS-1){if((INF.drillerNoticeCd||0)<=0){INF.drillerNoticeCd=1.2;J.text(cxw(c),cyw(r)-24,'외곽 지지층','#C8B8E8',13);toast('외곽 지지층은 붕괴 위험 때문에 굴착할 수 없습니다');}return false;}
   if(!(INF.drillerCracks instanceof Map))INF.drillerCracks=new Map();const depthScale=1+Math.max(0,INF.depth-1)*.22,need=(type==='core'?22*(INF.drillerCoreNeedMul||1)*(INF.drillerTraitMantle?.65:1):14)*depthScale;
   if(INF.drillerAlignTarget!==k){INF.drillerAlignTarget=k;INF.drillerAlignT=0;}INF.drillerAlignT+=dt;const aligned=(INF.drillerTraitAlign||INF.drillerTraitTracker)&&INF.drillerAlignT>=((INF.drillerTraitTracker&& !INF.drillerTraitAlign)?.65:.7),focus=(INF.drillerTraitAlign&&aligned?1.35:1)*(INF.drillerTraitTracker&&aligned?1.4:1);
-  const warm=.35+.65*drillWarmMul(),roleMul=typeof crewDigMul==='function'?crewDigMul():2,gain=Math.max(0,dt)*warm*INF.drillMul*infDrillerOutputMul()*roleMul*(INF.drillerFoundationMul||1)*focus*(boost?1.75:1)/need,old=INF.drillerCracks.get(k)||{p:0,last:G.t,type,stage:0};old.p=Math.min(1,old.p+gain);old.last=G.t;old.type=type;INF.drillerCracks.set(k,old);INF.drillerTarget=k;
+  const ramp=1+Math.min(1,(INF.drillerAlignT||0)/1.6)*(INF.drillerRampMax||0);   /* 과열 배출구 — 같은 벽 연속 굴착 램프 */
+  const warm=.35+.65*drillWarmMul(),roleMul=typeof crewDigMul==='function'?crewDigMul():2,gain=Math.max(0,dt)*warm*INF.drillMul*infDrillerOutputMul()*roleMul*(INF.drillerFoundationMul||1)*focus*ramp*(boost?1.75:1)/need,old=INF.drillerCracks.get(k)||{p:0,last:G.t,type,stage:0};old.p=Math.min(1,old.p+gain);old.last=G.t;old.type=type;INF.drillerCracks.set(k,old);INF.drillerTarget=k;
  const stage=Math.min(4,Math.floor(old.p*4));if(stage>old.stage){old.stage=stage;J.text(cxw(c),cyw(r)-26,'균열 '+Math.floor(old.p*100)+'%','#FFD36E',14);J.ring(cxw(c),cyw(r),'#FFD36E',4+stage*2,CELL*(.45+stage*.16),2.4);}
  if((INF.drillerFxCd||0)<=0){INF.drillerFxCd=.12;G.vib.set(k,{t:.14,amp:2.5+old.p*5,dx:hx||0,dy:hy||0});J.chunks(cxw(c)-(hx||0)*CELL*.32,cyw(r)-(hy||0)*CELL*.32,2,['#C8B8E8','#FFD36E','#FFF3D6'],105,hx,hy);SFX.dig&&SFX.dig();}
   if(old.p>=1){if(INF.drillerTraitBranchPin&&!INF.drillerPinUsed&&boost)infDrillerSeedBranch(c,r,type);return infBreakFoundation(c,r,type,hx,hy);}if(INF.drillerTraitBranchPin&&!INF.drillerPinUsed&&boost)infDrillerSeedBranch(c,r,type);return true;
@@ -10175,6 +10359,12 @@ function infUpdateDrillerCracks(dt){
 function infDrawDrillerCracks(){
  if(!(INF.drillerCracks instanceof Map))return;for(const [k,v] of INF.drillerCracks){if(v.p<=0||!G.cell[k]||!SOLIDX(G.cell[k]))continue;const c=k%COLS,r=(k-c)/COLS,x=cxw(c),y=cyw(r),p=v.p,arms=3+Math.floor(p*7);cx.save();cx.translate(x,y);cx.strokeStyle=p>.72?'#FFF3D6':'#FFD36E';cx.shadowColor='#FFD36E';cx.shadowBlur=5+p*10;cx.lineWidth=1.2+p*2;cx.globalAlpha=.38+p*.62;for(let i=0;i<arms;i++){const a=i*2.399+(k%17)*.13,len=CELL*(.1+p*(.18+(i%3)*.045)),sx=Math.cos(a)*CELL*.05,sy=Math.sin(a)*CELL*.05;cx.beginPath();cx.moveTo(sx,sy);cx.lineTo(Math.cos(a)*len,Math.sin(a)*len);cx.lineTo(Math.cos(a+.32)*len*.72,Math.sin(a+.32)*len*.72);cx.stroke();}cx.globalAlpha=.9;cx.lineWidth=2;cx.beginPath();cx.arc(0,0,CELL*.37,-Math.PI*.5,-Math.PI*.5+Math.PI*2*p);cx.stroke();cx.restore();}
 }
+/* 연막 화합물 — 플레어 조명 범위 안의 적을 감속시킨다 */
+function infEnemyInFlare(e){
+ if(!G.lamps||!G.lamps.length)return false;
+ for(const L of G.lamps){if(!L.flare||(L.ttl!=null&&L.ttl<=0))continue;if(Math.hypot(e.x-L.x,e.y-L.y)<=(L.rad||0))return true;}
+ return false;
+}
 function infScoutPointClear(x,y){
  const rad=R_SHELLY*.9;if(solidAt(x,y))return false;
  for(let i=0;i<8;i++){const a=Math.PI*2*i/8;if(solidAt(x+Math.cos(a)*rad,y+Math.sin(a)*rad))return false;}
@@ -10183,12 +10373,32 @@ function infScoutPointClear(x,y){
 function infUseScoutGrapple(){
  if(!INF.active||INF.roleId!=='scout'||G.dash.active)return false;
  const sh=G.sh,a=sh.aim,dx=Math.cos(a),dy=Math.sin(a),max=CELL*(INF.scoutGrappleRange||5);
- let bx=sh.x,by=sh.y;
- for(let d=12;d<=max;d+=8){const x=sh.x+dx*d,y=sh.y+dy*d;if(!infScoutPointClear(x,y))break;if(typeof LOS!=='undefined'&&DEMO.losOn&&!LOS.visibleAt(x,y))break;bx=x;by=y;}
+ let bx=sh.x,by=sh.y,blockLen=0,blocked=false,phased=false,px=0,py=0;
+ for(let d=12;d<=max;d+=8){const x=sh.x+dx*d,y=sh.y+dy*d;
+  if(!infScoutPointClear(x,y)){
+   /* 위상 그래플 — 한 칸 두께의 벽은 관통해 반대편 빈 공간을 찾는다 */
+   if(!INF.permPhaseGrapple)break;
+   blocked=true;blockLen+=8;if(blockLen>CELL*2.3)break;continue;
+  }
+  if(blocked){px=x;py=y;phased=true;break;}
+  if(typeof LOS!=='undefined'&&DEMO.losOn&&!LOS.visibleAt(x,y))break;
+  bx=x;by=y;
+ }
+ if(phased){
+  /* 벽 반대편으로 즉시 견인 — 통과 구간은 순간이동으로 처리한다 */
+  INF.scoutGrappleFx={sx:sh.x,sy:sh.y,x:px,y:py,life:.34,maxLife:.34};
+  J.ring(sh.x,sh.y,'#7FEBD0',6,CELL*.7,2.6);
+  sh.x=px;sh.y=py;collide(sh,R_SHELLY);sh.face=dx<0?-1:1;G.iframes=Math.max(G.iframes,.35);
+  CREW.eCd=CREW.role.eCd*(INF.scoutGrappleCdMul||1);
+  J.ring(px,py,'#7FEBD0',7,CELL*.9,3);J.burst(px,py,12,['#7FEBD0','#D8FFF5'],170);J.text(px,py-30,'위상 그래플','#7FEBD0',15);
+  if(typeof LOS!=='undefined'&&LOS.markDirty)LOS.markDirty();SFX.dash&&SFX.dash();
+  return true;
+ }
  const dist=Math.hypot(bx-sh.x,by-sh.y);
  if(dist<CELL*.72){toast('시야 안의 빈 공간에 조준하세요');return false;}
  const dur=.22;INF.scoutGrappleFx={sx:sh.x,sy:sh.y,x:bx,y:by,life:.34,maxLife:.34};
  G.dash.active=true;G.dash.vx=dx*dist/dur;G.dash.vy=dy*dist/dur;G.dash.t=dur;sh.face=dx<0?-1:1;
+ if(INF.permGhostDash)G.iframes=Math.max(G.iframes,dur+.4);   /* 유령 걸음 — 그래플 견인에도 적용 */
  CREW.eCd=CREW.role.eCd*(INF.scoutGrappleCdMul||1);spawnDashDust(1.35);J.ring(bx,by,'#7FEBD0',5,CELL*.48,2.2);SFX.dash&&SFX.dash();
  return true;
 }
@@ -10226,7 +10436,7 @@ function infPlaceEngineerNode(){
  if(INF.engineerNodes.length>=INF.engineerMaxNodes){const old=INF.engineerNodes.shift();G.lamps=G.lamps.filter(L=>L.engineerNodeId!==old.id);J.text(old.x,old.y-20,'회수','#C7A0FF',12);}
  const node={id:++INF.engineerNodeSeq,x:p.x,y:p.y,life:INF.engineerNodeLife,maxLife:INF.engineerNodeLife,rad:CELL*(INF.engineerNodeRadius||4)};INF.engineerNodes.push(node);
  G.lamps.push({c:0,r:0,x:p.x,y:p.y,ph:Math.random()*6,rad:CELL*2.15,ttl:node.life,engineerNodeId:node.id});
- CREW.qCd=CREW.role.qCd;J.burst(p.x,p.y,13,['#C7A0FF','#7FEBD0','#FFF'],155);J.ring(p.x,p.y,'#C7A0FF',7,node.rad,3);toast('전력 노드 설치 · 반경 '+(INF.engineerNodeRadius||4).toFixed(1)+'칸');SFX.cache&&SFX.cache();return true;
+ CREW.qCd=CREW.role.qCd*(INF.engineerQCdMul||1);J.burst(p.x,p.y,13,['#C7A0FF','#7FEBD0','#FFF'],155);J.ring(p.x,p.y,'#C7A0FF',7,node.rad,3);toast('전력 노드 설치 · 반경 '+(INF.engineerNodeRadius||4).toFixed(1)+'칸');SFX.cache&&SFX.cache();return true;
 }
 function infPlaceEngineerTurret(){
  if(!INF.active||INF.roleId!=='engineer'||CREW.eCd>0)return false;
@@ -10242,7 +10452,7 @@ function infEngineerLineClear(x0,y0,x1,y1){
 function infUpdateEngineer(dt){
  for(let i=INF.engineerNodes.length-1;i>=0;i--){const n=INF.engineerNodes[i];n.life-=dt;if(n.life>0)continue;INF.engineerNodes.splice(i,1);G.lamps=G.lamps.filter(L=>L.engineerNodeId!==n.id);J.text(n.x,n.y-18,'전력 종료','#8D789F',12);}
  for(const t of CREW.turrets){
-  t.life-=dt;t.cd=Math.max(0,t.cd-dt);let source=null,bd=1e9;
+  t.life-=dt*(INF.permOverclock&&t.linkNode?1.2:1);t.cd=Math.max(0,t.cd-dt);let source=null,bd=1e9;   /* 오버클럭 — 노드 급전 중 내구 20% 가속 소모 */
   for(const n of INF.engineerNodes){const d=Math.hypot(n.x-t.x,n.y-t.y);if(d<=n.rad&&d<bd){bd=d;source=n;}}
   const playerPower=Math.hypot(G.sh.x-t.x,G.sh.y-t.y)<=CELL*2.25;t.autonomousPowered=!source&&!playerPower&&INF.engineerAutonomous;t.powered=!!source||playerPower||t.autonomousPowered;t.linkNode=source;t.linkPlayer=!source&&playerPower;
   if(!t.powered)continue;
@@ -10251,7 +10461,7 @@ function infUpdateEngineer(dt){
   let best=null,bestD=CELL*INF.engineerTurretRange;
   for(const e of G.enemies){if(e.hp<=0)continue;const d=Math.hypot(e.x-t.x,e.y-t.y);if(d<bestD&&infEngineerLineClear(t.x,t.y,e.x,e.y)){best=e;bestD=d;}}
   if(!best)continue;
-  const a=Math.atan2(best.y-t.y,best.x-t.x),c=Math.cos(a),s=Math.sin(a),sp=teWorld(285);t.aim=a;t.ammo--;t.cd=INF.engineerTurretInterval;
+  const a=Math.atan2(best.y-t.y,best.x-t.x),c=Math.cos(a),s=Math.sin(a),sp=teWorld(285);t.aim=a;t.ammo--;t.cd=INF.engineerTurretInterval*(INF.permOverclock&&t.linkNode?.5:1);   /* 오버클럭 — 노드 급전 연사 2배 */
   G.projectiles.push(projectileWithVisual({x:t.x+c*12,y:t.y+s*12,vx:c*sp,vy:s*sp,life:1.05,power:INF.engineerTurretPower*(t.autonomousPowered ? .5 : 1),srcTurret:1,lastCell:-1},'support'));
   if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(t.x+c*12,t.y+s*12,a,'support');
  }
@@ -10269,14 +10479,28 @@ function infDrawEngineerInstallations(){
  for(const t of CREW.turrets){const col=t.powered?'#C7A0FF':'#685674',source=t.linkNode||t.linkPlayer&&G.sh;cx.save();if(source){cx.globalAlpha=.35+.18*Math.sin(G.t*8);cx.strokeStyle='#7FEBD0';cx.lineWidth=1.5;cx.setLineDash([6,5]);cx.beginPath();cx.moveTo(source.x,source.y);cx.lineTo(t.x,t.y);cx.stroke();cx.setLineDash([]);}cx.globalAlpha=1;cx.translate(t.x,t.y);cx.fillStyle='#21152F';cx.strokeStyle=col;cx.lineWidth=2.3;cx.beginPath();cx.arc(0,0,13,0,7);cx.fill();cx.stroke();cx.rotate(t.aim||0);cx.fillStyle=col;cx.beginPath();cx.roundRect(0,-4,19,8,3);cx.fill();cx.fillStyle='#F3E9FF';cx.beginPath();cx.arc(0,0,4.5,0,7);cx.fill();cx.rotate(-(t.aim||0));cx.strokeStyle=t.powered?'#7FEBD0':'#FF718A';cx.lineWidth=2;cx.beginPath();cx.arc(0,0,17,-Math.PI*.5,-Math.PI*.5+Math.PI*2*(t.ammo/Math.max(1,t.mag)));cx.stroke();cx.fillStyle=t.powered?'#BFFFEF':'#FF8DA8';cx.font='800 9px '+FNT;cx.textAlign='center';if(!t.powered)cx.fillText('NO POWER',0,-22);else if(t.reload>0)cx.fillText('RELOAD',0,-22);cx.restore();}
 }
 function infUpdateRoleTools(dt){
+ /* ── v7.5.1 확장 노드 프레임 틱 ── */
+ INF.permDashGuardT=Math.max(0,(INF.permDashGuardT||0)-dt);                       /* 견고한 발판 */
+ INF.permDarkMoveT=Math.max(0,(INF.permDarkMoveT||0)-dt);                         /* 암순응 */
+ if(!G.mouse.gunDown)INF.permGunRamp=Math.max(0,(INF.permGunRamp||0)-dt*.9);      /* 예열 총열 냉각 */
+ if((INF.permRegenAmt||0)>0&&CREW.phase==='play'){                                 /* 재생 라이닝 · 자동 수리 드론 */
+  INF.permRegenT=(INF.permRegenT||0)+dt;
+  if(INF.permRegenT>=5){INF.permRegenT-=5;if(G.php>0&&G.php<G.phpMax){G.php=Math.min(G.phpMax,G.php+INF.permRegenAmt);J.text(G.sh.x,G.sh.y-30,'+'+INF.permRegenAmt,'#7FEBD0',12);}}
+ }
  INF.breakerCd=Math.max(0,(INF.breakerCd||0)-dt);INF.breakerDryCd=Math.max(0,(INF.breakerDryCd||0)-dt);if(!G.mouse.drillDown)INF.breakerLatch=false;
- for(let i=INF.breakerCharges.length-1;i>=0;i--){const charge=INF.breakerCharges[i];if(!charge.stuck){charge.travel-=dt;if(charge.travel<=0){charge.travel=0;charge.stuck=true;J.burst(charge.x,charge.y,7,[charge.unbreakable?'#c8b8e8':'#ff8d72','#ffd36e'],105);J.ring(charge.x,charge.y,'#ffd36e',3,CELL*.45,2);}}else{charge.t-=dt;if(charge.t<=0){INF.breakerCharges.splice(i,1);infExplodeBreaker(charge,false);}}}
+ for(let i=INF.breakerCharges.length-1;i>=0;i--){const charge=INF.breakerCharges[i];
+  /* 점착 파쇄탄 — 살아있는 숙주를 따라다닌다. 숙주가 먼저 죽으면 그 자리에서 신관이 계속 돈다 */
+  if(charge.enemy&&charge.enemy.hp>0){charge.x=charge.enemy.x;charge.y=charge.enemy.y;}
+  if(!charge.stuck){charge.travel-=dt;if(charge.travel<=0){charge.travel=0;charge.stuck=true;J.burst(charge.x,charge.y,7,[charge.unbreakable?'#c8b8e8':'#ff8d72','#ffd36e'],105);J.ring(charge.x,charge.y,'#ffd36e',3,CELL*.45,2);
+   if(charge.enemyStick&&charge.enemy&&charge.enemy.hp>0){const e=charge.enemy;hurtEnemy(e,DEMO.enemyGunDmg*.5*INF.gunMul*(INF.breakerEnemyMul||1),Math.cos(charge.a||0),Math.sin(charge.a||0));J.text(e.x,e.y-e.r-16,'점착','#ff8d72',13);}   /* 부착 직격 피해 */
+  }}else{charge.t-=dt;if(charge.t<=0){INF.breakerCharges.splice(i,1);infExplodeBreaker(charge,false);}}}
  INF.scoutPulseT=Math.max(0,(INF.scoutPulseT||0)-dt);INF.scoutPulseCd=Math.max(0,(INF.scoutPulseCd||0)-dt);
  if(INF.scoutGrappleFx){INF.scoutGrappleFx.life-=dt;if(INF.scoutGrappleFx.life<=0)INF.scoutGrappleFx=null;}
  if(INF.roleId==='scout'){
   if(!(INF.scoutSectors instanceof Set))INF.scoutSectors=new Set();
   const [c,r]=toCell(G.sh.x,G.sh.y),sw=Math.ceil(COLS/3),key=Math.floor(c/3)+Math.floor(r/3)*sw;
-  if(!INF.scoutSectors.has(key)&&INF.scoutPulseCd<=0){INF.scoutSectors.add(key);INF.scoutSectorCount++;INF.scoutPulseCd=2.8;infScoutPulse(G.sh.x,G.sh.y,true);}
+  if(!INF.scoutSectors.has(key)&&INF.scoutPulseCd<=0){INF.scoutSectors.add(key);INF.scoutSectorCount++;INF.scoutPulseCd=2.8;infScoutPulse(G.sh.x,G.sh.y,true);
+   if((INF.permDarkMove||0)>0){INF.permDarkMoveT=3;J.text(G.sh.x,G.sh.y-56,'암순응','#7FEBD0',13);}}   /* 암순응 — 새 구역 발견 가속 */
  }
  if(INF.roleId==='driller')infUpdateDrillerCracks(dt);
  if(INF.roleId==='engineer')infUpdateEngineer(dt);
@@ -10312,12 +10536,18 @@ function infInitFloor(){
  {const pb=(infPermState().reroll)||0;INF.cards=INF.depth<=1?{rerolls:INF_CARDS.rerollStart+pb}:{rerolls:Math.min(INF_CARDS.rerollCap+pb,((INF.cards&&INF.cards.rerolls)||0)+INF_CARDS.rerollPerStratum)};}   /* 6.3 permanent-node reroll bonus */
  INF.xpNeed=infXpNeedFor(INF.level);  /* 곡선은 행성 길이에 맞춘다 (§4.3) */
  INF.depth=G.depth;INF.floorBroken=0;INF.bossSpawned=false;INF.bossActive=false;INF.boss=null;
- INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
+ INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
  INF.wallHpMul=infWallHpMulFor(Math.max(1,INF.depth));INF.enemyHpMul=infEnemyHpMulFor(Math.max(1,INF.depth));
  INF.totalBreakable=Math.max(1,G.cell.reduce((n,t)=>n+(t&&!SOLIDX(t)?1:0),0));
  G.enemies.length=0;G.enemyCd=3.2;CREW.timeLeft=1e9;CREW.phase='play';
  if(INF.roleId==='scout'){const [c,r]=toCell(G.sh.x,G.sh.y),sw=Math.ceil(COLS/3);INF.scoutSectors.add(Math.floor(c/3)+Math.floor(r/3)*sw);}
  /* 지층 정체성 — 진입 전조 (§4.2). 이상지대 진입은 엔드게임 경고를 겸한다 */
+ if(typeof AICREW!=='undefined'&&AICREW.members.length)AICREW.onFloorInit();   /* 새 지층에서 크루 재집결 */
+ /* 심층 적응 — 10층마다 최대 체력 증가 (지층 진입 시 목표치와의 차액만 반영) */
+ if((INF.permDepthHp||0)>0){
+  const target=Math.floor(Math.max(0,INF.depth)/10)*INF.permDepthHp,delta=target-(INF.permDepthHpApplied||0);
+  if(delta>0){INF.permDepthHpApplied=target;G.phpMax+=delta;G.php+=delta;J.text(G.sh.x,G.sh.y-36,'심층 적응 · 최대 체력 +'+delta,'#7FEBD0',13);}
+ }
  toast(infDepthLabel(INF.depth)+' — '+(infIsAbyss(INF.depth)?'행성 중심을 지나 이상지대에 진입했다. 위험이 가파르게 오른다':infStratum(INF.depth).omen));
 }
 function infDrillerDeflectWalls(x,y){if(!INF.drillerTraitDeflector||INF.drillerPropagationLock||!G.mouse.drillDown)return;const [c,r]=toCell(x,y),a=G.sh.aim,dc=Math.round(-Math.sin(a)),dr=Math.round(Math.cos(a));INF.drillerPropagationLock=true;for(const side of [-1,1]){const cc=c+dc*side,rr=r+dr*side;if(inB(cc,rr)&&solid(cc,rr)){const t=G.cell[ci(cc,rr)];if(t&&!SOLIDX(t)&&(t==='dirt'||t==='stone'))damage(cc,rr,shelDps()*DRILL_DMG()*.65*INF.drillMul,dc*side,dr*side,true);}}INF.drillerPropagationLock=false;J.ring(x,y,'#FFF3D6',4,CELL*.85,2);}
@@ -10362,7 +10592,7 @@ function infOnBlockBroken(type,x,y){
   if(INF.drillerTraitHeatRecovery&&INF.roleId==='driller'){G.drillHeat=Math.max(0,(G.drillHeat||0)-.12);G.drillHeatLock=Math.max(0,(G.drillHeatLock||0)-.08);}
   if(INF.drillerTraitDeflector&&INF.roleId==='driller'&&(type==='dirt'||type==='stone'))infDrillerDeflectWalls(x,y);
   if(INF.drillerTraitRecirc&&INF.roleId==='driller'&&CREW.breachT>0&&INF.drillerRecircReduced<1.5){const cut=Math.min(.25,1.5-INF.drillerRecircReduced);CREW.qCd=Math.max(0,CREW.qCd-cut);INF.drillerRecircReduced+=cut;}
-  if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);}
+  if(rare){const bonus=Math.random()<Math.min(1,INF.coreBonusChance+(INF.oreSonarChance||0))?1:0,core=Math.max(1,INF.coreMult|0)+bonus;   /* 광맥 감지 소나 가산 */INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);}
  if(INF.breakShield>0){CREW.shieldT=Math.max(CREW.shieldT,INF.breakShield);G.iframes=Math.max(G.iframes,Math.min(.28,INF.breakShield*.45));}
  if(INF.afterDrill&&!INF.universalBlastLock)INF.afterHits.push({x,y,t:.32});
  if(!INF.universalBlastLock){let rad=INF.breakShockRadius||0,pow=INF.breakShockPower||0;if(INF.explosiveDrill){rad=Math.max(rad,1.55);pow=Math.max(pow,.31);}if(INF.chainCollapse){rad+=.5;pow=Math.max(pow,.37);}if(rad>0)infTraitBlast(x,y,rad,pow,INF.chainCollapse?'#FF8D72':'#FFD36E');}
@@ -10605,7 +10835,9 @@ function infOpenLevel(){
  }
  /* 솔로는 전체 정지, 코옵은 비정지(§17.2-5 1차 답) — 게임은 계속 돌고
     선택은 1·2·3 키로 한다. 모달이 마우스를 덮는 동안에도 WASD 이동은 가능하다. */
- const coopLive=typeof COOP!=='undefined'&&COOP.active&&COOP._started;
+ const aiLive=typeof AICREW!=='undefined'&&AICREW.enabled&&AICREW.members.length>0;
+ /* AI 크루가 있으면 월드를 멈추지 않는다 — 선택은 1·2·3 키 (§17.2-5) */
+ const coopLive=(typeof COOP!=='undefined'&&COOP.active&&COOP._started)||aiLive;
  if(!coopLive){INF.cardReturnPhase=CREW.phase;CREW.phase='infiniteLevel';G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;}
  if(typeof COOP_onLevel==='function')COOP_onLevel(INF.level);
  const role=INF_ROLES[INF.roleId]||INF_ROLES.driller;infEl('infLevelTitle').textContent='LEVEL '+INF.level+' · '+(INF.active?role.name+' 채굴 특성':'채굴 특성 선택');
@@ -11002,8 +11234,115 @@ function infBossStartPattern(e,forcedType){
  else{for(let i=0;i<count;i++){const side=(i-(count-1)/2)*CELL*.32;infQueueBossShot(e,px+side,py+(Math.random()-.5)*CELL*.55,attackLead+i*.30,flight||1.72+Math.random()*.22,rad||CELL*1.08,'bossBarrage');}J.text(e.x,e.y-e.r-26,'연속 포격','#FF8DA8',16);}
  J.ring(e.x,e.y,'#FF557D',7,CELL*1.7,2.5);
 }
+/* ══════════ 보스 벽돌 소환 기믹 (boss-patterns 개발빌드) ══════════
+   1) field  — 보스 주변에 두꺼운 벽 뭉치를 불규칙 소환 → 원거리 공격 3연발
+   2) wave   — 특정 플레이어 방향으로 파도타듯 이어지는 장벽 (총 2초) → 원거리 공격 1회
+   3) prison — 플레이어 주변에 동그란 방벽(내부 여유 공간) → 그 플레이어에게 원거리 공격
+   공통: 맵 벽돌(stone)을 소환하되 낮은 확률로 파괴 불가(rock) — 보스 체력이 낮을수록 가중.
+   이미 벽돌이 있는 타일은 건너뛰고, 노이즈로 모양을 흐트러뜨린다.
+   생성 시 화면 흔들림 + 먼지 + 돌맹이 튐. 발동 시 보스 원거리 공격 애니메이션 재생. */
+function infBossWallHardChance(e){const ratio=e&&e.hpMax?Math.max(0,Math.min(1,e.hp/e.hpMax)):1;return .05+(1-ratio)*.20;}
+function infQueueBossWall(e,cc,rr,delay,budget){INF.bossWallQueue=INF.bossWallQueue||[];INF.bossWallQueue.push({boss:e,c:cc,r:rr,delay:Math.max(0,delay||0),budget});}
+function infBossWallMaterialize(w){
+ const cc=w.c,rr=w.r;if(!inB(cc,rr))return;const k=ci(cc,rr);
+ if(G.cell[k])return;   /* 규칙 5 — 이미 벽돌이 있는 타일은 소환하지 않음 */
+ const px=cxw(cc),py=cyw(rr);
+ if(Math.hypot(G.sh.x-px,G.sh.y-py)<CELL*1.05)return;   /* 플레이어를 벽 속에 가두지 않음 */
+ const b=w.boss;if(b&&b.hp>0&&Math.hypot(b.x-px,b.y-py)<b.r+CELL*.55)return;   /* 보스 몸통 위 생성 방지 */
+ let hard=false;
+ if(w.budget&&w.budget.left>0&&Math.random()<infBossWallHardChance(b)){hard=true;w.budget.left--;}
+ G.cell[k]=hard?'rock':'stone';G.band[k]=bandOf(rr);G.dec[k]=0;G.hp.delete(k);
+ G.compDirty=true;if(typeof LOS!=='undefined')LOS.markDirty();
+ /* 연출 — 흔들림 · 먼지 · 튀는 돌맹이 */
+ J.kick(2.4);
+ J.smoke(px,py+CELL*.15,3,hard?'#3A4462':'#4A4034',55);
+ J.chunks(px,py-CELL*.2,4,hard?['#6A7EB0','#4A5578','#2E3650']:['#C9B79A','#8F7B5C','#6B5A40'],165,0,-1.4);
+ J.ring(px,py,hard?'#8FA2E8':'#D8C49A',3,CELL*.6,2);
+ if(hard)J.text(px,py-CELL*.6,'경화 암반','#8FA2E8',13);
+}
+function infBossWallTick(dt){
+ if(!INF.bossWallQueue||!INF.bossWallQueue.length)return;
+ for(let i=0;i<INF.bossWallQueue.length;i++){
+  const w=INF.bossWallQueue[i];w.delay-=dt;
+  if(w.delay>0)continue;
+  INF.bossWallQueue.splice(i,1);i--;
+  if(!w.boss||w.boss.hp<=0)continue;
+  infBossWallMaterialize(w);
+ }
+}
+function infBossWallCastAnim(e,dur){   /* 기믹 발동 중 원거리 공격 애니메이션 재생 (규칙 7) */
+ e.facing=G.sh.x>=e.x?1:-1;
+ const baseDuration=2.6,animRate=baseDuration/Math.max(.4,dur);
+ e.bossFireBreathT=dur;e.bossAnimKey='fireBreath';e.bossAnimT=0;e.bossAnimRate=animRate;
+ e.attackCd=Math.max(e.attackCd||0,dur+.12);
+}
+function infBossWallField(e){   /* 패턴 1 — 주변 두꺼운 벽 뭉치 + 원거리 3연발 */
+ const budget={left:1+Math.round((1-e.hp/e.hpMax)*3)};
+ const [bc,br]=toCell(e.x,e.y),clusters=2+((Math.random()*3)|0);
+ for(let n=0;n<clusters;n++){
+  const a=Math.random()*Math.PI*2,dist=3.4+Math.random()*3.2;
+  const oc=bc+Math.round(Math.cos(a)*dist),or_=br+Math.round(Math.sin(a)*dist);
+  const rad=1.15+Math.random()*.75;
+  for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
+   const d=Math.hypot(dc,dr)+ (Math.random()-.5)*.6;   /* 노이즈 — 완벽한 원이 되지 않게 */
+   if(d>rad)continue;
+   if(Math.random()<.18)continue;                       /* 불규칙 구멍 */
+   infQueueBossWall(e,oc+dc,or_+dr,.12+n*.14+Math.random()*.3,budget);
+  }
+ }
+ infBossWallCastAnim(e,1.15);
+ e.bossForcedRanged=3;   /* 소환 후 원거리 공격 3연속 */
+ J.text(e.x,e.y-e.r-26,'암벽 융기','#D8C49A',17);J.ring(e.x,e.y,'#D8C49A',8,CELL*2.2,3);J.kick(4);
+}
+function infBossWallWave(e){   /* 패턴 2 — 탈리야식 파도 장벽 (총 2초) + 원거리 1회 */
+ const budget={left:1+Math.round((1-e.hp/e.hpMax)*3)};
+ const sh=G.sh,ang=Math.atan2(sh.y-e.y,sh.x-e.x);
+ const startD=Math.ceil(e.r/CELL)+1;
+ const lenToPlayer=Math.hypot(sh.x-e.x,sh.y-e.y)/CELL;
+ const len=Math.max(11,Math.min(24,Math.round(lenToPlayer+5)));
+ const [bc,br]=toCell(e.x,e.y),cosA=Math.cos(ang),sinA=Math.sin(ang),pxA=-sinA,pyA=cosA;
+ const steps=len-startD,WAVE_TOTAL=2.0;   /* 파도 총 생성 시간 2초 (규칙 2) */
+ for(let i=0;i<steps;i++){
+  const t=steps>1?i/(steps-1):0,delay=.1+WAVE_TOTAL*t;
+  const drift=(Math.random()-.5)*.9;   /* 노이즈 — 직선이 살짝 휘청이게 */
+  const cx0=bc+(cosA*(startD+i))+pxA*drift, cy0=br+(sinA*(startD+i))+pyA*drift;
+  for(const off of [-.55,.55]){   /* 두께 2칸 */
+   if(Math.random()<.10)continue;
+   const cc=Math.round(cx0+pxA*off+(Math.random()-.5)*.4),rr=Math.round(cy0+pyA*off+(Math.random()-.5)*.4);
+   infQueueBossWall(e,cc,rr,delay+Math.random()*.06,budget);
+  }
+ }
+ infBossWallCastAnim(e,WAVE_TOTAL+.25);
+ e.bossForcedRanged=1;   /* 소환 후 원거리 공격 1회 필수 */
+ J.text(e.x,e.y-e.r-26,'지각 파동','#FFB37A',17);J.ring(e.x,e.y,'#FFB37A',8,CELL*2.4,3);J.kick(4.5,cosA,sinA);
+}
+function infBossWallPrison(e){   /* 패턴 3 — 플레이어를 가두는 원형 방벽 + 원거리 1회 */
+ const budget={left:1+Math.round((1-e.hp/e.hpMax)*2)};
+ const sh=G.sh,[pc,pr]=toCell(sh.x,sh.y),radius=2.8;   /* 내부 여유 공간 확보 */
+ const segs=Math.round(Math.PI*2*radius*1.4),a0=Math.random()*Math.PI*2;
+ const seen=new Set();
+ for(let i=0;i<segs;i++){
+  const a=a0+Math.PI*2*i/segs;
+  const rj=radius+(Math.random()-.5)*.7;   /* 노이즈 — 완벽한 원형 방지 */
+  const cc=pc+Math.round(Math.cos(a)*rj),rr=pr+Math.round(Math.sin(a)*rj);
+  const key=cc+'_'+rr;if(seen.has(key))continue;seen.add(key);
+  if(Math.random()<.08)continue;
+  if(Math.hypot(cc-pc,rr-pr)<1.9)continue;   /* 내부 공간 침범 금지 */
+  infQueueBossWall(e,cc,rr,.15+(i/segs)*.55+Math.random()*.08,budget);   /* 시계방향으로 닫힘 */
+ }
+ infBossWallCastAnim(e,1.2);
+ e.bossForcedRanged=1;   /* 가둔 뒤 그 플레이어에게 원거리 공격 */
+ J.text(sh.x,sh.y-40,'석화 감옥!','#C7A0FF',18);J.ring(sh.x,sh.y,'#C7A0FF',10,CELL*radius,4);J.kick(4);
+}
+function infBossWallGimmickStart(e){
+ const roll=Math.random();
+ if(roll<.40)infBossWallField(e);
+ else if(roll<.75)infBossWallWave(e);
+ else infBossWallPrison(e);
+}
 function infBossProjectileHit(s){
  if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.impact(s.tx,s.ty,0,s.visualId||'bossScatter');else{J.ring(s.tx,s.ty,'#FF557D',10,s.rad*1.35,4);J.burst(s.tx,s.ty,18,['#FF557D','#FFB0B8','#3A0D1A'],230);J.kick(5);}
+ if(typeof AICREW!=='undefined')AICREW.bossShotHit(s);   /* AI 크루 피격 */
  const d=Math.hypot(G.sh.x-s.tx,G.sh.y-s.ty);if(d>s.rad||G.iframes>0)return;
  const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,spec=bossSpec(),dmg=lab&&BOSS_LAB.invincible?0:(spec?Math.max(0,Math.round(spec.projectileDamage*bossSpecTierMul(INF.boss,'dmgMul'))):Math.max(9,Math.round(DEMO.enemyDmg*(3.55+Math.max(0,INF.depth-1)*.35*INF_GROWTH_SCALE))));G.php=Math.max(0,G.php-dmg);G.iframes=DEMO.playerIFrame;G.flash=.65;G.pulse=1;if(dmg>0)J.text(G.sh.x,G.sh.y-32,'-'+dmg,'#FF557D',20);
  if(G.php<=0)infEndRun('붕괴탄에 쓰러짐');
@@ -11020,13 +11359,18 @@ function infDrawBossProjectiles(shx,shy){
   cx.restore();}
 }
 function infBossTick(e,dt){
- if(!e||e.hp<=0)return;const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,cfg=lab?BOSS_LAB.values:null,spec=bossSpec(),wasBreathing=(e.bossFireBreathT||0)>0;e.bossFireBreathT=Math.max(0,(e.bossFireBreathT||0)-dt);if(wasBreathing&&e.bossFireBreathT<=0)e.bossAnimRate=1;if(lab&&BOSS_LAB.paused){e.vx=e.vy=0;return;}if(lab&&BOSS_LAB.wanderOnly){INF.bossShots=[];INF.bossShotQueue=[];return;}infBossProjectileTick(dt);e.patternCd=(e.patternCd||0)-dt;e.attackCd=(e.attackCd||0)-dt;const ratio=e.hp/e.hpMax;
+ if(!e||e.hp<=0)return;const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,cfg=lab?BOSS_LAB.values:null,spec=bossSpec(),wasBreathing=(e.bossFireBreathT||0)>0;e.bossFireBreathT=Math.max(0,(e.bossFireBreathT||0)-dt);if(wasBreathing&&e.bossFireBreathT<=0)e.bossAnimRate=1;if(lab&&BOSS_LAB.paused){e.vx=e.vy=0;return;}if(lab&&BOSS_LAB.wanderOnly){INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];return;}infBossProjectileTick(dt);infBossWallTick(dt);e.patternCd=(e.patternCd||0)-dt;e.attackCd=(e.attackCd||0)-dt;e.wallGimmickCd=(e.wallGimmickCd==null?6+Math.random()*4:e.wallGimmickCd)-dt;const ratio=e.hp/e.hpMax;
  if(e.bossTier!=='guardian'){   /* 장갑 페이즈는 중심부 보스·변종 전용 */
  if(ratio<=.66&&e.armorStage<1){e.armorStage=1;infBossSpawnArmor(e,spec?spec.phaseArmor:6);if(!lab){spawnEnemy();spawnEnemy();}}
  else if(ratio<=.33&&e.armorStage<2){e.armorStage=2;infBossSpawnArmor(e,spec?spec.phaseArmor:8);if(!lab){spawnEnemy();spawnEnemy();}J.kick(7);}
  }
  if(e.patternCd<=0){e.patternCd=spec?spec.summonInterval:Math.max(2.4,5.96-Math.max(0,INF.depth-1)*.24*INF_GROWTH_SCALE);J.ring(e.x,e.y,'#FF557D',6,CELL*1.8,2.4);const count=spec?Math.max(0,Math.round(spec.summonCount*bossSpecTierMul(e,'summonMul'))):Math.max(1,Math.round(Math.min(5,1+Math.floor((INF.depth+1)/2))*infBossTierDef(e).summonMul));for(let i=0;i<count;i++)spawnEnemy();}
- if(e.attackCd<=0&&!(e.bossFireBreathT>0)&&!e.bossDashState){e.attackCd=Math.max(.1,bossRandomRange('attackIntervalMin','attackIntervalMax'));infBossStartPattern(e);}
+ const wallBusy=INF.bossWallQueue&&INF.bossWallQueue.length>0;
+ if(e.wallGimmickCd<=0&&!(e.bossFireBreathT>0)&&!e.bossDashState&&!wallBusy&&!(e.bossForcedRanged>0)){e.wallGimmickCd=9+Math.random()*6;infBossWallGimmickStart(e);return;}
+ if(e.attackCd<=0&&!(e.bossFireBreathT>0)&&!e.bossDashState){
+  if(e.bossForcedRanged>0){e.bossForcedRanged--;e.attackCd=Math.max(.1,1.0+Math.random()*.25);infBossStartPattern(e,'ranged');}   /* 벽 소환 후속 원거리 연발 */
+  else{e.attackCd=Math.max(.1,bossRandomRange('attackIntervalMin','attackIntervalMax'));infBossStartPattern(e);}
+ }
 }
 function infProjectileBurst(x,y){
  if(!INF.active||!Number.isFinite(x)||!Number.isFinite(y))return;const [c,r]=toCell(x,y);if(!window.TUNNEL_PROJECTILE_FX){J.ring(x,y,'#FFD36E',8,CELL*1.25,3);J.burst(x,y,10,['#FFD36E','#FFF'],180);}
@@ -11034,7 +11378,7 @@ function infProjectileBurst(x,y){
  for(const e of G.enemies){const dx=e.x-x,dy=e.y-y,d=Math.hypot(dx,dy);if(d<CELL*1.35)hurtEnemy(e,DEMO.enemyGunDmg*.7*INF.gunMul,dx/(d||1),dy/(d||1));}
 }
 function infBossDefeated(e){
- if(!INF.active||!INF.bossActive)return;INF.bossActive=false;INF.boss=null;INF.bossShots=[];INF.bossShotQueue=[];if(typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active){toast('TEST · 보스 처치 완료 · 인스펙터에서 재등장 가능');bossLabPaint();return;}const tier=(e&&e.bossTier)||'apex',td=INF_BOSS_TIER[tier];
+ if(!INF.active||!INF.bossActive)return;INF.bossActive=false;INF.boss=null;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];if(typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active){toast('TEST · 보스 처치 완료 · 인스펙터에서 재등장 가능');bossLabPaint();return;}const tier=(e&&e.bossTier)||'apex',td=INF_BOSS_TIER[tier];
  INF.bosses++;INF.core+=td.coreBase+INF.depth;   /* 코어는 운반 전리품 (§6.5) — 수호자는 소량, 중심부 보스는 후하게 */G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;G.php=Math.min(G.phpMax,G.php+G.phpMax*.3);CREW.phase='infiniteRest';
  /* §8.4-5 의 자동 탈출 요청은 '중심부 보스'(와 엔드게임 변종) 전용이다.
     수호자는 중간 목표이므로 처치 후에도 원정이 계속된다. */
@@ -11133,6 +11477,10 @@ function infUpdateEscape(dt){
  /* ready — 접근 탑승. 솔로 판정은 그대로 두고, 코옵이면 전원 탑승 집계로 확장한다.
     COOP_escapeAllAboard(): null=솔로 · false=크루 대기 · true=생존자 전원 탑승 (§8.4-3·4) */
  if(esc.localBoarded){
+  /* AI 크루도 다 타야 로켓이 뜬다 — 혼자 못 나간다 */
+  if(typeof AICREW!=='undefined'&&AICREW.escapeAllAboard()===true){
+   J.flash(esc.x,esc.y,CELL*2,'rgba(255,211,110,.9)');infEndRun('크루 전원 탑승',true);return;
+  }
   if(typeof COOP_escapeAllAboard==='function'&&COOP_escapeAllAboard()===true){
    J.flash(esc.x,esc.y,CELL*2,'rgba(255,211,110,.9)');infEndRun('크루 전원 탑승',true);
   }
@@ -11143,6 +11491,16 @@ function infUpdateEscape(dt){
   esc.board+=dt;
   if(esc.board>=INF_ESCAPE.boardTime){
    const aboard=(typeof COOP_escapeAllAboard==='function')?COOP_escapeAllAboard():null;
+   /* AI 크루가 있으면 솔로여도 '생존자 전원 탑승' 판정을 쓴다 */
+   if(aboard===null&&typeof AICREW!=='undefined'){
+    const a=AICREW.escapeAllAboard();
+    if(a!==null){
+     esc.localBoarded=true;
+     if(a===true){J.flash(esc.x,esc.y,CELL*2,'rgba(255,211,110,.9)');infEndRun('크루 전원 탑승',true);}
+     else{const cc=AICREW.escapeCount();toast('탑승 완료 — 크루를 기다린다 ('+(cc.boarded+1)+'/'+cc.total+')');}
+     return;
+    }
+   }
    if(aboard===null){J.flash(esc.x,esc.y,CELL*2,'rgba(255,211,110,.9)');infEndRun('탈출 포트 탑승',true);}   /* 솔로 — 기존 판정 유지 */
    else{
     esc.localBoarded=true;if(typeof COOP_onBoard==='function')COOP_onBoard();
@@ -11309,6 +11667,10 @@ function infPermNewState(){return {
  breakerCdCut:0,breakerRadius:0,breakerDmg:0,breakerEarly:0,
  flare:0,grappleRange:0,grappleCdCut:0,vision:0,pulseRadius:0,exploreXp:0,
  turrets:0,nodes:0,nodeRadius:0,turretMag:0,turretRate:0,turretLife:0,autonomous:false,
+ rampDrill:0,oreSonar:0,crackHold:0,drillPen:0,regen:0,dashGuard:0,depthHp:0,shieldDur:0,stoneheart:false,
+ rampGun:0,breakerEnemy:0,killHeal:0,lastStand:false,breakerStick:false,
+ flareSlow:0,dashDist:0,darkMove:0,phaseGrapple:false,ghostDash:false,
+ nodeLife:0,turretRange:0,turretPower:0,shieldAbsorb:0,engQCdCut:0,overclock:false,emergency:false,
  remoteAcc:0,remoteSent:0,reviveUsed:0,capped:[]};}
 function infPermState(){if(!INF.perm)INF.perm=infPermNewState();return INF.perm;}
 function infPermAddKey(P,key){if(P.cardKeys.indexOf(key)<0)P.cardKeys.push(key);}
@@ -11351,6 +11713,33 @@ function infPermCommit(P){
  if(P.turretRate)INF.engineerTurretInterval*=1-P.turretRate;
  if(P.turretLife)INF.engineerTurretLife*=1+P.turretLife;
  if(P.autonomous)INF.engineerAutonomous=true;
+ /* ── v7.5.1 확장 노드 커밋 ── */
+ if(P.rampDrill)INF.drillerRampMax=Math.max(INF.drillerRampMax||0,P.rampDrill);
+ if(P.oreSonar)INF.oreSonarChance=(INF.oreSonarChance||0)+P.oreSonar;
+ if(P.crackHold)INF.drillerCrackHoldMul=(INF.drillerCrackHoldMul||1)*(1+P.crackHold);
+ if(P.drillPen)INF.drillPenetration=Math.max(INF.drillPenetration||0,P.drillPen);
+ if(P.regen)INF.permRegenAmt=(INF.permRegenAmt||0)+P.regen;
+ if(P.dashGuard)INF.permDashGuardDur=Math.max(INF.permDashGuardDur||0,P.dashGuard);
+ if(P.depthHp)INF.permDepthHp=Math.max(INF.permDepthHp||0,P.depthHp);
+ if(P.shieldDur)INF.breakShield=Math.min(.9,INF.breakShield*(1+P.shieldDur));
+ if(P.stoneheart)INF.permStoneheart=true;
+ if(P.rampGun)INF.permGunRampMax=Math.max(INF.permGunRampMax||0,P.rampGun);
+ if(P.breakerEnemy)INF.breakerEnemyMul*=1+P.breakerEnemy;
+ if(P.killHeal)INF.permKillHeal=(INF.permKillHeal||0)+P.killHeal;
+ if(P.lastStand)INF.permLastStand=true;
+ if(P.breakerStick)INF.permBreakerStick=true;
+ if(P.flareSlow)INF.permFlareSlow=Math.max(INF.permFlareSlow||0,P.flareSlow);
+ if(P.dashDist)INF.permDashDistMul=Math.max(INF.permDashDistMul||1,1+P.dashDist);
+ if(P.darkMove)INF.permDarkMove=Math.max(INF.permDarkMove||0,P.darkMove);
+ if(P.phaseGrapple)INF.permPhaseGrapple=true;
+ if(P.ghostDash)INF.permGhostDash=true;
+ if(P.nodeLife)INF.engineerNodeLife*=1+P.nodeLife;
+ if(P.turretRange)INF.engineerTurretRange+=P.turretRange;
+ if(P.turretPower)INF.engineerTurretPower*=1+P.turretPower;
+ if(P.shieldAbsorb)INF.permShieldAbsorb=Math.max(INF.permShieldAbsorb||0,P.shieldAbsorb);
+ if(P.engQCdCut)INF.engineerQCdMul=(INF.engineerQCdMul||1)*(1-P.engQCdCut);
+ if(P.overclock)INF.permOverclock=true;
+ if(P.emergency)INF.permEmergency=true;
  return P;
 }
 function infPermCollect(roleId){
@@ -11408,7 +11797,7 @@ function infPermTryRevive(){
 function infNodeContentBox(){
  const G=INF_NODE_GRID;
  let minX=G.crestX-46,maxX=G.crestX+46,minY=G.crestY-46,maxY=G.crestY+46;
- for(const n of INF_PERMANENT_NODES){if(!infVisiblePermanent(n))continue;const pad=n.type==='캡스톤'?44:38;
+ for(const n of INF_PERMANENT_NODES){if(!infVisiblePermanent(n))continue;const pad=n.type==='캡스톤'?44:n.type==='주요'?42:38;
   minX=Math.min(minX,n.x-pad);maxX=Math.max(maxX,n.x+pad);minY=Math.min(minY,n.y-pad);maxY=Math.max(maxY,n.y+pad);}
  for(const H of INF_NODE_ROLE_HUBS){minX=Math.min(minX,H.x-76);maxX=Math.max(maxX,H.x+76);minY=Math.min(minY,H.y-76);maxY=Math.max(maxY,H.y+92);}
  return {minX,maxX,minY,maxY,w:maxX-minX,h:maxY-minY,cx:(minX+maxX)/2,cy:(minY+maxY)/2};
@@ -11562,7 +11951,7 @@ function infPaintSettlement(){
    state=rank>=max?' maxed':rank>0?' owned'+(canBuy?' available':(met&&bank<cost?' resourceLocked':'')):!met?' prereqLocked':canBuy?' available':' resourceLocked',
    b=document.createElement('button');
   b.type='button';b.dataset.nodeId=n.id;
-  b.className='infPermanentNode'+state+(n.type==='캡스톤'?' capstone':'')+(n.type==='행동 변형'||n.type==='전문 분야'?' behavior':'')+(n.owner==='crew'?' crew':'')+(isNew?' incoming':'')+(INF.settle.fxNodeId===n.id?' purchased':'');
+  b.className='infPermanentNode'+state+(n.type==='캡스톤'?' capstone':'')+(n.type==='주요'?' major':'')+(n.type==='행동 변형'||n.type==='전문 분야'?' behavior':'')+(n.owner==='crew'?' crew':'')+(isNew?' incoming':'')+(INF.settle.fxNodeId===n.id?' purchased':'');
   b.style.setProperty('--nx',n.x+'px');b.style.setProperty('--ny',n.y+'px');
   b.style.setProperty('--own',n.owner==='crew'?'#7febd0':((INF_ROLES[n.owner]||{}).color||'#7febd0'));
   if(isNew){b.style.setProperty('--dl',(newIndex*INF_NODE_FX.node.step)+'ms');newIndex++;}
@@ -11702,6 +12091,7 @@ function infInstallNodeMapControls(){
 }
 function infEndRun(reason,escaped){
  if(!INF.active||CREW.phase==='infiniteResult')return;
+ if(typeof AICREW!=='undefined')AICREW.onRunEnd();   /* AI 크루 정리 */
  if(!escaped&&infPermTryRevive())return;   /* 6.3 emergency restart - real death gate of infinite mode */
  CREW.phase='infiniteResult';INF.escape=null;INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
  if(typeof COOP_onInfEnd==='function')COOP_onInfEnd(reason,escaped);   /* 코옵 생환/다운 통지 — 트랙 F (훅 1줄) */
@@ -11740,7 +12130,7 @@ function infPaint(){
  else if(role.id==='engineer')terrainStatus='노드 '+INF.engineerNodes.length+'/'+INF.engineerMaxNodes+' · 센트리 '+CREW.turrets.filter(t=>t.powered).length+'/'+CREW.turrets.length+' · 탄약 '+CREW.turrets.reduce((n,t)=>n+t.ammo,0);
  infEl('infHpText').textContent=role.name+' · HP '+Math.ceil(G.php)+' / '+Math.ceil(G.phpMax);infEl('infBuildText').textContent=terrainStatus+' · '+INF.gunMode+' ×'+(INF.gunMul*role.gunMul).toFixed(2)+' · '+INF.shots+'발';
  const reloading=INF.reloadLeft>0,ammoRow=infEl('infAmmoRow'),reloadP=reloading?1-INF.reloadLeft/Math.max(.01,INF.reloadDuration):INF.ammo/Math.max(1,INF.magSize);ammoRow.classList.toggle('reloading',reloading);infEl('infAmmoText').textContent=reloading?'재장전 '+INF.reloadLeft.toFixed(1)+'초':'탄창 '+INF.ammo+' / '+INF.magSize;infEl('infReloadFill').style.width=Math.max(0,Math.min(100,reloadP*100))+'%';
- const boss=INF.boss&&INF.boss.hp>0?INF.boss:null;infEl('infBossBox').classList.toggle('on',!!boss);if(boss){const p=Math.max(0,boss.hp/boss.hpMax*100),armor=infBossArmorAlive(boss);infEl('infBossFill').style.width=p+'%';infEl('infBossText').textContent=(armor?'장갑 '+armor+' · ':'')+Math.ceil(p)+'%';const nm=infEl('infBossName');if(nm)nm.textContent=infBossTierDef(boss).name;}
+ const boss=INF.boss&&INF.boss.hp>0?INF.boss:null;infEl('infBossBox').classList.toggle('on',!!boss);infEl('infHud').classList.toggle('bossFocus',!!boss);if(boss){const p=Math.max(0,boss.hp/boss.hpMax*100),armor=infBossArmorAlive(boss);infEl('infBossFill').style.width=p+'%';infEl('infBossText').textContent=(armor?'장갑 '+armor+' · ':'')+Math.ceil(p)+'%';const nm=infEl('infBossName');if(nm)nm.textContent=infBossTierDef(boss).name;}
  infPaintBossIndicator(boss);
 }
 /* 머지 v7.3.0 — A의 영구 노드 표기에 D의 지층 문구(장악 40%는 지층별 목표로 대체됨)를 결합 */
@@ -12369,4 +12759,1961 @@ button:focus-visible,[role="button"]:focus-visible{
 })();
 </script>
 
+
+<!-- ══════════ [FX7.3.1] 보스 등장 연출 ══════════ -->
+<style id="tcBossFxCss">
+/* 레터박스 · 비네트 · 이름 플레이트. 캔버스 위에 얹히는 층이라 DOM 으로 처리한다.
+   높이/투명도는 JS 타임라인이 매 프레임 직접 써 넣는다 (CSS 트랜지션과 어긋나지 않게). */
+#tcBossFx{position:fixed;left:0;top:0;width:100%;height:100%;z-index:600;
+  display:none;overflow:hidden;pointer-events:none;font-family:"Pretendard","Malgun Gothic",sans-serif}
+#tcBossFx.on{display:block;pointer-events:auto;cursor:pointer}
+#tcBossFx .tcbBar{position:absolute;left:0;width:100%;height:0;background:#05040a;
+  box-shadow:0 0 34px rgba(0,0,0,.85)}
+#tcBossFx .tcbTop{top:0;border-bottom:1px solid rgba(255,85,125,.16)}
+#tcBossFx .tcbBot{bottom:0;border-top:1px solid rgba(255,85,125,.16)}
+#tcBossFx .tcbVig{position:absolute;inset:0;opacity:0;
+  background:radial-gradient(ellipse 68% 54% at 50% 48%,transparent 38%,rgba(5,3,10,.62) 100%)}
+#tcBossFx .tcbFlash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;
+  background:radial-gradient(ellipse 54% 46% at var(--tcb-fx,50%) var(--tcb-fy,50%),rgba(255,150,170,.85),rgba(255,85,125,.28) 46%,transparent 74%)}
+#tcBossFx .tcbName{position:absolute;left:0;right:0;bottom:14%;opacity:0;text-align:center;
+  translate:0 16px;text-shadow:0 6px 26px rgba(0,0,0,.9)}
+#tcBossFx .tcbTier{display:block;margin-bottom:7px;color:#ff8da8;
+  font:800 clamp(9px,.82vw,11px)/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.34em}
+#tcBossFx .tcbTitle{display:block;color:#fff2f4;
+  font:900 clamp(30px,3.6vw,54px)/1 inherit;letter-spacing:-.02em}
+#tcBossFx .tcbRule{display:block;width:clamp(120px,16vw,220px);height:1px;margin:13px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(255,85,125,.75),transparent)}
+#tcBossFx .tcbSkip{position:absolute;right:20px;opacity:0;color:#8d7f99;
+  font:700 10px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.16em}
+
+/* 연출 동안 게임 UI 를 잠시 걷어낸다.
+   등장 애니메이션이 아직 돌고 있어도 확실히 숨도록 !important 를 쓴다. */
+body.tcBossCine #infHud,body.tcBossCine #crewHud,body.tcBossCine #resHud,
+body.tcBossCine #crewTip,body.tcBossCine #act,body.tcBossCine #gear,
+body.tcBossCine #toast,body.tcBossCine #crewMuteFab,body.tcBossCine #crewSettingsFab,
+body.tcBossCine #infBossIndicator,body.tcBossCine #infTestPanel,
+body.tcBossCine #bossLabInspector{
+  opacity:0!important;pointer-events:none!important}
+#infHud,#crewHud,#resHud,#crewTip,#act,#gear,#crewMuteFab,#crewSettingsFab,#infBossIndicator,#bossLabInspector{
+  transition:opacity .34s ease}
+</style>
+<script id="tcBossFxJs">
+(function(){
+ 'use strict';
+ /* ── 구간 길이(초) ── */
+ var SEQ={dim:.55,pan:1.05,hold:.35,roar:1.75,back:.95};
+ var T1=SEQ.dim,T2=T1+SEQ.pan,T3=T2+SEQ.hold,T4=T3+SEQ.roar,T5=T4+SEQ.back;
+
+ var FX={active:false,VERSION:'FX7.3.1'};
+ window.TCBOSSFX=FX;
+
+ var root,barT,barB,vig,flash,name,tierEl,titleEl,skipEl;
+ var t=0,lastNow=0,roared=false,dustAcc=0,hintT=0;
+ var camB=null,baseZ=1,prevPhase='play',boss=null;
+
+ function mk(cls,tag){var d=document.createElement(tag||'div');d.className=cls;return d;}
+ function build(){
+  root=document.createElement('div');root.id='tcBossFx';root.setAttribute('aria-hidden','true');
+  barT=mk('tcbBar tcbTop');barB=mk('tcbBar tcbBot');vig=mk('tcbVig');flash=mk('tcbFlash');
+  name=mk('tcbName');tierEl=mk('tcbTier','span');titleEl=mk('tcbTitle','b');
+  name.appendChild(tierEl);name.appendChild(titleEl);name.appendChild(mk('tcbRule','span'));
+  skipEl=mk('tcbSkip');skipEl.textContent='CLICK / ESC — SKIP';
+  [vig,barT,barB,name,flash,skipEl].forEach(function(n){root.appendChild(n);});
+  document.body.appendChild(root);
+  root.addEventListener('click',function(){FX.stop();});
+ }
+ function reduced(){return document.documentElement.classList.contains('tcReducedMotion');}
+ function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+ function easeOut(p){return 1-Math.pow(1-p,3);}
+ function clamp01(v){return v<0?0:v>1?1:v;}
+ function seg(a,b){return clamp01((t-a)/Math.max(.0001,b-a));}
+
+ /* 대상을 화면 중앙에 두는 카메라 좌상단 좌표 — 게임의 카메라 규칙과 같은 식 */
+ function camFor(x,y){
+  var Z=G.Z||1,vw=LW/Z,vh=LH/Z;
+  return tcClampCamera(x-vw*.5,y-vh*.42,vw,vh);
+ }
+ function tierCopy(b){
+  var key=(b&&b.bossTier)||'apex';
+  var def=(typeof infBossTierDef==='function')?infBossTierDef(b):null;
+  return {name:(def&&def.name)||'암반 포식자',
+   tier:key==='guardian'?'DEEP GUARDIAN · 중심부의 전조'
+       :key==='variant' ?'VARIANT · 강화 개체'
+                        :'APEX PREDATOR · 중심부 보스'};
+ }
+
+ FX.start=function(b){
+  if(FX.active||!b||b.hp<=0)return;
+  if(reduced())return;                          /* 모션 줄이기 — 연출 없이 진행 */
+  if(typeof CREW==='undefined'||CREW.phase!=='play')return;
+  if(!root)build();
+
+  boss=b;t=0;lastNow=performance.now();roared=false;dustAcc=0;
+  hintT=G.hintT||0;G.hintT=0;              /* 캔버스에 직접 그리는 조작 힌트도 잠시 치운다 */
+  prevPhase=CREW.phase;CREW.phase='bossIntro';  /* loopStep 이 월드를 멈추고 렌더만 돌린다 */
+  G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;
+  baseZ=G.Z||1;
+  camB=camFor(b.x,b.y);
+  b.bossFireBreathT=0;b.bossAnimKey='idle';b.bossAnimT=0;b.bossAnimRate=1;
+
+  var c=tierCopy(b);tierEl.textContent=c.tier;titleEl.textContent=c.name;
+  barT.style.height=barB.style.height='0px';
+  vig.style.opacity=flash.style.opacity=name.style.opacity=skipEl.style.opacity='0';
+  document.body.classList.add('tcBossCine');
+  root.classList.add('on');
+  FX.active=true;
+  rumbleSfx();
+ };
+
+ function rumbleSfx(){
+  try{if(window.AU&&AU.ready&&!AU.muted){
+   AU.tone(41,1.5,{type:'sine',g:.13,slide:33,lp:190,cat:'sfx'});
+   AU.tone(63,1.2,{type:'triangle',g:.07,slide:47,lp:300,cat:'sfx'});
+  }}catch(e){}
+ }
+ function roarSfx(){
+  try{if(window.AU&&AU.ready&&!AU.muted){
+   AU.tone(84,1.15,{type:'sawtooth',g:.17,slide:39,lp:430,cat:'sfx'});
+   AU.tone(54,1.5,{type:'triangle',g:.14,slide:30,lp:250,cat:'sfx'});
+   if(AU.hit)AU.hit(.55,{f0:1100,f1:120,g:.12,q:.6,ft:'lowpass',cat:'sfx'});
+  }}catch(e){}
+ }
+
+ /* 매 프레임 — renderDepths 직전에 돈다 */
+ FX.tick=function(){
+  var now=performance.now(),dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;
+  t+=dt;
+  if(!boss||boss.hp<=0||typeof CREW==='undefined'||CREW.phase!=='bossIntro'){FX.stop();return;}
+
+  var C=(typeof CELL!=='undefined')?CELL:32;
+  var outP=seg(T4+.15,T5);
+
+  /* ── 레터박스 · 비네트 ── */
+  var barP=easeOut(seg(0,T1+.25));
+  var barH=LH*.115*barP*(1-easeOut(outP));
+  barT.style.height=barB.style.height=barH.toFixed(1)+'px';
+  vig.style.opacity=(barP*.9*(1-easeOut(outP))).toFixed(3);
+  skipEl.style.opacity=(barP*(1-easeOut(outP))*.75).toFixed(3);
+  skipEl.style.bottom=(barH*.36+6).toFixed(1)+'px';
+
+  /* ── 카메라 ── */
+  var panP=ease(seg(T1,T2)),backP=ease(seg(T4,T5));
+  var k=panP*(1-backP);                         /* 0 = 플레이어 · 1 = 보스 */
+  G.Z=baseZ*(1+.15*k);                          /* 다가가며 살짝 조인다 */
+  camB=camFor(boss.x,boss.y);
+  var pcam=camFor(G.sh.x,G.sh.y);
+  /* 저주파 흔들림 — J.kick 은 순간 충격용이라, 지속 진동은 카메라로 직접 만든다 */
+  var amp=2.4*easeOut(seg(0,T1))*(1-easeOut(outP))+(roared?5.5*Math.exp(-(t-T3)*2.6):0);
+  var wobX=(Math.sin(t*7.3)*.65+Math.sin(t*3.1)*.35)*amp/(G.Z||1);
+  var wobY=(Math.cos(t*5.9)*.6+Math.cos(t*2.7)*.4)*amp*.7/(G.Z||1);
+  G.camX=pcam.x+(camB.x-pcam.x)*k+wobX;
+  G.camY=pcam.y+(camB.y-pcam.y)*k+wobY;
+
+  /* ── 이름 플레이트 ── */
+  var nameIn=easeOut(seg(T2+.05,T3+.3)),nameOut=easeOut(seg(T4-.1,T4+.35));
+  name.style.opacity=(nameIn*(1-nameOut)).toFixed(3);
+  name.style.translate='0 '+(16*(1-nameIn)).toFixed(1)+'px';
+  name.style.bottom=(barH+LH*.055).toFixed(1)+'px';
+
+  /* ── 포효 ── */
+  if(!roared&&t>=T3){
+   roared=true;
+   boss.facing=(G.sh.x>=boss.x)?1:-1;
+   /* bossFireBreathT > 0 이면 bossDragonAnimation() 이 fireBreath 시트를 고른다 (26프레임 · 10fps) */
+   boss.bossFireBreathT=99;boss.bossAnimKey='fireBreath';boss.bossAnimT=0;boss.bossAnimRate=1.15;
+   roarSfx();
+   if(typeof J!=='undefined'){
+    J.kick(13);
+    J.ring(boss.x,boss.y,'#FF557D',10,C*4.6,7);
+    J.ring(boss.x,boss.y,'#FFD36E',6,C*2.8,4);
+    J.burst(boss.x,boss.y,42,['#FF557D','#FFB0B8','#C7A0FF','#FFF'],360);
+   }
+   var sx=(boss.x-G.camX)*(G.Z||1)+G.offX,sy=(boss.y-G.camY)*(G.Z||1)+G.offY;
+   flash.style.setProperty('--tcb-fx',(sx/Math.max(1,LW)*100).toFixed(1)+'%');
+   flash.style.setProperty('--tcb-fy',(sy/Math.max(1,LH)*100).toFixed(1)+'%');
+  }
+  flash.style.opacity=roared?(Math.exp(-(t-T3)*4.2)*.75).toFixed(3):'0';
+
+  /* 포효 중 — 천장에서 떨어지는 먼지와 잔여 충격 */
+  if(roared&&t<T4&&typeof J!=='undefined'){
+   dustAcc+=dt;
+   while(dustAcc>=.085){
+    dustAcc-=.085;
+    J.burst(boss.x+(Math.random()-.5)*C*7,boss.y-C*(1.6+Math.random()*2.4),
+            3,['#8A7566','#5A4638','#C9B3A0'],54);
+   }
+   if(t-T3>.34&&Math.random()<dt*4.2)J.kick(3.4);
+  }
+
+  /* update() 가 멈춰 있으니 보스 스프라이트 타이머는 여기서 직접 돌린다 */
+  boss.bossAnimT=(boss.bossAnimT||0)+dt*(boss.bossAnimRate||1);
+
+  if(t>=T5)FX.stop();
+ };
+
+ FX.stop=function(){
+  if(!FX.active)return;
+  FX.active=false;
+  if(root)root.classList.remove('on');
+  document.body.classList.remove('tcBossCine');
+  if(boss){boss.bossFireBreathT=0;boss.bossAnimKey='idle';boss.bossAnimT=0;boss.bossAnimRate=1;}
+  G.Z=baseZ;G.hintT=hintT;
+  if(typeof CREW!=='undefined'&&CREW.phase==='bossIntro')CREW.phase=prevPhase||'play';
+  boss=null;camB=null;
+ };
+
+ /* ── 훅 ── */
+ /* 스폰 직후 연출을 얹는다. 원래 함수의 링·버스트·토스트는 그대로 둔다. */
+ if(typeof window.infSpawnBoss==='function'){
+  var _spawn=window.infSpawnBoss;
+  window.infSpawnBoss=function(){
+   var out=_spawn.apply(this,arguments);
+   try{if(typeof INF!=='undefined'&&INF.boss)FX.start(INF.boss);}catch(e){}
+   return out;
+  };
+ }
+ /* 좌상단 게이지 같은 HUD 는 DOM 이 아니라 캔버스에 그려진다 (renderDepths 끝의 paintUI).
+    globalAlpha 를 곱해 DOM UI 와 같은 속도로 함께 사라지게 한다. */
+ FX.uiAlpha=function(){
+  return 1-easeOut(seg(0,.34))*(1-easeOut(seg(T4+.2,T5)));
+ };
+ if(typeof window.paintUI==='function'){
+  var _paintUI=window.paintUI;
+  window.paintUI=function(){
+   if(!FX.active)return _paintUI.apply(this,arguments);
+   var a=FX.uiAlpha();
+   if(a<=.004)return;
+   cx.save();cx.globalAlpha*=a;
+   try{return _paintUI.apply(this,arguments);}finally{cx.restore();}
+  };
+ }
+ /* renderDepths 는 월드가 멈춰 있어도 매 프레임 호출된다 — 여기에 타임라인을 태운다 */
+ if(typeof window.renderDepths==='function'){
+  var _render=window.renderDepths;
+  window.renderDepths=function(){
+   if(FX.active){try{FX.tick();}catch(e){FX.stop();}}
+   return _render.apply(this,arguments);
+  };
+ }
+ window.addEventListener('keydown',function(e){
+  if(!FX.active)return;
+  if(e.key==='Escape'||e.key===' '||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();FX.stop();}
+ },true);
+})();
+</script>
+
+
+
+<!-- ══════════ [FX7.5.1] 보스 죽음 연출 ══════════ -->
+<style id="tcBossDeathFxCss">
+#tcBossDeathFx{position:fixed;inset:0;z-index:610;display:none;overflow:hidden;pointer-events:none;font-family:"Pretendard","Malgun Gothic",sans-serif}
+#tcBossDeathFx.on{display:block}
+#tcBossDeathFx .tcdBar{position:absolute;left:0;width:100%;height:0;background:#03040a;box-shadow:0 0 40px rgba(0,0,0,.92)}
+#tcBossDeathFx .tcdTop{top:0;border-bottom:1px solid rgba(255,211,110,.18)}
+#tcBossDeathFx .tcdBot{bottom:0;border-top:1px solid rgba(255,211,110,.18)}
+#tcBossDeathFx .tcdVig{position:absolute;inset:0;opacity:0;background:radial-gradient(ellipse 58% 48% at 50% 48%,transparent 26%,rgba(3,4,10,.78) 100%)}
+#tcBossDeathFx .tcdFlash{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse 44% 38% at var(--tcd-fx,50%) var(--tcd-fy,50%),rgba(255,235,188,.9),rgba(255,85,80,.3) 38%,transparent 72%)}
+#tcBossDeathFx .tcdSprite{position:absolute;display:block;max-width:none;max-height:none;opacity:0;transform-origin:50% 58%;filter:drop-shadow(0 18px 18px rgba(0,0,0,.42));will-change:left,top,width,height,opacity,transform}
+#tcBossDeathFx .tcdName{position:absolute;left:0;right:0;bottom:14%;opacity:0;text-align:center;translate:0 14px;text-shadow:0 6px 28px rgba(0,0,0,.96)}
+#tcBossDeathFx .tcdTier{display:block;margin-bottom:7px;color:#ffd36e;font:800 clamp(9px,.82vw,11px)/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.32em}
+#tcBossDeathFx .tcdTitle{display:block;color:#fff7e8;font:900 clamp(28px,3.4vw,50px)/1 inherit;letter-spacing:-.02em}
+#tcBossDeathFx .tcdRule{display:block;width:clamp(120px,16vw,220px);height:1px;margin:13px auto 0;background:linear-gradient(90deg,transparent,rgba(255,211,110,.86),transparent)}
+</style>
+<script id="tcBossDeathFxJs">
+(function(){
+ 'use strict';
+ var DEATH_SRC='dragon_boss_death_transparent.gif';
+ var SEQ={focus:.34,death:2.4,hold:.38,out:.56};
+ var DEATH_END=SEQ.focus+SEQ.death,HOLD_END=DEATH_END+SEQ.hold,TOTAL=HOLD_END+SEQ.out;
+ var FX={active:false,VERSION:'FX7.5.1',duration:TOTAL};
+ window.TCBOSSDEATHFX=FX;
+ var root,barT,barB,vig,flash,name,tierEl,titleEl,sprite;
+ var boss=null,done=null,t=0,lastNow=0,baseZ=1,baseCamX=0,baseCamY=0,prevPhase='play',spriteStarted=false,finished=false;
+
+ function mk(cls,tag){var d=document.createElement(tag||'div');d.className=cls;return d;}
+ function clamp01(v){return v<0?0:v>1?1:v;}
+ function ease(p){p=clamp01(p);return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+ function easeOut(p){p=clamp01(p);return 1-Math.pow(1-p,3);}
+ function seg(a,b){return clamp01((t-a)/Math.max(.0001,b-a));}
+ function camFor(x,y){var Z=G.Z||1,vw=LW/Z,vh=LH/Z;return tcClampCamera(x-vw*.5,y-vh*.42,vw,vh);}
+ function copyFor(b){var def=(typeof infBossTierDef==='function')?infBossTierDef(b):null;return (def&&def.name)||'암반 포식자';}
+ function freshSprite(){var next=mk('tcdSprite','img');next.alt='';next.setAttribute('aria-hidden','true');if(sprite&&sprite.parentNode)sprite.parentNode.replaceChild(next,sprite);else root.appendChild(next);sprite=next;}
+ function build(){
+  root=document.createElement('div');root.id='tcBossDeathFx';root.setAttribute('aria-hidden','true');
+  barT=mk('tcdBar tcdTop');barB=mk('tcdBar tcdBot');vig=mk('tcdVig');flash=mk('tcdFlash');
+  name=mk('tcdName');tierEl=mk('tcdTier','span');titleEl=mk('tcdTitle','b');
+  name.appendChild(tierEl);name.appendChild(titleEl);name.appendChild(mk('tcdRule','span'));
+  [vig,barT,barB,name,flash].forEach(function(n){root.appendChild(n);});freshSprite();document.body.appendChild(root);
+ }
+ function deathSfx(){try{if(window.AU&&AU.ready&&!AU.muted){AU.tone(116,.58,{type:'sawtooth',g:.15,slide:42,lp:520,cat:'sfx'});AU.tone(58,1.7,{type:'triangle',g:.14,slide:27,lp:260,cat:'sfx'});if(AU.hit)AU.hit(.7,{f0:1350,f1:85,g:.16,q:.55,ft:'lowpass',cat:'sfx'});}}catch(e){}}
+ function removeBossFromWorld(b){if(typeof G!=='undefined'&&G.enemies)G.enemies=G.enemies.filter(function(e){return e!==b;});if(typeof INF!=='undefined'){INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];}}
+
+ FX.start=function(b,after){
+  if(FX.active||!b||typeof CREW==='undefined'||CREW.phase!=='play')return false;
+  if(!root)build();freshSprite();boss=b;done=after;t=0;lastNow=performance.now();finished=false;spriteStarted=false;
+  baseZ=G.Z||1;baseCamX=G.camX;baseCamY=G.camY;prevPhase=CREW.phase;b.tcDeathCine=true;b.vx=b.vy=b.kbx=b.kby=0;removeBossFromWorld(b);
+  CREW.phase='bossDeath';G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;G.hintT=0;try{SFX.drillHum(false);}catch(e){}
+  tierEl.textContent='BOSS DEFEATED · CORE SECURED';titleEl.textContent=copyFor(b)+' 격파';
+  barT.style.height=barB.style.height='0px';vig.style.opacity=flash.style.opacity=name.style.opacity='0';sprite.style.opacity='0';
+  document.body.classList.add('tcBossCine');root.classList.add('on');root.setAttribute('aria-hidden','false');FX.active=true;deathSfx();
+  try{if(typeof J!=='undefined'){J.kick(14);J.ring(b.x,b.y,'#FFD36E',12,CELL*4.2,7);J.burst(b.x,b.y,36,['#FFD36E','#FF715B','#FFF4D6'],310);}}catch(e){}
+  return true;
+ };
+ function startSprite(){if(spriteStarted)return;spriteStarted=true;sprite.src=DEATH_SRC;}
+ function placeSprite(alpha){
+  if(!boss||!sprite)return;var z=G.Z||1,sx=(boss.x-G.camX)*z+G.offX,sy=(boss.y-G.camY)*z+G.offY,size=boss.r*3.3*z;
+  sprite.style.left=sx.toFixed(1)+'px';sprite.style.top=sy.toFixed(1)+'px';sprite.style.width=sprite.style.height=size.toFixed(1)+'px';sprite.style.opacity=alpha.toFixed(3);
+  sprite.style.transform='translate(-50%,-58%) scaleX('+(((boss.facing||-1)>0)?-1:1)+')';
+  flash.style.setProperty('--tcd-fx',(sx/Math.max(1,LW)*100).toFixed(1)+'%');flash.style.setProperty('--tcd-fy',(sy/Math.max(1,LH)*100).toFixed(1)+'%');
+ }
+ FX.tick=function(){
+  if(!FX.active||finished)return;var now=performance.now(),dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;t+=dt;
+  if(!boss||typeof CREW==='undefined'||CREW.phase!=='bossDeath'){finish(false);return;}
+  var outP=easeOut(seg(HOLD_END,TOTAL)),focusP=ease(seg(0,SEQ.focus)),barP=easeOut(seg(0,SEQ.focus))*(1-outP),barH=LH*.115*barP;
+  barT.style.height=barB.style.height=barH.toFixed(1)+'px';vig.style.opacity=(barP*.94).toFixed(3);G.Z=baseZ*(1+.13*focusP*(1-outP));
+  var target=camFor(boss.x,boss.y),camK=focusP*(1-outP);G.camX=baseCamX+(target.x-baseCamX)*camK;G.camY=baseCamY+(target.y-baseCamY)*camK;
+  if(t>=SEQ.focus)startSprite();var spriteOut=easeOut(seg(DEATH_END+.08,HOLD_END+.18));placeSprite(spriteStarted?(1-spriteOut):0);
+  flash.style.opacity=(Math.exp(-t*4.5)*.82+Math.exp(-Math.abs(t-DEATH_END)*11)*.18).toFixed(3);
+  var nameIn=easeOut(seg(DEATH_END-.58,DEATH_END-.12));name.style.opacity=(nameIn*(1-outP)).toFixed(3);name.style.translate='0 '+(14*(1-nameIn)).toFixed(1)+'px';name.style.bottom=(barH+LH*.055).toFixed(1)+'px';
+  if(t>=TOTAL)finish(true);
+ };
+ function finish(runCallback){
+  if(finished)return;finished=true;FX.active=false;if(root){root.classList.remove('on');root.setAttribute('aria-hidden','true');}document.body.classList.remove('tcBossCine');
+  G.Z=baseZ;G.camX=baseCamX;G.camY=baseCamY;if(typeof CREW!=='undefined'&&CREW.phase==='bossDeath')CREW.phase=prevPhase||'play';
+  var cb=done;done=null;boss=null;if(runCallback&&typeof cb==='function')cb();
+ }
+ FX.stop=function(){finish(true);};
+ if(typeof window.infBossDefeated==='function'){
+  var _defeated=window.infBossDefeated;
+  window.infBossDefeated=function(e){var self=this,args=arguments;if(FX.start(e,function(){_defeated.apply(self,args);}))return;return _defeated.apply(self,args);};
+ }
+ if(typeof window.renderDepths==='function'){
+  var _render=window.renderDepths;
+  window.renderDepths=function(){if(FX.active){try{FX.tick();}catch(e){FX.stop();}}return _render.apply(this,arguments);};
+ }
+ window.addEventListener('keydown',function(e){if(FX.active&&(e.key==='Escape'||e.key===' '||e.key==='Enter')){e.preventDefault();e.stopImmediatePropagation();}},true);
+})();
+</script>
+
+<!-- AI_CREW_INJECTED_V1 — ai/crew-ai.js 에서 생성. 원본을 고치려면 그 파일을 고치고
+     python ai/inject-ai-crew.py 를 다시 실행하세요. -->
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   AI 크루 (로컬 플레이어 AI) — v1
+   ──────────────────────────────────────────────────────────────────────
+   목적: 어떤 모드든 직업 선택 화면에서 카드 옆 [+AI] 를 눌러 AI 동료를
+   즉시 편성한다. LAN 코옵·서버·별도 창이 필요 없다. 같은 게임 인스턴스
+   안에서 도는 진짜 로컬 동료다.
+
+   설계 원칙
+   1) AI 크루는 "그 직업이 실제로 할 만한 행위"를 한다. 드릴러는 길을
+      파고, 거너는 적을 지우고, 스카우트는 어둠을 열고, 엔지니어는
+      센트리를 세운다. 역할별 행동 예산(§0.5-5)을 코드로 명시한다.
+   2) 성장(경험치·특성 카드)은 사람만 갖는다. AI가 부순 블록은 장악도에
+      기여하되 사람 경험치를 올리지 않는다 (기획서 §5.2 개인 성장).
+   3) AI 설치물(센트리·전력 노드)은 사람 엔지니어의 INF 시스템과 섞지
+      않고 AI 소유로 따로 굴린다. 서로의 상한·전력망을 오염시키지 않는다.
+
+   주입 지점은 ai/inject-ai-crew.py 가 관리한다.
+   ══════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  const AI = {
+    /* 편성 — 직업 선택 화면에서 만든다. 런이 끝나도 유지되어 다음 런에 재사용 */
+    roster: [],
+    members: [],
+    turrets: [],
+    nodes: [],
+    max: 3,
+    enabled: true,
+    debug: false,
+    seq: 0,
+    _dist: null, _prev: null, _size: 0,
+    _uiT: 0,
+  };
+  window.AICREW = AI;
+
+  const ROLE_KO = { driller: '드릴러', gunner: '거너', scout: '스카우트', engineer: '엔지니어' };
+  const ROLE_COL = { driller: '#ffd36e', gunner: '#ff8d72', scout: '#7febd0', engineer: '#c7a0ff' };
+  const ORDER = ['driller', 'gunner', 'scout', 'engineer'];
+
+  /* ── 역할 행동 예산 ───────────────────────────────────────────────
+     "이 직업이 한 판에서 실제로 하는 일"을 수치로 적는다. AI 는 이 표를
+     그대로 실행한다. 사람 플레이어의 INF 배율과 분리해 두어야 AI 를 넣어도
+     사람 밸런스가 흔들리지 않는다. */
+  const KIT = {
+    driller: {
+      digMul: 1.35,          /* 굴착 주력 — 통로를 만든다 */
+      gunMul: 0.55, fireCd: 0.30, mag: 10, reload: 1.7, range: 6.5,
+      drillMelee: true,      /* 드릴 팁 접촉 피해 */
+      alert: 12,             /* 적을 인지하는 반경 (칸) */
+      intercept: 5,          /* 파티에서 이만큼까지만 적을 쫓는다 — 본업은 굴착 */
+      pathDigCost: 5,        /* 경로 탐색에서 벽을 뚫을 의지 (낮을수록 잘 판다) */
+      engage: 3.6,           /* 유지하려는 교전 거리 (칸) */
+      hp: 210,
+      job: '굴착',
+    },
+    gunner: {
+      digMul: 0.10,          /* 벽은 파쇄탄으로만 — 드릴 굴착은 거의 못 한다 */
+      gunMul: 1.55, fireCd: 0.15, mag: 22, reload: 1.9, range: 9.5,
+      pathDigCost: 30,
+      alert: 20,             /* 크루에서 가장 넓게 본다 — 화력 지원의 눈 */
+      intercept: 13,         /* 적극적으로 요격 나간다 */
+      engage: 5.2,           /* 사거리를 벌려 쏜다 */
+      hp: 240,
+      breakerCd: 9, breakerRadius: 1,
+      job: '화력 지원',
+    },
+    scout: {
+      digMul: 0.42,
+      gunMul: 1.0, fireCd: 0.22, mag: 14, reload: 1.5, range: 8,
+      pathDigCost: 12,
+      alert: 17,
+      intercept: 9,
+      engage: 4.6,
+      hp: 175,
+      flareCd: 7,            /* 어두운 전방에 플레어 */
+      dashMul: 1.4,
+      job: '정찰',
+    },
+    engineer: {
+      digMul: 0.75,
+      gunMul: 0.9, fireCd: 0.26, mag: 16, reload: 1.7, range: 7.5,
+      pathDigCost: 10,
+      alert: 14,
+      intercept: 7,          /* 센트리 라인을 벗어나지 않는다 */
+      engage: 4.4,
+      hp: 200,
+      maxTurrets: 2, turretCd: 12, turretLife: 55,
+      maxNodes: 2, nodeCd: 16, nodeLife: 70, nodeRadius: 4.2,
+      job: '진지 구축',
+    },
+  };
+
+  /* ── 게임 접근 안전판 ──────────────────────────────────────────── */
+  const ready = () => typeof G !== 'undefined' && typeof CELL !== 'undefined' && typeof CREW !== 'undefined';
+  const playing = () => ready() && CREW.phase === 'play' && AI.members.length > 0;
+  const inf = () => (typeof INF !== 'undefined' && INF.active ? INF : null);
+  const idx = (c, r) => r * COLS + c;
+  const cellOf = (c, r) => (c >= 0 && c < COLS && r >= 0 && r < ROWS ? G.cell[idx(c, r)] : 'rock');
+  const unbreakable = (t) => (typeof SOLIDX === 'function' ? SOLIDX(t) : t === 'rock' || t === 'core');
+  const rnd = (a, b) => a + Math.random() * (b - a);
+
+  /* ══════════ 편성 ══════════ */
+
+  AI.count = function (roleId) {
+    return AI.roster.filter((r) => r === roleId).length;
+  };
+  AI.add = function (roleId) {
+    if (!KIT[roleId]) return false;
+    if (AI.roster.length >= AI.max) return false;
+    AI.roster.push(roleId);
+    AI.paintRosterUI();
+    if (playing()) spawnMember(roleId, true);   /* 런 도중에도 즉시 합류 */
+    return true;
+  };
+  AI.remove = function (roleId) {
+    const i = AI.roster.lastIndexOf(roleId);
+    if (i < 0) return false;
+    AI.roster.splice(i, 1);
+    const m = [...AI.members].reverse().find((x) => x.roleId === roleId);
+    if (m) AI.members.splice(AI.members.indexOf(m), 1);
+    AI.paintRosterUI();
+    return true;
+  };
+  AI.clear = function () {
+    AI.roster.length = 0; AI.members.length = 0;
+    AI.turrets.length = 0; AI.nodes.length = 0;
+    AI.paintRosterUI();
+  };
+
+  /* ══════════ 런 시작 / 종료 ══════════ */
+
+  AI.onRunStart = function () {
+    AI.members.length = 0; AI.turrets.length = 0; AI.nodes.length = 0;
+    if (!AI.enabled || !AI.roster.length || !ready()) return;
+    for (const roleId of AI.roster) spawnMember(roleId, false);
+    if (AI.members.length && typeof toast === 'function') {
+      toast('AI 크루 ' + AI.members.length + '명 합류 · ' +
+        AI.members.map((m) => ROLE_KO[m.roleId]).join(', '));
+    }
+  };
+  AI.onRunEnd = function () {
+    AI.members.length = 0; AI.turrets.length = 0; AI.nodes.length = 0;
+  };
+  /* 지층이 바뀌면 지형이 새로 생긴다 — 크루를 사람 옆으로 다시 모은다 */
+  AI.onFloorInit = function () {
+    for (const m of AI.members) {
+      const p = freeSpotNear(G.sh.x, G.sh.y, 1.4);
+      m.x = p.x; m.y = p.y; m.vx = m.vy = 0;
+      m.path = []; m.goal = null; m.mineTarget = null;
+      m.hp = Math.max(m.hp, m.hpMax * 0.6); m.down = false; m.downT = 0;
+      m.ammo = m.mag; m.reloadLeft = 0;
+      m.xpCapped = 0;                       /* 트리클 상한은 지층마다 회복 */
+      m.sectors = null;                     /* 정찰 구역 기록도 지층마다 새로 */
+      m.lootCd = 0; m.dodging = false;
+    }
+    AI.turrets.length = 0; AI.nodes.length = 0;
+  };
+
+  function freeSpotNear(x, y, cells) {
+    const R = cells * CELL;
+    for (let i = 0; i < 40; i++) {
+      const a = Math.random() * Math.PI * 2, d = R * (0.35 + Math.random() * 0.9);
+      const nx = x + Math.cos(a) * d, ny = y + Math.sin(a) * d;
+      if (typeof solidAt === 'function' && !solidAt(nx, ny)) return { x: nx, y: ny };
+    }
+    return { x: x + rnd(-20, 20), y: y + rnd(-20, 20) };
+  }
+
+  function spawnMember(roleId, live) {
+    const base = KIT[roleId];
+    if (!base) return null;
+    /* KIT 사본 — 특성은 이 사본을 바꾼다. 크루끼리도 서로 다른 빌드가 된다. */
+    const kit = Object.assign({}, base);
+    const p = freeSpotNear(G.sh.x, G.sh.y, 1.5);
+    const m = {
+      id: ++AI.seq, roleId, kit,
+      x: p.x, y: p.y, vx: 0, vy: 0, aim: 0, face: 1,
+      hp: kit.hp, hpMax: kit.hp, iframes: 0, down: false, downT: 0, reviveT: 0,
+      drill: 0, drillWarm: 0, digging: false,
+      gunCd: 0, ammo: kit.mag, mag: kit.mag, reloadLeft: 0, reloadTime: kit.reload,
+      qCd: 0, eCd: 0, shieldT: 0, dashCd: 0, dash: null,
+      flareCd: 2, turretCd: 1.5, nodeCd: 3, breakerCd: 0, breaker: [],
+      lootCd: 0, lootGot: 0, dodging: false,
+      goal: null, path: [], pathAge: 0, pathKey: '', react: 0,
+      mineTarget: null, stuckT: 0, lastX: p.x, lastY: p.y, jitter: 0, jitterA: 0,
+      say: '', sayT: 0,
+      /* 개인 성장 (§5.2) — 사람과 같은 곡선, 자기 행동으로만 오른다 */
+      level: 1, xp: 0,
+      xpNeed: (typeof infXpNeedFor === 'function') ? infXpNeedFor(1) : 42,
+      xpCapped: 0, xpTrickle: 0, traits: [], traitIds: {},
+    };
+    AI.members.push(m);
+    if (live && typeof toast === 'function') toast('AI ' + ROLE_KO[roleId] + ' 합류');
+    return m;
+  }
+
+  /* ══════════ 지형·경로 ══════════ */
+
+  function digCost(t, kit) {
+    if (!t) return 1;
+    if (unbreakable(t)) return Infinity;
+    const hp = ((typeof HPT !== 'undefined' && HPT[t]) || 100) * (inf() ? INF.wallHpMul || 1 : 1);
+    return 1 + (hp / 100) * kit.pathDigCost;
+  }
+
+  /* 다익스트라 — 벽은 "뚫는 데 드는 시간"만큼 비싼 통로다.
+     비용 계수가 직업마다 달라서 드릴러는 지름길을 파고 거너는 돌아간다. */
+  function findPath(sc, sr, gc, gr, kit) {
+    const N = COLS * ROWS;
+    if (AI._size !== N) { AI._dist = new Float64Array(N); AI._prev = new Int32Array(N); AI._size = N; }
+    const dist = AI._dist, prev = AI._prev;
+    dist.fill(Infinity); prev.fill(-1);
+    if (sc < 0 || sr < 0 || gc < 0 || gr < 0 || sc >= COLS || gc >= COLS || sr >= ROWS || gr >= ROWS) return null;
+    const start = idx(sc, sr), goal = idx(gc, gr);
+    if (start === goal) return [];
+    dist[start] = 0;
+    const heap = [[0, start]];
+    const pop = () => {
+      let bi = 0;
+      for (let i = 1; i < heap.length; i++) if (heap[i][0] < heap[bi][0]) bi = i;
+      const v = heap[bi]; heap[bi] = heap[heap.length - 1]; heap.pop(); return v;
+    };
+    let guard = 0;
+    while (heap.length && guard++ < 24000) {
+      const [d, k] = pop();
+      if (d > dist[k]) continue;
+      if (k === goal) break;
+      const c = k % COLS, r = (k - c) / COLS;
+      for (let i = 0; i < 4; i++) {
+        const dc = i === 0 ? 1 : i === 1 ? -1 : 0, dr = i === 2 ? 1 : i === 3 ? -1 : 0;
+        const nc = c + dc, nr = r + dr;
+        if (nc < 1 || nr < 1 || nc >= COLS - 1 || nr >= ROWS - 1) continue;
+        const nk = idx(nc, nr), w = digCost(G.cell[nk], kit);
+        if (!isFinite(w)) continue;
+        const nd = d + w;
+        if (nd < dist[nk]) { dist[nk] = nd; prev[nk] = k; heap.push([nd, nk]); }
+      }
+    }
+    if (!isFinite(dist[goal])) return null;
+    const out = [];
+    for (let k = goal; k !== -1 && k !== start; k = prev[k]) out.push(k);
+    return out.reverse();
+  }
+
+  function ensurePath(m, gx, gy) {
+    const c0 = Math.floor(m.x / CELL), r0 = Math.floor(m.y / CELL);
+    const gc = Math.floor(gx / CELL), gr = Math.floor(gy / CELL);
+    const key = gc + ',' + gr;
+    if (key !== m.pathKey || m.pathAge <= 0 || !m.path.length) {
+      m.path = findPath(c0, r0, gc, gr, m.kit) || [];
+      m.pathKey = key; m.pathAge = 0.4;
+    }
+    while (m.path.length) {
+      const k = m.path[0], c = k % COLS, r = (k - c) / COLS;
+      if (!G.cell[k] && Math.hypot(cxw(c) - m.x, cyw(r) - m.y) < CELL * 0.5) m.path.shift();
+      else break;
+    }
+    return m.path.length ? m.path[0] : -1;
+  }
+
+  /* ══════════ 이동 ══════════ */
+
+  function steer(m, tx, ty, dt, speedMul) {
+    const dx = tx - m.x, dy = ty - m.y, d = Math.hypot(dx, dy);
+    if (d < 3) { m.vx *= 0.7; m.vy *= 0.7; return; }
+    let nx = dx / d, ny = dy / d;
+    if (m.jitter > 0) { nx = Math.cos(m.jitterA); ny = Math.sin(m.jitterA); }
+    /* 동료끼리 겹치지 않게 밀어낸다 */
+    let px = 0, py = 0;
+    for (const o of AI.members) {
+      if (o === m) continue;
+      const ox = m.x - o.x, oy = m.y - o.y, od = Math.hypot(ox, oy);
+      if (od > 1 && od < R_SHELLY * 1.9) { px += (ox / od) * (1 - od / (R_SHELLY * 1.9)); py += (oy / od) * (1 - od / (R_SHELLY * 1.9)); }
+    }
+    {
+      const ox = m.x - G.sh.x, oy = m.y - G.sh.y, od = Math.hypot(ox, oy);
+      if (od > 1 && od < R_SHELLY * 1.9) { px += (ox / od) * 0.8; py += (oy / od) * 0.8; }
+    }
+    nx += px * 0.9; ny += py * 0.9;
+    const n = Math.hypot(nx, ny) || 1;
+    const spd = teMovePx() * (speedMul == null ? 1 : speedMul) * (m.kit.moveMul || 1);
+    m.vx = (nx / n) * spd; m.vy = (ny / n) * spd;
+  }
+
+  function moveAwayFrom(m, tx, ty, dt, speedMul) {
+    steer(m, m.x * 2 - tx, m.y * 2 - ty, dt, speedMul);
+  }
+
+  function applyMotion(m, dt) {
+    if (m.dash) {
+      m.x += m.dash.vx * dt; m.y += m.dash.vy * dt;
+      collide(m, R_SHELLY);
+      m.dash.t -= dt;
+      if (m.dash.t <= 0) m.dash = null;
+      return;
+    }
+    m.x += m.vx * dt; m.y += m.vy * dt;
+    collide(m, R_SHELLY);
+    m.vx *= 0.82; m.vy *= 0.82;
+  }
+
+  function tryDashAI(m, dirX, dirY) {
+    if (m.dash || m.dashCd > 0) return;
+    const d = Math.hypot(dirX, dirY) || 1;
+    const dist = teWorld(TE.dashDist) * (m.kit.dashMul || 1), dur = TE.dashDur;
+    m.dash = { vx: (dirX / d) * (dist / dur), vy: (dirY / d) * (dist / dur), t: dur };
+    m.dashCd = TE.dashCd;
+  }
+
+  /* ══════════ 전투 ══════════ */
+
+  /* 총알이 실제로 닿는 거리 — 사람 총과 같은 제원에서 계산한다 */
+  const FIRE_RANGE = () => (teWorld(280) * 1.2) / CELL * 0.92;
+
+  function canSee(ax, ay, bx, by) {
+    return typeof sightClear !== 'function' || sightClear(ax, ay, bx, by);
+  }
+
+  /* 위협 목록 — "동료라면 반응했을 적"을 고른다.
+     1) 내가 직접 보는 적
+     2) 사람이 보고 있는 적 (팀은 서로 알린다)
+     3) 사람에게 달라붙은 적은 거리와 무관하게 최우선
+     이 셋을 합치지 않으면 AI 는 좁은 시야 때문에 전투를 통째로 놓친다. */
+  function threats(m) {
+    const out = [];
+    if (!G.enemies) return out;
+    const alertR = CELL * (m.kit.alert || 12);
+    const partyR = CELL * 9;
+    for (const e of G.enemies) {
+      if (e.hp <= 0) continue;
+      const dm = Math.hypot(e.x - m.x, e.y - m.y);
+      const dp = Math.hypot(e.x - G.sh.x, e.y - G.sh.y);
+      let known = false, prio = 0;
+      if (dp < partyR && canSee(G.sh.x, G.sh.y, e.x, e.y)) { known = true; prio = 100 - dp / CELL; }
+      else if (dm < alertR && canSee(m.x, m.y, e.x, e.y)) { known = true; prio = 60 - dm / CELL; }
+      else if (dp < alertR && canSee(G.sh.x, G.sh.y, e.x, e.y)) { known = true; prio = 40 - dp / CELL; }
+      if (!known) continue;
+      if (e.atkState) prio += 12;            /* 지금 때리는 중인 적을 먼저 */
+      if (e.elite || e.apex) prio += 8;
+      out.push({ e, d: dm, dp, prio });
+    }
+    out.sort((a, b) => b.prio - a.prio);
+    return out;
+  }
+  function enemiesNear(m, cells, needSight) {
+    const out = [];
+    if (!G.enemies) return out;
+    const max = CELL * cells;
+    for (const e of G.enemies) {
+      if (e.hp <= 0) continue;
+      const d = Math.hypot(e.x - m.x, e.y - m.y);
+      if (d > max) continue;
+      if (needSight && !canSee(m.x, m.y, e.x, e.y)) continue;
+      out.push({ e, d });
+    }
+    out.sort((a, b) => a.d - b.d);
+    return out;
+  }
+
+  /* AI 사격 — 사람의 특성 배율을 타지 않도록 p.ai 로 표시해서 쏜다 */
+  function fire(m, tx, ty) {
+    if (m.gunCd > 0 || m.reloadLeft > 0) return false;
+    if (m.ammo <= 0) { m.reloadLeft = m.reloadTime; return false; }
+    m.ammo--;
+    const a = Math.atan2(ty - m.y, tx - m.x) + rnd(-0.045, 0.045);
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const sp = teWorld(280);
+    G.projectiles.push({
+      x: m.x + ca * R_SHELLY * 0.9, y: m.y + sa * R_SHELLY * 0.9,
+      vx: ca * sp, vy: sa * sp, life: 1.2,
+      pierce: 0, bounces: 0, explosive: false, laser: false,
+      power: 1, lastCell: -1, ai: 1, aiMul: m.kit.gunMul, aiOwner: m.id,
+      visualId: 'standard', visualAge: 0, visualRot: 0, trail: [],
+    });
+    if (window.TUNNEL_PROJECTILE_FX) {
+      window.TUNNEL_PROJECTILE_FX.muzzle(m.x + ca * R_SHELLY * 0.9, m.y + sa * R_SHELLY * 0.9, a, 'standard');
+    }
+    m.gunCd = m.kit.fireCd;
+    if (m.ammo <= 0) m.reloadLeft = m.reloadTime;
+    return true;
+  }
+
+  /* 드릴 접촉 피해 — 드릴러가 벽을 파는 김에 붙은 적을 갈아버린다 */
+  function drillMelee(m, dt) {
+    if (!m.kit.drillMelee || !m.digging) return;
+    const ca = Math.cos(m.aim), sa = Math.sin(m.aim);
+    const tx = m.x + ca * DRILL_TIP, ty = m.y + sa * DRILL_TIP;
+    for (const e of G.enemies) {
+      if (e.hp <= 0) continue;
+      if (Math.hypot(tx - e.x, ty - e.y) < e.r + 8) {
+        AI.dmgSrc = m;
+        try { hurtEnemy(e, shelDps() * DEMO.enemyDrillMul * DRILL_DMG() * m.kit.digMul * dt, ca, sa); }
+        finally { AI.dmgSrc = null; }
+      }
+    }
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════
+     개인 성장 (§5.2) — AI 크루도 자기 행동으로 경험치를 얻고, 자기
+     레벨업 시점에 자기 특성을 고른다. 사람과 경험치 곡선·역할 가중치를
+     공유하므로 "네 명이 각자 다른 속도로 다른 빌드가 된다"가 성립한다.
+
+     본편의 INF_TRAITS 는 전역 INF 를 직접 바꾸는 함수라 그대로 쓸 수 없다.
+     그래서 같은 계열·같은 감각의 AI 전용 풀을 두고, 효과는 각 크루의
+     KIT 사본에만 적용한다. 사람 빌드는 절대 건드리지 않는다.
+     ══════════════════════════════════════════════════════════════ */
+
+  const XP = () => (typeof INF_XP_TABLE !== 'undefined' ? INF_XP_TABLE
+    : { dirt: 1, stone: 2, rare: 4, kill: 4, eliteMul: 1.7, apexMul: 2.4, killBoss: 45, turretKill: 5 });
+  const XP_FLOOR_CAP = 60;
+
+  function xpWeight(m, kind) {
+    const row = (typeof INF_XP_WEIGHT !== 'undefined' && INF_XP_WEIGHT[kind]) || null;
+    const w = row ? row[m.roleId] : null;
+    return w == null ? 1 : w;
+  }
+  function xpNeedFor(L) {
+    return (typeof infXpNeedFor === 'function') ? infXpNeedFor(L) : Math.round(30 + 10 * L + 2.4 * L * L);
+  }
+  function awardXp(m, base, kind, opts) {
+    if (!(base > 0) || m.down) return 0;
+    const o = opts || {};
+    if (o.capped && (m.xpCapped || 0) >= XP_FLOOR_CAP) return 0;
+    const growth = (typeof INF !== 'undefined' && INF.growthMultiplier) || 1;
+    const gain = Math.max(1, Math.round(base * xpWeight(m, kind) * growth));
+    m.xp += gain;
+    if (o.capped) m.xpCapped = (m.xpCapped || 0) + gain;
+    if (o.x != null && typeof J !== 'undefined' && J.text && Math.random() < 0.45) {
+      J.text(o.x, o.y - 24, '+' + gain, ROLE_COL[m.roleId], 10);
+    }
+    checkLevel(m);
+    return gain;
+  }
+  function checkLevel(m) {
+    let guard = 0;
+    while (m.xp >= m.xpNeed && guard++ < 4) {
+      m.xp -= m.xpNeed;
+      m.level++;
+      m.xpNeed = xpNeedFor(m.level);
+      pickTrait(m);
+    }
+  }
+
+  /* 레벨이 오를수록 상위 티어가 열린다 — 사람의 카드 곡선과 같은 감각 */
+  function maxTier(level) { return level < 3 ? 1 : level < 6 ? 2 : level < 9 ? 3 : 4; }
+
+  /* AI 전용 특성 풀. a(m) 은 그 크루의 KIT 사본만 바꾼다. */
+  const AI_TRAITS = [
+    /* ── 드릴러: 길을 연다 ── */
+    { role: 'driller', id: 'd_motor', tier: 1, n: '토크 증폭 모터', d: '굴착 +18%', a: (m) => m.kit.digMul *= 1.18 },
+    { role: 'driller', id: 'd_rivet', tier: 1, n: '리벳 강화 약실', d: '사격 +22%', a: (m) => m.kit.gunMul *= 1.22 },
+    { role: 'driller', id: 'd_frame', tier: 1, n: '경량 프레임', d: '이동 +8% · 체력 +30', a: (m) => { m.kit.moveMul *= 1.08; m.hpMax += 30; m.hp += 30; } },
+    { role: 'driller', id: 'd_fault', tier: 2, n: '단층 추적 비트', d: '굴착 +25% · 통로 개척 적극', a: (m) => { m.kit.digMul *= 1.25; m.kit.pathDigCost *= 0.8; } },
+    { role: 'driller', id: 'd_guard', tier: 2, n: '작업 구역 방호', d: '체력 +55 · 근접 교전 허용', a: (m) => { m.hpMax += 55; m.hp += 55; m.kit.engage = Math.max(2.4, m.kit.engage - 0.4); } },
+    { role: 'driller', id: 'd_seismic', tier: 3, n: '지진 공진축', d: '굴착 +32% · 드릴 접촉 피해 증가', a: (m) => m.kit.digMul *= 1.32 },
+    { role: 'driller', id: 'd_mantle', tier: 4, n: '맨틀 천공 키', d: '굴착 +45% · 이동 +10%', a: (m) => { m.kit.digMul *= 1.45; m.kit.moveMul *= 1.10; } },
+
+    /* ── 거너: 적을 지운다 ── */
+    { role: 'gunner', id: 'g_cycler', tier: 1, n: '고속 약실 순환기', d: '연사 +18%', a: (m) => m.kit.fireCd *= 0.85 },
+    { role: 'gunner', id: 'g_belt', tier: 1, n: '확장 급탄 벨트', d: '탄창 +6', ok: (m) => m.kit.mag < 40, a: (m) => m.kit.mag += 6 },
+    { role: 'gunner', id: 'g_liner', tier: 1, n: '텅스텐 라이너', d: '화력 +20%', a: (m) => m.kit.gunMul *= 1.20 },
+    { role: 'gunner', id: 'g_optic', tier: 2, n: '전술 조준경', d: '인지 +4칸 · 요격 +3칸', a: (m) => { m.kit.alert += 4; m.kit.intercept += 3; } },
+    { role: 'gunner', id: 'g_radius', tier: 2, n: '파쇄 확장 슬리브', d: '파쇄 반경 +1칸', ok: (m) => m.kit.breakerRadius < 2, a: (m) => m.kit.breakerRadius = 2 },
+    { role: 'gunner', id: 'g_quick', tier: 2, n: '속사 재장전', d: '재장전 -25%', a: (m) => m.kit.reload *= 0.75 },
+    { role: 'gunner', id: 'g_fuse', tier: 3, n: '고속 신관', d: '파쇄탄 재사용 -30%', a: (m) => m.kit.breakerCd *= 0.7 },
+    { role: 'gunner', id: 'g_storm', tier: 4, n: '지속 사격 교리', d: '연사 +20% · 화력 +25%', a: (m) => { m.kit.fireCd *= 0.8; m.kit.gunMul *= 1.25; } },
+
+    /* ── 스카우트: 어둠을 연다 ── */
+    { role: 'scout', id: 's_boots', tier: 1, n: '경량 부츠', d: '이동 +14%', a: (m) => m.kit.moveMul *= 1.14 },
+    { role: 'scout', id: 's_flare', tier: 1, n: '플레어 증설', d: '플레어 주기 -30%', a: (m) => m.kit.flareCd *= 0.7 },
+    { role: 'scout', id: 's_carbine', tier: 1, n: '카빈 총열 개조', d: '사격 +20%', a: (m) => m.kit.gunMul *= 1.20 },
+    { role: 'scout', id: 's_optic', tier: 2, n: '야간 광학', d: '인지 +5칸', a: (m) => m.kit.alert += 5 },
+    { role: 'scout', id: 's_cutter', tier: 2, n: '절삭기 출력 증폭', d: '굴착 +35%', a: (m) => { m.kit.digMul *= 1.35; m.kit.pathDigCost *= 0.85; } },
+    { role: 'scout', id: 's_evade', tier: 3, n: '회피 기동', d: '대시 +20% · 이동 +10%', a: (m) => { m.kit.dashMul *= 1.2; m.kit.moveMul *= 1.10; } },
+    { role: 'scout', id: 's_beacon', tier: 4, n: '지속 조명탄', d: '플레어 주기 -40% · 인지 +5칸', a: (m) => { m.kit.flareCd *= 0.6; m.kit.alert += 5; } },
+
+    /* ── 엔지니어: 공간을 만든다 ── */
+    { role: 'engineer', id: 'e_mag', tier: 1, n: '확장 탄약 호퍼', d: '센트리 탄창 +8', a: (m) => { m.kit.turretMag += 8; for (const t of AI.turrets) if (t.owner === m.id) { t.mag += 8; t.ammo += 8; } } },
+    { role: 'engineer', id: 'e_cutter', tier: 1, n: '공학 커터 증폭', d: '굴착 +28%', a: (m) => m.kit.digMul *= 1.28 },
+    { role: 'engineer', id: 'e_grid', tier: 1, n: '전력망 확장', d: '노드 반경 +1.2칸', a: (m) => m.kit.nodeRadius += 1.2 },
+    { role: 'engineer', id: 'e_rate', tier: 2, n: '센트리 사격 통제', d: '센트리 연사 +25% · 위력 +20%', a: (m) => { m.kit.turretRate *= 0.8; m.kit.turretPower *= 1.2; } },
+    { role: 'engineer', id: 'e_fast', tier: 2, n: '신속 설치 키트', d: '설치 대기 -30%', a: (m) => { m.kit.turretCd *= 0.7; m.kit.nodeCd *= 0.7; } },
+    { role: 'engineer', id: 'e_third', tier: 3, n: '3번 슬롯 개방', d: '센트리 최대 +1기', ok: (m) => m.kit.maxTurrets < 3, a: (m) => m.kit.maxTurrets = 3 },
+    { role: 'engineer', id: 'e_range', tier: 3, n: '장거리 사통 장치', d: '센트리 사거리 +2칸 · 수명 +25', a: (m) => { m.kit.turretRange += 2; m.kit.turretLife += 25; } },
+    { role: 'engineer', id: 'e_fortress', tier: 4, n: '이동 요새 교리', d: '센트리 위력 +35% · 노드 반경 +1.5칸', a: (m) => { m.kit.turretPower *= 1.35; m.kit.nodeRadius += 1.5; } },
+  ];
+
+  function pickTrait(m) {
+    const cap = maxTier(m.level);
+    const pool = AI_TRAITS.filter((t) => t.role === m.roleId && t.tier <= cap
+      && !m.traitIds[t.id] && (!t.ok || t.ok(m)));
+    if (!pool.length) {
+      /* 풀이 마르면 성장이 멈추지 않게 기본 숙련으로 대체한다 (§17.4-6 과 같은 취지) */
+      applyTrait(m, {
+        id: 'basic', n: '숙련',
+        a: (mm) => { mm.kit.digMul *= 1.06; mm.kit.gunMul *= 1.06; mm.hpMax += 12; mm.hp += 12; },
+      }, true);
+      return;
+    }
+    /* 높은 티어를 선호하되 결정적이지 않게 — 크루마다 빌드가 갈린다 */
+    pool.sort((a, b) => (b.tier + Math.random() * 1.4) - (a.tier + Math.random() * 1.4));
+    applyTrait(m, pool[0], false);
+  }
+  function applyTrait(m, t, repeatable) {
+    try { t.a(m); } catch (e) { console.error('[AICREW] trait', t.id, e); }
+    if (!repeatable) m.traitIds[t.id] = true;
+    m.traits.push(t.n);
+    /* KIT 사본이 바뀌면 파생 수치도 따라간다 */
+    m.reloadTime = m.kit.reload;
+    m.mag = m.kit.mag;
+    if (typeof J !== 'undefined' && J.text) {
+      J.text(m.x, m.y - 52, 'Lv' + m.level + ' · ' + t.n, ROLE_COL[m.roleId], 14);
+      J.ring(m.x, m.y, ROLE_COL[m.roleId], 6, CELL * 1.1, 2.4);
+    }
+    say(m, 'Lv' + m.level + ' ' + t.n);
+    if (typeof toast === 'function') toast('AI ' + ROLE_KO[m.roleId] + ' Lv' + m.level + ' · ' + t.n);
+  }
+
+  /* ── 경험치 획득처 ── */
+  /* 처치 — 어떤 크루의 피해로 죽었는지는 AI.dmgSrc 가 들고 있다 */
+  AI.dmgSrc = null;
+  AI.ownerOf = function (p) {
+    if (!p || p.aiOwner == null) return null;
+    return AI.members.find((m) => m.id === p.aiOwner) || null;
+  };
+  AI.awardKill = function (e, src) {
+    const m = AI.dmgSrc;
+    if (!m || !AI.members.includes(m)) return;
+    const T = XP();
+    if (e.boss) { awardXp(m, T.killBoss || 45, 'combat', { x: e.x, y: e.y }); return; }
+    const tier = e.apex ? (T.apexMul || 2.4) : (e.elite ? (T.eliteMul || 1.7) : 1);
+    if (src === 'turret') awardXp(m, (T.turretKill || 5) * tier, 'support', { x: e.x, y: e.y });
+    else awardXp(m, (T.kill || 4) * tier, 'combat', { x: e.x, y: e.y });
+  };
+  /* 정찰 경험치 — 사람의 scoutExploreXp 와 같은 규칙으로 '새 구역'에만 준다.
+     플레어를 던지는 행위 자체에 주면 쿨다운 단축 특성과 맞물려 자기가속하고,
+     스카우트만 혼자 레벨이 폭주한다(1차 구현에서 실제로 그랬다). */
+  function reconAward(m, x, y) {
+    const sw = Math.ceil(COLS / 3);
+    const key = Math.floor(Math.floor(x / CELL) / 3) + Math.floor(Math.floor(y / CELL) / 3) * sw;
+    if (!m.sectors) m.sectors = new Set();
+    if (m.sectors.has(key)) { awardXp(m, 1, 'recon', { capped: true }); return; }
+    m.sectors.add(key);
+    const base = (typeof INF !== 'undefined' && INF.scoutExploreXp) || 2;
+    awardXp(m, base, 'recon', { x: x, y: y });
+  }
+
+  /* 시간 트리클 — 사람의 지층당 상한과 같은 취지. 조용한 역할도 뒤처지지 않게. */
+  function xpTrickle(m, dt) {
+    m.xpTrickle = (m.xpTrickle || 0) + dt;
+    if (m.xpTrickle < 6) return;
+    m.xpTrickle = 0;
+    awardXp(m, 2, 'objective', { capped: true });
+  }
+
+  /* ══════════ 굴착 ══════════ */
+
+  /* AI 가 부순 블록: 장악도·코어는 팀에 기여하고, 경험치는 판 크루 개인에게 간다.
+     사람의 경험치와 특성 발동은 건드리지 않는다 (§5.2). */
+  AI.creditBreak = function (type, x, y) {
+    const raw = AI.breakSrc;
+    const src = raw && raw.roleId ? raw : AI.ownerOf(raw);
+    const I = inf();
+    if (I) {
+      INF.floorBroken++; INF.totalBlocks++;
+      INF.spawnDebt += 0.3 + Math.min(0.42, INF.floorBroken * 0.006);
+      G.enemyCd = Math.min(G.enemyCd, Math.max(0.35, 2.1 - INF.floorBroken * 0.018));
+      if (type === 'ore' || type === 'gem' || type === 'crys') INF.core += 1;
+      if (!INF.bossSpawned && typeof infDominanceTarget === 'function'
+        && INF.floorBroken / Math.max(1, INF.totalBreakable) >= infDominanceTarget()
+        && typeof infSpawnBoss === 'function') infSpawnBoss();
+    }
+    if (src) {
+      const T = XP();
+      const base = type === 'stone' ? (T.stone || 2)
+        : (type === 'ore' || type === 'gem' || type === 'crys') ? (T.rare || 4) : (T.dirt || 1);
+      awardXp(src, base, 'dig', { x: x, y: y });
+    }
+  };
+
+  function digAt(m, c, r, dt) {
+    const t = cellOf(c, r);
+    if (!t || unbreakable(t)) return false;
+    const wx = cxw(c), wy = cyw(r);
+    m.aim = Math.atan2(wy - m.y, wx - m.x);
+    if (Math.hypot(wx - m.x, wy - m.y) > CELL * 1.35) return false;   /* 너무 멀면 못 판다 */
+    m.digging = true; m.drill = 1;
+    const nx = Math.cos(m.aim), ny = Math.sin(m.aim);
+    const dv = shelDps() * DRILL_DMG() * m.kit.digMul * dt;
+    AI.breakSrc = m;
+    try { damage(c, r, dv, nx, ny, true); } finally { AI.breakSrc = null; }
+    if (Math.random() < dt * 5) J.burst(wx - nx * CELL * 0.3, wy - ny * CELL * 0.3, 2, ['#E8CBA6', '#FFF3D6'], 70);
+    return true;
+  }
+
+  /* 거너의 파쇄탄 — 드릴이 없으니 벽은 이걸로 뚫는다 */
+  function fireBreaker(m, c, r) {
+    if (m.breakerCd > 0) return false;
+    const wx = cxw(c), wy = cyw(r);
+    if (Math.hypot(wx - m.x, wy - m.y) > CELL * 7) return false;
+    m.breaker.push({ x: wx, y: wy, c, r, t: 2.0 });
+    m.breakerCd = m.kit.breakerCd;
+    m.aim = Math.atan2(wy - m.y, wx - m.x);
+    J.burst(m.x + Math.cos(m.aim) * 20, m.y + Math.sin(m.aim) * 20, 8, ['#ff8d72', '#ffd36e'], 170);
+    return true;
+  }
+  function updateBreakers(m, dt) {
+    m.breakerCd = Math.max(0, m.breakerCd - dt);
+    for (let i = m.breaker.length - 1; i >= 0; i--) {
+      const b = m.breaker[i];
+      b.t -= dt;
+      if (b.t > 0) continue;
+      m.breaker.splice(i, 1);
+      J.ring(b.x, b.y, '#ff8d72', 12, CELL * 1.8, 4);
+      J.burst(b.x, b.y, 24, ['#ff6f45', '#ffd36e', '#fff3d6'], 300);
+      SFX.brk && SFX.brk();
+      const rad = m.kit.breakerRadius;
+      AI.breakSrc = m;
+      try {
+        for (let dr = -rad; dr <= rad; dr++) for (let dc = -rad; dc <= rad; dc++) {
+          const c = b.c + dc, rr = b.r + dr;
+          const t = cellOf(c, rr);
+          if (!t || unbreakable(t)) continue;
+          damage(c, rr, ((HPT[t] || 100) * (inf() ? INF.wallHpMul || 1 : 1)) * 1.15, dc || 1, dr || 0, true);
+        }
+      } finally { AI.breakSrc = null; }
+      for (const e of G.enemies) {
+        if (e.hp <= 0) continue;
+        const d = Math.hypot(e.x - b.x, e.y - b.y);
+        if (d < CELL * 1.8) {
+          AI.dmgSrc = m;
+          try { hurtEnemy(e, DEMO.enemyGunDmg * 2.2 * m.kit.gunMul, (e.x - b.x) / (d || 1), (e.y - b.y) / (d || 1)); }
+          finally { AI.dmgSrc = null; }
+        }
+      }
+    }
+  }
+
+  /* ══════════ 설치물 — 엔지니어 ══════════ */
+
+  function placeTurret(m) {
+    const kit = m.kit;
+    const mine = AI.turrets.filter((t) => t.owner === m.id);
+    if (mine.length >= kit.maxTurrets) {
+      const old = mine[0];
+      AI.turrets.splice(AI.turrets.indexOf(old), 1);
+      J.text(old.x, old.y - 20, '회수', '#C7A0FF', 12);
+    }
+    const p = freeSpotNear(m.x, m.y, 1.2);
+    AI.turrets.push({
+      owner: m.id, x: p.x, y: p.y, aim: m.aim, cd: 0.2,
+      life: kit.turretLife, maxLife: kit.turretLife,
+      ammo: kit.turretMag, mag: kit.turretMag, reload: 0,
+      range: kit.turretRange, rate: kit.turretRate, power: kit.turretPower,
+    });
+    m.turretCd = kit.turretCd;
+    awardXp(m, 2, 'support', { x: p.x, y: p.y, capped: true });   /* 설치 자체는 반복 생산 — 상한 적용 */
+    J.burst(p.x, p.y, 12, ['#C7A0FF', '#FFF'], 140);
+    J.ring(p.x, p.y, '#C7A0FF', 6, CELL * 1.1, 2.4);
+    SFX.cache && SFX.cache();
+    say(m, '센트리 설치');
+    return true;
+  }
+
+  function placeNode(m) {
+    const kit = m.kit;
+    const mine = AI.nodes.filter((n) => n.owner === m.id);
+    if (mine.length >= kit.maxNodes) {
+      const old = mine[0];
+      AI.nodes.splice(AI.nodes.indexOf(old), 1);
+    }
+    AI.nodes.push({ owner: m.id, x: m.x, y: m.y, life: kit.nodeLife, maxLife: kit.nodeLife, radius: kit.nodeRadius });
+    m.nodeCd = kit.nodeCd;
+    awardXp(m, 2, 'support', { x: m.x, y: m.y, capped: true });
+    /* 전력 노드는 주변을 밝힌다 — 팀 시야에 실제로 기여한다 */
+    G.lamps.push({ c: 0, r: 0, x: m.x, y: m.y, ph: Math.random() * 6, rad: DEMO.lampRadius * 0.9, ttl: kit.nodeLife, flare: 1, visionRange: 3 });
+    if (typeof LOS !== 'undefined' && LOS.markDirty) LOS.markDirty();
+    J.ring(m.x, m.y, '#7FEBD0', 6, CELL * 1.3, 2.6);
+    say(m, '전력 노드');
+    return true;
+  }
+
+  function updateInstallations(dt) {
+    /* 전력 노드 — 반경 안의 센트리에 급전 */
+    for (let i = AI.nodes.length - 1; i >= 0; i--) {
+      const n = AI.nodes[i];
+      n.life -= dt;
+      if (n.life <= 0) AI.nodes.splice(i, 1);
+    }
+    for (let i = AI.turrets.length - 1; i >= 0; i--) {
+      const t = AI.turrets[i];
+      t.life -= dt;
+      if (t.life <= 0) { AI.turrets.splice(i, 1); J.burst(t.x, t.y, 8, ['#685674', '#C7A0FF'], 90); continue; }
+      t.powered = AI.nodes.some((n) => Math.hypot(n.x - t.x, n.y - t.y) <= CELL * n.radius);
+      t.cd = Math.max(0, t.cd - dt);
+      if (t.reload > 0) { t.reload = Math.max(0, t.reload - dt); if (t.reload <= 0) t.ammo = t.mag; continue; }
+      if (!t.powered) continue;                     /* 급전 없으면 침묵 — 노드의 의미 */
+      if (t.ammo <= 0) { t.reload = 2.2; continue; }
+      if (t.cd > 0) continue;
+      let best = null, bd = 1e9;
+      for (const e of G.enemies) {
+        if (e.hp <= 0) continue;
+        const d = Math.hypot(e.x - t.x, e.y - t.y);
+        if (d < bd && d <= CELL * t.range && (typeof sightClear !== 'function' || sightClear(t.x, t.y, e.x, e.y))) { bd = d; best = e; }
+      }
+      if (!best) continue;
+      t.aim = Math.atan2(best.y - t.y, best.x - t.x);
+      t.ammo--; t.cd = t.rate || 0.34;
+      const ca = Math.cos(t.aim), sa = Math.sin(t.aim), sp = teWorld(320);
+      G.projectiles.push({
+        x: t.x + ca * 16, y: t.y + sa * 16, vx: ca * sp, vy: sa * sp, life: 1.0,
+        pierce: 0, bounces: 0, explosive: false, laser: false,
+        power: 1, lastCell: -1, ai: 1, aiMul: t.power || 0.72, srcTurret: 1, aiOwner: t.owner,
+        visualId: 'standard', visualAge: 0, visualRot: 0, trail: [],
+      });
+    }
+  }
+
+  /* ══════════ 피해 / 다운 / 구조 ══════════ */
+
+  AI.hurt = function (m, dmg, nx, ny) {
+    if (!m || m.down || m.iframes > 0) return false;
+    if (m.shieldT > 0) dmg *= 0.35;
+    m.hp = Math.max(0, m.hp - dmg);
+    m.iframes = DEMO.playerIFrame;
+    m.x -= nx * DEMO.enemyKnock * 0.3; m.y -= ny * DEMO.enemyKnock * 0.3;
+    collide(m, R_SHELLY);
+    J.text(m.x, m.y - 30, '-' + Math.round(dmg), '#FF6B6B', 14);
+    if (m.hp <= 0) {
+      m.down = true; m.downT = 0; m.reviveT = 0;
+      m.vx = m.vy = 0; m.dash = null; m.digging = false;
+      J.ring(m.x, m.y, '#FF557D', 8, CELL * 1.4, 3);
+      toast && toast('AI ' + ROLE_KO[m.roleId] + ' 다운 — 접근해 구조');
+    }
+    return true;
+  };
+  /* 좌표로 맞는 판정 — 적 투사체가 쓴다 */
+  AI.hitTest = function (x, y, r) {
+    for (const m of AI.members) {
+      if (m.down) continue;
+      if (Math.hypot(m.x - x, m.y - y) < R_SHELLY + (r || 0)) return m;
+    }
+    return null;
+  };
+  /* 적이 노릴 수 있는 크루 — 사람 + 살아있는 AI */
+  AI.targets = function () {
+    const out = [{ x: G.sh.x, y: G.sh.y, player: true }];
+    for (const m of AI.members) if (!m.down) out.push({ x: m.x, y: m.y, member: m });
+    return out;
+  };
+
+  function updateDown(m, dt) {
+    m.downT += dt;
+    /* 구조 — 사람이든 다른 AI든 옆에 있으면 일으킨다 (§9.2) */
+    let helper = Math.hypot(G.sh.x - m.x, G.sh.y - m.y) < CELL * 1.6;
+    if (!helper) helper = AI.members.some((o) => o !== m && !o.down && Math.hypot(o.x - m.x, o.y - m.y) < CELL * 1.6);
+    if (helper) {
+      m.reviveT += dt;
+      if (Math.random() < dt * 8) J.burst(m.x, m.y - 10, 2, ['#7FEBD0', '#FFF'], 60);
+      if (m.reviveT >= 3) {
+        m.down = false; m.hp = m.hpMax * 0.5; m.iframes = 1.4; m.reviveT = 0;
+        J.flash(m.x, m.y, 40, 'rgba(127,235,208,.8)');
+        toast && toast('AI ' + ROLE_KO[m.roleId] + ' 구조 완료');
+      }
+    } else m.reviveT = Math.max(0, m.reviveT - dt * 0.5);
+  }
+
+  function say(m, text) { m.say = text; m.sayT = 1.8; }
+
+
+  /* ══════════════════════════════════════════════════════════════
+     보스 투사체 회피
+     보스탄은 (tx,ty) 에 rad 반경으로 예고 후 착탄한다. 즉 "피할 수 있게"
+     설계된 공격이다. 사람이 피하는 걸 AI 가 못 피하면 동료가 아니라 짐이다.
+     예고 원 안에 있으면 사격은 유지한 채 원 밖으로만 빠진다.
+     ══════════════════════════════════════════════════════════════ */
+  function dodgeBossShot(m, dt) {
+    const I = inf();
+    if (!I) return false;
+    let danger = null, bestEta = 1e9;
+    const scan = (s, eta) => {
+      if (eta > 1.8) return;                       /* 아직 먼 예고는 무시 */
+      const d = Math.hypot(m.x - s.tx, m.y - s.ty);
+      if (d > s.rad * 1.15) return;                /* 이미 원 밖 */
+      if (eta < bestEta) { bestEta = eta; danger = { s: s, d: d, eta: eta }; }
+    };
+    for (const s of I.bossShots || []) scan(s, Math.max(0, s.flight - s.t));
+    for (const q of I.bossShotQueue || []) scan(q, Math.max(0, q.delay || 0) + (q.flight || 0));
+    if (!danger) { m.dodging = false; return false; }
+
+    m.dodging = true;
+    let nx = m.x - danger.s.tx, ny = m.y - danger.s.ty;
+    const n = Math.hypot(nx, ny);
+    if (n < 1) { const a = Math.random() * Math.PI * 2; nx = Math.cos(a); ny = Math.sin(a); }
+    else { nx /= n; ny /= n; }
+    const need = danger.s.rad * 1.3 - danger.d;
+    steer(m, m.x + nx * (need + CELL), m.y + ny * (need + CELL), dt, 1.2);
+    /* 코앞이면 대시로 확실히 뺀다 */
+    if (danger.eta < 0.6 && m.dashCd <= 0 && need > CELL * 0.5) tryDashAI(m, nx, ny);
+    say(m, '회피');
+    return true;
+  }
+
+  /* 보스탄 착탄 — 사람만 맞고 AI 는 안 맞으면 회피가 의미 없다 */
+  AI.bossShotHit = function (s) {
+    if (!AI.members.length) return;
+    const spec = (typeof bossSpec === 'function') ? bossSpec() : null;
+    let dmg = spec ? Math.max(0, Math.round(spec.projectileDamage)) : 0;
+    if (!dmg) dmg = Math.max(9, Math.round(DEMO.enemyDmg * 3.55));
+    for (const m of AI.members) {
+      if (m.down) continue;
+      if (Math.hypot(m.x - s.tx, m.y - s.ty) > s.rad) continue;
+      const dx = m.x - s.tx, dy = m.y - s.ty, d = Math.hypot(dx, dy) || 1;
+      AI.hurt(m, dmg, dx / d, dy / d);
+    }
+  };
+
+  /* ══════════════════════════════════════════════════════════════
+     전투 중 지원 행동
+     "적을 쏜다"가 모든 것을 밀어내면 안 된다. 엔지니어는 교전 중에도
+     센트리를 세워야 하고, 스카우트는 교전 구역을 밝혀야 한다. 이 함수는
+     사격·이동과 경쟁하지 않는다 — 같은 프레임에 같이 일어난다.
+     ══════════════════════════════════════════════════════════════ */
+  function combatSupport(m, goal, dt) {
+    const kit = m.kit, e = goal.enemy;
+    const fx = e ? e.x : goal.x, fy = e ? e.y : goal.y;
+
+    if (m.roleId === 'engineer') {
+      const mine = AI.turrets.filter((t) => t.owner === m.id);
+      /* 슬롯이 비었으면 무조건 세운다. 슬롯이 찼어도 교전 지점에서 멀면
+         현장으로 옮겨 세운다 — 뒤에 남은 센트리는 전투에 기여하지 않는다. */
+      const useless = mine.length && mine.every((t) => Math.hypot(t.x - fx, t.y - fy) > CELL * (kit.turretRange + 2));
+      if (m.turretCd <= 0 && (mine.length < kit.maxTurrets || useless)) { placeTurret(m); return; }
+      /* 급전을 못 받는 센트리가 있으면 노드를 세워 살린다 */
+      const dead = mine.find((t) => !t.powered);
+      if (dead && m.nodeCd <= 0 && Math.hypot(dead.x - m.x, dead.y - m.y) < CELL * kit.nodeRadius * 1.2) {
+        placeNode(m); return;
+      }
+    }
+
+    if (m.roleId === 'scout') {
+      /* 교전 구역 조명 — 어두운 곳에서 싸우는 팀에게 실질적인 지원이다 */
+      if (m.flareCd <= 0) {
+        let lit = false;
+        for (const l of G.lamps) if (Math.hypot(l.x - fx, l.y - fy) < (l.rad || 120) * 0.8) { lit = true; break; }
+        if (!lit) {
+          const a = Math.atan2(fy - m.y, fx - m.x);
+          const lx = m.x + Math.cos(a) * CELL * 2.4, ly = m.y + Math.sin(a) * CELL * 2.4;
+          G.lamps.push({ c: 0, r: 0, x: lx, y: ly, ph: Math.random() * 6,
+            rad: Math.max(DEMO.lampRadius * 1.45, CELL * 4.2), ttl: 22, flare: 1, visionRange: 5 });
+          if (typeof LOS !== 'undefined' && LOS.markDirty) LOS.markDirty();
+          J.flash(lx, ly, 42, 'rgba(255,220,160,.9)');
+          m.flareCd = kit.flareCd;
+          reconAward(m, lx, ly);
+          say(m, '조명 지원');
+          return;
+        }
+      }
+    }
+
+    if (m.roleId === 'gunner') {
+      const d = Math.hypot(fx - m.x, fy - m.y);
+      if (m.qCd <= 0 && (d < CELL * 3 || m.hp < m.hpMax * 0.6)) {
+        m.shieldT = 2.8; m.qCd = 8;
+        J.ring(m.x, m.y, '#7FEBD0', 8, CELL * 1.4, 3);
+        say(m, '방어막');
+        return;
+      }
+      /* 벽 뒤의 적을 파쇄탄으로 열어젖힌다 — 거너다운 전투 기여 */
+      if (m.breakerCd <= 0 && !canSee(m.x, m.y, fx, fy)) {
+        const [c, r] = toCell((m.x + fx) / 2, (m.y + fy) / 2);
+        const t = cellOf(c, r);
+        if (t && !unbreakable(t)) { fireBreaker(m, c, r); say(m, '차폐 제거'); return; }
+      }
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     재화 습득
+     크루가 광물을 아예 못 줍던 문제. 다만 재화만 쫓아다니면 전투도 굴착도
+     안 하는 청소부가 된다. 그래서 두 층으로 나눈다.
+       ① 접촉 습득 — 지나가다 밟으면 줍는다 (항상)
+       ② 회수 행동 — 근처에 떨어진 게 있으면 '확률적으로' 주우러 간다
+     ②는 전투보다 아래, 채굴보다 위에 둔다.
+     ══════════════════════════════════════════════════════════════ */
+  function lootPickupRange() {
+    return (typeof DEMO !== 'undefined' ? DEMO.lootPickup : 26) * 1.0;
+  }
+  /* 접촉 습득 — 사람의 픽업과 같은 곳으로 정산된다(팀 재화) */
+  function collectLoot(m, dt) {
+    if (!G.res || !G.res.length) return;
+    const pick = lootPickupRange(), mag = (DEMO.lootMagnet || 72) * 0.55;
+    for (const q of G.res) {
+      if (q.gone || !q.land) continue;
+      const d = Math.hypot(q.x - m.x, q.y - m.y);
+      if (d > mag) continue;
+      if (d > pick) {
+        /* 약한 자석 — 사람보다 약하게 둬서 사람 몫을 빨아가지 않는다 */
+        if ((q.landAge || 0) >= (DEMO.lootMagnetDelay || 0.8)) {
+          q.x += (m.x - q.x) * Math.min(1, dt * (DEMO.lootMagnetSpd || 7.5) * 0.5);
+          q.y += (m.y - q.y) * Math.min(1, dt * (DEMO.lootMagnetSpd || 7.5) * 0.5);
+        }
+        continue;
+      }
+      q.gone = true;
+      const v = Math.max(1, Math.round(q.val * (typeof depthMul === 'function' ? depthMul() : 1)));
+      if (q.kind === 'pulp') G.gPulp += v; else G.gBloom += v;
+      G.nRes += v;
+      const col = q.kind === 'bloom' ? P.bloom : P.pulp;
+      J.ring(m.x, m.y, col, 10, 26 + v * 3, 2);
+      J.burst(m.x, m.y, 3, col, 90);
+      if (typeof paintResHud === 'function') paintResHud();
+      SFX.res && SFX.res();
+      awardXp(m, Math.max(1, v), 'loot', { x: m.x, y: m.y });   /* 회수도 개인 경험치 (§5.3) */
+      m.lootGot = (m.lootGot || 0) + v;
+    }
+  }
+  /* 회수 목표 — 근처의 가장 값나가는 재화. 확률·쿨다운으로 절제한다. */
+  function pickLoot(m) {
+    if (!G.res || !G.res.length) return null;
+    if (m.lootCd > 0) return null;
+    const maxD = CELL * 7;
+    let best = null, bs = -1e9;
+    for (const q of G.res) {
+      if (q.gone || !q.land) continue;
+      const d = Math.hypot(q.x - m.x, q.y - m.y);
+      if (d > maxD) continue;
+      /* 사람이 코앞에 둔 재화는 사람 몫으로 남긴다 */
+      if (Math.hypot(q.x - G.sh.x, q.y - G.sh.y) < CELL * 2.2) continue;
+      const s = (q.kind === 'bloom' ? 6 : 3) + (q.val || 1) * 2 - d / CELL * 1.6;
+      if (s > bs) { bs = s; best = q; }
+    }
+    return best;
+  }
+
+  /* ══════════ 판단 — 역할별 행동 예산 ══════════ */
+
+  /* 리더 = 사람 플레이어. AI 는 사람 주변에서 자기 일을 한다. */
+  function leaderDist(m) { return Math.hypot(G.sh.x - m.x, G.sh.y - m.y); }
+
+  /* 캘 만한 벽 — 광맥에 가중치. anchor 주변만 본다.
+     제한을 걸지 않는다: 크루가 능동적으로 계속 파는 편이 플레이 감각에 낫다.
+     (광맥만 캐게 막아 봤더니 할 일이 없어 서 있는 시간이 크게 늘었다.) */
+  function pickMine(m, ax, ay, radius) {
+    const oc = Math.floor(ax / CELL), or_ = Math.floor(ay / CELL);
+    let best = null, bs = -1e9;
+    for (let dr = -radius; dr <= radius; dr++) for (let dc = -radius; dc <= radius; dc++) {
+      const c = oc + dc, r = or_ + dr;
+      if (c < 1 || r < 1 || c >= COLS - 1 || r >= ROWS - 1) continue;
+      const t = G.cell[idx(c, r)];
+      if (!t || unbreakable(t)) continue;
+      let open = false;
+      for (let i = 0; i < 4; i++) {
+        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
+        if (!cellOf(nc, nr)) { open = true; break; }
+      }
+      if (!open) continue;
+      const ore = t === 'gem' ? 28 : t === 'crys' ? 22 : t === 'ore' ? 16 : t === 'stone' ? 3 : 2;
+      const s = ore - Math.hypot(c - oc, r - or_) * 2.4;
+      if (s > bs) { bs = s; best = { c, r, x: cxw(c), y: cyw(r), type: t }; }
+    }
+    return best;
+  }
+
+  /* 스카우트: 아직 어두운 방향을 찾는다 — 플레어를 던질 곳 */
+  function darkSpotAhead(m) {
+    const best = { x: 0, y: 0, score: -1 };
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      for (let d = 3; d <= 7; d++) {
+        const x = m.x + Math.cos(a) * CELL * d, y = m.y + Math.sin(a) * CELL * d;
+        if (x < CELL || y < CELL || x > WW - CELL || y > WH - CELL) break;
+        if (typeof solidAt === 'function' && solidAt(x, y)) break;
+        let lit = false;
+        for (const l of G.lamps) if (Math.hypot(l.x - x, l.y - y) < (l.rad || 120)) { lit = true; break; }
+        const s = d * (lit ? 0.2 : 1);
+        if (s > best.score) { best.score = s; best.x = x; best.y = y; }
+      }
+    }
+    return best.score > 0 ? best : null;
+  }
+
+  function decide(m) {
+    const kit = m.kit, I = inf();
+    const ld = leaderDist(m);
+
+    /* 0) 탈출 포트 — 요청되면 전원이 간다 (§8.4) */
+    const esc = I && I.escape;
+    if (esc && (esc.state === 'incoming' || esc.state === 'ready')) {
+      return { kind: 'escape', x: esc.x, y: esc.y, label: '탈출 포트' };
+    }
+
+    /* 1) 쓰러진 동료 구조가 최우선 (§9.2) */
+    const downed = AI.members.find((o) => o !== m && o.down && Math.hypot(o.x - m.x, o.y - m.y) < CELL * 14);
+    if (downed) return { kind: 'revive', x: downed.x, y: downed.y, target: downed, label: '구조' };
+
+    /* 2) 리더가 너무 멀면 붙는다 — 혼자 돌아다니는 AI 는 동료가 아니다 */
+    const leash = m.roleId === 'scout' ? 13 : 9;
+    if (ld > CELL * leash) return { kind: 'follow', x: G.sh.x, y: G.sh.y, label: '합류' };
+
+    /* 3) 전투 — 인지는 팀 단위, 요격 거리는 직업별.
+          거너는 멀리까지 쫓아가 지우고, 드릴러는 파티에 붙은 적만 처리한다. */
+    if (I && I.boss && I.boss.hp > 0 && Math.hypot(I.boss.x - m.x, I.boss.y - m.y) < CELL * 16) {
+      return { kind: 'fight', x: I.boss.x, y: I.boss.y, enemy: I.boss, boss: true, label: '보스 교전' };
+    }
+    const foes = threats(m);
+    if (foes.length) {
+      const t = foes[0];
+      /* 파티에서 너무 멀리 떨어진 적까지 쫓아가면 대열이 무너진다 */
+      const leashOk = t.dp <= CELL * (m.kit.intercept + 4) || t.d <= CELL * m.kit.intercept;
+      if (leashOk) return { kind: 'fight', x: t.e.x, y: t.e.y, enemy: t.e, label: '교전' };
+    }
+
+    /* 4) 직업 고유 임무 — 전투가 없을 때 그 직업이 하는 일 */
+    if (m.roleId === 'engineer') {
+      const mine = AI.turrets.filter((t) => t.owner === m.id);
+      if (m.turretCd <= 0 && mine.length < kit.maxTurrets) return { kind: 'turret', x: m.x, y: m.y, label: '센트리 설치' };
+      /* 파티가 센트리 라인을 벗어나 전진했으면 진지를 앞으로 옮긴다 —
+         한 번 세우고 끝내는 엔지니어는 엔지니어가 아니다 */
+      if (m.turretCd <= 0 && mine.length && mine.every((t) => Math.hypot(t.x - G.sh.x, t.y - G.sh.y) > CELL * 8)) {
+        return { kind: 'turret', x: m.x, y: m.y, label: '센트리 전진 배치' };
+      }
+      const nodes = AI.nodes.filter((n) => n.owner === m.id);
+      /* 센트리가 급전을 못 받고 있으면 노드부터 세운다 */
+      const unpowered = mine.find((t) => !t.powered);
+      if (m.nodeCd <= 0 && (nodes.length < kit.maxNodes || unpowered)) {
+        const at = unpowered || m;
+        return { kind: 'node', x: at.x, y: at.y, label: unpowered ? '센트리 급전' : '전력 노드' };
+      }
+    }
+    if (m.roleId === 'scout' && m.flareCd <= 0) {
+      const dark = darkSpotAhead(m);
+      if (dark) return { kind: 'flare', x: dark.x, y: dark.y, label: '플레어' };
+    }
+
+    /* 4.4) 재화 회수 — 근처에 떨어진 게 있으면 '가끔' 주우러 간다.
+            항상 쫓아가면 청소부가 되고, 아예 안 가면 광물이 바닥에 쌓인다. */
+    if (m.lootCd <= 0) {
+      const q = pickLoot(m);
+      if (q && Math.random() < 0.4) {
+        m.lootCd = 2.5 + Math.random() * 2;
+        return { kind: 'loot', x: q.x, y: q.y, res: q, label: '재화 회수' };
+      }
+      if (!q) m.lootCd = 1.2;          /* 주울 게 없으면 잠깐 쉬었다 다시 본다 */
+    }
+
+    /* 4.5) 전투가 끊긴 사이 재장전 — 다음 교전을 빈 탄창으로 맞지 않는다 */
+    if (m.reloadLeft <= 0 && m.ammo < m.mag * 0.45) {
+      m.reloadLeft = m.reloadTime;
+      say(m, '재장전');
+    }
+
+    /* 5) 채굴 — 한 번 고른 벽은 부술 때까지 붙잡는다 */
+    const ax = (m.x + G.sh.x) / 2, ay = (m.y + G.sh.y) / 2;
+    if (m.mineTarget) {
+      const t = cellOf(m.mineTarget.c, m.mineTarget.r);
+      const far = Math.hypot(m.mineTarget.x - ax, m.mineTarget.y - ay) > CELL * (leash + 4);
+      if (!t || unbreakable(t) || far || m.mineTarget.until < G.t) m.mineTarget = null;
+      else return { kind: 'mine', x: m.mineTarget.x, y: m.mineTarget.y, c: m.mineTarget.c, r: m.mineTarget.r, label: '채굴' };
+    }
+    /* 거너는 파쇄탄이 식기 전엔 벽을 붙잡지 않는다 — 대신 구역을 지킨다 */
+    if (m.roleId === 'gunner' && m.breakerCd > 2) return { kind: 'guard', x: G.sh.x, y: G.sh.y, label: '구역 경계' };
+    let pick = pickMine(m, ax, ay, Math.max(4, leash - 2));
+    if (!pick) pick = pickMine(m, ax, ay, leash + 3);        /* 주변이 이미 다 파였으면 더 멀리 본다 */
+    if (!pick) pick = pickMine(m, G.sh.x, G.sh.y, leash + 6);
+    if (pick) {
+      m.mineTarget = { c: pick.c, r: pick.r, x: pick.x, y: pick.y, until: G.t + 14 };
+      return { kind: 'mine', x: pick.x, y: pick.y, c: pick.c, r: pick.r, label: '채굴' };
+    }
+    return { kind: 'guard', x: G.sh.x, y: G.sh.y, label: '대기' };
+  }
+
+  /* ══════════ 실행 ══════════ */
+
+  function followStep(m, goal, dt) {
+    const step = ensurePath(m, goal.x, goal.y);
+    if (step < 0) { steer(m, goal.x, goal.y, dt); aimTo(m, goal.x, goal.y); return; }
+    const c = step % COLS, r = (step - c) / COLS;
+    if (G.cell[step]) {
+      /* 앞이 벽 — 직업의 방식으로 뚫는다 */
+      const wx = cxw(c), wy = cyw(r);
+      if (m.roleId === 'gunner') {
+        if (!fireBreaker(m, c, r)) { steer(m, wx, wy, dt, 0.4); aimTo(m, wx, wy); }
+        else moveAwayFrom(m, wx, wy, dt, 0.8);
+        return;
+      }
+      steer(m, wx, wy, dt, 0.55);
+      if (!digAt(m, c, r, dt)) aimTo(m, wx, wy);
+      return;
+    }
+    steer(m, cxw(c), cyw(r), dt);
+    aimTo(m, cxw(c), cyw(r));
+  }
+
+  function aimTo(m, x, y) {
+    const want = Math.atan2(y - m.y, x - m.x);
+    let d = want - m.aim;
+    while (d > Math.PI) d -= Math.PI * 2;
+    while (d < -Math.PI) d += Math.PI * 2;
+    m.aim += d * 0.25;
+    m.face = Math.cos(m.aim) < 0 ? -1 : 1;
+  }
+
+  function act(m, goal, dt) {
+    /* 보스탄 예고는 어떤 행동보다 먼저다 — 굴착 중이든 이동 중이든 */
+    if (goal.kind !== 'fight' && dodgeBossShot(m, dt)) return;
+
+    if (goal.kind === 'fight') {
+      const e = goal.enemy;
+      const d = Math.hypot(e.x - m.x, e.y - m.y);
+      const want = CELL * (goal.boss ? m.kit.engage + 1.6 : m.kit.engage);
+      aimTo(m, e.x, e.y);
+      /* 지원 행동을 먼저 흘린다 — "쏘느라 아무것도 안 하는" 문제를 막는다 */
+      combatSupport(m, goal, dt);
+      /* 보스탄 예고 안이면 사격은 유지한 채 원 밖으로 뺀다 */
+      if (dodgeBossShot(m, dt)) { if (canSee(m.x, m.y, e.x, e.y)) fire(m, e.x, e.y); return; }
+      /* 사격 — 총알이 닿고 시야가 통할 때만. 안 닿으면 붙는다. */
+      const inRange = d <= CELL * FIRE_RANGE() && canSee(m.x, m.y, e.x, e.y);
+      if (inRange) fire(m, e.x, e.y);
+      if (!inRange) { followStep(m, goal, dt); return; }
+      if (d < want * 0.65) {
+        moveAwayFrom(m, e.x, e.y, dt, 0.95);
+        if (d < CELL * 1.5 && m.dashCd <= 0 && m.hp < m.hpMax * 0.5) tryDashAI(m, m.x - e.x, m.y - e.y);
+      } else if (d > want * 1.35) followStep(m, goal, dt);
+      else {
+        /* 사거리 유지 — 옆으로 돌며 쏜다 */
+        const a = Math.atan2(e.y - m.y, e.x - m.x) + Math.PI / 2 * (m.id % 2 ? 1 : -1);
+        steer(m, m.x + Math.cos(a) * CELL, m.y + Math.sin(a) * CELL, dt, 0.55);
+      }
+      /* 드릴러는 붙은 적을 드릴로 간다 */
+      if (m.kit.drillMelee && d < CELL * 1.5) { m.digging = true; m.drill = 1; drillMelee(m, dt); }
+      return;
+    }
+
+    if (goal.kind === 'escape') {
+      const d = Math.hypot(goal.x - m.x, goal.y - m.y);
+      if (d > CELL * 1.0) followStep(m, goal, dt);
+      else { m.vx *= 0.7; m.vy *= 0.7; aimTo(m, goal.x, goal.y); }
+      const foes = enemiesNear(m, 7, true);
+      if (foes.length) { aimTo(m, foes[0].e.x, foes[0].e.y); fire(m, foes[0].e.x, foes[0].e.y); }
+      return;
+    }
+
+    if (goal.kind === 'revive') {
+      const d = Math.hypot(goal.x - m.x, goal.y - m.y);
+      if (d > CELL * 1.2) followStep(m, goal, dt);
+      else { m.vx *= 0.7; m.vy *= 0.7; aimTo(m, goal.x, goal.y); }
+      return;
+    }
+
+    if (goal.kind === 'turret') { placeTurret(m); return; }
+    if (goal.kind === 'node') {
+      const d = Math.hypot(goal.x - m.x, goal.y - m.y);
+      if (d > CELL * 1.2) { followStep(m, goal, dt); return; }
+      placeNode(m); return;
+    }
+    if (goal.kind === 'flare') {
+      const kit = m.kit;
+      aimTo(m, goal.x, goal.y);
+      const a = Math.atan2(goal.y - m.y, goal.x - m.x);
+      const fx = m.x + Math.cos(a) * CELL * 2.6, fy = m.y + Math.sin(a) * CELL * 2.6;
+      G.lamps.push({ c: 0, r: 0, x: fx, y: fy, ph: Math.random() * 6, rad: Math.max(DEMO.lampRadius * 1.45, CELL * 4.2), ttl: 22, flare: 1, visionRange: 5 });
+      if (typeof LOS !== 'undefined' && LOS.markDirty) LOS.markDirty();
+      J.flash(fx, fy, 42, 'rgba(255,220,160,.9)');
+      J.ring(fx, fy, '#FFD080', 6, CELL * 1.6, 3);
+      m.flareCd = kit.flareCd;
+      reconAward(m, fx, fy);                            /* 정찰 — 새 구역을 밝힐 때만 */
+      say(m, '플레어');
+      return;
+    }
+
+    if (goal.kind === 'mine') {
+      const d = Math.hypot(goal.x - m.x, goal.y - m.y);
+      if (d > CELL * 1.25) { followStep(m, goal, dt); return; }
+      steer(m, goal.x, goal.y, dt, 0.4);
+      if (m.roleId === 'gunner') fireBreaker(m, goal.c, goal.r);
+      else digAt(m, goal.c, goal.r, dt);
+      return;
+    }
+
+    if (goal.kind === 'loot') {
+      if (goal.res && goal.res.gone) { m.goal = null; return; }
+      const d = Math.hypot(goal.x - m.x, goal.y - m.y);
+      if (goal.res) { goal.x = goal.res.x; goal.y = goal.res.y; }
+      if (d > lootPickupRange() * 0.9) followStep(m, goal, dt);
+      else { m.vx *= 0.7; m.vy *= 0.7; m.goal = null; }
+      return;
+    }
+
+    if (goal.kind === 'follow') { followStep(m, goal, dt); return; }
+
+    /* guard — 리더 근처를 지키며 주변을 살핀다 */
+    const d = Math.hypot(G.sh.x - m.x, G.sh.y - m.y);
+    if (d > CELL * 3.2) followStep(m, goal, dt);
+    else {
+      m.vx *= 0.85; m.vy *= 0.85;
+      m.aim += dt * 0.7;
+      m.face = Math.cos(m.aim) < 0 ? -1 : 1;
+    }
+  }
+
+  /* ══════════ 복구 ══════════
+     지형은 런 도중에도 바뀐다 — 보스의 벽 붕괴, 탈출 포트 착륙, 붕괴 계열
+     특성. 크루가 흙에 파묻히거나 길이 막히면 스스로 빠져나와야 한다.
+     그래도 안 되면 파티 옆으로 복귀시킨다(대부분의 코옵 게임과 같은 처리). */
+  function warpToParty(m) {
+    J.burst(m.x, m.y, 10, ['#C7A0FF', '#FFF'], 120);
+    const p = freeSpotNear(G.sh.x, G.sh.y, 1.6);
+    m.x = p.x; m.y = p.y; m.vx = m.vy = 0;
+    m.path = []; m.pathKey = ''; m.pathAge = 0;
+    m.buriedT = 0; m.lostT = 0; m.stuckT = 0;
+    J.burst(m.x, m.y, 10, ['#C7A0FF', '#FFF'], 120);
+    say(m, '재합류');
+  }
+  function recover(m, dt) {
+    if (typeof solidAt === 'function' && solidAt(m.x, m.y)) {
+      const c = Math.floor(m.x / CELL), r = Math.floor(m.y / CELL);
+      const t = cellOf(c, r);
+      if (t && !unbreakable(t)) {
+        m.digging = true; m.drill = 1;
+        AI.breakSrc = m;
+        try { damage(c, r, shelDps() * DRILL_DMG() * Math.max(1, m.kit.digMul) * 3 * dt, 0, -1, true); }
+        finally { AI.breakSrc = null; }
+      }
+      m.buriedT = (m.buriedT || 0) + dt;
+      if (m.buriedT > 4) warpToParty(m);
+      m.vx *= 0.6; m.vy *= 0.6;
+      return true;
+    }
+    m.buriedT = 0;
+    m.lostT = m.stuckT > 0.8 ? (m.lostT || 0) + dt : Math.max(0, (m.lostT || 0) - dt * 0.5);
+    if (m.lostT > 6) warpToParty(m);
+    return false;
+  }
+
+  function watchStuck(m, dt) {
+    const moved = Math.hypot(m.x - m.lastX, m.y - m.lastY);
+    m.lastX = m.x; m.lastY = m.y;
+    const wants = Math.hypot(m.vx, m.vy) > 8;
+    if (wants && moved < dt * 10) m.stuckT += dt; else m.stuckT = Math.max(0, m.stuckT - dt * 2);
+    if (m.jitter > 0) m.jitter -= dt;
+    if (m.stuckT > 1.0) {
+      m.stuckT = 0; m.pathAge = 0; m.path = []; m.pathKey = '';
+      m.jitter = 0.5; m.jitterA = Math.random() * Math.PI * 2;
+    }
+  }
+
+  /* ══════════ 프레임 ══════════ */
+
+  AI.update = function (dt) {
+    if (!AI.enabled || !ready() || !AI.members.length) return;
+    if (CREW.phase !== 'play') return;
+    updateInstallations(dt);
+    for (const m of AI.members) {
+      m.iframes = Math.max(0, m.iframes - dt);
+      m.gunCd = Math.max(0, m.gunCd - dt);
+      m.qCd = Math.max(0, m.qCd - dt);
+      m.eCd = Math.max(0, m.eCd - dt);
+      m.dashCd = Math.max(0, m.dashCd - dt);
+      m.shieldT = Math.max(0, m.shieldT - dt);
+      m.flareCd = Math.max(0, m.flareCd - dt);
+      m.turretCd = Math.max(0, m.turretCd - dt);
+      m.nodeCd = Math.max(0, m.nodeCd - dt);
+      m.lootCd = Math.max(0, m.lootCd - dt);
+      m.pathAge -= dt;
+      m.sayT = Math.max(0, m.sayT - dt);
+      if (m.reloadLeft > 0) { m.reloadLeft = Math.max(0, m.reloadLeft - dt); if (m.reloadLeft <= 0) m.ammo = m.mag; }
+      updateBreakers(m, dt);
+      updateBoarding(m, dt);
+      xpTrickle(m, dt);
+      collectLoot(m, dt);            /* 접촉 습득 — 어떤 행동 중이든 밟으면 줍는다 */
+
+      if (m.down) { updateDown(m, dt); continue; }
+
+      m.digging = false; m.drill = 0;
+      if (recover(m, dt)) { applyMotion(m, dt); continue; }   /* 파묻힘 탈출이 최우선 */
+
+      m.react -= dt;
+      if (m.react <= 0 || !m.goal) { m.goal = decide(m); m.react = 0.12 + Math.random() * 0.1; }
+      try { act(m, m.goal, dt); }
+      catch (e) {
+        m.vx = m.vy = 0;
+        if (!m._errAt || performance.now() - m._errAt > 3000) {
+          m._errAt = performance.now();
+          console.error('[AICREW]', m.roleId, m.goal && m.goal.kind, e);
+        }
+      }
+      applyMotion(m, dt);
+      watchStuck(m, dt);
+    }
+  };
+
+  /* ══════════ 적의 타깃 선정 ══════════
+     AI 크루가 없으면 항상 사람을 반환한다 — 즉 기존 동작과 완전히 같다.
+     크루가 있으면 가장 가까운 크루를 노리되, 0.6초 이력(hysteresis)을 두어
+     적이 두 사람 사이에서 떨리지 않게 한다. */
+  window.AI_TGT = function (e) {
+    if (!AI.enabled || !AI.members.length || !ready()) { if (e) e._aiTgt = null; return G.sh; }
+    if (!e) return G.sh;
+    e._aiTgtCd = (e._aiTgtCd || 0) - (G.rt - (e._aiTgtAt || G.rt));
+    e._aiTgtAt = G.rt;
+    if (e._aiTgtCd > 0) {
+      const cur = e._aiTgt;
+      if (!cur) return G.sh;
+      if (!cur.down && AI.members.includes(cur)) return cur;
+    }
+    e._aiTgtCd = 0.6;
+    let best = null, bd = Math.hypot(G.sh.x - e.x, G.sh.y - e.y);
+    for (const m of AI.members) {
+      if (m.down) continue;
+      const d = Math.hypot(m.x - e.x, m.y - e.y);
+      if (d < bd) { bd = d; best = m; }
+    }
+    e._aiTgt = best;
+    return best || G.sh;
+  };
+  /* 적의 타격이 AI 크루에게 갔는지 — enemyContactDamage 가 쓴다 */
+  window.AI_TGT_HURT = function (e, dmg, nx, ny) {
+    const m = e && e._aiTgt;
+    if (!m || m.down || !AI.members.includes(m)) return null;
+    return AI.hurt(m, dmg, nx, ny);
+  };
+
+  /* ══════════ 탈출 — 생존자 전원 탑승 (§8.4-3·4) ══════════
+     AI 크루가 있으면 로켓은 그들도 태워야 뜬다. 이게 성립해야 코옵 설계의
+     핵심인 "혼자 못 나간다"를 솔로에서도 검증할 수 있다. */
+  function updateBoarding(m, dt) {
+    const I = inf(), esc = I && I.escape;
+    if (!esc || esc.state !== 'ready') { m.boarded = false; m.boardT = 0; return; }
+    if (m.down) { m.boarded = false; m.boardT = 0; return; }
+    const d = Math.hypot(m.x - esc.x, m.y - esc.y);
+    if (d <= CELL * (typeof INF_ESCAPE !== 'undefined' ? INF_ESCAPE.boardRange : 1.25)) {
+      m.boardT = (m.boardT || 0) + dt;
+      if (m.boardT >= (typeof INF_ESCAPE !== 'undefined' ? INF_ESCAPE.boardTime : 1.2) && !m.boarded) {
+        m.boarded = true;
+        say(m, '탑승');
+        toast && toast('AI ' + ROLE_KO[m.roleId] + ' 탑승');
+      }
+    } else { m.boardT = Math.max(0, (m.boardT || 0) - dt * 2); m.boarded = false; }
+  }
+  /* null = AI 크루 없음(기존 솔로 판정 그대로) · false = 아직 대기 · true = 전원 탑승 */
+  AI.escapeAllAboard = function () {
+    if (!AI.enabled || !AI.members.length) return null;
+    for (const m of AI.members) {
+      if (m.down) continue;              /* 다운된 크루는 제외 — 생존자 전원 */
+      if (!m.boarded) return false;
+    }
+    return true;
+  };
+  AI.escapeCount = function () {
+    if (!AI.members.length) return null;
+    let total = 1, on = 0;
+    for (const m of AI.members) { if (m.down) continue; total++; if (m.boarded) on++; }
+    return { boarded: on, total };
+  };
+
+  /* AI 크루 위치 — 시야 합산(FoW)과 적 타깃 선정에 쓴다 */
+  AI.visionXY = function () {
+    if (!AI.members.length) return null;
+    const out = [];
+    for (const m of AI.members) if (!m.down) out.push([m.x, m.y]);
+    return out.length ? out : null;
+  };
+
+  /* ══════════ 렌더 ══════════ */
+
+  AI.draw = function () {
+    if (!AI.members.length || !ready() || typeof cx === 'undefined') return;
+    drawInstallations();
+    for (const m of AI.members) {
+      const col = ROLE_COL[m.roleId] || '#c7a0ff';
+      cx.save();
+      if (m.down) cx.globalAlpha = 0.45;
+      else if (m.iframes > 0) cx.globalAlpha = 0.5 + 0.5 * Math.sin(G.t * 28);
+
+      /* 몸 — 사람 캐릭터와 같은 그리기 함수를 쓴다 */
+      if (typeof drawShellyVector === 'function') {
+        drawShellyVector(m.x, m.y, R_SHELLY, G.t, m.face, m.digging ? 1 : 0, m.aim, m.roleId !== 'driller');
+      }
+      cx.globalAlpha = 1;
+
+      /* 역할 링 — 누가 누군지 한눈에 */
+      cx.strokeStyle = col; cx.lineWidth = 2; cx.globalAlpha = m.down ? 0.5 : 0.75;
+      cx.beginPath(); cx.arc(m.x, m.y + R_SHELLY * 0.75, R_SHELLY * 0.62, 0, Math.PI * 2); cx.stroke();
+      if (m.shieldT > 0) {
+        cx.strokeStyle = '#7FEBD0'; cx.globalAlpha = 0.5 + 0.3 * Math.sin(G.t * 9);
+        cx.beginPath(); cx.arc(m.x, m.y, R_SHELLY * 1.35, 0, Math.PI * 2); cx.stroke();
+      }
+      cx.globalAlpha = 1;
+
+      /* 명판 */
+      const label = 'AI ' + (ROLE_KO[m.roleId] || m.roleId) + ' Lv' + m.level;
+      cx.font = '800 11px ' + (typeof FNT !== 'undefined' ? FNT : 'sans-serif');
+      cx.textAlign = 'center';
+      const tw = cx.measureText(label).width + 14;
+      const bx = m.x - tw / 2, by = m.y - R_SHELLY - 34;
+      cx.fillStyle = 'rgba(10,6,20,.72)';
+      cx.strokeStyle = m.down ? 'rgba(255,110,140,.8)' : col;
+      cx.lineWidth = 1.5;
+      cx.fillRect(bx, by, tw, 15); cx.strokeRect(bx, by, tw, 15);
+      cx.fillStyle = m.down ? '#ffc9d6' : '#F0E6FF';
+      cx.fillText(label, m.x, by + 11);
+
+      /* 체력 바 */
+      const bw = 34, hp = Math.max(0, m.hp / m.hpMax);
+      cx.fillStyle = 'rgba(0,0,0,.55)'; cx.fillRect(m.x - bw / 2, by + 17, bw, 4);
+      cx.fillStyle = m.down ? '#FF557D' : hp > 0.5 ? '#7FEBD0' : hp > 0.25 ? '#FFD36E' : '#FF8DA8';
+      cx.fillRect(m.x - bw / 2, by + 17, bw * hp, 4);
+
+      /* 지금 뭘 하는지 — 플레이테스트에서 이게 제일 중요하다 */
+      const state = m.down ? '다운 ' + (3 - m.reviveT > 0 ? Math.ceil(3 - m.reviveT) + 's' : '') : (m.sayT > 0 ? m.say : (m.goal ? m.goal.label : ''));
+      if (state) {
+        cx.font = '700 9.5px ' + (typeof FNT !== 'undefined' ? FNT : 'sans-serif');
+        cx.fillStyle = m.down ? '#FF8DA8' : 'rgba(230,214,255,.78)';
+        cx.fillText(state, m.x, by - 4);
+      }
+
+      if (AI.debug && m.path.length) {
+        cx.strokeStyle = col; cx.globalAlpha = 0.35; cx.lineWidth = 2;
+        cx.beginPath(); cx.moveTo(m.x, m.y);
+        for (const k of m.path) { const c = k % COLS, r = (k - c) / COLS; cx.lineTo(cxw(c), cyw(r)); }
+        cx.stroke(); cx.globalAlpha = 1;
+      }
+      cx.restore();
+    }
+  };
+
+  function drawInstallations() {
+    for (const n of AI.nodes) {
+      const a = Math.min(1, n.life / 4);
+      cx.save(); cx.globalAlpha = 0.28 * a;
+      cx.strokeStyle = '#7FEBD0'; cx.lineWidth = 1.5; cx.setLineDash([5, 6]);
+      cx.beginPath(); cx.arc(n.x, n.y, CELL * n.radius, 0, 7); cx.stroke(); cx.setLineDash([]);
+      cx.globalAlpha = a; cx.fillStyle = '#122b28'; cx.strokeStyle = '#7FEBD0'; cx.lineWidth = 2;
+      cx.beginPath(); cx.arc(n.x, n.y, 9, 0, 7); cx.fill(); cx.stroke();
+      cx.fillStyle = '#BFFFEF'; cx.beginPath(); cx.arc(n.x, n.y, 3.4, 0, 7); cx.fill();
+      cx.restore();
+    }
+    for (const t of AI.turrets) {
+      const col = t.powered ? '#C7A0FF' : '#685674';
+      cx.save();
+      const src = AI.nodes.find((n) => Math.hypot(n.x - t.x, n.y - t.y) <= CELL * n.radius);
+      if (src) {
+        cx.globalAlpha = 0.3 + 0.15 * Math.sin(G.t * 8); cx.strokeStyle = '#7FEBD0'; cx.lineWidth = 1.4;
+        cx.setLineDash([6, 5]); cx.beginPath(); cx.moveTo(src.x, src.y); cx.lineTo(t.x, t.y); cx.stroke(); cx.setLineDash([]);
+      }
+      cx.globalAlpha = 1; cx.translate(t.x, t.y);
+      cx.fillStyle = '#21152F'; cx.strokeStyle = col; cx.lineWidth = 2.2;
+      cx.beginPath(); cx.arc(0, 0, 12, 0, 7); cx.fill(); cx.stroke();
+      cx.rotate(t.aim || 0);
+      cx.fillStyle = col; cx.beginPath(); cx.roundRect(0, -3.6, 17, 7.2, 3); cx.fill();
+      cx.rotate(-(t.aim || 0));
+      cx.fillStyle = '#F3E9FF'; cx.beginPath(); cx.arc(0, 0, 4, 0, 7); cx.fill();
+      cx.strokeStyle = t.powered ? '#7FEBD0' : '#FF718A'; cx.lineWidth = 1.8;
+      cx.beginPath(); cx.arc(0, 0, 16, -Math.PI * 0.5, -Math.PI * 0.5 + Math.PI * 2 * (t.ammo / Math.max(1, t.mag))); cx.stroke();
+      if (!t.powered) {
+        cx.fillStyle = '#FF8DA8'; cx.font = '800 8px ' + (typeof FNT !== 'undefined' ? FNT : 'sans-serif');
+        cx.textAlign = 'center'; cx.fillText('NO POWER', 0, -20);
+      }
+      cx.restore();
+    }
+  }
+
+  /* ══════════ 편성 UI — 직업 카드 옆의 작은 +AI ══════════ */
+
+  const CSS = `
+.aiCrewChip{position:absolute;right:42px;top:9px;z-index:6;display:flex;align-items:center;gap:0;
+ border:1px solid color-mix(in srgb,var(--role,#c7a0ff) 55%,#3b2f49);border-radius:999px;
+ background:rgba(12,8,20,.86);backdrop-filter:blur(3px);overflow:hidden;
+ font:800 10px/1 Pretendard,Malgun Gothic,sans-serif;color:#e9def9}
+.aiCrewChip button{all:unset;padding:5px 8px;cursor:pointer;color:inherit;line-height:1}
+.aiCrewChip button:hover{background:color-mix(in srgb,var(--role,#c7a0ff) 26%,transparent)}
+.aiCrewChip button:disabled{opacity:.3;cursor:default}
+.aiCrewChip .n{padding:5px 7px;min-width:14px;text-align:center;color:var(--role,#c7a0ff);
+ background:rgba(255,255,255,.05)}
+.aiCrewChip.zero .n{color:#6f6280}
+.aiCrewBar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+ margin:12px auto 0;padding:9px 14px;max-width:900px;
+ border:1px solid rgba(199,160,255,.22);border-radius:12px;background:rgba(199,160,255,.05);
+ font:600 11.5px/1.5 Pretendard,Malgun Gothic,sans-serif;color:#a294b8}
+.aiCrewBar b{color:#d9c6f5}
+.aiCrewBar .slot{padding:3px 9px;border:1px solid currentColor;border-radius:999px;font-weight:800;font-size:10.5px}
+.aiCrewBar .empty{color:#5f5473;border-style:dashed}
+.aiCrewBar button{all:unset;padding:4px 10px;border:1px solid rgba(199,160,255,.3);border-radius:8px;
+ cursor:pointer;color:#c9b6e6;font-weight:700;font-size:10.5px}
+.aiCrewBar button:hover{background:rgba(199,160,255,.14)}
+.aiHud{position:absolute;right:12px;top:112px;z-index:8;align-items:flex-end;display:flex;flex-direction:column;gap:4px;
+ pointer-events:none;font:700 10.5px/1.35 Pretendard,Malgun Gothic,sans-serif}
+.aiHud .row{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:8px;
+ border:1px solid rgba(255,255,255,.09);background:rgba(10,6,18,.62);color:#ded2f0}
+.aiHud .dot{width:7px;height:7px;border-radius:50%}
+.aiHud .st{color:#9d8fb4;font-weight:600}
+.aiHud .hp{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.14);overflow:hidden}
+.aiHud .hp i{display:block;height:100%}
+.aiHud .lv{padding:1px 5px;border-radius:5px;background:rgba(255,255,255,.09);color:#ffd36e;font-size:9.5px}
+.aiHud .xp{width:26px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+.aiHud .xp i{display:block;height:100%;background:#C7A0FF}
+.aiHud .down{color:#ff8da8}
+
+`;
+
+  function ensureCSS() {
+    if (document.getElementById('aiCrewCSS')) return;
+    const s = document.createElement('style');
+    s.id = 'aiCrewCSS'; s.textContent = CSS;
+    document.head.appendChild(s);
+  }
+
+  /* 어떤 직업 선택 화면이든 .tcRoleChoice[data-role] 카드를 쓴다.
+     그래서 미션 모드·무한 모드·앞으로 생길 화면까지 한 번에 붙는다. */
+  function attachChips() {
+    const cards = document.querySelectorAll('.tcRoleChoice[data-role]');
+    for (const card of cards) {
+      const roleId = card.getAttribute('data-role');
+      if (!KIT[roleId]) continue;
+      if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+      let chip = card.querySelector(':scope > .aiCrewChip');
+      if (!chip) {
+        chip = document.createElement('div');
+        chip.className = 'aiCrewChip';
+        chip.innerHTML = '<button type="button" data-ai="-" title="AI 크루 빼기">−</button>'
+          + '<span class="n">0</span>'
+          + '<button type="button" data-ai="+" title="이 직업의 AI 크루 추가">+ AI</button>';
+        /* 카드 선택 클릭과 섞이지 않게 이벤트를 여기서 끊는다 */
+        chip.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
+        chip.addEventListener('pointerdown', (e) => e.stopPropagation());
+        chip.querySelector('[data-ai="+"]').addEventListener('click', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          if (AI.add(roleId)) { SFX && SFX.tick && SFX.tick(); }
+          else toast && toast('AI 크루는 최대 ' + AI.max + '명입니다');
+        });
+        chip.querySelector('[data-ai="-"]').addEventListener('click', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          if (AI.remove(roleId)) SFX && SFX.back && SFX.back();
+        });
+        card.appendChild(chip);
+      }
+      const n = AI.count(roleId);
+      chip.classList.toggle('zero', n === 0);
+      chip.querySelector('.n').textContent = String(n);
+      chip.querySelector('[data-ai="+"]').disabled = AI.roster.length >= AI.max;
+      chip.querySelector('[data-ai="-"]').disabled = n === 0;
+    }
+    /* 카드 그리드 아래의 편성 요약 */
+    const grids = new Set();
+    for (const card of cards) if (card.parentElement) grids.add(card.parentElement);
+    for (const grid of grids) {
+      let bar = grid.parentElement && grid.parentElement.querySelector(':scope > .aiCrewBar');
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'aiCrewBar';
+        grid.insertAdjacentElement('afterend', bar);
+      }
+      const slots = [];
+      slots.push('<span class="slot" style="color:#ffe6a8">나</span>');
+      for (const r of AI.roster) slots.push('<span class="slot" style="color:' + ROLE_COL[r] + '">AI ' + ROLE_KO[r] + '</span>');
+      for (let i = AI.roster.length; i < AI.max; i++) slots.push('<span class="slot empty">빈 자리</span>');
+      bar.innerHTML = '<b>크루 편성</b>' + slots.join('')
+        + (AI.roster.length ? '<button type="button" data-ai-clear>모두 비우기</button>' : '')
+        + '<span style="flex-basis:100%;text-align:center;color:#7b6f8f;font-size:10.5px">'
+        + '카드 우측 상단 <b>+ AI</b> 로 동료를 넣는다 · 런 중에도 <b>F9</b> 로 켜고 끌 수 있다</span>';
+      const cb = bar.querySelector('[data-ai-clear]');
+      if (cb) cb.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); AI.clear(); });
+    }
+  }
+  AI.paintRosterUI = attachChips;
+
+  /* 플레이 중 HUD — 각 AI 가 지금 뭘 하는지 */
+  function paintHud() {
+    let el = document.getElementById('aiCrewHud');
+    if (!AI.members.length || !ready() || CREW.phase !== 'play') { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'aiCrewHud'; el.className = 'aiHud';
+      (document.getElementById('app') || document.body).appendChild(el);
+    }
+    el.innerHTML = AI.members.map((m) => {
+      const col = ROLE_COL[m.roleId];
+      const hp = Math.max(0, m.hp / m.hpMax);
+      const st = m.down ? '<span class="down">다운 · 구조 필요</span>'
+        : '<span class="st">' + (m.sayT > 0 ? m.say : (m.goal ? m.goal.label : '—')) + '</span>';
+      const xpp = Math.max(0, Math.min(1, m.xp / Math.max(1, m.xpNeed)));
+      return '<div class="row" title="' + (m.traits.join(' · ') || '특성 없음') + '">'
+        + '<span class="dot" style="background:' + col + '"></span>'
+        + '<b style="color:' + col + '">' + ROLE_KO[m.roleId] + '</b>'
+        + '<span class="lv">Lv' + m.level + '</span>'
+        + '<span class="hp"><i style="width:' + (hp * 100) + '%;background:' + (hp > .5 ? '#7FEBD0' : hp > .25 ? '#FFD36E' : '#FF8DA8') + '"></i></span>'
+        + '<span class="xp"><i style="width:' + (xpp * 100) + '%"></i></span>'
+        + st + '</div>';
+    }).join('');
+  }
+
+  /* ══════════ 부팅 ══════════ */
+
+  function boot() {
+    ensureCSS();
+    attachChips();
+    /* 직업 선택 화면은 동적으로 다시 그려지므로(무한 모드 그리드) 계속 붙여준다 */
+    const mo = new MutationObserver(() => {
+      clearTimeout(AI._moT);
+      AI._moT = setTimeout(attachChips, 40);
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    setInterval(() => { try { paintHud(); } catch (e) {} }, 220);
+  }
+
+  addEventListener('keydown', (e) => {
+    if (e.key === 'F9') { AI.enabled = !AI.enabled; toast && toast('AI 크루 ' + (AI.enabled ? 'ON' : 'OFF')); e.preventDefault(); }
+    if (e.key === 'F10') { AI.debug = !AI.debug; toast && toast('AI 경로 표시 ' + (AI.debug ? 'ON' : 'OFF')); e.preventDefault(); }
+  });
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
 </body></html>
