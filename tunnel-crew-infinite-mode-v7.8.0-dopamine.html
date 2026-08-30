@@ -10638,6 +10638,7 @@ function infTryJackpot(x,y){
  J.kick(7);J.ring(x,y,'#FFD36E',10,CELL*2.6,5);J.ring(x,y,'#FFF3D6',6,CELL*1.5,3);J.burst(x,y,26,['#FFD36E','#FFF3D6','#7FEBD0'],260);
  J.text(x,y-40,'노다지!','#FFD36E',26);
  SFX.dawn&&SFX.dawn();toast('노다지 광맥! 코어 '+total+'개 — 소리를 듣고 적이 몰려옵니다');
+ if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('jackpot');
  infAwardXp(10,'loot',{check:false});
 }
 /* 잭팟 순차 지급 큐 — infUpdateMiningTraits(play 페이즈)에서만 소비되므로 사망·정산 중에는 멈춘다 */
@@ -10667,6 +10668,7 @@ function infStartFever(){
  if(INF.runStats)INF.runStats.fevers++;
  infFeverVeil(true);J.kick(5);J.ring(G.sh.x,G.sh.y,'#FFD36E',9,CELL*2.2,4);
  SFX.ready&&SFX.ready();toast('피버 드릴! 6초간 굴착 폭주');
+ if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('fever');
 }
 function infEndFever(){
  INF.feverT=0;INF.drillMul/=1.5;INF.moveMul/=1.1;infFeverVeil(false);SFX.back&&SFX.back();
@@ -11551,7 +11553,7 @@ function infUpdateEscape(dt){
  if(esc.state==='incoming'){esc.t+=dt;if(esc.t>=esc.need)infEscapeArrive();return;}
  /* 도파민 콘텐츠 4 — 탈출 배당 (spec §5.4 이월분 조기 구현): 포트가 열린 뒤 탑승을 미룰수록
     운반 코어 배당이 초당 +2%p, 상한 30%. 위협은 계속 오르므로 순수한 리스크 베팅이 된다(SDT 자율성). */
- if(!esc.localBoarded)esc.divT=(esc.divT||0)+dt;
+ if(!esc.localBoarded){esc.divT=(esc.divT||0)+dt;if(esc.divT>5&&!esc.divSaid){esc.divSaid=true;if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('escapeWait');}}
  /* ready — 접근 탑승. 솔로 판정은 그대로 두고, 코옵이면 전원 탑승 집계로 확장한다.
     COOP_escapeAllAboard(): null=솔로 · false=크루 대기 · true=생존자 전원 탑승 (§8.4-3·4) */
  if(esc.localBoarded){
@@ -15152,6 +15154,40 @@ body.tcBossCine #bossLabInspector{
     let total = 1, on = 0;
     for (const m of AI.members) { if (m.down) continue; total++; if (m.boarded) on++; }
     return { boarded: on, total };
+  };
+
+  /* ══════════ 이벤트 리액션 (Phase 4.5 — 도파민 콘텐츠 대응) ══════════
+     게임 훅(잭팟·피버·탈출 배당)이 AICREW.reactEvent(kind)로 호출한다.
+     살아있는 크루 하나가 직업 개성이 묻은 한마디를 말풍선으로 뱉는다 — "동료와 함께" 감각. */
+  const REACT_LINES = {
+    jackpot: {
+      driller: ['노다지다!! 내가 판다!', '이 맥이야, 이 맥!'],
+      gunner: ['소리 들었지? 온다. 엄호한다', '캐, 내가 막는다'],
+      scout: ['신호가 미쳤어, 진짜배기다', '이런 건 처음 봐'],
+      engineer: ['수익률 계산 완료. 캐자', '센트리 돌려놨어, 마음껏 캐'],
+    },
+    fever: {
+      driller: ['드릴이 노래한다!!', '멈추지 마!'],
+      gunner: ['그 기세 좋다!', '길이 뻥뻥 뚫리네'],
+      scout: ['속도 봐라, 따라간다!', '앞은 내가 본다, 파!'],
+      engineer: ['출력 안정적. 계속!', '과열 수치가 예술이다'],
+    },
+    escapeWait: {
+      driller: ['더 캘 수 있어... 조금만 더', '배당이 아깝잖아'],
+      gunner: ['버티는 만큼 번다 이거지', '탄약은 충분해. 더 버텨?'],
+      scout: ['위험 수당 챙기자고', '적 몰려온다, 판단은 빨리'],
+      engineer: ['초당 2%p, 나쁘지 않은 이율이야', '리스크 대비 수익 양호'],
+    },
+  };
+  AI.reactEvent = function (kind) {
+    if (!AI.enabled || !AI.members.length) return;
+    const table = REACT_LINES[kind];
+    if (!table) return;
+    const alive = AI.members.filter((m) => !m.down);
+    if (!alive.length) return;
+    const m = alive[(Math.random() * alive.length) | 0];
+    const lines = table[m.roleId] || table.driller;
+    say(m, lines[(Math.random() * lines.length) | 0]);
   };
 
   /* AI 크루 위치 — 시야 합산(FoW)과 적 타깃 선정에 쓴다 */

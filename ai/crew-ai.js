@@ -1356,6 +1356,40 @@
     return { boarded: on, total };
   };
 
+  /* ══════════ 이벤트 리액션 (Phase 4.5 — 도파민 콘텐츠 대응) ══════════
+     게임 훅(잭팟·피버·탈출 배당)이 AICREW.reactEvent(kind)로 호출한다.
+     살아있는 크루 하나가 직업 개성이 묻은 한마디를 말풍선으로 뱉는다 — "동료와 함께" 감각. */
+  const REACT_LINES = {
+    jackpot: {
+      driller: ['노다지다!! 내가 판다!', '이 맥이야, 이 맥!'],
+      gunner: ['소리 들었지? 온다. 엄호한다', '캐, 내가 막는다'],
+      scout: ['신호가 미쳤어, 진짜배기다', '이런 건 처음 봐'],
+      engineer: ['수익률 계산 완료. 캐자', '센트리 돌려놨어, 마음껏 캐'],
+    },
+    fever: {
+      driller: ['드릴이 노래한다!!', '멈추지 마!'],
+      gunner: ['그 기세 좋다!', '길이 뻥뻥 뚫리네'],
+      scout: ['속도 봐라, 따라간다!', '앞은 내가 본다, 파!'],
+      engineer: ['출력 안정적. 계속!', '과열 수치가 예술이다'],
+    },
+    escapeWait: {
+      driller: ['더 캘 수 있어... 조금만 더', '배당이 아깝잖아'],
+      gunner: ['버티는 만큼 번다 이거지', '탄약은 충분해. 더 버텨?'],
+      scout: ['위험 수당 챙기자고', '적 몰려온다, 판단은 빨리'],
+      engineer: ['초당 2%p, 나쁘지 않은 이율이야', '리스크 대비 수익 양호'],
+    },
+  };
+  AI.reactEvent = function (kind) {
+    if (!AI.enabled || !AI.members.length) return;
+    const table = REACT_LINES[kind];
+    if (!table) return;
+    const alive = AI.members.filter((m) => !m.down);
+    if (!alive.length) return;
+    const m = alive[(Math.random() * alive.length) | 0];
+    const lines = table[m.roleId] || table.driller;
+    say(m, lines[(Math.random() * lines.length) | 0]);
+  };
+
   /* AI 크루 위치 — 시야 합산(FoW)과 적 타깃 선정에 쓴다 */
   AI.visionXY = function () {
     if (!AI.members.length) return null;
