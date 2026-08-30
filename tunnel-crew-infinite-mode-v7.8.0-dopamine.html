@@ -10297,7 +10297,10 @@ function infAdjustReload(mult){INF.reloadTime=Math.max(.42,Math.min(3.5,INF.relo
 function infStartReload(manual){if(!INF.active||CREW.phase!=='play'||INF.reloadLeft>0||INF.ammo>=INF.magSize)return false;INF.reloadDuration=INF.reloadTime;INF.reloadLeft=INF.reloadDuration;INF.reloadCount++;J.text(G.sh.x,G.sh.y-32,manual?'전술 재장전':'재장전','#7FEBD0',15);SFX.reload&&SFX.reload(manual);return true;}
 function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='play')return;INF.reloadLeft=Math.max(0,INF.reloadLeft-dt);if(INF.reloadLeft<=0){INF.ammo=INF.magSize;J.text(G.sh.x,G.sh.y-32,'장전 완료','#FFD36E',14);SFX.reloadDone&&SFX.reloadDone();}}
  function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null,
-  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{}});infResetXpLog();}
+  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{},
+  /* 도파민 콘텐츠 상태 (docs/design/dopamine-content-spec.md §5.3) — 잭팟 피티·피버 콤보·원정 기록 */
+  jackpotPity:0,jackpotFx:null,comboN:0,comboLast:-9,feverT:0,feverCd:0,
+  runStats:{kills:0,jackpots:0,jackpotCores:0,maxCombo:0,fevers:0,relicsFound:0}});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
  for(const role of Object.values(INF_ROLES)){
@@ -10579,7 +10582,7 @@ function infPlanetBreaker(x,y){
  const a=G.sh.aim,dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc,[c,r]=toCell(x,y);INF.planetBreakerFx={x,y,a,t:.7,maxT:.7};INF.universalBlastLock=true;for(let step=-1;step<=8;step++)for(let side=-2;side<=2;side++)infDamageTraitCell(c+dc*step+pc*side,r+dr*step+pr*side,.375,dc,dr);INF.universalBlastLock=false;infTraitRiskDamage(G.phpMax*.015,'파쇄기 반동',false);J.ring(x,y,'#FF8D72',14,CELL*4.8,6);J.kick(13,dc,dr);SFX.brk&&SFX.brk();
 }
 function infUpdateMiningTraits(dt){
- if(!infTraitCardsEnabled()||CREW.phase!=='play')return;INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
+ if(!infTraitCardsEnabled()||CREW.phase!=='play')return;infJackpotTick(dt);INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
  if(INF.endlessOverdrive&&(G.drillHeat||0)>=.9){INF.endlessBurnTick=(INF.endlessBurnTick||0)+dt;while(INF.endlessBurnTick>=.5){INF.endlessBurnTick-=.5;if(infTraitRiskDamage(G.phpMax*.006,'과급 손상',true))return;}}else INF.endlessBurnTick=0;
  if(!Array.isArray(INF.afterHits))INF.afterHits=[];for(let i=INF.afterHits.length-1;i>=0;i--){const hit=INF.afterHits[i];hit.t-=dt;if(hit.t<=0){INF.afterHits.splice(i,1);infTraitBlast(hit.x,hit.y,1.25,.25,'#C7A0FF');}}
  const count=Math.max(INF.auxDrills|0,INF.drillStorm|0);if(count<=0)return;INF.auxDrillCd=Math.max(0,(INF.auxDrillCd||0)-dt);if(INF.auxDrillCd>0)return;INF.auxDrillCd=Math.max(.12,.48-count*.035);const sh=G.sh,candidates=[];
@@ -10597,7 +10600,7 @@ function infOnBlockBroken(type,x,y){
   if(INF.drillerTraitHeatRecovery&&INF.roleId==='driller'){G.drillHeat=Math.max(0,(G.drillHeat||0)-.12);G.drillHeatLock=Math.max(0,(G.drillHeatLock||0)-.08);}
   if(INF.drillerTraitDeflector&&INF.roleId==='driller'&&(type==='dirt'||type==='stone'))infDrillerDeflectWalls(x,y);
   if(INF.drillerTraitRecirc&&INF.roleId==='driller'&&CREW.breachT>0&&INF.drillerRecircReduced<1.5){const cut=Math.min(.25,1.5-INF.drillerRecircReduced);CREW.qCd=Math.max(0,CREW.qCd-cut);INF.drillerRecircReduced+=cut;}
-  if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);if(typeof infRelicOnRare==='function')infRelicOnRare(x,y,core);}
+  if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);if(typeof infRelicOnRare==='function')infRelicOnRare(x,y,core);if(typeof infTryJackpot==='function')infTryJackpot(x,y);}
  if(typeof infRelicOnBlock==='function')infRelicOnBlock(type,x,y);   /* 유물 — 피티 카운터·굴착 공명석 */
  if(INF.breakShield>0){CREW.shieldT=Math.max(CREW.shieldT,INF.breakShield);G.iframes=Math.max(G.iframes,Math.min(.28,INF.breakShield*.45));}
  if(INF.afterDrill&&!INF.universalBlastLock)INF.afterHits.push({x,y,t:.32});
@@ -10618,6 +10621,33 @@ function infRadialBurst(x,y,n,power){
 function infDrillNova(x,y){
  INF.novaLock=true;const [c,r]=toCell(x,y);J.ring(x,y,'#FFD36E',12,CELL*2.5,5);J.burst(x,y,24,['#FFD36E','#FFF','#C7A0FF'],290);J.kick(6);
  for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){if(Math.hypot(dc,dr)>2.35)continue;const cc=c+dc,rr=r+dr;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,shelDps()*1.25*INF.drillMul,dc,dr,true);}INF.novaLock=false;
+}
+/* ══════════ 도파민 콘텐츠 1 — 광맥 잭팟 '노다지' (docs/design/dopamine-content-spec.md §5.3-1) ══════════
+   변동비율 보상: rare 파괴의 3.5% + 피티(불발마다 +0.9%p, 플레이어에게 유리한 방향으로만).
+   보상은 순차 지급으로 세어 주고(명제 T1), 발동은 반드시 적 웨이브를 동반한다(가드레일 4 — 무비용 보상 금지). */
+function infTryJackpot(x,y){
+ if(!INF.active)return;
+ const chance=.035+.009*(INF.jackpotPity||0);
+ if(Math.random()>=chance){INF.jackpotPity=(INF.jackpotPity||0)+1;return;}
+ INF.jackpotPity=0;
+ const total=(4+(Math.random()*4|0))*Math.max(1,INF.coreMult|0);
+ INF.jackpotFx={x,y,left:total,total,t:.5,tick:0};
+ if(INF.runStats){INF.runStats.jackpots++;INF.runStats.jackpotCores+=total;}
+ INF.spawnDebt+=5;G.enemyCd=Math.min(G.enemyCd,.6);   /* 노다지 소리가 적을 부른다 */
+ J.kick(7);J.ring(x,y,'#FFD36E',10,CELL*2.6,5);J.ring(x,y,'#FFF3D6',6,CELL*1.5,3);J.burst(x,y,26,['#FFD36E','#FFF3D6','#7FEBD0'],260);
+ J.text(x,y-40,'노다지!','#FFD36E',26);
+ SFX.dawn&&SFX.dawn();toast('노다지 광맥! 코어 '+total+'개 — 소리를 듣고 적이 몰려옵니다');
+ infAwardXp(10,'loot',{check:false});
+}
+/* 잭팟 순차 지급 큐 — infUpdateMiningTraits(play 페이즈)에서만 소비되므로 사망·정산 중에는 멈춘다 */
+function infJackpotTick(dt){
+ const fx=INF.jackpotFx;if(!fx)return;
+ fx.t-=dt;if(fx.t>0)return;
+ fx.t=.12;fx.left--;INF.core++;fx.tick++;
+ const jx=fx.x+(Math.random()-.5)*CELL*1.4,jy=fx.y-(fx.tick%5)*10-14;
+ J.text(jx,jy,'+1','#FFD36E',14);J.burst(fx.x,fx.y,3,['#FFD36E','#FFF3D6'],130);
+ if(fx.tick%2===0)SFX.ore&&SFX.ore();
+ if(fx.left<=0){J.text(fx.x,fx.y-56,'노다지 +'+fx.total,'#FFD36E',20);SFX.cache&&SFX.cache();INF.jackpotFx=null;}
 }
 /* ══════════ 역할 행동 개인 경험치 ══════════ */
 /* 기획서 §5.3 — 개인 경험치는 직업별 역할 행동에 가중치를 두어 지급한다.
