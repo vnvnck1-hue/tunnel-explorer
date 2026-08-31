@@ -714,7 +714,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
       <div class="menuFrame">
         <header class="menuTop">
           <div class="menuBrand"><span class="menuBrandMark">TC</span><span>TUNNEL CREW</span></div>
-          <span class="menuBuild">PROTOTYPE / 7.7.0-ui</span>
+          <span class="menuBuild">PROTOTYPE / 7.7.2-ui</span>
         </header>
         <main class="menuMain">
           <section class="menuCopy">
@@ -726,7 +726,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
               <button class="modeBtn infinite" id="menuStarmap"><i>03</i><b>행성 원정</b><span>STARMAP / 행성을 골라 중심부까지</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn" id="menuNodeTree"><i>04</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매 · 유물 보관고</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn testHub" id="menuTestHub"><i>05</i><b>테스트 모드</b><span>TEST HUB / 유물 · 보스 · 투사체 · 치트 패널</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>06</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn coop" id="menuCoop"><i>06</i><b>LAN 코옵</b><span>CO-OP / 사내망 2~4인</span><u aria-hidden="true">↗</u></button>
             </nav>
             <div class="menuTools">
               <button type="button" id="menuMute">SOUND · ON</button>
@@ -769,6 +769,10 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
             <div class="tcSettingsRow"><div class="tcSettingsLabel">알파 라이팅<span class="tcSettingsHint">캐릭터와 암벽에 방향성 음영과 림라이트 적용</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle on" id="tcSetAlphaLight" aria-label="알파 라이팅" aria-pressed="true"></button></div></div>
             <div class="tcSettingsRow"><div class="tcSettingsLabel">조작 힌트<span class="tcSettingsHint">첫 솔로 미션에서 30초 튜토리얼 표시</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle on" id="tcSetHints" aria-label="조작 힌트" aria-pressed="true"></button></div></div>
             <div class="tcSettingsRow"><div class="tcSettingsLabel">모션 감소<span class="tcSettingsHint">메뉴의 기울기와 전환 효과를 줄임</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle" id="tcSetMotion" aria-label="모션 감소" aria-pressed="false"></button></div></div>
+          </section>
+          <section class="tcSettingsSection">
+            <h3>UI 레이아웃</h3>
+            <div class="tcSettingsRow"><div class="tcSettingsLabel">HUD 레이아웃 편집<span class="tcSettingsHint">HUD 모듈을 드래그해 위치·크기를 바꾸고 즉시 적용 (F8)</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsButton" id="tcSetUiLayout">편집 열기</button></div></div>
           </section>
           <section class="tcSettingsSection">
             <h3>조작법</h3>
@@ -926,6 +930,12 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
           <div class="opt"><span>소프트 마스크</span><button class="sw on" id="teSoftMask"></button></div>
           <div class="opt"><span>호흡 펄스</span><button class="sw on" id="tePulse"></button></div>
           <div class="opt"><span>손전등 (F)</span><button class="sw on" id="teFlashlight"></button></div>
+        </div>
+
+        <div class="teSec"><h3>UI 레이아웃</h3>
+          <div class="row2"><button class="pill" id="bUiLayout">레이아웃 편집 모드</button>
+            <button class="pill" id="bUiLayoutReset" style="border-color:#C2445E;color:#C2445E">레이아웃 초기화</button></div>
+          <p class="note">HUD 모듈을 드래그해 위치·크기를 바꾸면 즉시 적용된다. 게임 중 F8로도 열 수 있다.</p>
         </div>
 
         <div class="teSec"><h3>프리셋</h3>
@@ -2198,6 +2208,9 @@ for(const biome of ['purple','brine']){
 }
 function tileResourceBiome(){return (typeof CREW!=='undefined'&&CREW.biomeId==='brine')?'brine':'purple';}
 function tileResourceImageReady(img){return !!(img&&img.loaded&&img.naturalWidth);}
+/* v7.7.2c — 보스 소환 벽 전용 타일: 2종 랜덤 + 좌우 랜덤 플립, 하단 피벗(솟아오른 표현) */
+const BOSS_WALL_TILES=[loadTileResource('assets/boss-walls/boss-wall-block.png'),loadTileResource('assets/boss-walls/boss-wall-crystal.png')];
+function bossWallTilesReady(){return tileResourceImageReady(BOSS_WALL_TILES[0])&&tileResourceImageReady(BOSS_WALL_TILES[1]);}
 function updateTileResourceStatus(){
  const all=Object.values(TILE_RESOURCES).flatMap(r=>[r.atlas,r.floor,r.overlays.bottom,...r.overlays.side,...r.overlays.seam]);
  document.documentElement.dataset.tileResources=all.filter(tileResourceImageReady).length+'/'+all.length;
@@ -3772,7 +3785,7 @@ const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],s
   }
   this.dm=this.dm.filter(q=>q.life>0);
   for(const q of this.sm){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.9;q.vy*=.9;q.r+=dt*(q.grow==null?34:q.grow);q.life-=dt*(q.decay==null?2.2:q.decay);}
-  this.sm=this.sm.filter(q=>q.life>0);if(this.sm.length>60)this.sm.splice(0,this.sm.length-60);
+  this.sm=this.sm.filter(q=>q.life>0);if(this.sm.length>320)this.sm.splice(0,this.sm.length-320);   /* v7.7.2 — 보스 벽 소환 먼지(2~4초 체류)가 잘리지 않게 상한 확장 */
   for(const q of this.bd){
    if(q.delay>0){q.delay-=dt;continue;}
    if(!q.landed){q.x+=q.vx*dt;q.y+=q.vy*dt;q.z-=q.fall*dt;q.fall+=650*dt;q.rot+=q.vr*dt;if(q.z<=0){q.z=0;q.landed=true;q.life=Math.min(q.life,.5);}}
@@ -5094,6 +5107,7 @@ function bossBeginDash(e,lead){
  e.bossDashState='windup';e.bossDashT=Math.max(.05,lead);e.bossDashLeadTotal=e.bossDashT;e.bossDashDirX=dx/d;e.bossDashDirY=dy/d;e.bossDustCd=0;e.bossCeilingPending=Math.random()<Math.max(0,Math.min(1,bossTune('dashCeilingChance')));e.bossCeilingTriggered=false;e.bossCeilingAt=.18+Math.random()*.5;e.facing=e.bossDashDirX>=0?1:-1;
  e.bossAnimRate=1;e.vx=e.vy=0;e.wanderState='idle';
  e.bossDashHits=new Set();e.bossDashHitPlayer=false;
+ if(typeof infBossDashPrison==='function')infBossDashPrison(e,lead);   /* v7.7.2 — 체력 30% 이하: 진로 양쪽 협곡 벽 */
  J.text(e.x,e.y-e.r-26,'돌진 예고','#FFD36E',17);J.ring(e.x,e.y,'#FFD36E',5,e.r*1.45,3);
 }
 function updateBossWander(e,dt,spd,timeSpd){
@@ -5202,6 +5216,54 @@ function enemyBeginAttack(e,dx,dy){
 }
 
 /* 플레이어 피해 처리 — 접촉(보스)·근접 타격·투사체가 공유한다 */
+/* ══════════ v7.7.2c — 상호 부활 (§9.2 확장): 사람도 다운→구조된다 ══════════
+   체력이 0이 되면 사망 대신 기절. 살아있는 동료(사람 크루·AI 크루)가 CELL*1.6 안에서
+   5초간 집중 치료하면 체력 50%로 부활한다. 구조할 동료가 아무도 없으면 기존 사망 처리. */
+const REVIVE_NEED_SEC=5,REVIVE_RANGE=1.6,REVIVE_HP_RATIO=.5;
+function reviveRescuersAlive(){
+ let n=0;
+ if(typeof AICREW!=='undefined'&&AICREW.members)for(const m of AICREW.members)if(!m.down)n++;
+ if(typeof COOP!=='undefined'&&COOP.active&&COOP._started)for(const p of COOP.peers.values())if(p.status==='play'&&!p.dropped&&isFinite(p.x))n++;
+ return n;
+}
+function reviveHelpersNear(){
+ let n=0;const R=CELL*REVIVE_RANGE;
+ if(typeof AICREW!=='undefined'&&AICREW.members)for(const m of AICREW.members)if(!m.down&&Math.hypot(m.x-G.sh.x,m.y-G.sh.y)<R)n++;
+ if(typeof COOP!=='undefined'&&COOP.active&&COOP._started)for(const p of COOP.peers.values())if(p.status==='play'&&!p.dropped&&isFinite(p.x)&&Math.hypot(p.x-G.sh.x,p.y-G.sh.y)<R)n++;
+ return n;
+}
+function playerEnterDowned(){
+ G.downed=true;G.downT=0;G.reviveT=0;G.php=0;
+ G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;if(G.dash)G.dash.active=false;
+ if(SFX.drillHum)SFX.drillHum(false);
+ J.kick(6);J.ring(G.sh.x,G.sh.y,'#FF557D',10,CELL*2,4);
+ J.text(G.sh.x,G.sh.y-46,'기절!','#FF8DA8',20);
+ toast('기절 — 동료가 곁에서 5초간 치료하면 체력 50%로 부활합니다');
+ if(typeof COOP_onDownState==='function')COOP_onDownState(true);
+}
+function playerRevive(){
+ G.downed=false;G.reviveT=0;G.php=Math.max(1,Math.round(G.phpMax*REVIVE_HP_RATIO));G.iframes=Math.max(G.iframes||0,2.2);G.stunT=0;
+ J.flash(G.sh.x,G.sh.y,52,'rgba(127,235,208,.85)');J.ring(G.sh.x,G.sh.y,'#7FEBD0',10,CELL*2.2,4);
+ J.text(G.sh.x,G.sh.y-46,'구조 완료! HP 50%','#7FEBD0',20);toast('구조 완료 — 체력 50% 회복');
+ if(typeof COOP_onDownState==='function')COOP_onDownState(false);
+}
+function infDownedTick(dt){
+ if(!G.downed)return;
+ G.downT+=dt;G.stunT=Math.max(G.stunT||0,.4);G.iframes=Math.max(G.iframes||0,.4);
+ G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;
+ if(reviveHelpersNear()>0){
+  G.reviveT+=dt;
+  if(Math.random()<dt*8)J.burst(G.sh.x,G.sh.y-12,2,['#7FEBD0','#FFF'],60);
+  if(G.reviveT>=REVIVE_NEED_SEC)playerRevive();
+ }else{
+  G.reviveT=Math.max(0,G.reviveT-dt*.5);
+  if(reviveRescuersAlive()<=0){
+   G.downed=false;if(typeof COOP_onDownState==='function')COOP_onDownState(false);
+   if(typeof INF!=='undefined'&&INF.active&&typeof infEndRun==='function')infEndRun('쓰러짐 — 구조할 동료가 없었다');
+   else endCrewMission('fail');
+  }
+ }
+}
 function applyPlayerDamage(raw,nx,ny){
  if(G.iframes>0)return false;
  const sh=G.sh;
@@ -5716,6 +5778,7 @@ function update(dt){
  G.depCd=Math.max(0,G.depCd-dt);
  if(G.hintT>0&&!G.moved)G.hintT=Math.max(0,G.hintT-dt*.3); else G.hintT=Math.max(0,G.hintT-dt*2.4);
  const sh=G.sh;
+ if(G.downed&&typeof infDownedTick==='function')infDownedTick(dt);   /* v7.7.2c — 기절 중 구조 진행 (stunT 로 입력 차단) */
  /* 세션 압박 제거 · TE 이동/대시/무기 — WASD only */
  G.weaponLock=Math.max(0,G.weaponLock-dt);
  G.dash.cd=Math.max(0,G.dash.cd-dt);
@@ -6571,7 +6634,39 @@ function renderDepths(){
   const full=HPT[t],hp=G.hp.has(k)?G.hp.get(k):full;
   const db=Math.min(3,Math.max(0,Math.round((1-hp/full)*3)));
   if(t==='core'){coreList.push([c,r,x,y]);continue;}
+  /* v7.7.2c — 보스 소환 벽: 전용 타일 2종을 셀 고정 해시로 랜덤 선택·좌우 플립.
+     원본이 기존 타일보다 길죽하므로 최하단 피벗을 셀 하단에 맞춰 위로 솟게 그린다 */
+  if(typeof INF!=='undefined'&&INF.bossWallCells&&INF.bossWallCells.has(k)){
+   const hsh=(k*2654435761)>>>0,img=BOSS_WALL_TILES[hsh&1];
+   if(tileResourceImageReady(img)){
+    const dh=CELL*img.naturalHeight/img.naturalWidth,prevSm=cx.imageSmoothingEnabled;
+    cx.imageSmoothingEnabled=false;
+    if((hsh>>1)&1){cx.save();cx.translate(x+CELL,y+CELL-dh);cx.scale(-1,1);cx.drawImage(img,0,0,CELL,dh);cx.restore();}
+    else cx.drawImage(img,x,y+CELL-dh,CELL,dh);
+    cx.imageSmoothingEnabled=prevSm;
+    continue;
+   }
+  }
   cx.drawImage(blockSprite(t,SOLIDX(t)?0:db,G.band[k],SOLIDX(t)?0:G.dec[k]),x,y,CELL,CELL);
+ }
+ /* v7.7.2b — 보스 소환 벽 강조. v7.7.2c부터 전용 타일이 그 역할을 하므로
+    맥동 틴트는 전용 타일이 아직 로드되지 않았을 때의 폴백으로만 그린다 (죽은 셀 정리는 항상) */
+ if(typeof INF!=='undefined'&&INF.bossWallCells&&INF.bossWallCells.size){
+  const tinted=!bossWallTilesReady();
+  const pulse=.55+.45*Math.sin((G.rt||0)*4.6);
+  cx.save();
+  for(const k of INF.bossWallCells){
+   if(!G.cell[k]){INF.bossWallCells.delete(k);continue;}
+   if(!tinted)continue;
+   const c=k%COLS,r=(k/COLS)|0;
+   if(c<c0||c>c1||r<r0||r>r1)continue;
+   if(losOn&&!LOS.seenTile(c,r))continue;
+   const x=c*CELL,y=r*CELL;
+   cx.globalAlpha=.20+.10*pulse;cx.fillStyle='#FF3A50';cx.fillRect(x,y,CELL,CELL);
+   cx.globalAlpha=.36+.30*pulse;cx.strokeStyle='#FF6B7A';cx.lineWidth=2.2;cx.strokeRect(x+1.4,y+1.4,CELL-2.8,CELL-2.8);
+   cx.globalAlpha=.45+.30*pulse;cx.fillStyle='#FF8A96';cx.fillRect(x,y,CELL,2.4);
+  }
+  cx.restore();cx.globalAlpha=1;
  }
  /* 천장 요철 — 원작의 지표면 단면 */
  {const tw=CELL*.62;
@@ -6710,6 +6805,18 @@ function renderDepths(){
   drawShelly(G.sh.x,G.sh.y,R_SHELLY,G.t,G.sh.face,G.weapon==='drill'?G.sh.drill:0,G.sh.aim,G.weapon!=='drill',Math.hypot(G.sh.vx||0,G.sh.vy||0)>1);
   cx.globalAlpha=1;cx.restore();}
  if((G.stunT||0)>0)drawStunSpin({x:G.sh.x,y:G.sh.y,r:R_SHELLY});
+ /* v7.7.2c — 기절(다운) 상태: 붉은 링 + 구조 진행 게이지 */
+ if(G.downed){
+  const prog=Math.min(1,(G.reviveT||0)/REVIVE_NEED_SEC);
+  cx.save();cx.lineWidth=3.2;
+  cx.globalAlpha=.5+.2*Math.sin(G.t*5);cx.strokeStyle='#FF6B7A';
+  cx.beginPath();cx.arc(G.sh.x,G.sh.y,R_SHELLY+9,0,7);cx.stroke();
+  if(prog>0){cx.globalAlpha=.95;cx.strokeStyle='#7FEBD0';
+   cx.beginPath();cx.arc(G.sh.x,G.sh.y,R_SHELLY+9,-Math.PI/2,-Math.PI/2+Math.PI*2*prog);cx.stroke();}
+  cx.globalAlpha=.9;cx.fillStyle='#FFB3C2';cx.font='800 12px Pretendard,Malgun Gothic,sans-serif';cx.textAlign='center';
+  cx.fillText(prog>0?'치료 중 '+Math.round(prog*100)+'%':'기절 — 구조 대기',G.sh.x,G.sh.y-R_SHELLY-24);
+  cx.restore();
+ }
  if(typeof AICREW!=='undefined')AICREW.draw();   /* AI 크루 */
  if(typeof COOP_drawPeer==='function')COOP_drawPeer();
  drawBats();
@@ -8798,6 +8905,7 @@ function updateCrewTutorial(dt){
  }
 }
 function startCrewMission(roleId){
+ G.downed=false;G.reviveT=0;G.downT=0;   /* v7.7.2c — 이전 런의 기절 상태 정리 */
  /* AI 크루 — 미션 모드에서도 같이 나간다 */
  setTimeout(()=>{if(typeof AICREW!=='undefined')AICREW.onRunStart();},0);
  const r=CREW_ROLES[roleId];if(!r)return;
@@ -8832,6 +8940,8 @@ function startCrewMission(roleId){
 }
 function endCrewMission(kind){
  if(CREW.phase!=='play')return;
+ /* v7.7.2c — 상호 부활: 채취 미션 코옵·해저드 사망도 동료가 있으면 기절로 전환 */
+ if(kind==='fail'&&!G.downed&&G.php<=0&&typeof reviveRescuersAlive==='function'&&reviveRescuersAlive()>0){playerEnterDowned();return;}
  if(kind==='fail'&&typeof INF!=='undefined'&&INF.active&&infPermTryRevive())return;   /* 6.3 emergency restart (permanent node) */
  CREW.result=kind;
  if(typeof INF!=='undefined')INF.modeTraitCards=false;
@@ -9145,12 +9255,40 @@ $('menuSolo')&&$('menuSolo').addEventListener('click',()=>{
  if(typeof COOP!=='undefined'){COOP.active=false;COOP._started=false;}
  crewShow('mission');
 });
+/* 코옵 서버 안내 — file:// 로 열었거나 서버가 없을 때. client.js 없이도 떠야 한다 */
+function coopServerHelp(){
+ let el=$('coopHelp');
+ if(!el){
+  const st=document.createElement('style');
+  st.textContent='#coopHelp{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(6,4,14,.86);backdrop-filter:blur(5px)}'
+   +'#coopHelp.on{display:flex}'
+   +'#coopHelp .chCard{width:min(480px,92vw);background:#1a1228;border:1px solid #4a3568;border-radius:14px;padding:22px 22px 18px;color:#e4d4f5;font:13.5px/1.65 Pretendard,Malgun Gothic,sans-serif}'
+   +'#coopHelp h2{margin:0 0 10px;font:800 18px/1.3 Pretendard,sans-serif;color:#edd8ff}'
+   +'#coopHelp code{background:#0c0814;border:1px solid #3a2a55;border-radius:6px;padding:2px 7px;font:600 12px ui-monospace,Consolas,monospace;color:#d4a8ff}'
+   +'#coopHelp .chAddr{margin:10px 0;padding:10px 12px;background:rgba(12,8,20,.6);border:1px solid #2e2145;border-radius:9px}'
+   +'#coopHelp .chAddr b{color:#7febd0;font:700 13px ui-monospace,Consolas,monospace}'
+   +'#coopHelp .chRow{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}'
+   +'#coopHelp button{font:inherit;background:#2a1a42;color:#e4d4f5;border:1px solid #4a3568;border-radius:9px;padding:9px 14px;cursor:pointer}'
+   +'#coopHelp button.pri{background:rgba(180,120,255,.22);border-color:rgba(180,120,255,.5);color:#edd8ff;font-weight:700}';
+  document.head.appendChild(st);
+  el=document.createElement('div');el.id='coopHelp';
+  el.innerHTML='<div class="chCard"><h2>LAN 코옵은 서버 접속이 필요합니다</h2>'
+   +'<p>파일을 직접 열면(file://) 네트워크 기능이 동작하지 않습니다.<br>'
+   +'서버 PC에서 <code>cd coop && npm start</code> 를 실행한 뒤,<br>브라우저 주소창에 서버 주소를 입력해 접속하세요.</p>'
+   +'<div class="chAddr">서버 PC 본인 → <b>http://localhost:5188/</b><br>동료 PC에서 → <b>http://&lt;서버IP&gt;:5188/</b></div>'
+   +'<div class="chRow"><button class="pri" id="chGo">localhost:5188 열기</button><button id="chClose">닫기</button></div></div>';
+  document.body.appendChild(el);
+  el.querySelector('#chGo').onclick=()=>{location.href='http://localhost:5188/';};
+  el.querySelector('#chClose').onclick=()=>{el.classList.remove('on');};
+  el.addEventListener('click',(e)=>{if(e.target===el)el.classList.remove('on');});
+ }
+ el.classList.add('on');
+}
 $('menuCoop')&&$('menuCoop').addEventListener('click',()=>{
  if($('menuCoop').disabled||$('menuCoop').classList.contains('locked'))return;
- crewEnsureBgm();
- SFX.ui&&SFX.ui();
+ try{crewEnsureBgm();SFX.ui&&SFX.ui();}catch(e){}
  if(typeof COOP_openLobby==='function')COOP_openLobby();
- else toast('코옵 서버가 필요합니다 (cd coop && npm start)');
+ else coopServerHelp();
 });
 
 crewLoadSettings();
@@ -9233,9 +9371,9 @@ body.infActive #infHud{display:block}
 #infHud .ihChip{padding:6px 11px;border:1px solid rgba(199,160,255,.3);border-radius:999px;background:rgba(12,8,22,.74);color:#e9def5;font:800 11px/1 inherit;letter-spacing:.02em}
 #infCoreText{color:#ffd36e}
 /* ── v7.7.0 UI — 좌측 세로 깊이 게이지 ── */
-#infHud .ihDepthRail{position:absolute;left:calc(18px + env(safe-area-inset-left));top:calc(96px + env(safe-area-inset-top));bottom:calc(128px + env(safe-area-inset-bottom));width:6px;border-radius:3px;background:rgba(20,13,32,.66);box-shadow:0 0 0 1px rgba(0,0,0,.4);transition:opacity .6s}
-#infHud .ihDepthFill{position:absolute;left:0;right:0;top:0;height:0;border-radius:3px;background:linear-gradient(180deg,#8b5bd0,#ffd36e);box-shadow:0 0 8px rgba(255,211,110,.4);transition:height .3s}
-#infHud .ihDepthMarks span{position:absolute;left:11px;transform:translateY(-50%);color:#8f7da3;font:900 9px/1 ui-monospace,monospace;letter-spacing:.04em;text-shadow:0 1px 2px rgba(0,0,0,.9);white-space:nowrap}
+#infHud .ihDepthRail{position:absolute;left:calc(18px + env(safe-area-inset-left));top:calc(96px + env(safe-area-inset-top));bottom:calc(128px + env(safe-area-inset-bottom));width:18px;border-radius:9px;background:rgba(20,13,32,.66);box-shadow:0 0 0 1px rgba(0,0,0,.4);transition:opacity .6s}
+#infHud .ihDepthFill{position:absolute;left:0;right:0;top:0;height:0;border-radius:9px;background:linear-gradient(180deg,#8b5bd0,#ffd36e);box-shadow:0 0 8px rgba(255,211,110,.4);transition:height .3s}
+#infHud .ihDepthMarks span{position:absolute;left:23px;transform:translateY(-50%);color:#8f7da3;font:900 9px/1 ui-monospace,monospace;letter-spacing:.04em;text-shadow:0 1px 2px rgba(0,0,0,.9);white-space:nowrap}
 #infHud .ihDepthMarks span.cur{color:#ffd36e}
 #infHud .ihDepthMarks span::before{content:'';position:absolute;left:-9px;top:50%;width:6px;height:2px;transform:translateY(-50%);background:currentColor;opacity:.7}
 /* ── v7.7.0 UI — 하단 중앙 상황부 탈출 프롬프트 ── */
@@ -9677,7 +9815,7 @@ body.bossLabActive #bossLabInspector{display:flex;flex-direction:column}body.bos
 
 <!-- 보스 파라미터 · 게임 파일 내장 저장소 — ‘게임 파일에 굽기’가 이 JSON 을 직접 덮어쓴다.
      localStorage 가 비어 있어도, 파일만 다른 PC 로 옮겨도 수치가 그대로 따라온다. 손대지 말 것. -->
-<script type="application/json" id="bossLabBakedParams">{"version":4,"app":"tunnel-crew-boss-lab","savedAt":null,"values":null}</script>
+<script type="application/json" id="bossLabBakedParams">{"version":4,"app":"tunnel-crew-boss-lab","savedAt":"2026-08-31T12:21:01.091Z","values":{"maxHp":9072,"hpPercent":94.00774261536124,"moveSpeed":1.35,"size":6,"contactDamage":72,"projectileDamage":20,"projectileCount":6,"projectileRadius":2.5,"projectileFlight":1.05,"summonInterval":4.6,"summonCount":3,"initialArmor":6,"phaseArmor":7,"armorDamageTaken":0.22,"lightRadiusMul":6.65,"lightIntensity":0.67,"lightMinAlpha":0.49,"lightPulseAmount":0.23,"lightPulseSpeed":0.65,"lightHeightRatio":0.29,"lightNormalStrength":0.11,"attackIntervalMin":1.2,"attackIntervalMax":9.8,"attackLeadMin":0.35,"attackLeadMax":2.25,"dashChance":0.6,"dashSpeedMul":5.2,"dashDuration":1.25,"dashDamageMul":1.6,"dashAnimSpeed":3.2,"dashTelegraphLengthMul":1,"dashTelegraphWidthMul":1.25,"dashTelegraphAlpha":0.3,"dashTelegraphPulseSpeed":5,"dashDustCount":15,"dashDustAlpha":0.39,"dashDustInterval":0.16,"dashDustSize":1.05,"dashCeilingChance":0.93,"dashCeilingRockCount":7,"dashCeilingDustCount":7,"dashCeilingAlpha":0.22,"dashCeilingHeightMul":2.6,"dashCeilingClusters":16,"dashCeilingSpread":1,"dashCeilingWave":1.25,"dashCeilingShake":8.4,"muzzleOffsetX":0.83,"muzzleOffsetY":0.27,"shadowWidthMul":1.3,"shadowDepthMul":0.65,"shadowOffsetY":0.34,"shadowAlpha":0.38,"shadowAngle":0,"moveShakeStrength":1.75,"moveShakeInterval":0.18,"dashShakeStrength":3.2,"dashShakeInterval":0.14,"dashImpactShake":11.6},"animations":{"idle":true,"walking":true,"mode":"auto"},"invincible":true,"showCollider":false,"applyAll":false,"autoBake":true}</script>
 <script id="tcInfiniteModeScript">
 'use strict';
 const INF_META_KEY='tc_infinite_meta_v1';
@@ -9879,6 +10017,8 @@ const INF_PERMANENT_NODES=(()=>{
 /* 총 80노드 · 140랭크 · 코어 760 / 한 런 적용 32노드 · 56랭크 (§6.4.9) */
 const INF_DOMINANCE_TARGET=.40;
 const INF_BOSS_POWER=10;
+const INF_BOSS_SIZE_MUL=2.5;      /* v7.7.2 — 무한·채굴 모드 보스 크기 2.5배 */
+const INF_BOSS_WALL_HP_MUL=5;     /* v7.7.2 — 보스 소환 벽은 일반 벽보다 5배 단단하다 */
 const INF_GROWTH_SCALE=.5;
 const INF_ROLES={
  driller:{id:'driller',code:'EXCAVATION',name:'드릴러',tag:'길을 연다 · 기반암 균열 전문가',dig:2,gun:true,gunMul:.65,dash:1,weapon:'drill',qLabel:'돌파 파기',eLabel:null,qCd:7,eCd:0,color:'#ffd36e',terrain:'고압 중형 드릴',combat:'리벳 권총',keys:'<b>LMB</b> 고압 드릴·기반암 균열　<b>RMB</b> 보조총<br><b>Q</b> 돌파 파기　<b>SPACE</b> 대시'},
@@ -10297,10 +10437,7 @@ function infAdjustReload(mult){INF.reloadTime=Math.max(.42,Math.min(3.5,INF.relo
 function infStartReload(manual){if(!INF.active||CREW.phase!=='play'||INF.reloadLeft>0||INF.ammo>=INF.magSize)return false;INF.reloadDuration=INF.reloadTime;INF.reloadLeft=INF.reloadDuration;INF.reloadCount++;J.text(G.sh.x,G.sh.y-32,manual?'전술 재장전':'재장전','#7FEBD0',15);SFX.reload&&SFX.reload(manual);return true;}
 function infUpdateReload(dt){if(!INF.active||INF.reloadLeft<=0||CREW.phase!=='play')return;INF.reloadLeft=Math.max(0,INF.reloadLeft-dt);if(INF.reloadLeft<=0){INF.ammo=INF.magSize;J.text(G.sh.x,G.sh.y-32,'장전 완료','#FFD36E',14);SFX.reloadDone&&SFX.reloadDone();}}
  function infResetBuild(){const roleId=INF_ROLES[INF.roleId]?INF.roleId:'driller';Object.assign(INF,{roleId,selectedRoleId:roleId,depth:1,level:1,xp:0,xpNeed:12,core:0,floorBroken:0,totalBreakable:1,totalBlocks:0,bosses:0,bossSpawned:false,bossActive:false,boss:null,drillMul:1,gunMul:1,gunWallMul:1,fireRate:1,moveMul:1,xpMul:1,wallHpMul:1,enemyHpMul:1,shots:1,pierce:0,bounces:0,explosive:false,syncMul:1,chainBlast:0,oreHeal:0,coreBonusChance:0,coreMult:1,shardBurst:0,singularityEvery:0,laserEvery:0,shotCounter:0,blockCounter:0,gunMode:'표준총',smg:false,autoLoader:false,pity:0,chainLock:false,novaLock:false,magSize:12,ammo:12,reloadTime:1.35,reloadLeft:0,reloadDuration:1.35,reloadCount:0,breakerCd:0,breakerMaxCd:12,breakerFuse:2,breakerDryCd:0,breakerLatch:false,breakerCharges:[],breakerBlastLock:false,breakerDamageMul:1,breakerRadius:1,breakerEarlyMul:1,breakerEnemyMul:1,drillerCracks:new Map(),drillerTarget:-1,drillerBroken:0,drillerFoundationMul:1,drillerCrackHold:2.5,drillerCrackDecay:.012,drillerQMul:1,drillerShockRadius:0,drillerCoreNeedMul:1,scoutSectors:new Set(),scoutSectorCount:0,scoutPulseT:0,scoutPulseMax:2.4,scoutPulseCd:0,scoutHighlights:[],scoutGrappleFx:null,scoutGrappleRange:5,scoutGrappleCdMul:1,scoutFlareRadMul:1,scoutFlareLifeMul:1,scoutVisionBonus:0,scoutPulseRadius:5,scoutExploreXp:2,engineerNodes:[],engineerNodeSeq:0,engineerMaxNodes:2,engineerMaxTurrets:2,engineerNodeLife:50,engineerNodeRadius:4,engineerTurretLife:45,engineerTurretMag:18,engineerTurretReload:2.2,engineerTurretRange:5.5,engineerTurretInterval:.34,engineerTurretPower:.72,engineerAutonomous:false,floorTime:0,spawnDebt:0,threat:1,bossShots:[],bossShotQueue:[],branch:{dig:0,ballistic:0,power:0,control:0},restChosen:false,escape:null,
-  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{},
-  /* 도파민 콘텐츠 상태 (docs/design/dopamine-content-spec.md §5.3) — 잭팟 피티·피버 콤보·원정 기록 */
-  jackpotPity:0,jackpotFx:null,comboN:0,comboIdle:9,feverT:0,feverCd:0,nearMiss:null,
-  runStats:{kills:0,jackpots:0,jackpotCores:0,maxCombo:0,fevers:0,relicsFound:0,dividend:0}});infResetXpLog();}
+  drillWidth:0,drillReach:1,drillPenetration:0,focusDrill:false,focusDrillCell:-1,focusDrillT:0,breakShockRadius:0,breakShockPower:0,traitDrillMoveMul:1,traitHeatBuildMul:1,lootMagnetMul:1,lootPickupMul:1,auxDrills:0,auxDrillPower:0,auxDrillCd:0,explosiveDrill:0,afterDrill:0,afterHits:[],breakShield:0,chainCollapse:0,chainCollapseLock:false,autoDigEvery:0,vortexMining:0,wideQ:false,planetBreakerEvery:0,planetBreakerFx:null,grandCollapseEvery:0,giantBit:false,drillStorm:0,endlessOverdrive:false,endlessBurnTick:0,traitRiskTextCd:0,traitFx:[],traitStacks:{}});infResetXpLog();}
 function infPaintRoleSelect(){
  const root=infEl('infRoleGrid');if(!root)return;root.innerHTML='';
  for(const role of Object.values(INF_ROLES)){
@@ -10549,7 +10686,7 @@ function infInitFloor(){
  {const pb=(infPermState().reroll)||0;INF.cards=INF.depth<=1?{rerolls:INF_CARDS.rerollStart+pb}:{rerolls:Math.min(INF_CARDS.rerollCap+pb,((INF.cards&&INF.cards.rerolls)||0)+INF_CARDS.rerollPerStratum)};}   /* 6.3 permanent-node reroll bonus */
  INF.xpNeed=infXpNeedFor(INF.level);  /* 곡선은 행성 길이에 맞춘다 (§4.3) */
  INF.depth=G.depth;INF.floorBroken=0;INF.bossSpawned=false;INF.bossActive=false;INF.boss=null;
- INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
+ INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];INF.bossWallCells=new Set();G.downed=false;G.reviveT=0;G.downT=0;INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
  INF.wallHpMul=infWallHpMulFor(Math.max(1,INF.depth));INF.enemyHpMul=infEnemyHpMulFor(Math.max(1,INF.depth));
  INF.totalBreakable=Math.max(1,G.cell.reduce((n,t)=>n+(t&&!SOLIDX(t)?1:0),0));
  G.enemies.length=0;G.enemyCd=3.2;CREW.timeLeft=1e9;CREW.phase='play';
@@ -10582,7 +10719,7 @@ function infPlanetBreaker(x,y){
  const a=G.sh.aim,dc=Math.abs(Math.cos(a))>=Math.abs(Math.sin(a))?(Math.cos(a)>=0?1:-1):0,dr=dc?0:(Math.sin(a)>=0?1:-1),pc=-dr,pr=dc,[c,r]=toCell(x,y);INF.planetBreakerFx={x,y,a,t:.7,maxT:.7};INF.universalBlastLock=true;for(let step=-1;step<=8;step++)for(let side=-2;side<=2;side++)infDamageTraitCell(c+dc*step+pc*side,r+dr*step+pr*side,.375,dc,dr);INF.universalBlastLock=false;infTraitRiskDamage(G.phpMax*.015,'파쇄기 반동',false);J.ring(x,y,'#FF8D72',14,CELL*4.8,6);J.kick(13,dc,dr);SFX.brk&&SFX.brk();
 }
 function infUpdateMiningTraits(dt){
- if(!infTraitCardsEnabled()||CREW.phase!=='play')return;infJackpotTick(dt);infFeverTick(dt);INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
+ if(!infTraitCardsEnabled()||CREW.phase!=='play')return;INF.traitRiskTextCd=Math.max(0,(INF.traitRiskTextCd||0)-dt);if(INF.planetBreakerFx){INF.planetBreakerFx.t-=dt;if(INF.planetBreakerFx.t<=0)INF.planetBreakerFx=null;}if(!G.sh.drill){INF.focusDrillCell=-1;INF.focusDrillT=0;}
  if(INF.endlessOverdrive&&(G.drillHeat||0)>=.9){INF.endlessBurnTick=(INF.endlessBurnTick||0)+dt;while(INF.endlessBurnTick>=.5){INF.endlessBurnTick-=.5;if(infTraitRiskDamage(G.phpMax*.006,'과급 손상',true))return;}}else INF.endlessBurnTick=0;
  if(!Array.isArray(INF.afterHits))INF.afterHits=[];for(let i=INF.afterHits.length-1;i>=0;i--){const hit=INF.afterHits[i];hit.t-=dt;if(hit.t<=0){INF.afterHits.splice(i,1);infTraitBlast(hit.x,hit.y,1.25,.25,'#C7A0FF');}}
  const count=Math.max(INF.auxDrills|0,INF.drillStorm|0);if(count<=0)return;INF.auxDrillCd=Math.max(0,(INF.auxDrillCd||0)-dt);if(INF.auxDrillCd>0)return;INF.auxDrillCd=Math.max(.12,.48-count*.035);const sh=G.sh,candidates=[];
@@ -10595,13 +10732,12 @@ function infDrawMiningTraits(){
 }
 function infOnBlockBroken(type,x,y){
  if(!infTraitCardsEnabled())return;if(INF.active){INF.floorBroken++;INF.spawnDebt+=(.30+Math.min(.42,INF.floorBroken*.006));G.enemyCd=Math.min(G.enemyCd,Math.max(.35,2.1-INF.floorBroken*.018));}INF.totalBlocks++;INF.blockCounter++;
- if(typeof infComboOnBreak==='function')infComboOnBreak(x,y);
  const rare=type==='ore'||type==='gem'||type==='crys';
  infAwardXp(type==='stone'?INF_XP_TABLE.stone:rare?INF_XP_TABLE.rare:INF_XP_TABLE.dirt,'dig',{check:false});
   if(INF.drillerTraitHeatRecovery&&INF.roleId==='driller'){G.drillHeat=Math.max(0,(G.drillHeat||0)-.12);G.drillHeatLock=Math.max(0,(G.drillHeatLock||0)-.08);}
   if(INF.drillerTraitDeflector&&INF.roleId==='driller'&&(type==='dirt'||type==='stone'))infDrillerDeflectWalls(x,y);
   if(INF.drillerTraitRecirc&&INF.roleId==='driller'&&CREW.breachT>0&&INF.drillerRecircReduced<1.5){const cut=Math.min(.25,1.5-INF.drillerRecircReduced);CREW.qCd=Math.max(0,CREW.qCd-cut);INF.drillerRecircReduced+=cut;}
-  if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);if(typeof infRelicOnRare==='function')infRelicOnRare(x,y,core);if(typeof infTryJackpot==='function')infTryJackpot(x,y);}
+  if(rare){const bonus=Math.random()<INF.coreBonusChance?1:0,core=Math.max(1,INF.coreMult|0)+bonus;INF.core+=core;infAwardLootXp('core',core,x,y);infPermRemoteTick(core,x,y);J.text(x,y-22,'코어 +'+core,'#7FEBD0',16);if(INF.oreHeal>0)G.php=Math.min(G.phpMax,G.php+INF.oreHeal);if(typeof infRelicOnRare==='function')infRelicOnRare(x,y,core);}
  if(typeof infRelicOnBlock==='function')infRelicOnBlock(type,x,y);   /* 유물 — 피티 카운터·굴착 공명석 */
  if(INF.breakShield>0){CREW.shieldT=Math.max(CREW.shieldT,INF.breakShield);G.iframes=Math.max(G.iframes,Math.min(.28,INF.breakShield*.45));}
  if(INF.afterDrill&&!INF.universalBlastLock)INF.afterHits.push({x,y,t:.32});
@@ -10622,67 +10758,6 @@ function infRadialBurst(x,y,n,power){
 function infDrillNova(x,y){
  INF.novaLock=true;const [c,r]=toCell(x,y);J.ring(x,y,'#FFD36E',12,CELL*2.5,5);J.burst(x,y,24,['#FFD36E','#FFF','#C7A0FF'],290);J.kick(6);
  for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){if(Math.hypot(dc,dr)>2.35)continue;const cc=c+dc,rr=r+dr;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,shelDps()*1.25*INF.drillMul,dc,dr,true);}INF.novaLock=false;
-}
-/* ══════════ 도파민 콘텐츠 1 — 광맥 잭팟 '노다지' (docs/design/dopamine-content-spec.md §5.3-1) ══════════
-   변동비율 보상: rare 파괴의 3.5% + 피티(불발마다 +0.9%p, 플레이어에게 유리한 방향으로만).
-   보상은 순차 지급으로 세어 주고(명제 T1), 발동은 반드시 적 웨이브를 동반한다(가드레일 4 — 무비용 보상 금지). */
-function infTryJackpot(x,y){
- if(!INF.active)return;
- const chance=.035+.009*(INF.jackpotPity||0);
- if(Math.random()>=chance){INF.jackpotPity=(INF.jackpotPity||0)+1;return;}
- INF.jackpotPity=0;
- const total=(4+(Math.random()*4|0))*Math.max(1,INF.coreMult|0);
- INF.jackpotFx={x,y,left:total,total,t:.5,tick:0};
- if(INF.runStats){INF.runStats.jackpots++;INF.runStats.jackpotCores+=total;}
- INF.spawnDebt+=5;G.enemyCd=Math.min(G.enemyCd,.6);   /* 노다지 소리가 적을 부른다 */
- J.kick(7);J.ring(x,y,'#FFD36E',10,CELL*2.6,5);J.ring(x,y,'#FFF3D6',6,CELL*1.5,3);J.burst(x,y,26,['#FFD36E','#FFF3D6','#7FEBD0'],260);
- J.text(x,y-40,'노다지!','#FFD36E',26);
- SFX.dawn&&SFX.dawn();toast('노다지 광맥! 코어 '+total+'개 — 소리를 듣고 적이 몰려옵니다');
- if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('jackpot');
- infAwardXp(10,'loot',{check:false});
-}
-/* 잭팟 순차 지급 큐 — infUpdateMiningTraits(play 페이즈)에서만 소비되므로 사망·정산 중에는 멈춘다 */
-function infJackpotTick(dt){
- const fx=INF.jackpotFx;if(!fx)return;
- fx.t-=dt;if(fx.t>0)return;
- fx.t=.12;fx.left--;INF.core++;fx.tick++;
- const jx=fx.x+(Math.random()-.5)*CELL*1.4,jy=fx.y-(fx.tick%5)*10-14;
- J.text(jx,jy,'+1','#FFD36E',14);J.burst(fx.x,fx.y,3,['#FFD36E','#FFF3D6'],130);
- if(fx.tick%2===0)SFX.ore&&SFX.ore();
- if(fx.left<=0){J.text(fx.x,fx.y-56,'노다지 +'+fx.total,'#FFD36E',20);SFX.cache&&SFX.cache();INF.jackpotFx=null;}
-}
-/* ══════════ 도파민 콘텐츠 2 — 피버 드릴 (docs/design/dopamine-content-spec.md §5.3-2) ══════════
-   Flow 가시화: 이미 하고 있는 '연속 굴착'에 게이지를 단다 — 새 조작 요구 없음.
-   2.4초 이내 연속 파괴로 콤보 유지, 25콤보에 피버 6초(굴착 ×1.5 · 파괴 시 소형 파쇄), 재사용 대기 30초. */
-function infComboOnBreak(x,y){
- if(!INF.active)return;
- if((INF.comboIdle||0)>2.4)INF.comboN=0;
- INF.comboN++;INF.comboIdle=0;
- if(INF.runStats&&INF.comboN>INF.runStats.maxCombo)INF.runStats.maxCombo=INF.comboN;
- if(INF.comboN>=10&&INF.comboN%10===0)J.text(x,y-30,'콤보 x'+INF.comboN,'#C7A0FF',13+Math.min(9,INF.comboN/10|0));
- if(INF.comboN>=25&&INF.feverT<=0&&(INF.feverCd||0)<=0)infStartFever();
- if(INF.feverT>0&&!INF.universalBlastLock)infTraitBlast(x,y,1.2,.28,'#FFD36E');
-}
-function infStartFever(){
- INF.feverT=6;INF.feverCd=30;INF.drillMul*=1.5;INF.moveMul*=1.1;
- if(INF.runStats)INF.runStats.fevers++;
- infFeverVeil(true);J.kick(5);J.ring(G.sh.x,G.sh.y,'#FFD36E',9,CELL*2.2,4);
- SFX.ready&&SFX.ready();toast('피버 드릴! 6초간 굴착 폭주');
- if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('fever');
-}
-function infEndFever(){
- INF.feverT=0;INF.drillMul/=1.5;INF.moveMul/=1.1;infFeverVeil(false);SFX.back&&SFX.back();
-}
-/* 화면 금색 비네트 — DOM 오버레이라 update 정지·rAF 유무와 무관하게 동작한다 */
-function infFeverVeil(on){
- let v=document.getElementById('infFeverVeil');
- if(!v){v=document.createElement('div');v.id='infFeverVeil';v.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:40;opacity:0;transition:opacity .35s;box-shadow:inset 0 0 120px 26px rgba(255,211,110,.34),inset 0 0 42px 8px rgba(255,211,110,.18)';document.body.appendChild(v);}
- v.style.opacity=on?'1':'0';
-}
-function infFeverTick(dt){
- INF.comboIdle=(INF.comboIdle||0)+dt;   /* 콤보 유휴 클록 — floorTime은 지층 전환 시 리셋되므로 쓰지 않는다 */
- if(INF.feverT<=0&&(INF.feverCd||0)>0)INF.feverCd-=dt;
- if(INF.feverT>0){INF.feverT-=dt;if(INF.feverT<=0)infEndFever();}
 }
 /* ══════════ 역할 행동 개인 경험치 ══════════ */
 /* 기획서 §5.3 — 개인 경험치는 직업별 역할 행동에 가중치를 두어 지급한다.
@@ -10735,7 +10810,6 @@ function infAwardXp(base,kind,opts){
 /* 적 처치 경험치 — 센트리가 잡은 적은 엔지니어의 지원 기여로 정산한다. */
 function infAwardEnemyKillXp(e,src){
  if(!INF.active||!e)return;
- if(INF.runStats)INF.runStats.kills++;   /* 원정 기록 (spec §5.3-3) */
  if(e.boss){infAwardXp(INF_XP_TABLE.killBoss,'combat',{x:e.x,y:e.y,dy:56,label:'보스 격파',color:'#FFD36E',size:18,check:false});return;}
  const tier=e.apex?INF_XP_TABLE.apexMul:(e.elite?INF_XP_TABLE.eliteMul:1);
  if(src==='turret')infAwardXp(INF_XP_TABLE.turretKill*tier,'support',{x:e.x,y:e.y,dy:30,label:'센트리 처치',color:'#C7A0FF',size:13});
@@ -11261,7 +11335,7 @@ function infSpawnBoss(){
  const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,cfg=lab?BOSS_LAB.values:null,spec=bossSpec();INF.bossSpawned=true;INF.bossActive=true;
  const tier=infBossTierForDepth(INF.depth),td=INF_BOSS_TIER[tier];const p=lab?bossLabFindSpawnPoint():(pickFarOpenSpot(CELL*5)||{x:G.sh.x+CELL*4,y:G.sh.y});
  const hp=lab?cfg.maxHp:spec?spec.maxHp*td.hpMul:DEMO.enemyHp*(11.2+Math.max(0,INF.depth-1)*2.2*INF_GROWTH_SCALE)*INF.enemyHpMul*INF_BOSS_POWER*td.hpMul;
- const e={x:p.x,y:p.y,vx:0,vy:0,hp,hpMax:hp,cd:0,hurt:0,bob:0,r:DEMO.enemyRadius*(lab?cfg.size:(spec?spec.size:3.65)*td.sizeMul),elite:1,boss:1,bossTier:tier,bossPower:INF_BOSS_POWER,speedMul:lab?cfg.moveSpeed:(spec?spec.moveSpeed:1.35)*td.speedMul,damageMul:1.55*INF_BOSS_POWER*td.dmgMul,kbx:0,kby:0,armorCells:[],armorStage:0,patternCd:spec?spec.summonInterval:4.2,attackCd:bossRandomRange('attackIntervalMin','attackIntervalMax'),kind:'broodBeast',animT:0,blinkCd:2.5,blinkT:0,jumpT:0,jumpDur:0,jumpCd:Infinity,facing:-1,bossAnimKey:'idle',bossAnimRate:1,bossDashState:null};INF.boss=e;G.enemies.push(e);
+ const e={x:p.x,y:p.y,vx:0,vy:0,hp,hpMax:hp,cd:0,hurt:0,bob:0,r:DEMO.enemyRadius*(lab?cfg.size:(spec?spec.size:3.65)*td.sizeMul*INF_BOSS_SIZE_MUL),elite:1,boss:1,bossTier:tier,bossPower:INF_BOSS_POWER,speedMul:lab?cfg.moveSpeed:(spec?spec.moveSpeed:1.35)*td.speedMul,damageMul:1.55*INF_BOSS_POWER*td.dmgMul,kbx:0,kby:0,armorCells:[],armorStage:0,patternCd:spec?spec.summonInterval:4.2,attackCd:bossRandomRange('attackIntervalMin','attackIntervalMax'),kind:'broodBeast',animT:0,blinkCd:2.5,blinkT:0,jumpT:0,jumpDur:0,jumpCd:Infinity,facing:-1,bossAnimKey:'idle',bossAnimRate:1,bossDashState:null};INF.boss=e;G.enemies.push(e);
  if(tier!=='guardian')infBossSpawnArmor(e,spec?spec.initialArmor:6);   /* 수호자는 장갑 없음 — §11.1 위계 차별화 */
  INF.indicatorFlashUntil=performance.now()+1800;
  J.ring(e.x,e.y,'#FF557D',16,CELL*3.2,6);J.burst(e.x,e.y,30,['#FF557D','#C7A0FF','#FFF'],300);J.kick(9);toast(lab?'TEST · 암반 포식자 즉시 출현'
@@ -11285,14 +11359,21 @@ function infPaintBossIndicator(boss){
 }
 function infBossArmorAlive(e){if(!e||!e.armorCells)return 0;e.armorCells=e.armorCells.filter(k=>G.cell[k]&&!SOLIDX(G.cell[k]));return e.armorCells.length;}
 function infBossSpawnArmor(e,want){
- if(!e)return;const [c,r]=toCell(e.x,e.y),cand=[];for(let dr=-3;dr<=3;dr++)for(let dc=-3;dc<=3;dc++){const d=Math.hypot(dc,dr);if(d>=1.7&&d<=3.25)cand.push([dc,dr]);}infShuffle(cand);e.armorCells=e.armorCells||[];
+ if(!e)return;const [c,r]=toCell(e.x,e.y),ringMin=Math.max(1.7,e.r/CELL+.7),ringMax=ringMin+1.55,span=Math.ceil(ringMax),cand=[];for(let dr=-span;dr<=span;dr++)for(let dc=-span;dc<=span;dc++){const d=Math.hypot(dc,dr);if(d>=ringMin&&d<=ringMax)cand.push([dc,dr]);}infShuffle(cand);e.armorCells=e.armorCells||[];   /* v7.7.2 — 장갑 링이 커진 보스 몸통 밖에 생기도록 반경 기준 스케일 */
  let made=0;for(const [dc,dr] of cand){if(made>=want)break;const cc=c+dc,rr=r+dr;if(!inB(cc,rr))continue;const k=ci(cc,rr),t=G.cell[k];if(SOLIDX(t)||e.armorCells.includes(k))continue;G.cell[k]='stone';G.band[k]=bandOf(rr);G.dec[k]=0;G.hp.delete(k);e.armorCells.push(k);made++;}
  G.compDirty=true;if(typeof LOS!=='undefined')LOS.markDirty();J.ring(e.x,e.y,'#FFD36E',9,CELL*2.4,4);J.text(e.x,e.y-e.r-28,'암반 장갑 생성','#FFD36E',17);toast('보스 장갑벽을 채굴해 약점을 노출하세요');
 }
-function infQueueBossShot(e,tx,ty,delay,flight,rad,visualId){
- if(!e||e.hp<=0)return;INF.bossShotQueue.push({boss:e,tx:clamp(tx,CELL,WW-CELL),ty:clamp(ty,CELL,WH-CELL),delay:Math.max(0,delay||0),flight:flight||1.9,rad:rad||CELL*1.12,visualId:visualId||'bossScatter'});
+function infQueueBossShot(e,tx,ty,delay,flight,rad,visualId,power){
+ if(!e||e.hp<=0)return;
+ const pw=Math.max(.5,power||1),vid=visualId||'bossScatter';
+ /* v7.7.2c — 피격 범위를 화면의 경고 원 vfx 반경과 정확히 일치시킨다.
+    플레이어·AI 크루·원격 크루·드로잉이 전부 이 rad 하나를 쓴다 */
+ const v=window.TUNNEL_PROJECTILE_LAB&&window.TUNNEL_PROJECTILE_LAB.profiles&&window.TUNNEL_PROJECTILE_LAB.profiles[vid];
+ const r=(v&&v.telegraphRadius)?v.telegraphRadius*pw:(rad||CELL*1.12);
+ INF.bossShotQueue.push({boss:e,tx:clamp(tx,CELL,WW-CELL),ty:clamp(ty,CELL,WH-CELL),delay:Math.max(0,delay||0),flight:flight||1.9,rad:r,visualId:vid,power:pw});
 }
 function bossMouthPosition(e){const facing=(e&&e.facing)||-1;return{x:e.x+facing*e.r*bossTune('muzzleOffsetX'),y:e.y+e.r*bossTune('muzzleOffsetY')};}
+function bossProjectileInitialAngle(mouth,tx,ty,visualId){const profile=window.TUNNEL_PROJECTILE_LAB&&window.TUNNEL_PROJECTILE_LAB.profiles[visualId]||{},arcHeight=profile.arcHeight||110;return Math.atan2(ty-mouth.y-Math.PI*arcHeight,tx-mouth.x);}
 function infBossStartPattern(e,forcedType){
  if(!e||e.hp<=0)return;const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,cfg=lab?BOSS_LAB.values:null,spec=bossSpec();
  const attackLead=Math.max(.05,bossRandomRange('attackLeadMin','attackLeadMax')),dash=forcedType==='dash'||(forcedType!=='ranged'&&Math.random()<bossTune('dashChance')+infBossTierDef(e).dashBonus);
@@ -11301,9 +11382,15 @@ function infBossStartPattern(e,forcedType){
  const sh=G.sh,targetLead=.45,px=sh.x+(sh.vx||0)*targetLead,py=sh.y+(sh.vy||0)*targetLead;e.facing=px>=e.x?1:-1;
  const baseLead=1.45,baseDuration=2.6,animRate=baseLead/attackLead;
  e.bossFireBreathT=baseDuration/animRate;e.bossAnimKey='fireBreath';e.bossAnimT=0;e.bossAnimRate=animRate;
+ /* v7.7.2b — 기 모으기: 시전(예고) 시간이 길수록 투사체 크기·피해 반경·피해량이 커진다.
+    v7.7.2c — 최대 배율 2.5 → 1.25 (최대 크기 절반 제한) */
+ const chargePow=Math.max(.6,Math.min(1.25,attackLead/Math.max(.1,bossTune('attackLeadMin'))));
  const scatter=Math.random()<.48,count=spec?Math.max(1,Math.round(spec.projectileCount*bossSpecTierMul(e,'projMul'))):Math.max(2,Math.round((scatter?Math.min(10,5+INF.depth):Math.min(8,3+INF.depth))*infBossTierDef(e).projMul)),flight=spec?spec.projectileFlight:0,rad=spec?CELL*spec.projectileRadius:0;
- if(scatter){for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,r=CELL*(.45+Math.random()*2.45);infQueueBossShot(e,px+Math.cos(a)*r,py+Math.sin(a)*r,attackLead+Math.random()*.22,flight||1.8+Math.random()*.38,rad||CELL*(.95+Math.random()*.28),'bossScatter');}J.text(e.x,e.y-e.r-26,'산발 붕괴탄','#FF8DA8',16);}
- else{for(let i=0;i<count;i++){const side=(i-(count-1)/2)*CELL*.32;infQueueBossShot(e,px+side,py+(Math.random()-.5)*CELL*.55,attackLead+i*.30,flight||1.72+Math.random()*.22,rad||CELL*1.08,'bossBarrage');}J.text(e.x,e.y-e.r-26,'연속 포격','#FF8DA8',16);}
+ if(scatter){for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,r=CELL*(.45+Math.random()*2.45);infQueueBossShot(e,px+Math.cos(a)*r,py+Math.sin(a)*r,attackLead+Math.random()*.22,flight||1.8+Math.random()*.38,(rad||CELL*(.95+Math.random()*.28))*chargePow,'bossScatter',chargePow);}J.text(e.x,e.y-e.r-26,'산발 붕괴탄','#FF8DA8',16);}
+ else{for(let i=0;i<count;i++){const side=(i-(count-1)/2)*CELL*.32;infQueueBossShot(e,px+side,py+(Math.random()-.5)*CELL*.55,attackLead+i*.30,flight||1.72+Math.random()*.22,(rad||CELL*1.08)*chargePow,'bossBarrage',chargePow);}J.text(e.x,e.y-e.r-26,'연속 포격','#FF8DA8',16);}
+ const castVisualId=scatter?'bossScatter':'bossBarrage',mouth=bossMouthPosition(e),castAngle=bossProjectileInitialAngle(mouth,px,py,castVisualId);
+ if(window.TUNNEL_PROJECTILE_FX&&window.TUNNEL_PROJECTILE_FX.bossCastMuzzle3)window.TUNNEL_PROJECTILE_FX.bossCastMuzzle3(mouth.x,mouth.y,castAngle,attackLead);
+ if(chargePow>=1.3)J.text(e.x,e.y-e.r-48,'기 응축 ×'+chargePow.toFixed(1),'#FFD36E',15);
  J.ring(e.x,e.y,'#FF557D',7,CELL*1.7,2.5);
 }
 /* ══════════ 보스 벽돌 소환 기믹 (boss-patterns 개발빌드) ══════════
@@ -11314,10 +11401,15 @@ function infBossStartPattern(e,forcedType){
    이미 벽돌이 있는 타일은 건너뛰고, 노이즈로 모양을 흐트러뜨린다.
    생성 시 화면 흔들림 + 먼지 + 돌맹이 튐. 발동 시 보스 원거리 공격 애니메이션 재생. */
 function infBossWallHardChance(e){const ratio=e&&e.hpMax?Math.max(0,Math.min(1,e.hp/e.hpMax)):1;return .05+(1-ratio)*.20;}
-function infQueueBossWall(e,cc,rr,delay,budget){INF.bossWallQueue=INF.bossWallQueue||[];INF.bossWallQueue.push({boss:e,c:cc,r:rr,delay:Math.max(0,delay||0),budget});}
+function infQueueBossWall(e,cc,rr,delay,budget,convert){INF.bossWallQueue=INF.bossWallQueue||[];INF.bossWallQueue.push({boss:e,c:cc,r:rr,delay:Math.max(0,delay||0),budget,convert:!!convert});}
 function infBossWallMaterialize(w){
  const cc=w.c,rr=w.r;if(!inB(cc,rr))return;const k=ci(cc,rr);
- if(G.cell[k])return;   /* 규칙 5 — 이미 벽돌이 있는 타일은 소환하지 않음 */
+ const t0=G.cell[k];
+ if(t0){   /* 규칙 5 — 이미 벽돌이 있는 타일은 소환하지 않음. 단, convert(지각 파동)는 붉은 보스 벽으로 전환 */
+  if(!w.convert)return;
+  if(SOLIDX(t0)||t0==='ore'||t0==='gem'||t0==='crys')return;   /* 자원·파괴불가 벽은 보존 */
+  const bb=w.boss;if(bb&&bb.armorCells&&bb.armorCells.includes(k))return;   /* 보스 장갑은 전환하지 않음 */
+ }
  const px=cxw(cc),py=cyw(rr);
  if(Math.hypot(G.sh.x-px,G.sh.y-py)<CELL*1.05)return;   /* 플레이어를 벽 속에 가두지 않음 */
  const b=w.boss;if(b&&b.hp>0&&Math.hypot(b.x-px,b.y-py)<b.r+CELL*.55)return;   /* 보스 몸통 위 생성 방지 */
@@ -11326,11 +11418,15 @@ function infBossWallMaterialize(w){
  const relicRam=typeof infRelicHas==='function'&&infRelicHas('r_ram');   /* 유물 — 파성퇴 코어: 소환 벽 경화 무효 + 1타 파괴 */
  if(relicRam)hard=false;
  G.cell[k]=hard?'rock':'stone';G.band[k]=bandOf(rr);G.dec[k]=0;G.hp.delete(k);
+ if(!hard){const hpMul=(typeof infTraitCardsEnabled==='function'&&infTraitCardsEnabled())?INF.wallHpMul:1;G.hp.set(k,HPT.stone*hpMul*INF_BOSS_WALL_HP_MUL);}   /* v7.7.2 — 보스 소환 벽은 일반 벽 5배 경도 */
  if(relicRam)G.hp.set(k,1);
+ (INF.bossWallCells=INF.bossWallCells||new Set()).add(k);   /* v7.7.2b — 보스 소환 벽 붉은 강조 대상 */
  G.compDirty=true;if(typeof LOS!=='undefined')LOS.markDirty();
- /* 연출 — 흔들림 · 먼지 · 튀는 돌맹이 */
- J.kick(2.4);
- J.smoke(px,py+CELL*.15,3,hard?'#3A4462':'#4A4034',55);
+ /* 연출 — 흔들림 · 먼지 · 튀는 돌맹이 (v7.7.2c — 소환 흔들림 2배 강화) */
+ J.kick(8.4);
+ /* v7.7.2 — 소환 먼지는 최소 2초 ~ 최대 4초 동안 시야에 남는다 */
+ for(let i=0;i<3;i++){const a=Math.random()*6.283,s=55*(.3+Math.random()*.8),dustLife=2+Math.random()*2;
+  J.sm.push({x:px+(Math.random()-.5)*CELL*.4,y:py+CELL*.15,vx:Math.cos(a)*s,vy:Math.sin(a)*s-9,r:9+Math.random()*13,col:hard?'#3A4462':'#4A4034',alpha:.38,life:1,grow:7,decay:1/dustLife});}
  J.chunks(px,py-CELL*.2,4,hard?['#6A7EB0','#4A5578','#2E3650']:['#C9B79A','#8F7B5C','#6B5A40'],165,0,-1.4);
  J.ring(px,py,hard?'#8FA2E8':'#D8C49A',3,CELL*.6,2);
  if(hard)J.text(px,py-CELL*.6,'경화 암반','#8FA2E8',13);
@@ -11355,17 +11451,17 @@ function infBossWallField(e){   /* 패턴 1 — 주변 두꺼운 벽 뭉치 + �
  const budget={left:1+Math.round((1-e.hp/e.hpMax)*3)};
  const [bc,br]=toCell(e.x,e.y),clusters=2+((Math.random()*3)|0);
  for(let n=0;n<clusters;n++){
-  const a=Math.random()*Math.PI*2,dist=3.4+Math.random()*3.2;
+  const a=Math.random()*Math.PI*2,dist=e.r/CELL+.8+Math.random()*3.2;   /* v7.7.2 — 커진 보스 몸통 밖에 뭉치가 생기도록 */
   const oc=bc+Math.round(Math.cos(a)*dist),or_=br+Math.round(Math.sin(a)*dist);
   const rad=1.15+Math.random()*.75;
   for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
    const d=Math.hypot(dc,dr)+ (Math.random()-.5)*.6;   /* 노이즈 — 완벽한 원이 되지 않게 */
    if(d>rad)continue;
    if(Math.random()<.18)continue;                       /* 불규칙 구멍 */
-   infQueueBossWall(e,oc+dc,or_+dr,.12+n*.14+Math.random()*.3,budget);
+   infQueueBossWall(e,oc+dc,or_+dr,.06+n*.07+Math.random()*.15,budget);   /* v7.7.2 — 시전 2배 가속 */
   }
  }
- infBossWallCastAnim(e,1.15);
+ infBossWallCastAnim(e,.58);
  e.bossForcedRanged=3;   /* 소환 후 원거리 공격 3연속 */
  J.text(e.x,e.y-e.r-26,'암벽 융기','#D8C49A',17);J.ring(e.x,e.y,'#D8C49A',8,CELL*2.2,3);J.kick(4);
 }
@@ -11374,20 +11470,20 @@ function infBossWallWave(e){   /* 패턴 2 — 탈리야식 파도 장벽 (총 2
  const sh=G.sh,ang=Math.atan2(sh.y-e.y,sh.x-e.x);
  const startD=Math.ceil(e.r/CELL)+1;
  const lenToPlayer=Math.hypot(sh.x-e.x,sh.y-e.y)/CELL;
- const len=Math.max(11,Math.min(24,Math.round(lenToPlayer+5)));
+ const len=Math.max(22,Math.min(48,Math.round((lenToPlayer+5)*2)));   /* v7.7.2b — 장벽 길이 2배 */
  const [bc,br]=toCell(e.x,e.y),cosA=Math.cos(ang),sinA=Math.sin(ang),pxA=-sinA,pyA=cosA;
- const steps=len-startD,WAVE_TOTAL=2.0;   /* 파도 총 생성 시간 2초 (규칙 2) */
+ const steps=len-startD,WAVE_TOTAL=1.0;   /* v7.7.2b — 길이 2배를 같은 1초에 훑는다 = 파도 진행 속도 2배 */
  for(let i=0;i<steps;i++){
-  const t=steps>1?i/(steps-1):0,delay=.1+WAVE_TOTAL*t;
+  const t=steps>1?i/(steps-1):0,delay=.05+WAVE_TOTAL*t;
   const drift=(Math.random()-.5)*.9;   /* 노이즈 — 직선이 살짝 휘청이게 */
   const cx0=bc+(cosA*(startD+i))+pxA*drift, cy0=br+(sinA*(startD+i))+pyA*drift;
   for(const off of [-.55,.55]){   /* 두께 2칸 */
    if(Math.random()<.10)continue;
    const cc=Math.round(cx0+pxA*off+(Math.random()-.5)*.4),rr=Math.round(cy0+pyA*off+(Math.random()-.5)*.4);
-   infQueueBossWall(e,cc,rr,delay+Math.random()*.06,budget);
+   infQueueBossWall(e,cc,rr,delay+Math.random()*.06,budget,true);   /* v7.7.2b — 경로의 기존 벽돌은 붉은 보스 벽으로 전환 */
   }
  }
- infBossWallCastAnim(e,WAVE_TOTAL+.25);
+ infBossWallCastAnim(e,WAVE_TOTAL+.12);
  e.bossForcedRanged=1;   /* 소환 후 원거리 공격 1회 필수 */
  J.text(e.x,e.y-e.r-26,'지각 파동','#FFB37A',17);J.ring(e.x,e.y,'#FFB37A',8,CELL*2.4,3);J.kick(4.5,cosA,sinA);
 }
@@ -11403,9 +11499,9 @@ function infBossWallPrison(e){   /* 패턴 3 — 플레이어를 가두는 원�
   const key=cc+'_'+rr;if(seen.has(key))continue;seen.add(key);
   if(Math.random()<.08)continue;
   if(Math.hypot(cc-pc,rr-pr)<1.9)continue;   /* 내부 공간 침범 금지 */
-  infQueueBossWall(e,cc,rr,.15+(i/segs)*.55+Math.random()*.08,budget);   /* 시계방향으로 닫힘 */
+  infQueueBossWall(e,cc,rr,.08+(i/segs)*.28+Math.random()*.04,budget);   /* 시계방향으로 닫힘 — v7.7.2 시전 2배 가속 */
  }
- infBossWallCastAnim(e,1.2);
+ infBossWallCastAnim(e,.6);
  e.bossForcedRanged=1;   /* 가둔 뒤 그 플레이어에게 원거리 공격 */
  J.text(sh.x,sh.y-40,'석화 감옥!','#C7A0FF',18);J.ring(sh.x,sh.y,'#C7A0FF',10,CELL*radius,4);J.kick(4);
 }
@@ -11415,23 +11511,48 @@ function infBossWallGimmickStart(e){
  else if(roll<.75)infBossWallWave(e);
  else infBossWallPrison(e);
 }
+/* v7.7.2 — 체력 30% 이하 돌진: 시전(예고) 직전 진로 기준 양쪽에 장벽을 세워 목표 플레이어를 협곡 안에 가둔다 */
+function infBossDashPrison(e,lead){
+ if(!e||!e.hpMax||e.hp/e.hpMax>.3)return;
+ if(typeof INF==='undefined'||!INF.bossActive)return;
+ const budget={left:2},sh=G.sh;
+ const dirX=e.bossDashDirX||0,dirY=e.bossDashDirY||0;if(!dirX&&!dirY)return;
+ const pxA=-dirY,pyA=dirX,[bc,br]=toCell(e.x,e.y);
+ const startD=Math.ceil(e.r/CELL)+1;
+ const distToPlayer=Math.hypot(sh.x-e.x,sh.y-e.y)/CELL;
+ const len=Math.max(startD+5,Math.min(28,Math.round(distToPlayer+4)));   /* 플레이어를 지나 조금 더 이어진다 */
+ const halfW=Math.max(2.2,e.r*.92/CELL+1.4);   /* 보스 돌진 파쇄 반경 바깥 — 보스가 지나가도 벽이 남는다 */
+ const total=Math.max(.15,Math.min(.6,(lead||1)*.55));   /* 돌진 예고가 끝나기 전에 벽이 완성된다 */
+ for(let i=startD;i<=len;i++){
+  const t=(i-startD)/Math.max(1,len-startD);
+  for(const sideSign of [-1,1]){
+   const off=halfW*sideSign+(Math.random()-.5)*.5;   /* 노이즈 — 직선이 살짝 흐트러지게 */
+   const cc=Math.round(bc+dirX*i+pxA*off),rr=Math.round(br+dirY*i+pyA*off);
+   if(Math.random()<.06)continue;
+   infQueueBossWall(e,cc,rr,.05+total*t+Math.random()*.05,budget);
+  }
+ }
+ J.text(sh.x,sh.y-44,'협곡 돌진 — 갇혔다!','#FF8DA8',18);
+ J.ring(sh.x,sh.y,'#FF8DA8',8,CELL*halfW,3);J.kick(4,dirX,dirY);
+}
 function infBossProjectileHit(s){
  if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.impact(s.tx,s.ty,0,s.visualId||'bossScatter');else{J.ring(s.tx,s.ty,'#FF557D',10,s.rad*1.35,4);J.burst(s.tx,s.ty,18,['#FF557D','#FFB0B8','#3A0D1A'],230);J.kick(5);}
  if(typeof AICREW!=='undefined')AICREW.bossShotHit(s);   /* AI 크루 피격 */
  const d=Math.hypot(G.sh.x-s.tx,G.sh.y-s.ty);if(d>s.rad||G.iframes>0)return;
- const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,spec=bossSpec();let dmg=lab&&BOSS_LAB.invincible?0:(spec?Math.max(0,Math.round(spec.projectileDamage*bossSpecTierMul(INF.boss,'dmgMul'))):Math.max(9,Math.round(DEMO.enemyDmg*(3.55+Math.max(0,INF.depth-1)*.35*INF_GROWTH_SCALE))));if(dmg>0&&typeof infRelicPlayerDamageMod==='function')dmg=infRelicPlayerDamageMod(dmg);G.php=Math.max(0,G.php-dmg);G.iframes=DEMO.playerIFrame;if(typeof infRelicAfterPlayerHurt==='function')infRelicAfterPlayerHurt(0,0);G.flash=.65;G.pulse=1;if(dmg>0)J.text(G.sh.x,G.sh.y-32,'-'+dmg,'#FF557D',20);
+ const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,spec=bossSpec();let dmg=lab&&BOSS_LAB.invincible?0:(spec?Math.max(0,Math.round(spec.projectileDamage*bossSpecTierMul(INF.boss,'dmgMul'))):Math.max(9,Math.round(DEMO.enemyDmg*(3.55+Math.max(0,INF.depth-1)*.35*INF_GROWTH_SCALE))));if(dmg>0)dmg=Math.round(dmg*(s.power||1));   /* v7.7.2b — 기 모으기 배율 */if(dmg>0&&typeof infRelicPlayerDamageMod==='function')dmg=infRelicPlayerDamageMod(dmg);G.php=Math.max(0,G.php-dmg);G.iframes=DEMO.playerIFrame;if(typeof infRelicAfterPlayerHurt==='function')infRelicAfterPlayerHurt(0,0);G.flash=.65;G.pulse=1;if(dmg>0)J.text(G.sh.x,G.sh.y-32,'-'+dmg,'#FF557D',20);
  if(G.php<=0)infEndRun('붕괴탄에 쓰러짐');
 }
 function infBossProjectileTick(dt){
- for(let i=INF.bossShotQueue.length-1;i>=0;i--){const q=INF.bossShotQueue[i];q.delay-=dt;if(q.delay>0)continue;INF.bossShotQueue.splice(i,1);if(!q.boss||q.boss.hp<=0)continue;const mouth=bossMouthPosition(q.boss),angle=Math.atan2(q.ty-mouth.y,q.tx-mouth.x);INF.bossShots.push({sx:mouth.x,sy:mouth.y,tx:q.tx,ty:q.ty,t:0,flight:q.flight,rad:q.rad,visualId:q.visualId||'bossScatter'});if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(mouth.x,mouth.y,angle,q.visualId||'bossScatter');else J.flash(mouth.x,mouth.y,18,'rgba(255,115,65,.75)');}
+ for(let i=INF.bossShotQueue.length-1;i>=0;i--){const q=INF.bossShotQueue[i];q.delay-=dt;if(q.delay>0)continue;INF.bossShotQueue.splice(i,1);if(!q.boss||q.boss.hp<=0)continue;const mouth=bossMouthPosition(q.boss),visualId=q.visualId||'bossScatter',angle=bossProjectileInitialAngle(mouth,q.tx,q.ty,visualId);INF.bossShots.push({sx:mouth.x,sy:mouth.y,tx:q.tx,ty:q.ty,t:0,flight:q.flight,rad:q.rad,visualId,power:q.power||1});if(window.TUNNEL_PROJECTILE_FX)window.TUNNEL_PROJECTILE_FX.muzzle(mouth.x,mouth.y,angle,visualId);else J.flash(mouth.x,mouth.y,18,'rgba(255,115,65,.75)');}
  for(let i=INF.bossShots.length-1;i>=0;i--){const s=INF.bossShots[i];s.t+=dt;if(s.t<s.flight)continue;INF.bossShots.splice(i,1);infBossProjectileHit(s);}
 }
 function infDrawBossProjectiles(shx,shy){
  if(!INF.active||(!INF.bossShots.length&&!INF.bossShotQueue.length))return;const z=G.Z||1,ox=G.offX+(shx||0),oy=G.offY+(shy||0),toS=(x,y)=>[(x-G.camX)*z+ox,(y-G.camY)*z+oy];
- const all=[];for(const q of INF.bossShotQueue)all.push({tx:q.tx,ty:q.ty,t:0,flight:q.flight,rad:q.rad,visualId:q.visualId||'bossScatter',queued:1});for(const s of INF.bossShots)all.push(s);
- for(const s of all){const id=s.visualId||'bossScatter',v=window.TUNNEL_PROJECTILE_LAB&&window.TUNNEL_PROJECTILE_LAB.profiles[id]||{},p=Math.max(0,Math.min(1,s.t/Math.max(.01,s.flight))),[tx,ty]=toS(s.tx,s.ty),rr=(v.telegraphRadius||s.rad)*z,col=v.telegraphColor||'#FF557D',alpha=v.telegraphAlpha==null ? .28 : v.telegraphAlpha;cx.save();cx.globalAlpha=alpha*(.55+p*.45);cx.fillStyle=col;cx.beginPath();cx.arc(tx,ty,rr,0,7);cx.fill();cx.globalAlpha=Math.min(1,alpha*2.35);cx.strokeStyle=col;cx.lineWidth=2.2;cx.beginPath();cx.arc(tx,ty,rr,0,Math.PI*2*p);cx.stroke();cx.setLineDash([5,5]);cx.beginPath();cx.arc(tx,ty,rr*.72,0,7);cx.stroke();cx.setLineDash([]);
-  if(!s.queued){const u=p,src=toS(s.sx,s.sy),spx=clamp(src[0],22,LW-22),spy=clamp(src[1],188,LH-42),px=spx+(tx-spx)*u,py=spy+(ty-spy)*u,arc=Math.sin(Math.PI*u)*(v.arcHeight||110)*z,halo=(v.haloSize||10)*z,core=(v.coreSize||5)*z;cx.globalAlpha=.22;cx.fillStyle='#24040B';cx.beginPath();cx.ellipse(px,py,halo*1.2,halo*.48,0,0,7);cx.fill();cx.globalAlpha=v.glowAlpha==null?1:v.glowAlpha;cx.globalCompositeOperation=v.blendMode||'source-over';cx.fillStyle=v.haloColor||'#FF557D';cx.shadowColor=v.glowColor||col;cx.shadowBlur=(v.glowBlur||18)*z;cx.beginPath();cx.arc(px,py-arc,halo,0,7);cx.fill();cx.globalAlpha=1;cx.fillStyle=v.bodyColor||'#FFD8D8';cx.beginPath();cx.arc(px,py-arc,core,0,7);cx.fill();}
-  cx.restore();}
+ const all=[];for(const q of INF.bossShotQueue)all.push({tx:q.tx,ty:q.ty,t:0,flight:q.flight,rad:q.rad,visualId:q.visualId||'bossScatter',power:q.power||1,queued:1});for(const s of INF.bossShots)all.push(s);
+ for(const s of all){const id=s.visualId||'bossScatter',v=window.TUNNEL_PROJECTILE_LAB&&window.TUNNEL_PROJECTILE_LAB.profiles[id]||{},p=Math.max(0,Math.min(1,s.t/Math.max(.01,s.flight))),[tx,ty]=toS(s.tx,s.ty),rr=s.rad*z,col=v.telegraphColor||'#FF557D',alpha=v.telegraphAlpha==null ? .28 : v.telegraphAlpha;cx.save();cx.globalAlpha=alpha*(.55+p*.45);cx.fillStyle=col;cx.beginPath();cx.arc(tx,ty,rr,0,7);cx.fill();cx.globalAlpha=Math.min(1,alpha*2.35);cx.strokeStyle=col;cx.lineWidth=2.2;cx.beginPath();cx.arc(tx,ty,rr,0,Math.PI*2*p);cx.stroke();cx.setLineDash([5,5]);cx.beginPath();cx.arc(tx,ty,rr*.72,0,7);cx.stroke();cx.setLineDash([]);
+  if(!s.queued){const u=p,src=toS(s.sx,s.sy),spx=clamp(src[0],22,LW-22),spy=clamp(src[1],188,LH-42),px=spx+(tx-spx)*u,py=spy+(ty-spy)*u,arc=Math.sin(Math.PI*u)*(v.arcHeight||110)*z,halo=(v.haloSize||10)*z*(s.power||1),core=(v.coreSize||5)*z*(s.power||1);cx.globalAlpha=.22;cx.fillStyle='#24040B';cx.beginPath();cx.ellipse(px,py,halo*1.2,halo*.48,0,0,7);cx.fill();cx.globalAlpha=v.glowAlpha==null?1:v.glowAlpha;cx.globalCompositeOperation=v.blendMode||'source-over';cx.fillStyle=v.haloColor||'#FF557D';cx.shadowColor=v.glowColor||col;cx.shadowBlur=(v.glowBlur||18)*z;cx.beginPath();cx.arc(px,py-arc,halo,0,7);cx.fill();cx.globalAlpha=1;cx.fillStyle=v.bodyColor||'#FFD8D8';cx.beginPath();cx.arc(px,py-arc,core,0,7);cx.fill();}
+ cx.restore();}
+ if(window.TUNNEL_PROJECTILE_FX&&window.TUNNEL_PROJECTILE_FX.drawBossMuzzles)window.TUNNEL_PROJECTILE_FX.drawBossMuzzles(cx,toS,z);
 }
 function infBossTick(e,dt){
  if(!e||e.hp<=0)return;const lab=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active,cfg=lab?BOSS_LAB.values:null,spec=bossSpec(),wasBreathing=(e.bossFireBreathT||0)>0;e.bossFireBreathT=Math.max(0,(e.bossFireBreathT||0)-dt);if(wasBreathing&&e.bossFireBreathT<=0)e.bossAnimRate=1;if(lab&&BOSS_LAB.paused){e.vx=e.vy=0;return;}if(lab&&BOSS_LAB.wanderOnly){INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];return;}infBossProjectileTick(dt);infBossWallTick(dt);e.patternCd=(e.patternCd||0)-dt;e.attackCd=(e.attackCd||0)-dt;e.wallGimmickCd=(e.wallGimmickCd==null?6+Math.random()*4:e.wallGimmickCd)-dt;const ratio=e.hp/e.hpMax;
@@ -11542,57 +11663,15 @@ function infEscapeArrive(){
  J.kick(6);J.flash(esc.x,esc.y,CELL*1.6,'rgba(255,120,150,.8)');J.ring(esc.x,esc.y,'#FF8DA8',10,CELL*2.6,4);
  J.burst(esc.x,esc.y,26,['#FF8DA8','#FFD36E','#FFF'],260);
  toast('탈출 포트 도착 · 탑승하세요');SFX.brk&&SFX.brk();
- infTrySpawnNearMiss(esc.x,esc.y);
-}
-/* ══════════ 도파민 콘텐츠 5 — 니어미스 유물 신호 (spec §5.3 후보 B) ══════════
-   탈출 포트가 열릴 때 60% 확률로, 포트에서 떨어진 곳에 유물 신호가 뜬다.
-   가지러 가면 유물 확정 발굴 — 단 그동안 위협은 계속 오른다(탈출 배당과 같은 리스크 축).
-   두고 떠나면 정산에 '두고 온 것'으로 남는다(손실회피). 확률 조작 없음 — 가드레일 §5.5-2. */
-function infTrySpawnNearMiss(px,py){
- INF.nearMiss=null;
- if(!INF.active||Math.random()>=.6)return;
- for(let tries=0;tries<24;tries++){
-  const a=Math.random()*Math.PI*2,d=CELL*(9+Math.random()*4),x=clamp(px+Math.cos(a)*d,CELL*2,WW-CELL*2),y=clamp(py+Math.sin(a)*d,CELL*2,WH-CELL*2);
-  if(Math.hypot(x-px,y-py)<CELL*7)continue;
-  INF.nearMiss={x,y,found:false,pulse:0};
-  toast('미확인 유물 신호 감지 — 탈출 포트 반대편이다. 가지러 갈 것인가?');
-  SFX.res&&SFX.res();J.ring(x,y,'#C7A0FF',8,CELL*2.2,4);
-  if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('escapeWait');
-  return;
- }
-}
-function infNearMissTick(dt){
- const nm=INF.nearMiss;if(!nm||nm.found)return;
- if(!INF.escape){INF.nearMiss=null;return;}   /* 포트가 사라지면 신호도 걷힌다 */
- nm.pulse+=dt;
- if(Math.hypot(G.sh.x-nm.x,G.sh.y-nm.y)<=CELL*1.3){
-  nm.found=true;
-  /* 확정 발굴 — 고급 확률 굴림. 도박의 보상은 시간·위협이라는 실제 비용에 대한 대가다 */
-  infRelicGrant(infRelicPickUnowned(infRelicRollRarity(true)),nm.x,nm.y);
-  INF.nearMiss=null;
- }
-}
-function infDrawNearMiss(){
- const nm=INF.nearMiss;if(!nm||nm.found)return;
- const p=(nm.pulse%1.4)/1.4;
- cx.save();cx.globalAlpha=.85-p*.55;cx.strokeStyle='#C7A0FF';cx.lineWidth=2.5;
- cx.beginPath();cx.arc(nm.x,nm.y,CELL*(0.5+p*1.8),0,7);cx.stroke();
- cx.globalAlpha=.9;cx.fillStyle='#C7A0FF';cx.font='bold '+Math.round(CELL*.62)+'px sans-serif';cx.textAlign='center';
- cx.fillText('?',nm.x,nm.y-CELL*.4);
- cx.restore();
 }
 function infUpdateEscape(dt){
  const esc=INF.escape;if(!esc)return;
- infNearMissTick(dt);
  if(esc.state==='placing'){
   /* 조준 지점을 프레임마다 갱신 — 미리보기와 확정이 항상 같은 지점을 쓴다 */
   if(G.mouse.sx!=null){const mw=screenToWorld(G.mouse.sx,G.mouse.sy),p=infEscapeClampTarget(mw.x,mw.y);esc.x=p.x;esc.y=p.y;}
   return;
  }
  if(esc.state==='incoming'){esc.t+=dt;if(esc.t>=esc.need)infEscapeArrive();return;}
- /* 도파민 콘텐츠 4 — 탈출 배당 (spec §5.4 이월분 조기 구현): 포트가 열린 뒤 탑승을 미룰수록
-    운반 코어 배당이 초당 +2%p, 상한 30%. 위협은 계속 오르므로 순수한 리스크 베팅이 된다(SDT 자율성). */
- if(!esc.localBoarded){esc.divT=(esc.divT||0)+dt;if(esc.divT>5&&!esc.divSaid){esc.divSaid=true;if(typeof AICREW!=='undefined'&&AICREW.reactEvent)AICREW.reactEvent('escapeWait');}}
  /* ready — 접근 탑승. 솔로 판정은 그대로 두고, 코옵이면 전원 탑승 집계로 확장한다.
     COOP_escapeAllAboard(): null=솔로 · false=크루 대기 · true=생존자 전원 탑승 (§8.4-3·4) */
  if(esc.localBoarded){
@@ -11631,7 +11710,6 @@ function infUpdateEscape(dt){
 }
 function infDrawEscape(){
  const esc=INF.escape;if(!esc)return;
- infDrawNearMiss();
  const pulse=.6+.4*Math.sin(G.t*6);
  if(esc.state==='placing'||esc.state==='incoming'){
   /* 보스 투사체와 같은 문법의 붉은 지면 원 — 진행률은 외곽 호로 표현 */
@@ -11693,8 +11771,7 @@ function infPaintEscapeHud(){
  if(esc.state==='placing')t.textContent='탈출 지점 지정 중 · 좌클릭 확정 · 우클릭 취소';
  else if(esc.state==='incoming')t.textContent='탈출 포트 도착까지 '+Math.ceil(esc.need-esc.t)+'초 · 생존하세요';
  else{const cc=(typeof COOP_escapeCount==='function')?COOP_escapeCount():null;
-  const divPct=Math.round(Math.min(30,(esc.divT||0)*2)),divTxt=INF.core>0?' · 배당 +'+divPct+'%'+(divPct>=30?' (최대)':''):'';
-  t.textContent=(cc?('탈출 포트 도착 · 탑승 '+cc.boarded+'/'+cc.total+(esc.localBoarded?' · 크루 대기 중':' · 접근해 탑승하세요')):'탈출 포트 도착 · 접근해 탑승하세요')+divTxt;}
+  t.textContent=cc?('탈출 포트 도착 · 탑승 '+cc.boarded+'/'+cc.total+(esc.localBoarded?' · 크루 대기 중':' · 접근해 탑승하세요')):'탈출 포트 도착 · 접근해 탑승하세요';}
 }
 function infInitSettleState(){
  infInitPermanentMetaOnly();INF.settle={roleId:INF_ROLES[INF.roleId]?INF.roleId:'driller',returnedCores:0,keptCores:0,lostCores:0,remoteCores:0,escaped:false,fromMenu:false,view:'summary',busy:false,centerOnOpen:true,userDragged:false,buyStreak:0,lastBuyAt:0,fxNodeId:null,discovered:[],nodeCamera:null,nodeCameraRole:null};
@@ -11977,28 +12054,6 @@ function infShowPermanentTooltip(node,button){
  top=Math.max(48,Math.min(mr.height-tip.offsetHeight-10,top));
  tip.style.left=left+'px';tip.style.top=top+'px';
 }
-/* 도파민 콘텐츠 3 — 정산 카운트업 (spec §5.3-3, 명제 T1: 숫자는 세어서 준다)
-   DOM setInterval 구동이라 rAF 정지와 무관. reduced-motion·재방문 시 즉시 표시. */
-function infSettleCountUp(){
- if(!INF.settle||INF.settle.counted)return;
- INF.settle.counted=true;
- if(infReducedMotion())return;
- const cells=infEl('infSettleLedger').querySelectorAll('b');
- cells.forEach((b,i)=>{
-  const target=parseInt(b.textContent,10);
-  if(!(target>0))return;
-  b.textContent='0';
-  const t0=performance.now(),dur=800,delay=i*140;let tick=0;
-  const iv=setInterval(()=>{
-   if(!b.isConnected){clearInterval(iv);return;}
-   const p=Math.min(1,(performance.now()-t0-delay)/dur);
-   if(p<=0)return;
-   const v=Math.round(target*(1-Math.pow(1-p,3)));
-   if(String(v)!==b.textContent){b.textContent=String(v);if(++tick%3===0)SFX.tick&&SFX.tick();}
-   if(p>=1){clearInterval(iv);if(i===cells.length-1)SFX.cache&&SFX.cache();}
-  },40);
- });
-}
 function infPaintSettlement(){
  if(!INF.settle)infInitSettleState();
  const runRole=INF_ROLES[INF.settle.roleId]||INF_ROLES.driller,bank=INF_META.bankedCores||0,
@@ -12020,7 +12075,6 @@ function infPaintSettlement(){
   :(kept?'<b>회수 강화</b>'+(remote?'와 <b>원격 전송</b>('+remote+'개)':'')+' 덕분에 코어 '+kept+'개를 지켰습니다. 남은 자원은 소실되었습니다.':'회수 강화·원격 전송 노드를 활성화하면 쓰러져도 코어 일부를 지킬 수 있습니다.');
  infEl('infSettleRetry').hidden=!!INF.settle.fromMenu;
  infEl('infSettleDone').textContent=INF.settle.fromMenu?'메인 메뉴로':'기지 메뉴로';
- if(view==='summary')infSettleCountUp();
  if(view==='relic'){if(typeof infPaintRelics==='function')infPaintRelics();return;}   /* ③ 유물 보관고 (v7.6.0) */
  if(view!=='map')return;
  /* ② 전체화면 성장 지도 — 직업 잠금 없음 */
@@ -12355,7 +12409,7 @@ function infRelicGrant(relic,x,y){
  const R=infRelicMeta();
  if(!relic){INF.core+=2;if(x!=null)J.text(x,y-40,'코어 +2 (도감 완성)','#7FEBD0',14);return;}
  R.owned.push(relic.id);infSaveMeta();
- INF.relicPityBlocks=0;INF.relicDropped=(INF.relicDropped||0)+1;if(INF.runStats)INF.runStats.relicsFound++;
+ INF.relicPityBlocks=0;INF.relicDropped=(INF.relicDropped||0)+1;
  const tc=INF_RELIC_TIER[relic.tier].col,el=relic.elem?INF_RELIC_ELEM[relic.elem]:null;
  if(x!=null){
   J.flash(x,y,CELL*1.4,'rgba(255,235,180,.95)');
@@ -12898,30 +12952,13 @@ function infPaintRelics(){
  bind('infRelicMapOpen',()=>{infRelicHideTip();infSettleShowMap();});
  bind('infRelicClose',()=>{infRelicHideTip();if(INF.settle&&INF.settle.relicBack==='map')infSettleShowMap();else if(INF.settle&&!INF.settle.fromMenu)infSettleShowSummary();else infCloseSettlement();});
 })();
-/* 실패의 재해석(명제 T3) — 전멸도 이야기가 되도록 상황 기반 묘비명을 뽑는다 */
-function infRunEpitaph(reason){
- const rs=INF.runStats||{};
- if(INF.jackpotFx)return '노다지를 세다가 순직 — 코어는 아직 따뜻했다';
- if(INF.bossActive)return '보스의 눈을 똑바로 바라보다 산화';
- if(INF.feverT>0)return '피버 드릴의 불꽃 속에서 — 멈추는 법을 몰랐다';
- if(rs.maxCombo>=25)return '콤보 x'+rs.maxCombo+'의 전설로 지층에 새겨짐';
- if(INF.depth>=4)return '심층 '+INF.depth+' — 아무도 내려가 본 적 없는 곳에서';
- if((rs.kills|0)===0)return '싸움 한 번 없이 조용히 파다가 갔다';
- return reason+' — 다음 굴착자는 더 깊이 간다';
-}
 function infEndRun(reason,escaped){
  if(!INF.active||CREW.phase==='infiniteResult')return;
+ /* v7.7.2c — 상호 부활: 구조 가능한 동료(사람·AI)가 있으면 사망 대신 기절 */
+ if(!escaped&&!G.downed&&G.php<=0&&CREW.phase==='play'&&typeof reviveRescuersAlive==='function'&&reviveRescuersAlive()>0){playerEnterDowned();return;}
  if(typeof AICREW!=='undefined')AICREW.onRunEnd();   /* AI 크루 정리 */
  if(!escaped&&typeof infRelicTryPhoenix==='function'&&infRelicTryPhoenix())return;   /* 유물 — 불사조 깃털 (부활 노드와 별도 중첩) */
  if(!escaped&&infPermTryRevive())return;   /* 6.3 emergency restart - real death gate of infinite mode */
- /* 탈출 배당 정산 — 코어 계정 확정 전에 지급한다 (spec §5.4) */
- if(escaped&&INF.escape&&(INF.escape.divT||0)>.5&&INF.core>0){
-  const pct=Math.min(.30,INF.escape.divT*.02),bonus=Math.floor(INF.core*pct);
-  if(bonus>0){INF.core+=bonus;if(INF.runStats)INF.runStats.dividend=bonus;toast('탈출 배당 +'+bonus+' 코어 ('+Math.round(pct*100)+'%) — 버틴 만큼의 보수');SFX.buy&&SFX.buy();}
- }
- const leftRelicSignal=!!(escaped&&INF.nearMiss&&!INF.nearMiss.found);   /* 손실회피 — 두고 온 것 표시 */
- if(INF.runStats)INF.runStats.leftBehind=leftRelicSignal?1:0;
- INF.nearMiss=null;
  CREW.phase='infiniteResult';INF.escape=null;INF.bossShots=[];INF.bossShotQueue=[];G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;SFX.drillHum(false);
  if(typeof COOP_onInfEnd==='function')COOP_onInfEnd(reason,escaped);   /* 코옵 생환/다운 통지 — 트랙 F (훅 1줄) */
  const newly=[];INF_META.bestDepth=Math.max(INF_META.bestDepth,INF.depth);INF_META.bestBlocks=Math.max(INF_META.bestBlocks,INF.totalBlocks);INF_META.totalBosses+=INF.bosses;
@@ -12942,12 +12979,9 @@ function infEndRun(reason,escaped){
  infEl('infResultReason').textContent=escaped
   ?(reason+' · 심층 '+INF.depth+'에서 생환 · 런 성장은 다음 출격에서 초기화됩니다.')
   :(reason+' · 다음 런에서는 모든 런 성장이 초기화됩니다.');
- const xpSummary=infXpLogSummary(),rs=INF.runStats||{},epitaph=escaped?'':infRunEpitaph(reason);
- if(INF.feverT>0)infEndFever();INF.jackpotFx=null;   /* 피버 비네트·잭팟 큐 정리 — 정산 화면에 새지 않게 */
+ const xpSummary=infXpLogSummary();
  infEl('infResultStats').innerHTML='<div>도달 심층<b>'+INF.depth+'</b></div><div>처치 보스<b>'+INF.bosses+'</b></div><div>파괴 블록<b>'+INF.totalBlocks+'</b></div>'
   +'<div>'+(escaped?'확보 코어':'소실 코어')+'<b'+(escaped?'':' style="color:#ff8da8"')+'>'+(escaped?INF.core:lostCores)+'</b></div>'+(keptCores>0?'<div>회수 보존<b style="color:#7febd0">'+keptCores+'</b></div>':'')
-  +'<div style="grid-column:1/-1">이번 원정의 기록<b style="font-size:14px;line-height:1.6">최대 콤보 x'+(rs.maxCombo||0)+' · 노다지 '+(rs.jackpots||0)+'회'+(rs.jackpotCores?'(+'+rs.jackpotCores+' 코어)':'')+' · 피버 '+(rs.fevers||0)+'회 · 처치 '+(rs.kills||0)+' · 유물 발굴 '+(rs.relicsFound||0)+(rs.dividend?' · 탈출 배당 +'+rs.dividend:'')+(rs.leftBehind?' · <span style="color:#ff8da8">두고 온 유물 신호 '+rs.leftBehind+'건</span>':'')+'</b></div>'
-  +(escaped?'':'<div style="grid-column:1/-1">묘비명<b style="font-size:14px;color:#ff8da8">'+epitaph+'</b></div>')
   +'<div style="grid-column:1/-1">역할 행동별 경험치<b style="font-size:15px;line-height:1.6">'+(xpSummary||'없음')+'</b></div>';
  infEl('infUnlockText').textContent=(newly.length?'새 특성 해금: '+newly.join(', '):'최고 기록: 심층 '+INF_META.bestDepth+' · 블록 '+INF_META.bestBlocks)+' · 기지 보관 코어 '+(INF_META.bankedCores||0);
  infEl('infResultModal').classList.add('on');infUpdateMenuRecord();
@@ -13221,7 +13255,13 @@ function drawProjectile(s,p){drawTrail(s,p);const wob=p.wobbleAmount*Math.sin(s.
 function drawArtillery(s,p){const waiting=s.delay>0,u=waiting?0:cl(s.t/p.telegraphDuration,0,1),r=p.telegraphRadius;ctx.save();ctx.globalAlpha=p.telegraphAlpha*(.55+u*.45);ctx.fillStyle=p.telegraphColor;ctx.beginPath();ctx.arc(s.tx,s.ty,r,0,7);ctx.fill();ctx.strokeStyle=p.telegraphColor;ctx.lineWidth=2;ctx.beginPath();ctx.arc(s.tx,s.ty,r,0,Math.PI*2*(waiting?.06:u));ctx.stroke();ctx.setLineDash([5,5]);ctx.beginPath();ctx.arc(s.tx,s.ty,r*.72,0,7);ctx.stroke();ctx.setLineDash([]);if(!waiting){const x=s.sx+(s.tx-s.sx)*u,y=s.sy+(s.ty-s.sy)*u-Math.sin(Math.PI*u)*p.arcHeight;ctx.globalAlpha=1;ctx.shadowColor=p.glowColor;ctx.shadowBlur=p.glowBlur;ctx.fillStyle=p.haloColor;ctx.beginPath();ctx.arc(x,y,p.haloSize,0,7);ctx.fill();ctx.fillStyle=p.bodyColor;ctx.beginPath();ctx.arc(x,y,p.coreSize,0,7);ctx.fill();}ctx.restore();}
 function drawEffects(){for(const e of state.effects){const p=profile(e.id),life=e.kind==='muzzle'?p.muzzleDuration:e.kind==='impact'?p.impactDuration:.5,u=cl(e.age/Math.max(.01,life),0,1),fade=1-u,col=e.kind==='muzzle'?p.muzzleColor:p.impactColor;ctx.save();ctx.globalCompositeOperation=p.blendMode;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.globalAlpha=fade;if(e.kind==='muzzle'){const r=p.muzzleSize*(.35+u*.65);ctx.translate(e.x,e.y);ctx.rotate(e.a);ctx.lineWidth=2;if(p.muzzleType==='ring'){ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.stroke();}else if(p.muzzleType==='cone'){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(r,-r*.42);ctx.lineTo(r*.68,0);ctx.lineTo(r,r*.42);ctx.closePath();ctx.fill();}else if(p.muzzleType==='cross'){ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-r,0);ctx.lineTo(r,0);ctx.moveTo(0,-r);ctx.lineTo(0,r);ctx.stroke();}else{ctx.beginPath();for(let i=0;i<10;i++){const a=Math.PI*2*i/10,rr=i%2?r*.35:r;i?ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();ctx.fill();}ctx.rotate(-e.a);ctx.translate(-e.x,-e.y);}else if(e.kind==='impact'){const r=p.impactRadius*(1-Math.pow(1-u,3));ctx.lineWidth=p.impactRingWidth;if(p.impactType==='ring'){ctx.beginPath();ctx.arc(e.x,e.y,r,0,7);ctx.stroke();}else if(p.impactType==='shockwave'){ctx.globalAlpha=fade*.22;ctx.beginPath();ctx.arc(e.x,e.y,r,0,7);ctx.fill();ctx.globalAlpha=fade;ctx.beginPath();ctx.arc(e.x,e.y,r,0,7);ctx.stroke();ctx.beginPath();ctx.arc(e.x,e.y,r*.62,0,7);ctx.stroke();}else if(p.impactType==='shards'){for(let i=0;i<12;i++){const a=Math.PI*2*i/12;ctx.beginPath();ctx.moveTo(e.x+Math.cos(a)*r*.2,e.y+Math.sin(a)*r*.2);ctx.lineTo(e.x+Math.cos(a)*r,e.y+Math.sin(a)*r);ctx.stroke();}}else{ctx.beginPath();for(let i=0;i<16;i++){const a=Math.PI*2*i/16,rr=i%2?r*.42:r;i?ctx.lineTo(e.x+Math.cos(a)*rr,e.y+Math.sin(a)*rr):ctx.moveTo(e.x+Math.cos(a)*rr,e.y+Math.sin(a)*rr);}ctx.closePath();ctx.fill();}}else{ctx.globalAlpha=fade*.65;ctx.beginPath();ctx.arc(e.x,e.y,36*u,0,7);ctx.stroke();}if(e.parts){for(const q of e.parts){ctx.globalAlpha=fade;ctx.beginPath();ctx.arc(q.x,q.y,(e.kind==='impact'?p.impactParticleSize:2.2)*q.size,0,7);ctx.fill();}}ctx.restore();}}
 /* 실제 게임 캔버스용 렌더러. 이동/피해 판정은 기존 밸런스를 유지하고 JSON의 시각 파라미터만 사용한다. */
-const gameEffects=[];
+const gameEffects=[],bossMuzzleEffects=[];
+const BOSS_MUZZLE_SHEET=new Image();BOSS_MUZZLE_SHEET.decoding='async';BOSS_MUZZLE_SHEET.src='data:image/webp;base64,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';
+const BOSS_MUZZLE_DURATIONS=[0.09,0.09,0.09,0.06,0.09,0.06,0.09,0.09,0.09],BOSS_MUZZLE_LIFE=.75;
+function gameSpawnBossMuzzle(x,y,a,delay){bossMuzzleEffects.push({x,y,a,age:-Math.max(0,delay||0)});if(bossMuzzleEffects.length>36)bossMuzzleEffects.splice(0,bossMuzzleEffects.length-36);}
+function gameSpawnBossCastMuzzles(x,y,a,attackLead){const first=Math.max(0,(attackLead||0)-.24);for(let i=0;i<3;i++)gameSpawnBossMuzzle(x,y,a,first+i*.24);}
+function gameUpdateBossMuzzles(dt){for(let i=bossMuzzleEffects.length-1;i>=0;i--){const e=bossMuzzleEffects[i];e.age+=dt;if(e.age>=BOSS_MUZZLE_LIFE)bossMuzzleEffects.splice(i,1);}}
+function gameDrawBossMuzzles(c,toScreen,scale){for(const e of bossMuzzleEffects){if(e.age<0)continue;let frame=0,frameT=e.age;while(frame<BOSS_MUZZLE_DURATIONS.length-1&&frameT>=BOSS_MUZZLE_DURATIONS[frame])frameT-=BOSS_MUZZLE_DURATIONS[frame++];if(!BOSS_MUZZLE_SHEET.complete||!BOSS_MUZZLE_SHEET.naturalWidth)continue;const u=cl(e.age/BOSS_MUZZLE_LIFE,0,1),intro=cl(u/.1,0,1),fade=u<.78?1:cl((1-u)/.22,0,1),s=scale||1,h=CELL*4*s*(326/515)*(.92+.08*intro),w=h*(241/326),alpha=intro*fade,lead=CELL*.2*s,point=toScreen?toScreen(e.x,e.y):[e.x,e.y],ox=Math.cos(e.a)*lead,oy=Math.sin(e.a)*lead,sx=(frame%3)*241,sy=Math.floor(frame/3)*326;c.save();c.translate(point[0]+ox,point[1]+oy);c.rotate(e.a+Math.PI*.5);c.globalCompositeOperation='screen';c.globalAlpha=alpha*.72;c.shadowColor='#FFB13B';c.shadowBlur=CELL*.42;c.drawImage(BOSS_MUZZLE_SHEET,sx,sy,241,326,-w*.5,-h*.992,w,h);c.globalCompositeOperation='source-over';c.globalAlpha=alpha;c.shadowBlur=0;c.drawImage(BOSS_MUZZLE_SHEET,sx,sy,241,326,-w*.5,-h*.992,w,h);c.restore();}}
 function gameProfile(id){return profile(PROFILES[id]?id:'standard');}
 function gameStepProjectile(s,dt,ox,oy){const p=gameProfile(s.visualId);s.visualAge=(s.visualAge||0)+dt;s.visualRot=(s.visualRot||0)+p.rotationSpeed*dt;if(!Array.isArray(s.trail))s.trail=[];const den=Math.max(1,Math.round(p.trailDensity));for(let j=1;j<=den;j++)s.trail.push({x:ox+(s.x-ox)*j/den,y:oy+(s.y-oy)*j/den});if(s.trail.length>p.trailLength)s.trail.splice(0,s.trail.length-p.trailLength);}
 function gameDrawTrail(c,s,p,a){if(p.trailType==='none'||!s.trail||s.trail.length<2)return;c.save();c.globalCompositeOperation=p.blendMode;c.strokeStyle=p.trailColor;c.fillStyle=p.trailColor;c.lineCap='round';const n=s.trail.length,alpha=i=>Math.exp(-(n-1-i)*p.trailDecay)*(i/n)*p.trailAlpha;if(p.trailType==='line'||p.trailType==='ribbon'){for(let i=1;i<n;i++){c.globalAlpha=alpha(i);c.lineWidth=p.trailWidth*(p.trailType==='ribbon'?(.25+.75*i/n):1);c.beginPath();c.moveTo(s.trail[i-1].x,s.trail[i-1].y);c.lineTo(s.trail[i].x,s.trail[i].y);c.stroke();}}else if(p.trailType==='dots'){for(let i=0;i<n;i++){c.globalAlpha=alpha(i);c.beginPath();c.arc(s.trail[i].x,s.trail[i].y,p.trailWidth*(.2+.45*i/n),0,7);c.fill();}}else{for(let i=1;i<n;i+=2){c.globalAlpha=alpha(i);const q=s.trail[i],aa=a+Math.PI+(i%3-1)*.35;c.lineWidth=Math.max(.5,p.trailWidth*.35);c.beginPath();c.moveTo(q.x,q.y);c.lineTo(q.x+Math.cos(aa)*p.trailWidth*2.2,q.y+Math.sin(aa)*p.trailWidth*2.2);c.stroke();}}c.restore();}
@@ -13230,7 +13270,7 @@ function gameFeedback(kind,p){const cap=state.feedbackCap,shake=Math.min(kind===
 function gameSpawnEffect(kind,x,y,a,id){const p=gameProfile(id),enabled=kind==='muzzle'?p.muzzleEnabled:p.impactEnabled;if(!enabled)return;const count=Math.min(70,Math.max(0,Math.round(kind==='muzzle'?p.muzzleParticles:p.impactParticles))),speed=kind==='muzzle'?p.muzzleParticleSpeed:p.impactParticleSpeed,parts=[];for(let i=0;i<count;i++){const aa=kind==='muzzle'?a+(Math.random()-.5)*1.1:Math.random()*Math.PI*2,sp=speed*(.35+Math.random()*.75);parts.push({x,y,vx:Math.cos(aa)*sp,vy:Math.sin(aa)*sp,size:.45+Math.random()*.9});}gameEffects.push({kind,x,y,a,id,age:0,parts});if(gameEffects.length>160)gameEffects.splice(0,gameEffects.length-160);gameFeedback(kind,p);}
 function gameUpdate(dt){for(let i=gameEffects.length-1;i>=0;i--){const e=gameEffects[i],p=gameProfile(e.id),life=e.kind==='muzzle'?p.muzzleDuration:p.impactDuration;e.age+=dt;for(const q of e.parts){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=Math.pow(.06,dt);q.vy*=Math.pow(.06,dt);}if(e.age>=life)gameEffects.splice(i,1);}}
 function gameDrawEffects(c){for(const e of gameEffects){const p=gameProfile(e.id),life=e.kind==='muzzle'?p.muzzleDuration:p.impactDuration,u=cl(e.age/Math.max(.01,life),0,1),fade=1-u,col=e.kind==='muzzle'?p.muzzleColor:p.impactColor;c.save();c.globalCompositeOperation=p.blendMode;c.strokeStyle=col;c.fillStyle=col;c.globalAlpha=fade;if(e.kind==='muzzle'){const r=p.muzzleSize*(.35+u*.65);c.translate(e.x,e.y);c.rotate(e.a);c.lineWidth=2;if(p.muzzleType==='ring'){c.beginPath();c.arc(0,0,r,0,7);c.stroke();}else if(p.muzzleType==='cone'){c.beginPath();c.moveTo(0,0);c.lineTo(r,-r*.42);c.lineTo(r*.68,0);c.lineTo(r,r*.42);c.closePath();c.fill();}else if(p.muzzleType==='cross'){c.lineWidth=3;c.beginPath();c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.stroke();}else{c.beginPath();for(let i=0;i<10;i++){const aa=Math.PI*2*i/10,pr=i%2?r*.35:r;i?c.lineTo(Math.cos(aa)*pr,Math.sin(aa)*pr):c.moveTo(Math.cos(aa)*pr,Math.sin(aa)*pr);}c.closePath();c.fill();}}else{const r=p.impactRadius*(1-Math.pow(1-u,3));c.lineWidth=p.impactRingWidth;if(p.impactType==='ring'){c.beginPath();c.arc(e.x,e.y,r,0,7);c.stroke();}else if(p.impactType==='shockwave'){c.globalAlpha=fade*.22;c.beginPath();c.arc(e.x,e.y,r,0,7);c.fill();c.globalAlpha=fade;c.beginPath();c.arc(e.x,e.y,r,0,7);c.stroke();c.beginPath();c.arc(e.x,e.y,r*.62,0,7);c.stroke();}else if(p.impactType==='shards'){for(let i=0;i<12;i++){const aa=Math.PI*2*i/12;c.beginPath();c.moveTo(e.x+Math.cos(aa)*r*.2,e.y+Math.sin(aa)*r*.2);c.lineTo(e.x+Math.cos(aa)*r,e.y+Math.sin(aa)*r);c.stroke();}}else{c.beginPath();for(let i=0;i<16;i++){const aa=Math.PI*2*i/16,pr=i%2?r*.42:r;i?c.lineTo(e.x+Math.cos(aa)*pr,e.y+Math.sin(aa)*pr):c.moveTo(e.x+Math.cos(aa)*pr,e.y+Math.sin(aa)*pr);}c.closePath();c.fill();}}for(const q of e.parts){c.globalAlpha=fade;c.beginPath();c.arc(q.x,q.y,(e.kind==='impact'?p.impactParticleSize:2.2)*q.size,0,7);c.fill();}c.restore();}}
-window.TUNNEL_PROJECTILE_FX={stepProjectile:gameStepProjectile,drawProjectile:gameDrawProjectile,muzzle:(x,y,a,id)=>gameSpawnEffect('muzzle',x,y,a,id),impact:(x,y,a,id)=>gameSpawnEffect('impact',x,y,a,id),update:gameUpdate,drawEffects:gameDrawEffects};
+window.TUNNEL_PROJECTILE_FX={stepProjectile:gameStepProjectile,drawProjectile:gameDrawProjectile,muzzle:(x,y,a,id)=>gameSpawnEffect('muzzle',x,y,a,id),impact:(x,y,a,id)=>gameSpawnEffect('impact',x,y,a,id),bossCastMuzzle3:gameSpawnBossCastMuzzles,update:(dt)=>{gameUpdate(dt);gameUpdateBossMuzzles(dt);},drawEffects:gameDrawEffects,drawBossMuzzles:gameDrawBossMuzzles};
 function drawAim(){ctx.save();ctx.strokeStyle='rgba(127,235,208,.68)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(state.aim.x,state.aim.y,10,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(state.aim.x-15,state.aim.y);ctx.lineTo(state.aim.x+15,state.aim.y);ctx.moveTo(state.aim.x,state.aim.y-15);ctx.lineTo(state.aim.x,state.aim.y+15);ctx.stroke();ctx.restore();}
 function draw(){ctx.clearRect(0,0,state.w,state.h);ctx.save();if(state.shake>0)ctx.translate((Math.random()-.5)*state.shake*2,(Math.random()-.5)*state.shake*2);drawGrid();drawBricks();drawEnemies();drawLauncher(72,state.h*.68,'#ffd36e','PLAYER');drawLauncher(72,state.h*.34,'#7febd0','SUPPORT');ctx.fillStyle='#ff557d';ctx.font='900 8px ui-monospace,monospace';ctx.textAlign='right';ctx.fillText('BOSS ORIGIN',state.w-20,20);drawAim();for(const s of state.shots)s.mode==='artillery'?drawArtillery(s,profile(s.id)):drawProjectile(s,profile(s.id));drawEffects();ctx.restore();if(state.flash>0){ctx.globalAlpha=state.flash;ctx.fillStyle='#fff';ctx.fillRect(0,0,state.w,state.h);ctx.globalAlpha=1;}}
 function frame(now){const dt=Math.min(.035,(now-state.last)/1000||0);state.last=now;if(state.active){update(dt);draw();}requestAnimationFrame(frame);}
@@ -14587,22 +14627,25 @@ body.tcBossCine #bossLabInspector{
     }
     return null;
   };
-  /* 적이 노릴 수 있는 크루 — 사람 + 살아있는 AI */
+  /* 적이 노릴 수 있는 크루 — 사람 + 살아있는 AI (v7.7.2c — 기절한 사람은 제외) */
   AI.targets = function () {
-    const out = [{ x: G.sh.x, y: G.sh.y, player: true }];
+    const out = [];
+    if (!G.downed) out.push({ x: G.sh.x, y: G.sh.y, player: true });
     for (const m of AI.members) if (!m.down) out.push({ x: m.x, y: m.y, member: m });
+    if (!out.length) out.push({ x: G.sh.x, y: G.sh.y, player: true });
     return out;
   };
 
   function updateDown(m, dt) {
     m.downT += dt;
-    /* 구조 — 사람이든 다른 AI든 옆에 있으면 일으킨다 (§9.2) */
-    let helper = Math.hypot(G.sh.x - m.x, G.sh.y - m.y) < CELL * 1.6;
+    /* 구조 — 사람이든 다른 AI든 옆에 있으면 일으킨다 (§9.2)
+       v7.7.2c — 기절한 사람은 구조자가 될 수 없고, 치료 시간은 5초로 통일 */
+    let helper = !G.downed && Math.hypot(G.sh.x - m.x, G.sh.y - m.y) < CELL * 1.6;
     if (!helper) helper = AI.members.some((o) => o !== m && !o.down && Math.hypot(o.x - m.x, o.y - m.y) < CELL * 1.6);
     if (helper) {
       m.reviveT += dt;
       if (Math.random() < dt * 8) J.burst(m.x, m.y - 10, 2, ['#7FEBD0', '#FFF'], 60);
-      if (m.reviveT >= 3) {
+      if (m.reviveT >= 5) {
         m.down = false; m.hp = m.hpMax * 0.5; m.iframes = 1.4; m.reviveT = 0;
         J.flash(m.x, m.y, 40, 'rgba(127,235,208,.8)');
         toast && toast('AI ' + ROLE_KO[m.roleId] + ' 구조 완료');
@@ -14828,6 +14871,11 @@ body.tcBossCine #bossLabInspector{
   function decide(m) {
     const kit = m.kit, I = inf();
     const ld = leaderDist(m);
+
+    /* 0) 쓰러진 리더(사람) 구조가 그 무엇보다 우선 — v7.7.2c 상호 부활 */
+    if (typeof G !== 'undefined' && G.downed) {
+      return { kind: 'revive', x: G.sh.x, y: G.sh.y, target: 'player', label: '리더 구조' };
+    }
 
     /* 0) 탈출 포트 — 요청되면 전원이 간다 (§8.4) */
     const esc = I && I.escape;
@@ -15150,7 +15198,7 @@ body.tcBossCine #bossLabInspector{
       if (!cur.down && AI.members.includes(cur)) return cur;
     }
     e._aiTgtCd = 0.6;
-    let best = null, bd = Math.hypot(G.sh.x - e.x, G.sh.y - e.y);
+    let best = null, bd = (typeof G !== 'undefined' && G.downed) ? Infinity : Math.hypot(G.sh.x - e.x, G.sh.y - e.y); /* v7.7.2c — 기절한 사람은 표적에서 제외 */
     for (const m of AI.members) {
       if (m.down) continue;
       const d = Math.hypot(m.x - e.x, m.y - e.y);
@@ -15197,40 +15245,6 @@ body.tcBossCine #bossLabInspector{
     let total = 1, on = 0;
     for (const m of AI.members) { if (m.down) continue; total++; if (m.boarded) on++; }
     return { boarded: on, total };
-  };
-
-  /* ══════════ 이벤트 리액션 (Phase 4.5 — 도파민 콘텐츠 대응) ══════════
-     게임 훅(잭팟·피버·탈출 배당)이 AICREW.reactEvent(kind)로 호출한다.
-     살아있는 크루 하나가 직업 개성이 묻은 한마디를 말풍선으로 뱉는다 — "동료와 함께" 감각. */
-  const REACT_LINES = {
-    jackpot: {
-      driller: ['노다지다!! 내가 판다!', '이 맥이야, 이 맥!'],
-      gunner: ['소리 들었지? 온다. 엄호한다', '캐, 내가 막는다'],
-      scout: ['신호가 미쳤어, 진짜배기다', '이런 건 처음 봐'],
-      engineer: ['수익률 계산 완료. 캐자', '센트리 돌려놨어, 마음껏 캐'],
-    },
-    fever: {
-      driller: ['드릴이 노래한다!!', '멈추지 마!'],
-      gunner: ['그 기세 좋다!', '길이 뻥뻥 뚫리네'],
-      scout: ['속도 봐라, 따라간다!', '앞은 내가 본다, 파!'],
-      engineer: ['출력 안정적. 계속!', '과열 수치가 예술이다'],
-    },
-    escapeWait: {
-      driller: ['더 캘 수 있어... 조금만 더', '배당이 아깝잖아'],
-      gunner: ['버티는 만큼 번다 이거지', '탄약은 충분해. 더 버텨?'],
-      scout: ['위험 수당 챙기자고', '적 몰려온다, 판단은 빨리'],
-      engineer: ['초당 2%p, 나쁘지 않은 이율이야', '리스크 대비 수익 양호'],
-    },
-  };
-  AI.reactEvent = function (kind) {
-    if (!AI.enabled || !AI.members.length) return;
-    const table = REACT_LINES[kind];
-    if (!table) return;
-    const alive = AI.members.filter((m) => !m.down);
-    if (!alive.length) return;
-    const m = alive[(Math.random() * alive.length) | 0];
-    const lines = table[m.roleId] || table.driller;
-    say(m, lines[(Math.random() * lines.length) | 0]);
   };
 
   /* AI 크루 위치 — 시야 합산(FoW)과 적 타깃 선정에 쓴다 */
@@ -15713,4 +15727,688 @@ infCloseSettlement=function(){tcPrevCloseSettlement();if(!INF.active)tcRelicLabD
  }
 })();
 </script>
+<style id="uiLayoutLabStyles">
+/* ══ v7.7.1 — 인게임 UI 레이아웃 편집 모드 (UILAB) ══
+   F8을 누른 순간 떠있는 화면을 감지해 그 화면의 실제 DOM을 드래그/리사이즈로 즉시 수정한다.
+   오버라이드는 localStorage(tc.uiLayout.v1)에 자동 저장, 부팅시 재적용. */
+#uiLabRoot{position:fixed;inset:0;z-index:3000;display:none;pointer-events:auto;
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  user-select:none;-webkit-user-select:none}
+body.uiLabEdit #uiLabRoot{display:block}
+#uiLabStage{position:absolute;inset:0;touch-action:none}
+/* HUD 씬 편집중 강제 표시 — 숨김 상태 모듈(보스 배너·키 가이드·브리핑·정산)도 편집 가능하게 */
+body.uiLabEdit.uiLabScene-inf #infHud{display:block!important}
+body.uiLabEdit.uiLabScene-inf #tcHudPolish{display:none!important}
+body.uiLabEdit.uiLabScene-inf #infHud>*{opacity:1!important;transition:none!important;animation:none!important}
+body.uiLabEdit.uiLabScene-inf #infBossBox{display:block!important}
+body.uiLabEdit.uiLabScene-inf #infBossIndicator{display:none!important}
+body.uiLabEdit.uiLabScene-tunnel #tcHudPolish{display:block!important}
+body.uiLabEdit.uiLabScene-tunnel .tcMod{display:block!important}
+body.uiLabEdit.uiLabScene-tunnel #infHud{display:none!important}
+body.uiLabEdit #gear,body.uiLabEdit #act,body.uiLabEdit #toast{visibility:hidden}
+/* 모듈 박스 */
+.uiLabBox{position:absolute;border:1px dashed rgba(127,216,255,.5);border-radius:4px;
+  pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.32)}
+.uiLabBox.custom{border-color:rgba(255,211,110,.72)}
+.uiLabBox.sel{border:2px solid #7fd8ff;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 18px rgba(127,216,255,.32)}
+.uiLabBox.sel.custom{border-color:#ffd36e;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 18px rgba(255,211,110,.32)}
+.uiLabTag{position:absolute;left:-1px;top:-21px;padding:3px 7px;border-radius:5px;
+  background:rgba(9,13,22,.92);color:#bfe8ff;font:800 10px/1 inherit;white-space:nowrap;
+  letter-spacing:.02em;border:1px solid rgba(127,216,255,.3)}
+.uiLabBox.custom .uiLabTag{color:#ffe3a0;border-color:rgba(255,211,110,.4)}
+.uiLabBox.tagBelow .uiLabTag{top:auto;bottom:-21px}
+.uiLabH{position:absolute;width:10px;height:10px;background:#7fd8ff;border:1px solid #06222f;
+  border-radius:2px;pointer-events:auto;display:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.uiLabBox.sel .uiLabH{display:block}
+.uiLabBox.sel.custom .uiLabH{background:#ffd36e}
+.uiLabH[data-dir=nw]{left:-6px;top:-6px;cursor:nwse-resize}
+.uiLabH[data-dir=n]{left:calc(50% - 5px);top:-6px;cursor:ns-resize}
+.uiLabH[data-dir=ne]{right:-6px;top:-6px;cursor:nesw-resize}
+.uiLabH[data-dir=e]{right:-6px;top:calc(50% - 5px);cursor:ew-resize}
+.uiLabH[data-dir=se]{right:-6px;bottom:-6px;cursor:nwse-resize}
+.uiLabH[data-dir=s]{left:calc(50% - 5px);bottom:-6px;cursor:ns-resize}
+.uiLabH[data-dir=sw]{left:-6px;bottom:-6px;cursor:nesw-resize}
+.uiLabH[data-dir=w]{left:-6px;top:calc(50% - 5px);cursor:ew-resize}
+/* 스냅 가이드 라인 */
+.uiLabGuide{position:absolute;background:rgba(255,211,110,.85);pointer-events:none;display:none}
+.uiLabGuide.v{width:1px;top:0;bottom:0}.uiLabGuide.h{height:1px;left:0;right:0}
+/* 툴바 */
+#uiLabBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);display:flex;
+  flex-direction:column;gap:5px;align-items:center;pointer-events:auto;max-width:calc(100vw - 20px)}
+#uiLabBar.bottom{top:auto;bottom:12px}
+.uiLabRow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;
+  padding:8px 11px;border:1px solid rgba(127,216,255,.34);border-radius:12px;
+  background:rgba(8,11,20,.93);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.uiLabRow .uiLabTitle{color:#7fd8ff;font:900 12px/1 inherit;letter-spacing:.07em;margin-right:2px}
+#uiLabSceneName{padding:5px 10px;border:1px solid rgba(255,211,110,.4);border-radius:999px;
+  background:rgba(58,44,18,.5);color:#ffe9b6;font:800 11px/1 inherit;white-space:nowrap}
+.uiLabBtn{padding:6px 10px;border:1px solid #35506b;border-radius:8px;background:#111a28;
+  color:#cfe6f7;font:800 11px/1 inherit;cursor:pointer;white-space:nowrap}
+.uiLabBtn:hover{border-color:#7fd8ff;color:#eaf7ff}
+.uiLabBtn.danger{border-color:#6b3545;background:#2a121c;color:#ffb9c8}
+.uiLabBtn.danger:hover{border-color:#ff8da8;color:#ffd3dd}
+#uiLabSelName{min-width:150px;color:#ffd36e;font:800 11px/1.3 inherit;text-align:center}
+#uiLabSaved{color:#7febd0;font:800 10px/1 inherit;opacity:0;transition:opacity .25s;min-width:56px}
+.uiLabHint{padding:0 6px;color:#93a9bf;font:700 10px/1.5 inherit;text-align:center;
+  text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.uiLabSep{width:1px;height:18px;background:rgba(127,216,255,.22)}
+</style>
+<script id="uiLayoutLabScript">
+/* ══ v7.7.1 — 인게임 UI 레이아웃 편집 모드 (UILAB) ══
+   F8 = 지금 떠있는 화면을 감지해 편집. 로비·직업 선택·모달·HUD 전부 등록.
+   드래그 이동 · Shift 드래그 = 직선(축 고정) · Alt = 스냅 해제 · 핸들 리사이즈
+   더블클릭 = 그룹 안으로 진입(자식 요소 개별 편집, 중첩 가능) · Esc = 한 단계 위로
+   휠 / +·- = 선택 요소 스케일(텍스트·아이콘 포함) · Del 초기화 · JSON 내보내기.
+
+   좌표계 2종:
+   · HUD 씬(non-flow) — 컨테이너가 inset:0 고정이라 % 를 그대로 스타일에 쓴다 (부팅시 블라인드 적용).
+   · 메뉴/모달 씬(flow) — flex/grid 흐름 배치라 컨테이닝 블록이 내용에 따라 움직인다.
+     좌표는 "씬 루트(전체 화면) 기준 %" 로 저장하고, 적용 시점에 실제 컨테이닝 블록
+     위치를 빼서 px 로 보정한다. 씬이 보일 때 워처가 재적용한다. 흐름 모듈은 처음
+     만지는 순간 absolute 로 전환되며, 형제 재배치는 실제 런타임과 동일한 WYSIWYG 결과다.
+
+   저장 키: 최상위 모듈은 'grid', 드릴다운 자식은 'grid>2', 'grid>2>1' (1-기반 자식 인덱스).
+   스케일은 오버라이드의 s 필드 (transform:scale, origin 좌상단). */
+(function(){
+'use strict';
+if(window.UILAB)return;
+const LSKEY='tc.uiLayout.v1';
+/* tcMod 컨테이너 쿼리 --fit 재계산용 기준 크기 (본편 fitAll과 동일) */
+const FIT={'tc-objective':[520,92],'tc-resources':[250,64],'tc-status':[330,100],'tc-skills':[340,72],
+ 'tc-minimap':[190,190],'tc-bag':[250,120],'tc-interaction':[190,58],'tc-briefing':[420,260],'tc-settlement':[520,220]};
+const vis=el=>{if(!el)return false;const r=el.getBoundingClientRect();return r.width>2&&r.height>2;};
+/* ── 씬 레지스트리 — 위에서부터 우선 감지 (모달 > 스타맵 > 메뉴 패널 > HUD) ── */
+const SCENES=[
+ {id:'infLevelModal',label:'특성 선택 (레벨업)',root:'#infLevelModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'특성 선택 패널'}]},
+ {id:'infRestModal',label:'심층 정복 (전리품)',root:'#infRestModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'전리품 패널'}]},
+ {id:'infResultModal',label:'무한 모드 종료',root:'#infResultModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'결과 패널'}]},
+ {id:'infSettlementModal',label:'귀환 정산',root:'#infSettlementModal',flow:true,
+  modules:[{id:'panel',sel:'#infSettlementPanel',name:'정산 패널'}]},
+ {id:'infModeChoiceModal',label:'무한모드 선택',root:'#infModeChoiceModal',flow:true,
+  modules:[{id:'head',sel:'.infModeChoiceHead',name:'헤더'},{id:'grid',sel:'.infModeChoiceGrid',name:'모드 카드 그리드'}]},
+ {id:'tcTestHubModal',label:'테스트 모드 허브',root:'#tcTestHubModal',flow:true,
+  modules:[{id:'head',sel:'.infModeChoiceHead',name:'헤더'},{id:'grid',sel:'.tcTestHubGrid',name:'테스트 카드 그리드'}]},
+ {id:'infRoleModal',label:'무한 모드 직업 선택',root:'#infRoleModal',flow:true,
+  modules:[{id:'head',sel:'.infRoleHead',name:'헤더 · 타이틀'},
+   {id:'grid',sel:'#infRoleGrid',name:'직업 카드 그리드'},
+   {id:'note',sel:'.infRoleNote',name:'하단 설명'}]},
+ {id:'tcStarmap',label:'행성 원정 지도',root:'#tcStarmap',flow:true,pickChildren:true,modules:[]},
+ {id:'crewSettings',label:'게임 설정',root:'#crewSettings',flow:true,
+  modules:[{id:'frame',sel:'.tcSettingsFrame',name:'설정 프레임'}]},
+ {id:'crewMission',label:'미션 선택',root:'#crewMission',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'서브 카피'},
+   {id:'grid',sel:'.modeGrid',name:'미션 버튼 그리드'},{id:'back',sel:'#missionBackMenu',name:'뒤로가기'}]},
+ {id:'crewBiome',label:'바이옴 선택',root:'#crewBiome',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'서브 카피'},
+   {id:'grid',sel:'.modeGrid',name:'바이옴 버튼 그리드'},{id:'back',sel:'#biomeBackMission',name:'뒤로가기'}]},
+ {id:'crewRole',label:'직업 선택',root:'#crewRole',flow:true,
+  modules:[{id:'head',sel:'.tcRoleHeading',name:'타이틀 · 서브'},
+   {id:'grid',sel:'.tcRoleSelectGrid',name:'직업 카드 그리드'},
+   {id:'feedback',sel:'#crewRoleFeedback',name:'선택 피드백'},
+   {id:'back',sel:'#roleBackMission',name:'뒤로가기'}]},
+ {id:'crewResult',label:'미션 결과',root:'#crewResult',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'결과 카피'},
+   {id:'act',sel:'.crewAct',name:'행동 버튼'}]},
+ {id:'crewMenu',label:'메인 로비',root:'#crewMenu',flow:true,
+  modules:[{id:'brand',sel:'.menuBrand',name:'브랜드'},{id:'build',sel:'.menuBuild',name:'빌드 표기'},
+   {id:'kicker',sel:'.menuKicker',name:'킥커 카피'},{id:'logo',sel:'.menuCopy h1',name:'로고 타이틀'},
+   {id:'grid',sel:'.menuCopy .modeGrid',name:'모드 버튼 그리드'},{id:'tools',sel:'.menuTools',name:'하단 도구 버튼'},
+   {id:'visual',sel:'.menuVisual',name:'키아트 비주얼 (전면 레이어 · Tab으로 선택)',hitSkip:true},
+   {id:'foot',sel:'.menuFoot',name:'푸터'}]},
+ {id:'inf',label:'무한 모드 HUD',root:'#infHud',bodyClass:'uiLabScene-inf',
+  detect:()=>typeof INF!=='undefined'&&INF.active&&typeof SCENE!=='undefined'&&SCENE==='depths',
+  modules:[
+   {id:'ihProg',sel:'.ihProg',name:'진행 · 심층/위협/장악도'},
+   {id:'ihChips',sel:'.ihChips',name:'재화 칩 (Lv·코어)'},
+   {id:'ihDepthRail',sel:'.ihDepthRail',name:'깊이 게이지',fixSize:true},
+   {id:'ihTop',sel:'.ihTop',name:'보스 배너 레인'},
+   {id:'ihEscape',sel:'.ihEscape',name:'탈출 프롬프트'},
+   {id:'ihLeft',sel:'.ihLeft',name:'바이탈 · 탄창 패널'},
+   {id:'ihXpEdge',sel:'.ihXpEdge',name:'XP 바 (하단 엣지)',fixSize:true},
+   {id:'ihXpText',sel:'.ihXpText',name:'XP 라벨'},
+   {id:'ihKeys',sel:'.ihKeys',name:'키 가이드 (Tab)'}]},
+ {id:'tunnel',label:'터널 미션 HUD',root:'#tcHudPolish',bodyClass:'uiLabScene-tunnel',
+  detect:()=>typeof CREW!=='undefined'&&(CREW.phase==='play'||CREW.phase==='result')&&!(typeof INF!=='undefined'&&INF.active),
+  modules:[
+   {id:'tc-objective',name:'목표'},{id:'tc-resources',name:'자원'},{id:'tc-status',name:'상태 · HP'},
+   {id:'tc-skills',name:'스킬'},{id:'tc-minimap',name:'미니맵'},{id:'tc-bag',name:'가방 / 유물'},
+   {id:'tc-interaction',name:'상호작용 힌트'},{id:'tc-briefing',name:'미션 브리핑'},{id:'tc-settlement',name:'정산 카드'}
+  ].map(m=>Object.assign({sel:'#'+m.id,fixSize:true},m))}
+];
+const SCENE_BY_ID={};SCENES.forEach(s=>SCENE_BY_ID[s.id]=s);
+function detectScene(){
+ for(const s of SCENES){
+  const el=document.querySelector(s.root);
+  if(s.detect){if(s.detect())return s;continue;}
+  if(vis(el))return s;
+ }
+ return null;
+}
+/* 런타임 생성 화면(스타맵 등) — 열 때마다 루트의 직계 자식으로 모듈 목록 구성 */
+function sceneModules(s){
+ if(!s.pickChildren)return s.modules;
+ const root=document.querySelector(s.root);if(!root)return [];
+ const out=[];let i=0;
+ for(const ch of Array.from(root.children)){
+  if(!vis(ch))continue;
+  const id=ch.id?ch.id:(ch.className?String(ch.className).split(/\s+/)[0]:'child')+'-'+i;
+  out.push({id,el:ch,name:ch.id||String(ch.className).split(/\s+/)[0]||('요소 '+i)});
+  i++;
+ }
+ return out;
+}
+function load(){
+ try{
+  const j=JSON.parse(localStorage.getItem(LSKEY)||'null');
+  if(j&&j.scenes)return {v:2,scenes:j.scenes};
+  if(j&&j.huds)return {v:2,scenes:{inf:j.huds.inf||{},tunnel:j.huds.tunnel||{}}};   /* v1 마이그레이션 */
+ }catch(_){}
+ return {v:2,scenes:{}};
+}
+const UILAB={on:false,scene:null,sel:null,data:load(),drag:null,raf:0,saveT:0,savedT:0,mods:[],stack:[]};
+window.UILAB=UILAB;
+const $id=s=>document.getElementById(s);
+const r3=v=>Math.round(v*1000)/1000;
+function bag(sceneId){return UILAB.data.scenes[sceneId]||(UILAB.data.scenes[sceneId]={});}
+function ov(sceneId,id){return (UILAB.data.scenes[sceneId]||{})[id];}
+function rootEl(s){return document.querySelector(s.root);}
+function modEl(s,m){
+ if(m.el)return m.el.isConnected?m.el:null;
+ const c=rootEl(s);return c?c.querySelector(m.sel):null;
+}
+/* 저장 키 → 요소 해석: 'grid' / 'grid>2' / 'grid>2>1' (1-기반 자식 인덱스) */
+function resolveKey(s,key){
+ const parts=String(key).split('>');
+ const base=sceneModules(s).find(m=>m.id===parts[0]);
+ if(!base)return null;
+ let el=modEl(s,base);
+ for(let k=1;k<parts.length&&el;k++)el=el.children[(+parts[k])-1]||null;
+ return el;
+}
+function childLabel(el,idx){
+ const tag=el.tagName.toLowerCase();
+ const cls=el.classList.length?'.'+el.classList[0]:'';
+ const txt=(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,14);
+ return (el.id?'#'+el.id:tag+cls)+(txt?' “'+txt+'”':'')+' ['+(idx+1)+']';
+}
+/* ── 위치 변환 ── */
+function ensurePositioned(el){
+ const cp=getComputedStyle(el).position;
+ if(cp==='static'||cp==='relative')el.style.position='absolute';
+}
+function cbOf(el){return el.offsetParent||document.body;}
+function clearInline(el){['position','left','top','right','bottom','margin','transform','transform-origin','width','height','animation','transition'].forEach(p=>el.style.removeProperty(p));}
+function refit(s,m,el){
+ if(s.id!=='tunnel'||!FIT[m.id])return;
+ requestAnimationFrame(()=>{const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
+  const b=FIT[m.id],f=Math.max(.55,Math.min(1.45,Math.min(r.width/b[0],r.height/b[1])));
+  el.style.setProperty('--fit',f.toFixed(3));});
+}
+function applyTransform(el,o){
+ el.style.animation='none';   /* 진입 연출(fill:both)이 transform 을 영구 점유하므로 차단 */
+ el.style.transition='none';  /* 전환 애니메이션 배제 — 편집 결과 즉시 반영 */
+ if(o.s&&Math.abs(o.s-1)>.005){el.style.transform='scale('+o.s+')';el.style.transformOrigin='0 0';}
+ else{el.style.transform='none';el.style.removeProperty('transform-origin');}
+}
+/* HUD(non-flow) — 컨테이너가 inset:0 이라 % 를 그대로 쓴다. 숨김 상태에서도 적용 가능 */
+function applyOne(s,m){
+ const el=modEl(s,m);if(!el)return;
+ const o=ov(s.id,m.id);
+ if(!o){clearInline(el);refit(s,m,el);return;}
+ ensurePositioned(el);
+ el.style.left=o.l+'%';el.style.top=o.t+'%';
+ el.style.right='auto';el.style.bottom='auto';el.style.margin='0';
+ applyTransform(el,o);
+ if(o.w!=null)el.style.width=o.w+'%';else el.style.removeProperty('width');
+ if(o.h!=null)el.style.height=o.h+'%';else el.style.removeProperty('height');
+ refit(s,m,el);
+}
+/* flow — 루트 기준 % 저장값을 실제 컨테이닝 블록 좌표로 보정해 px 적용 */
+function applyFlowModule(s,m,rootR){
+ const el=modEl(s,m);if(!el)return;
+ const o=ov(s.id,m.id);if(!o)return;
+ ensurePositioned(el);
+ const cbR=cbOf(el).getBoundingClientRect();
+ el.style.left=(rootR.left+o.l/100*rootR.width-cbR.left).toFixed(1)+'px';
+ el.style.top=(rootR.top+o.t/100*rootR.height-cbR.top).toFixed(1)+'px';
+ el.style.right='auto';el.style.bottom='auto';el.style.margin='0';
+ applyTransform(el,o);
+ if(o.w!=null)el.style.width=(o.w/100*rootR.width).toFixed(1)+'px';
+ if(o.h!=null)el.style.height=(o.h/100*rootR.height).toFixed(1)+'px';
+}
+/* 씬의 모든 오버라이드 키(드릴다운 자식 포함)를 가상 모듈로 나열 */
+function overrideModules(s){
+ const b=UILAB.data.scenes[s.id];if(!b)return [];
+ const tops=sceneModules(s),out=[];
+ for(const key of Object.keys(b)){
+  const top=tops.find(m=>m.id===key);
+  if(top){out.push(top);continue;}
+  const el=resolveKey(s,key);
+  if(el)out.push({id:key,el,name:key,fixSize:true});
+ }
+ return out;
+}
+function applyScene(s){
+ const mods=overrideModules(s);
+ if(!s.flow){for(const m of mods)applyOne(s,m);return;}
+ const rt=rootEl(s);if(!rt)return;
+ const rootR=rt.getBoundingClientRect();if(rootR.width<2)return;
+ /* 1패스: 오버라이드된 모듈 전부 absolute 전환 (흐름 붕괴를 먼저 확정) */
+ for(const m of mods){const el=modEl(s,m);if(el)ensurePositioned(el);}
+ void rt.offsetHeight;   /* 리플로우 확정 */
+ /* 2패스: 안정된 컨테이닝 블록을 기준으로 좌표 보정 적용 */
+ for(const m of mods)applyFlowModule(s,m,rootR);
+}
+/* 부팅: HUD 는 블라인드 % 적용, flow 씬은 워처가 보일 때 적용 */
+function applyAll(){for(const s of SCENES)if(!s.flow&&UILAB.data.scenes[s.id]&&Object.keys(UILAB.data.scenes[s.id]).length)applyScene(s);}
+UILAB.applyAll=applyAll;
+/* ── flow 씬 워처 — 루트가 보이거나 크기가 바뀌면 재적용 ── */
+const SIG={};
+setInterval(()=>{
+ for(const s of SCENES){
+  if(!s.flow)continue;
+  const b=UILAB.data.scenes[s.id];
+  if(!b||!Object.keys(b).length){delete SIG[s.id];continue;}
+  const rt=rootEl(s);if(!rt){delete SIG[s.id];continue;}
+  const r=rt.getBoundingClientRect();
+  if(r.width<2){delete SIG[s.id];continue;}
+  const sig=(r.left|0)+','+(r.top|0)+','+(r.width|0)+','+(r.height|0);
+  if(SIG[s.id]!==sig){SIG[s.id]=sig;applyScene(s);}
+ }
+},400);
+addEventListener('resize',()=>{for(const k in SIG)delete SIG[k];});
+function save(){
+ clearTimeout(UILAB.saveT);
+ UILAB.saveT=setTimeout(()=>{try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));flashSaved();}catch(_){}},250);
+}
+function flashSaved(){
+ const e=$id('uiLabSaved');if(!e)return;e.style.opacity='1';
+ clearTimeout(UILAB.savedT);UILAB.savedT=setTimeout(()=>{e.style.opacity='0';},1200);
+}
+function ensureOv(s,m,withSize){
+ const el=modEl(s,m);if(!el)return null;
+ const r=el.getBoundingClientRect();          /* 전환 전 위치를 먼저 확보 */
+ let base;
+ if(s.flow){const rt=rootEl(s);if(!rt)return null;base=rt.getBoundingClientRect();}
+ else{ensurePositioned(el);base=cbOf(el).getBoundingClientRect();}
+ if(base.width<2||base.height<2)return null;
+ let o=ov(s.id,m.id);
+ const needSize=s.flow||m.fixSize;
+ if(!o){o=bag(s.id)[m.id]={l:r3((r.left-base.left)/base.width*100),t:r3((r.top-base.top)/base.height*100)};
+  if(needSize){o.w=r3(r.width/base.width*100);o.h=r3(r.height/base.height*100);}}
+ if((withSize||needSize)&&(o.w==null||o.h==null)){o.w=r3(r.width/base.width*100);o.h=r3(r.height/base.height*100);}
+ return o;
+}
+function applyModule(s,m){
+ if(!s.flow){applyOne(s,m);return;}
+ const rt=rootEl(s);if(!rt)return;
+ const rootR=rt.getBoundingClientRect();if(rootR.width<2)return;
+ applyFlowModule(s,m,rootR);
+}
+
+/* ── 편집기 DOM ── */
+let root=null,stage=null,BOX={};
+function buildUi(){
+ if(root)return;
+ root=document.createElement('div');root.id='uiLabRoot';
+ root.innerHTML=
+  '<div id="uiLabStage"><div class="uiLabGuide v" id="uiLabGvX"></div><div class="uiLabGuide h" id="uiLabGvY"></div></div>'+
+  '<div id="uiLabBar">'+
+   '<div class="uiLabRow">'+
+    '<span class="uiLabTitle">UI 레이아웃</span>'+
+    '<span id="uiLabSceneName">—</span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabUp" style="display:none">↰ 상위로</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<span id="uiLabSelName">모듈을 클릭해 선택</span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabResetSel">선택 초기화</button>'+
+    '<button type="button" class="uiLabBtn danger" id="uiLabResetScene">화면 초기화</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabCopy">JSON 복사</button>'+
+    '<button type="button" class="uiLabBtn" id="uiLabDl">JSON 저장</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabFlip">패널 ↕</button>'+
+    '<button type="button" class="uiLabBtn" id="uiLabClose">닫기 · ESC</button>'+
+    '<span id="uiLabSaved">자동 저장됨</span>'+
+   '</div>'+
+   '<div class="uiLabHint">지금 떠있는 화면을 편집중 — 드래그 이동 · Shift 드래그 = 직선(축 고정) · Alt = 스냅 해제 · 핸들 리사이즈 · <b>더블클릭 = 그룹 안으로</b> · Esc = 한 단계 위 · <b>휠 / +− = 크기(스케일)</b> · 방향키 0.1% (Shift=1%) · Tab 다음 모듈 · Del 초기화 · 즉시 적용 + 자동 저장</div>'+
+  '</div>';
+ document.body.appendChild(root);
+ stage=$id('uiLabStage');
+ $id('uiLabUp').addEventListener('click',popLevel);
+ $id('uiLabResetSel').addEventListener('click',resetSel);
+ $id('uiLabResetScene').addEventListener('click',resetScene);
+ $id('uiLabCopy').addEventListener('click',copyJson);
+ $id('uiLabDl').addEventListener('click',downloadJson);
+ $id('uiLabFlip').addEventListener('click',()=>$id('uiLabBar').classList.toggle('bottom'));
+ $id('uiLabClose').addEventListener('click',close);
+ root.addEventListener('contextmenu',e=>e.preventDefault());
+ stage.addEventListener('pointerdown',onDown);
+ stage.addEventListener('pointermove',onMove);
+ stage.addEventListener('pointerup',onUp);
+ stage.addEventListener('pointercancel',onUp);
+ stage.addEventListener('wheel',onWheel,{passive:false});
+}
+/* 현재 레벨의 모듈 목록: 스택이 비면 씬 최상위, 아니면 진입한 그룹의 직계 자식 */
+function levelModules(){
+ const s=UILAB.scene;
+ if(!UILAB.stack.length)return sceneModules(s);
+ const top=UILAB.stack[UILAB.stack.length-1];
+ const out=[];
+ Array.from(top.el.children).forEach((ch,i)=>{
+  const r=ch.getBoundingClientRect();
+  if(r.width<1&&r.height<1)return;
+  out.push({id:top.key+'>'+(i+1),el:ch,name:childLabel(ch,i),fixSize:true});
+ });
+ return out;
+}
+function buildBoxes(){
+ BOX={};
+ for(const el of Array.from(stage.querySelectorAll('.uiLabBox')))el.remove();
+ for(const m of UILAB.mods){
+  const el=modEl(UILAB.scene,m);if(!el)continue;
+  const box=document.createElement('div');box.className='uiLabBox';box.dataset.id=m.id;
+  let h='<span class="uiLabTag">'+m.name+'</span>';
+  for(const d of ['nw','n','ne','e','se','s','sw','w'])h+='<i class="uiLabH" data-dir="'+d+'"></i>';
+  box.innerHTML=h;
+  stage.appendChild(box);
+  BOX[m.id]={m,el,box,rect:null};
+ }
+ syncSel();
+}
+function syncBoxes(){
+ for(const id in BOX){
+  const b=BOX[id],r=b.el.getBoundingClientRect();b.rect=r;
+  const st=b.box.style;
+  st.left=r.left+'px';st.top=r.top+'px';
+  st.width=Math.max(8,r.width)+'px';st.height=Math.max(8,r.height)+'px';
+  b.box.classList.toggle('custom',!!ov(UILAB.scene.id,id));
+  b.box.classList.toggle('tagBelow',r.top<30);
+ }
+}
+function loop(){if(!UILAB.on)return;syncBoxes();UILAB.raf=requestAnimationFrame(loop);}
+function crumb(){
+ let t=UILAB.scene?UILAB.scene.label:'—';
+ for(const g of UILAB.stack)t+=' › '+g.name;
+ return t;
+}
+function syncSel(){
+ for(const id in BOX)BOX[id].box.classList.toggle('sel',id===UILAB.sel);
+ const nameEl=$id('uiLabSelName');
+ if(!nameEl)return;
+ const b=UILAB.sel&&BOX[UILAB.sel];
+ let label=b?b.m.name:'모듈을 클릭해 선택';
+ if(b){const o=ov(UILAB.scene.id,UILAB.sel);if(o&&o.s)label+=' · ×'+o.s.toFixed(2);}
+ nameEl.textContent=label;
+ $id('uiLabSceneName').textContent=crumb();
+ $id('uiLabUp').style.display=UILAB.stack.length?'':'none';
+}
+function select(id){UILAB.sel=id;syncSel();}
+function setLevelMods(){UILAB.mods=levelModules();buildBoxes();syncBoxes();}
+function enterGroup(m){
+ const el=modEl(UILAB.scene,m);
+ if(!el||!el.children.length)return;
+ UILAB.stack.push({key:m.id,name:m.name,el});
+ UILAB.sel=null;
+ setLevelMods();
+ typeof toast==='function'&&toast('그룹 진입 — '+m.name+' · Esc = 상위로');
+}
+function popLevel(){
+ if(!UILAB.stack.length)return;
+ UILAB.stack.pop();
+ UILAB.sel=null;
+ setLevelMods();
+}
+
+/* ── 히트 테스트 / 드래그 ── */
+function hitTest(x,y){
+ const selB=UILAB.sel&&BOX[UILAB.sel];
+ if(selB&&selB.rect&&inRect(selB.rect,x,y))return selB;
+ let best=null,bestA=Infinity;
+ for(const id in BOX){const b=BOX[id];
+  if(b.m.hitSkip)continue;          /* 전면 배경 레이어는 클릭으로 잡지 않는다 (Tab 선택) */
+  if(b.rect&&inRect(b.rect,x,y)){const a=b.rect.width*b.rect.height;if(a<bestA){bestA=a;best=b;}}}
+ return best;
+}
+function inRect(r,x,y){return x>=r.left-4&&x<=r.right+4&&y>=r.top-4&&y<=r.bottom+4;}
+function guide(axis,posPx){
+ const g=$id(axis==='x'?'uiLabGvX':'uiLabGvY');if(!g)return;
+ if(posPx==null){g.style.display='none';return;}
+ g.style.display='block';
+ if(axis==='x')g.style.left=posPx+'px';else g.style.top=posPx+'px';
+}
+let lastDown={id:null,t:0};
+function onDown(e){
+ if(e.button!==0)return;
+ syncBoxes();                       /* 저FPS/백그라운드에서도 최신 위치로 히트테스트 */
+ const t=e.target;
+ if(t.classList&&t.classList.contains('uiLabH')&&UILAB.sel){
+  startDrag('resize',t.dataset.dir,e);e.preventDefault();return;}
+ const hit=hitTest(e.clientX,e.clientY);
+ const now=performance.now();
+ if(hit&&lastDown.id===hit.m.id&&now-lastDown.t<420){   /* 더블클릭 = 그룹 진입 */
+  lastDown={id:null,t:0};
+  UILAB.drag=null;
+  select(hit.m.id);
+  enterGroup(hit.m);
+  e.preventDefault();return;
+ }
+ lastDown={id:hit?hit.m.id:null,t:now};
+ select(hit?hit.m.id:null);
+ if(hit){startDrag('move',null,e);e.preventDefault();}
+}
+function startDrag(kind,dir,e){
+ const b=BOX[UILAB.sel];if(!b)return;
+ const s=UILAB.scene;
+ const o=ensureOv(s,b.m,kind==='resize');if(!o)return;
+ applyScene(s);                                    /* 전환·보정을 먼저 확정 */
+ const base=s.flow?rootEl(s).getBoundingClientRect():cbOf(b.el).getBoundingClientRect();
+ const r=b.el.getBoundingClientRect();
+ UILAB.drag={kind,dir,b,x:e.clientX,y:e.clientY,cr:base,
+  o0:{l:o.l,t:o.t,w:o.w,h:o.h},
+  wPct:r.width/base.width*100,hPct:r.height/base.height*100};
+ try{stage.setPointerCapture(e.pointerId);}catch(_){}
+}
+function snapAxis(v,targets,th){
+ for(const t of targets)if(Math.abs(v-t)<th)return t;
+ return v;
+}
+function onMove(e){
+ const d=UILAB.drag;
+ if(!d){const hit=hitTest(e.clientX,e.clientY);
+  stage.style.cursor=(e.target.classList&&e.target.classList.contains('uiLabH'))?'':'move';
+  if(!hit)stage.style.cursor='default';
+  return;}
+ const m=d.b.m,o=ov(UILAB.scene.id,m.id);if(!o)return;
+ const dx=(e.clientX-d.x)/d.cr.width*100,dy=(e.clientY-d.y)/d.cr.height*100;
+ guide('x',null);guide('y',null);
+ if(d.kind==='move'){
+  let l=d.o0.l+dx,t=d.o0.t+dy;
+  let lockX=false,lockY=false;
+  if(e.shiftKey){                    /* Shift 드래그 = 축 고정 직선 이동 */
+   if(Math.abs(dx)>=Math.abs(dy)){t=d.o0.t;lockY=true;}
+   else{l=d.o0.l;lockX=true;}
+  }
+  if(!e.altKey){                     /* Alt = 스냅 해제 · 고정된 축은 스냅하지 않는다 */
+   const thx=8/d.cr.width*100,thy=8/d.cr.height*100;
+   const xs=[1.4,50-d.wPct/2,98.6-d.wPct,0,100-d.wPct];
+   const ys=[2,50-d.hPct/2,98-d.hPct,0,100-d.hPct];
+   const l2=lockX?l:snapAxis(l,xs,thx),t2=lockY?t:snapAxis(t,ys,thy);
+   if(l2!==l)guide('x',d.cr.left+(l2+d.wPct/2)*d.cr.width/100);
+   if(t2!==t)guide('y',d.cr.top+(t2+d.hPct/2)*d.cr.height/100);
+   l=l2;t=t2;
+  }
+  o.l=r3(Math.max(-d.wPct+.8,Math.min(99.2,l)));
+  o.t=r3(Math.max(-d.hPct+.8,Math.min(99.2,t)));
+ }else{
+  const minW=24/d.cr.width*100,minH=16/d.cr.height*100;
+  let l=d.o0.l,t=d.o0.t,w=d.o0.w,h=d.o0.h;
+  const dir=d.dir;
+  if(dir.includes('e'))w=d.o0.w+dx;
+  if(dir.includes('w')){l=d.o0.l+dx;w=d.o0.w-dx;}
+  if(dir.includes('s'))h=d.o0.h+dy;
+  if(dir.includes('n')){t=d.o0.t+dy;h=d.o0.h-dy;}
+  if(w<minW){if(dir.includes('w'))l=d.o0.l+d.o0.w-minW;w=minW;}
+  if(h<minH){if(dir.includes('n'))t=d.o0.t+d.o0.h-minH;h=minH;}
+  o.l=r3(l);o.t=r3(t);o.w=r3(w);o.h=r3(h);
+ }
+ applyModule(UILAB.scene,m);
+}
+function onUp(e){
+ if(!UILAB.drag)return;
+ guide('x',null);guide('y',null);
+ const m=UILAB.drag.b.m;
+ UILAB.drag=null;
+ try{stage.releasePointerCapture(e.pointerId);}catch(_){}
+ if(BOX[m.id])refit(UILAB.scene,m,BOX[m.id].el);
+ save();
+}
+/* 휠 = 선택 모듈 스케일 (텍스트·아이콘 포함, 좌상단 기준) */
+function scaleSel(mult){
+ if(!UILAB.sel)return;
+ const b=BOX[UILAB.sel];if(!b)return;
+ const s=UILAB.scene,o=ensureOv(s,b.m,false);if(!o)return;
+ let next=r3(Math.max(.3,Math.min(4,(o.s||1)*mult)));
+ if(Math.abs(next-1)<.01)delete o.s;else o.s=next;
+ applyModule(s,b.m);save();syncSel();
+}
+function onWheel(e){
+ e.preventDefault();
+ if(!UILAB.sel)return;
+ scaleSel(e.deltaY<0?1.05:1/1.05);
+}
+
+/* ── 초기화 / 내보내기 ── */
+function resetSel(){
+ if(!UILAB.sel||!UILAB.scene)return;
+ const b=BOX[UILAB.sel];
+ delete bag(UILAB.scene.id)[UILAB.sel];
+ delete SIG[UILAB.scene.id];
+ clearInline(b.el);refit(UILAB.scene,b.m,b.el);save();syncSel();
+}
+function resetScene(){
+ if(!UILAB.scene)return;
+ const s=UILAB.scene;
+ for(const m of overrideModules(s)){const el=modEl(s,m);if(el){clearInline(el);refit(s,m,el);}}
+ UILAB.data.scenes[s.id]={};
+ delete SIG[s.id];
+ UILAB.stack=[];
+ select(null);setLevelMods();save();
+ typeof toast==='function'&&toast(s.label+' 레이아웃 초기화');
+}
+function resetEverything(){
+ for(const s of SCENES)for(const m of overrideModules(s)){const el=modEl(s,m);if(el){clearInline(el);refit(s,m,el);}}
+ UILAB.data={v:2,scenes:{}};
+ for(const k in SIG)delete SIG[k];
+ try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));}catch(_){}
+ typeof toast==='function'&&toast('UI 레이아웃 전체 초기화 (모든 화면)');
+}
+UILAB.resetEverything=resetEverything;
+function exportJson(){
+ return JSON.stringify({schema:'tunnel-crew-ui-layout@2',app:'tunnel-crew-infinite-mode-v7.7.1',
+  exportedAt:new Date().toISOString(),scenes:UILAB.data.scenes},null,2);
+}
+UILAB.exportJson=exportJson;
+function copyJson(){
+ const txt=exportJson();
+ const done=()=>typeof toast==='function'&&toast('레이아웃 JSON 복사됨 — 확정본은 파일에 베이크 요청');
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt,done));
+ else fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,done){
+ const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+ document.body.appendChild(ta);ta.select();
+ try{document.execCommand('copy');done();}catch(_){}
+ ta.remove();
+}
+function downloadJson(){
+ const blob=new Blob([exportJson()],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+ a.download='tunnel-crew-ui-layout.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+/* ── 열기 / 닫기 ── */
+function open(){
+ if(UILAB.on)return;
+ const s=detectScene();
+ if(!s){typeof toast==='function'&&toast('이 화면에는 편집할 UI가 없습니다');return;}
+ buildUi();
+ UILAB.on=true;UILAB.scene=s;UILAB.sel=null;UILAB.stack=[];
+ document.body.classList.add('uiLabEdit');
+ if(s.bodyClass)document.body.classList.add(s.bodyClass);
+ setLevelMods();
+ loop();
+ typeof toast==='function'&&toast('UI 레이아웃 편집 — '+s.label+' · 더블클릭=그룹 진입 · F8/ESC 종료');
+}
+function close(){
+ if(!UILAB.on)return;
+ UILAB.on=false;UILAB.drag=null;UILAB.sel=null;UILAB.stack=[];
+ cancelAnimationFrame(UILAB.raf);
+ document.body.classList.remove('uiLabEdit','uiLabScene-inf','uiLabScene-tunnel');
+ UILAB.scene=null;UILAB.mods=[];
+ clearTimeout(UILAB.saveT);
+ try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));}catch(_){}
+}
+UILAB.open=open;UILAB.close=close;
+
+/* ── 월드 일시정지 — 편집중엔 패널이 열린 것으로 취급 ── */
+if(typeof window.panelOpen==='function'){
+ const _po=window.panelOpen;
+ window.panelOpen=function(){return UILAB.on||_po.apply(this,arguments);};
+}
+
+/* ── 키보드 — 캡처 단계에서 게임 입력 차단 + 편집 키 처리 ── */
+window.addEventListener('keydown',e=>{
+ if(!UILAB.on){
+  if(e.key==='F8'&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')){
+   e.preventDefault();open();}
+  return;
+ }
+ e.stopPropagation();
+ const k=e.key;
+ if(k==='Escape'){e.preventDefault();if(UILAB.stack.length)popLevel();else close();return;}
+ if(k==='F8'){e.preventDefault();close();return;}
+ if(k==='Tab'){
+  e.preventDefault();
+  const list=UILAB.mods.filter(m=>BOX[m.id]);
+  if(!list.length)return;
+  const i=list.findIndex(m=>m.id===UILAB.sel);
+  select(list[(i+(e.shiftKey?-1:1)+list.length)%list.length].id);
+  return;
+ }
+ if((k==='Delete'||k==='Backspace')&&UILAB.sel){e.preventDefault();resetSel();return;}
+ if((k==='+'||k==='=')&&UILAB.sel){e.preventDefault();scaleSel(1.05);return;}
+ if((k==='-'||k==='_')&&UILAB.sel){e.preventDefault();scaleSel(1/1.05);return;}
+ const step=e.shiftKey?1:.1;
+ let dx=0,dy=0;
+ if(k==='ArrowLeft')dx=-step;else if(k==='ArrowRight')dx=step;
+ else if(k==='ArrowUp')dy=-step;else if(k==='ArrowDown')dy=step;
+ if((dx||dy)&&UILAB.sel){
+  e.preventDefault();
+  const b=BOX[UILAB.sel],o=ensureOv(UILAB.scene,b.m,false);
+  if(o){o.l=r3(o.l+dx);o.t=r3(o.t+dy);applyModule(UILAB.scene,b.m);save();}
+ }
+},true);
+window.addEventListener('keyup',e=>{if(UILAB.on)e.stopPropagation();},true);
+
+/* ── 진입 버튼 배선 ── */
+function wire(){
+ const b1=$id('bUiLayout');
+ if(b1)b1.addEventListener('click',()=>{try{typeof show==='function'&&show(null);}catch(_){}open();});
+ const b2=$id('bUiLayoutReset');
+ if(b2)b2.addEventListener('click',resetEverything);
+ const b3=$id('tcSetUiLayout');
+ if(b3)b3.addEventListener('click',()=>{try{typeof crewCloseSettings==='function'&&crewCloseSettings();}catch(_){}setTimeout(open,30);});
+}
+wire();
+
+/* ── 부팅시 저장된 레이아웃 재적용 (HUD 즉시 · flow 씬은 워처가 처리) ── */
+applyAll();
+console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에서든 F8 (떠있는 화면을 감지해 편집)');
+})();
+</script>
+
 </body></html>

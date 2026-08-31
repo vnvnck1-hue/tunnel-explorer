@@ -714,7 +714,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
       <div class="menuFrame">
         <header class="menuTop">
           <div class="menuBrand"><span class="menuBrandMark">TC</span><span>TUNNEL CREW</span></div>
-          <span class="menuBuild">PROTOTYPE / 7.7.0-ui</span>
+          <span class="menuBuild">PROTOTYPE / 7.7.1-ui</span>
         </header>
         <main class="menuMain">
           <section class="menuCopy">
@@ -726,7 +726,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
               <button class="modeBtn infinite" id="menuStarmap"><i>03</i><b>행성 원정</b><span>STARMAP / 행성을 골라 중심부까지</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn" id="menuNodeTree"><i>04</i><b>캐릭터 성장 지도</b><span>BASE / 영구 노드 구매 · 유물 보관고</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn testHub" id="menuTestHub"><i>05</i><b>테스트 모드</b><span>TEST HUB / 유물 · 보스 · 투사체 · 치트 패널</span><u aria-hidden="true">↗</u></button>
-              <button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="임시 잠금"><i>06</i><b>LAN 코옵 <span class="lockedTag">LOCKED</span></b><span>CO-OP / 2인 로컬 네트워크</span><u aria-hidden="true">↗</u></button>
+              <button class="modeBtn coop" id="menuCoop"><i>06</i><b>LAN 코옵</b><span>CO-OP / 사내망 2~4인</span><u aria-hidden="true">↗</u></button>
             </nav>
             <div class="menuTools">
               <button type="button" id="menuMute">SOUND · ON</button>
@@ -769,6 +769,10 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
             <div class="tcSettingsRow"><div class="tcSettingsLabel">알파 라이팅<span class="tcSettingsHint">캐릭터와 암벽에 방향성 음영과 림라이트 적용</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle on" id="tcSetAlphaLight" aria-label="알파 라이팅" aria-pressed="true"></button></div></div>
             <div class="tcSettingsRow"><div class="tcSettingsLabel">조작 힌트<span class="tcSettingsHint">첫 솔로 미션에서 30초 튜토리얼 표시</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle on" id="tcSetHints" aria-label="조작 힌트" aria-pressed="true"></button></div></div>
             <div class="tcSettingsRow"><div class="tcSettingsLabel">모션 감소<span class="tcSettingsHint">메뉴의 기울기와 전환 효과를 줄임</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsToggle" id="tcSetMotion" aria-label="모션 감소" aria-pressed="false"></button></div></div>
+          </section>
+          <section class="tcSettingsSection">
+            <h3>UI 레이아웃</h3>
+            <div class="tcSettingsRow"><div class="tcSettingsLabel">HUD 레이아웃 편집<span class="tcSettingsHint">HUD 모듈을 드래그해 위치·크기를 바꾸고 즉시 적용 (F8)</span></div><div class="tcSettingsControl"><button type="button" class="tcSettingsButton" id="tcSetUiLayout">편집 열기</button></div></div>
           </section>
           <section class="tcSettingsSection">
             <h3>조작법</h3>
@@ -926,6 +930,12 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
           <div class="opt"><span>소프트 마스크</span><button class="sw on" id="teSoftMask"></button></div>
           <div class="opt"><span>호흡 펄스</span><button class="sw on" id="tePulse"></button></div>
           <div class="opt"><span>손전등 (F)</span><button class="sw on" id="teFlashlight"></button></div>
+        </div>
+
+        <div class="teSec"><h3>UI 레이아웃</h3>
+          <div class="row2"><button class="pill" id="bUiLayout">레이아웃 편집 모드</button>
+            <button class="pill" id="bUiLayoutReset" style="border-color:#C2445E;color:#C2445E">레이아웃 초기화</button></div>
+          <p class="note">HUD 모듈을 드래그해 위치·크기를 바꾸면 즉시 적용된다. 게임 중 F8로도 열 수 있다.</p>
         </div>
 
         <div class="teSec"><h3>프리셋</h3>
@@ -9145,12 +9155,40 @@ $('menuSolo')&&$('menuSolo').addEventListener('click',()=>{
  if(typeof COOP!=='undefined'){COOP.active=false;COOP._started=false;}
  crewShow('mission');
 });
+/* 코옵 서버 안내 — file:// 로 열었거나 서버가 없을 때. client.js 없이도 떠야 한다 */
+function coopServerHelp(){
+ let el=$('coopHelp');
+ if(!el){
+  const st=document.createElement('style');
+  st.textContent='#coopHelp{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(6,4,14,.86);backdrop-filter:blur(5px)}'
+   +'#coopHelp.on{display:flex}'
+   +'#coopHelp .chCard{width:min(480px,92vw);background:#1a1228;border:1px solid #4a3568;border-radius:14px;padding:22px 22px 18px;color:#e4d4f5;font:13.5px/1.65 Pretendard,Malgun Gothic,sans-serif}'
+   +'#coopHelp h2{margin:0 0 10px;font:800 18px/1.3 Pretendard,sans-serif;color:#edd8ff}'
+   +'#coopHelp code{background:#0c0814;border:1px solid #3a2a55;border-radius:6px;padding:2px 7px;font:600 12px ui-monospace,Consolas,monospace;color:#d4a8ff}'
+   +'#coopHelp .chAddr{margin:10px 0;padding:10px 12px;background:rgba(12,8,20,.6);border:1px solid #2e2145;border-radius:9px}'
+   +'#coopHelp .chAddr b{color:#7febd0;font:700 13px ui-monospace,Consolas,monospace}'
+   +'#coopHelp .chRow{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}'
+   +'#coopHelp button{font:inherit;background:#2a1a42;color:#e4d4f5;border:1px solid #4a3568;border-radius:9px;padding:9px 14px;cursor:pointer}'
+   +'#coopHelp button.pri{background:rgba(180,120,255,.22);border-color:rgba(180,120,255,.5);color:#edd8ff;font-weight:700}';
+  document.head.appendChild(st);
+  el=document.createElement('div');el.id='coopHelp';
+  el.innerHTML='<div class="chCard"><h2>LAN 코옵은 서버 접속이 필요합니다</h2>'
+   +'<p>파일을 직접 열면(file://) 네트워크 기능이 동작하지 않습니다.<br>'
+   +'서버 PC에서 <code>cd coop && npm start</code> 를 실행한 뒤,<br>브라우저 주소창에 서버 주소를 입력해 접속하세요.</p>'
+   +'<div class="chAddr">서버 PC 본인 → <b>http://localhost:5188/</b><br>동료 PC에서 → <b>http://&lt;서버IP&gt;:5188/</b></div>'
+   +'<div class="chRow"><button class="pri" id="chGo">localhost:5188 열기</button><button id="chClose">닫기</button></div></div>';
+  document.body.appendChild(el);
+  el.querySelector('#chGo').onclick=()=>{location.href='http://localhost:5188/';};
+  el.querySelector('#chClose').onclick=()=>{el.classList.remove('on');};
+  el.addEventListener('click',(e)=>{if(e.target===el)el.classList.remove('on');});
+ }
+ el.classList.add('on');
+}
 $('menuCoop')&&$('menuCoop').addEventListener('click',()=>{
  if($('menuCoop').disabled||$('menuCoop').classList.contains('locked'))return;
- crewEnsureBgm();
- SFX.ui&&SFX.ui();
+ try{crewEnsureBgm();SFX.ui&&SFX.ui();}catch(e){}
  if(typeof COOP_openLobby==='function')COOP_openLobby();
- else toast('코옵 서버가 필요합니다 (cd coop && npm start)');
+ else coopServerHelp();
 });
 
 crewLoadSettings();
@@ -15524,4 +15562,688 @@ infCloseSettlement=function(){tcPrevCloseSettlement();if(!INF.active)tcRelicLabD
  }
 })();
 </script>
+<style id="uiLayoutLabStyles">
+/* ══ v7.7.1 — 인게임 UI 레이아웃 편집 모드 (UILAB) ══
+   F8을 누른 순간 떠있는 화면을 감지해 그 화면의 실제 DOM을 드래그/리사이즈로 즉시 수정한다.
+   오버라이드는 localStorage(tc.uiLayout.v1)에 자동 저장, 부팅시 재적용. */
+#uiLabRoot{position:fixed;inset:0;z-index:3000;display:none;pointer-events:auto;
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  user-select:none;-webkit-user-select:none}
+body.uiLabEdit #uiLabRoot{display:block}
+#uiLabStage{position:absolute;inset:0;touch-action:none}
+/* HUD 씬 편집중 강제 표시 — 숨김 상태 모듈(보스 배너·키 가이드·브리핑·정산)도 편집 가능하게 */
+body.uiLabEdit.uiLabScene-inf #infHud{display:block!important}
+body.uiLabEdit.uiLabScene-inf #tcHudPolish{display:none!important}
+body.uiLabEdit.uiLabScene-inf #infHud>*{opacity:1!important;transition:none!important;animation:none!important}
+body.uiLabEdit.uiLabScene-inf #infBossBox{display:block!important}
+body.uiLabEdit.uiLabScene-inf #infBossIndicator{display:none!important}
+body.uiLabEdit.uiLabScene-tunnel #tcHudPolish{display:block!important}
+body.uiLabEdit.uiLabScene-tunnel .tcMod{display:block!important}
+body.uiLabEdit.uiLabScene-tunnel #infHud{display:none!important}
+body.uiLabEdit #gear,body.uiLabEdit #act,body.uiLabEdit #toast{visibility:hidden}
+/* 모듈 박스 */
+.uiLabBox{position:absolute;border:1px dashed rgba(127,216,255,.5);border-radius:4px;
+  pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.32)}
+.uiLabBox.custom{border-color:rgba(255,211,110,.72)}
+.uiLabBox.sel{border:2px solid #7fd8ff;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 18px rgba(127,216,255,.32)}
+.uiLabBox.sel.custom{border-color:#ffd36e;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 18px rgba(255,211,110,.32)}
+.uiLabTag{position:absolute;left:-1px;top:-21px;padding:3px 7px;border-radius:5px;
+  background:rgba(9,13,22,.92);color:#bfe8ff;font:800 10px/1 inherit;white-space:nowrap;
+  letter-spacing:.02em;border:1px solid rgba(127,216,255,.3)}
+.uiLabBox.custom .uiLabTag{color:#ffe3a0;border-color:rgba(255,211,110,.4)}
+.uiLabBox.tagBelow .uiLabTag{top:auto;bottom:-21px}
+.uiLabH{position:absolute;width:10px;height:10px;background:#7fd8ff;border:1px solid #06222f;
+  border-radius:2px;pointer-events:auto;display:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.uiLabBox.sel .uiLabH{display:block}
+.uiLabBox.sel.custom .uiLabH{background:#ffd36e}
+.uiLabH[data-dir=nw]{left:-6px;top:-6px;cursor:nwse-resize}
+.uiLabH[data-dir=n]{left:calc(50% - 5px);top:-6px;cursor:ns-resize}
+.uiLabH[data-dir=ne]{right:-6px;top:-6px;cursor:nesw-resize}
+.uiLabH[data-dir=e]{right:-6px;top:calc(50% - 5px);cursor:ew-resize}
+.uiLabH[data-dir=se]{right:-6px;bottom:-6px;cursor:nwse-resize}
+.uiLabH[data-dir=s]{left:calc(50% - 5px);bottom:-6px;cursor:ns-resize}
+.uiLabH[data-dir=sw]{left:-6px;bottom:-6px;cursor:nesw-resize}
+.uiLabH[data-dir=w]{left:-6px;top:calc(50% - 5px);cursor:ew-resize}
+/* 스냅 가이드 라인 */
+.uiLabGuide{position:absolute;background:rgba(255,211,110,.85);pointer-events:none;display:none}
+.uiLabGuide.v{width:1px;top:0;bottom:0}.uiLabGuide.h{height:1px;left:0;right:0}
+/* 툴바 */
+#uiLabBar{position:absolute;left:50%;top:12px;transform:translateX(-50%);display:flex;
+  flex-direction:column;gap:5px;align-items:center;pointer-events:auto;max-width:calc(100vw - 20px)}
+#uiLabBar.bottom{top:auto;bottom:12px}
+.uiLabRow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;
+  padding:8px 11px;border:1px solid rgba(127,216,255,.34);border-radius:12px;
+  background:rgba(8,11,20,.93);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.uiLabRow .uiLabTitle{color:#7fd8ff;font:900 12px/1 inherit;letter-spacing:.07em;margin-right:2px}
+#uiLabSceneName{padding:5px 10px;border:1px solid rgba(255,211,110,.4);border-radius:999px;
+  background:rgba(58,44,18,.5);color:#ffe9b6;font:800 11px/1 inherit;white-space:nowrap}
+.uiLabBtn{padding:6px 10px;border:1px solid #35506b;border-radius:8px;background:#111a28;
+  color:#cfe6f7;font:800 11px/1 inherit;cursor:pointer;white-space:nowrap}
+.uiLabBtn:hover{border-color:#7fd8ff;color:#eaf7ff}
+.uiLabBtn.danger{border-color:#6b3545;background:#2a121c;color:#ffb9c8}
+.uiLabBtn.danger:hover{border-color:#ff8da8;color:#ffd3dd}
+#uiLabSelName{min-width:150px;color:#ffd36e;font:800 11px/1.3 inherit;text-align:center}
+#uiLabSaved{color:#7febd0;font:800 10px/1 inherit;opacity:0;transition:opacity .25s;min-width:56px}
+.uiLabHint{padding:0 6px;color:#93a9bf;font:700 10px/1.5 inherit;text-align:center;
+  text-shadow:0 1px 2px rgba(0,0,0,.85)}
+.uiLabSep{width:1px;height:18px;background:rgba(127,216,255,.22)}
+</style>
+<script id="uiLayoutLabScript">
+/* ══ v7.7.1 — 인게임 UI 레이아웃 편집 모드 (UILAB) ══
+   F8 = 지금 떠있는 화면을 감지해 편집. 로비·직업 선택·모달·HUD 전부 등록.
+   드래그 이동 · Shift 드래그 = 직선(축 고정) · Alt = 스냅 해제 · 핸들 리사이즈
+   더블클릭 = 그룹 안으로 진입(자식 요소 개별 편집, 중첩 가능) · Esc = 한 단계 위로
+   휠 / +·- = 선택 요소 스케일(텍스트·아이콘 포함) · Del 초기화 · JSON 내보내기.
+
+   좌표계 2종:
+   · HUD 씬(non-flow) — 컨테이너가 inset:0 고정이라 % 를 그대로 스타일에 쓴다 (부팅시 블라인드 적용).
+   · 메뉴/모달 씬(flow) — flex/grid 흐름 배치라 컨테이닝 블록이 내용에 따라 움직인다.
+     좌표는 "씬 루트(전체 화면) 기준 %" 로 저장하고, 적용 시점에 실제 컨테이닝 블록
+     위치를 빼서 px 로 보정한다. 씬이 보일 때 워처가 재적용한다. 흐름 모듈은 처음
+     만지는 순간 absolute 로 전환되며, 형제 재배치는 실제 런타임과 동일한 WYSIWYG 결과다.
+
+   저장 키: 최상위 모듈은 'grid', 드릴다운 자식은 'grid>2', 'grid>2>1' (1-기반 자식 인덱스).
+   스케일은 오버라이드의 s 필드 (transform:scale, origin 좌상단). */
+(function(){
+'use strict';
+if(window.UILAB)return;
+const LSKEY='tc.uiLayout.v1';
+/* tcMod 컨테이너 쿼리 --fit 재계산용 기준 크기 (본편 fitAll과 동일) */
+const FIT={'tc-objective':[520,92],'tc-resources':[250,64],'tc-status':[330,100],'tc-skills':[340,72],
+ 'tc-minimap':[190,190],'tc-bag':[250,120],'tc-interaction':[190,58],'tc-briefing':[420,260],'tc-settlement':[520,220]};
+const vis=el=>{if(!el)return false;const r=el.getBoundingClientRect();return r.width>2&&r.height>2;};
+/* ── 씬 레지스트리 — 위에서부터 우선 감지 (모달 > 스타맵 > 메뉴 패널 > HUD) ── */
+const SCENES=[
+ {id:'infLevelModal',label:'특성 선택 (레벨업)',root:'#infLevelModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'특성 선택 패널'}]},
+ {id:'infRestModal',label:'심층 정복 (전리품)',root:'#infRestModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'전리품 패널'}]},
+ {id:'infResultModal',label:'무한 모드 종료',root:'#infResultModal',flow:true,
+  modules:[{id:'panel',sel:'.infPanel',name:'결과 패널'}]},
+ {id:'infSettlementModal',label:'귀환 정산',root:'#infSettlementModal',flow:true,
+  modules:[{id:'panel',sel:'#infSettlementPanel',name:'정산 패널'}]},
+ {id:'infModeChoiceModal',label:'무한모드 선택',root:'#infModeChoiceModal',flow:true,
+  modules:[{id:'head',sel:'.infModeChoiceHead',name:'헤더'},{id:'grid',sel:'.infModeChoiceGrid',name:'모드 카드 그리드'}]},
+ {id:'tcTestHubModal',label:'테스트 모드 허브',root:'#tcTestHubModal',flow:true,
+  modules:[{id:'head',sel:'.infModeChoiceHead',name:'헤더'},{id:'grid',sel:'.tcTestHubGrid',name:'테스트 카드 그리드'}]},
+ {id:'infRoleModal',label:'무한 모드 직업 선택',root:'#infRoleModal',flow:true,
+  modules:[{id:'head',sel:'.infRoleHead',name:'헤더 · 타이틀'},
+   {id:'grid',sel:'#infRoleGrid',name:'직업 카드 그리드'},
+   {id:'note',sel:'.infRoleNote',name:'하단 설명'}]},
+ {id:'tcStarmap',label:'행성 원정 지도',root:'#tcStarmap',flow:true,pickChildren:true,modules:[]},
+ {id:'crewSettings',label:'게임 설정',root:'#crewSettings',flow:true,
+  modules:[{id:'frame',sel:'.tcSettingsFrame',name:'설정 프레임'}]},
+ {id:'crewMission',label:'미션 선택',root:'#crewMission',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'서브 카피'},
+   {id:'grid',sel:'.modeGrid',name:'미션 버튼 그리드'},{id:'back',sel:'#missionBackMenu',name:'뒤로가기'}]},
+ {id:'crewBiome',label:'바이옴 선택',root:'#crewBiome',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'서브 카피'},
+   {id:'grid',sel:'.modeGrid',name:'바이옴 버튼 그리드'},{id:'back',sel:'#biomeBackMission',name:'뒤로가기'}]},
+ {id:'crewRole',label:'직업 선택',root:'#crewRole',flow:true,
+  modules:[{id:'head',sel:'.tcRoleHeading',name:'타이틀 · 서브'},
+   {id:'grid',sel:'.tcRoleSelectGrid',name:'직업 카드 그리드'},
+   {id:'feedback',sel:'#crewRoleFeedback',name:'선택 피드백'},
+   {id:'back',sel:'#roleBackMission',name:'뒤로가기'}]},
+ {id:'crewResult',label:'미션 결과',root:'#crewResult',flow:true,
+  modules:[{id:'title',sel:'h1',name:'타이틀'},{id:'sub',sel:'.crewSub',name:'결과 카피'},
+   {id:'act',sel:'.crewAct',name:'행동 버튼'}]},
+ {id:'crewMenu',label:'메인 로비',root:'#crewMenu',flow:true,
+  modules:[{id:'brand',sel:'.menuBrand',name:'브랜드'},{id:'build',sel:'.menuBuild',name:'빌드 표기'},
+   {id:'kicker',sel:'.menuKicker',name:'킥커 카피'},{id:'logo',sel:'.menuCopy h1',name:'로고 타이틀'},
+   {id:'grid',sel:'.menuCopy .modeGrid',name:'모드 버튼 그리드'},{id:'tools',sel:'.menuTools',name:'하단 도구 버튼'},
+   {id:'visual',sel:'.menuVisual',name:'키아트 비주얼 (전면 레이어 · Tab으로 선택)',hitSkip:true},
+   {id:'foot',sel:'.menuFoot',name:'푸터'}]},
+ {id:'inf',label:'무한 모드 HUD',root:'#infHud',bodyClass:'uiLabScene-inf',
+  detect:()=>typeof INF!=='undefined'&&INF.active&&typeof SCENE!=='undefined'&&SCENE==='depths',
+  modules:[
+   {id:'ihProg',sel:'.ihProg',name:'진행 · 심층/위협/장악도'},
+   {id:'ihChips',sel:'.ihChips',name:'재화 칩 (Lv·코어)'},
+   {id:'ihDepthRail',sel:'.ihDepthRail',name:'깊이 게이지',fixSize:true},
+   {id:'ihTop',sel:'.ihTop',name:'보스 배너 레인'},
+   {id:'ihEscape',sel:'.ihEscape',name:'탈출 프롬프트'},
+   {id:'ihLeft',sel:'.ihLeft',name:'바이탈 · 탄창 패널'},
+   {id:'ihXpEdge',sel:'.ihXpEdge',name:'XP 바 (하단 엣지)',fixSize:true},
+   {id:'ihXpText',sel:'.ihXpText',name:'XP 라벨'},
+   {id:'ihKeys',sel:'.ihKeys',name:'키 가이드 (Tab)'}]},
+ {id:'tunnel',label:'터널 미션 HUD',root:'#tcHudPolish',bodyClass:'uiLabScene-tunnel',
+  detect:()=>typeof CREW!=='undefined'&&(CREW.phase==='play'||CREW.phase==='result')&&!(typeof INF!=='undefined'&&INF.active),
+  modules:[
+   {id:'tc-objective',name:'목표'},{id:'tc-resources',name:'자원'},{id:'tc-status',name:'상태 · HP'},
+   {id:'tc-skills',name:'스킬'},{id:'tc-minimap',name:'미니맵'},{id:'tc-bag',name:'가방 / 유물'},
+   {id:'tc-interaction',name:'상호작용 힌트'},{id:'tc-briefing',name:'미션 브리핑'},{id:'tc-settlement',name:'정산 카드'}
+  ].map(m=>Object.assign({sel:'#'+m.id,fixSize:true},m))}
+];
+const SCENE_BY_ID={};SCENES.forEach(s=>SCENE_BY_ID[s.id]=s);
+function detectScene(){
+ for(const s of SCENES){
+  const el=document.querySelector(s.root);
+  if(s.detect){if(s.detect())return s;continue;}
+  if(vis(el))return s;
+ }
+ return null;
+}
+/* 런타임 생성 화면(스타맵 등) — 열 때마다 루트의 직계 자식으로 모듈 목록 구성 */
+function sceneModules(s){
+ if(!s.pickChildren)return s.modules;
+ const root=document.querySelector(s.root);if(!root)return [];
+ const out=[];let i=0;
+ for(const ch of Array.from(root.children)){
+  if(!vis(ch))continue;
+  const id=ch.id?ch.id:(ch.className?String(ch.className).split(/\s+/)[0]:'child')+'-'+i;
+  out.push({id,el:ch,name:ch.id||String(ch.className).split(/\s+/)[0]||('요소 '+i)});
+  i++;
+ }
+ return out;
+}
+function load(){
+ try{
+  const j=JSON.parse(localStorage.getItem(LSKEY)||'null');
+  if(j&&j.scenes)return {v:2,scenes:j.scenes};
+  if(j&&j.huds)return {v:2,scenes:{inf:j.huds.inf||{},tunnel:j.huds.tunnel||{}}};   /* v1 마이그레이션 */
+ }catch(_){}
+ return {v:2,scenes:{}};
+}
+const UILAB={on:false,scene:null,sel:null,data:load(),drag:null,raf:0,saveT:0,savedT:0,mods:[],stack:[]};
+window.UILAB=UILAB;
+const $id=s=>document.getElementById(s);
+const r3=v=>Math.round(v*1000)/1000;
+function bag(sceneId){return UILAB.data.scenes[sceneId]||(UILAB.data.scenes[sceneId]={});}
+function ov(sceneId,id){return (UILAB.data.scenes[sceneId]||{})[id];}
+function rootEl(s){return document.querySelector(s.root);}
+function modEl(s,m){
+ if(m.el)return m.el.isConnected?m.el:null;
+ const c=rootEl(s);return c?c.querySelector(m.sel):null;
+}
+/* 저장 키 → 요소 해석: 'grid' / 'grid>2' / 'grid>2>1' (1-기반 자식 인덱스) */
+function resolveKey(s,key){
+ const parts=String(key).split('>');
+ const base=sceneModules(s).find(m=>m.id===parts[0]);
+ if(!base)return null;
+ let el=modEl(s,base);
+ for(let k=1;k<parts.length&&el;k++)el=el.children[(+parts[k])-1]||null;
+ return el;
+}
+function childLabel(el,idx){
+ const tag=el.tagName.toLowerCase();
+ const cls=el.classList.length?'.'+el.classList[0]:'';
+ const txt=(el.textContent||'').trim().replace(/\s+/g,' ').slice(0,14);
+ return (el.id?'#'+el.id:tag+cls)+(txt?' “'+txt+'”':'')+' ['+(idx+1)+']';
+}
+/* ── 위치 변환 ── */
+function ensurePositioned(el){
+ const cp=getComputedStyle(el).position;
+ if(cp==='static'||cp==='relative')el.style.position='absolute';
+}
+function cbOf(el){return el.offsetParent||document.body;}
+function clearInline(el){['position','left','top','right','bottom','margin','transform','transform-origin','width','height','animation','transition'].forEach(p=>el.style.removeProperty(p));}
+function refit(s,m,el){
+ if(s.id!=='tunnel'||!FIT[m.id])return;
+ requestAnimationFrame(()=>{const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
+  const b=FIT[m.id],f=Math.max(.55,Math.min(1.45,Math.min(r.width/b[0],r.height/b[1])));
+  el.style.setProperty('--fit',f.toFixed(3));});
+}
+function applyTransform(el,o){
+ el.style.animation='none';   /* 진입 연출(fill:both)이 transform 을 영구 점유하므로 차단 */
+ el.style.transition='none';  /* 전환 애니메이션 배제 — 편집 결과 즉시 반영 */
+ if(o.s&&Math.abs(o.s-1)>.005){el.style.transform='scale('+o.s+')';el.style.transformOrigin='0 0';}
+ else{el.style.transform='none';el.style.removeProperty('transform-origin');}
+}
+/* HUD(non-flow) — 컨테이너가 inset:0 이라 % 를 그대로 쓴다. 숨김 상태에서도 적용 가능 */
+function applyOne(s,m){
+ const el=modEl(s,m);if(!el)return;
+ const o=ov(s.id,m.id);
+ if(!o){clearInline(el);refit(s,m,el);return;}
+ ensurePositioned(el);
+ el.style.left=o.l+'%';el.style.top=o.t+'%';
+ el.style.right='auto';el.style.bottom='auto';el.style.margin='0';
+ applyTransform(el,o);
+ if(o.w!=null)el.style.width=o.w+'%';else el.style.removeProperty('width');
+ if(o.h!=null)el.style.height=o.h+'%';else el.style.removeProperty('height');
+ refit(s,m,el);
+}
+/* flow — 루트 기준 % 저장값을 실제 컨테이닝 블록 좌표로 보정해 px 적용 */
+function applyFlowModule(s,m,rootR){
+ const el=modEl(s,m);if(!el)return;
+ const o=ov(s.id,m.id);if(!o)return;
+ ensurePositioned(el);
+ const cbR=cbOf(el).getBoundingClientRect();
+ el.style.left=(rootR.left+o.l/100*rootR.width-cbR.left).toFixed(1)+'px';
+ el.style.top=(rootR.top+o.t/100*rootR.height-cbR.top).toFixed(1)+'px';
+ el.style.right='auto';el.style.bottom='auto';el.style.margin='0';
+ applyTransform(el,o);
+ if(o.w!=null)el.style.width=(o.w/100*rootR.width).toFixed(1)+'px';
+ if(o.h!=null)el.style.height=(o.h/100*rootR.height).toFixed(1)+'px';
+}
+/* 씬의 모든 오버라이드 키(드릴다운 자식 포함)를 가상 모듈로 나열 */
+function overrideModules(s){
+ const b=UILAB.data.scenes[s.id];if(!b)return [];
+ const tops=sceneModules(s),out=[];
+ for(const key of Object.keys(b)){
+  const top=tops.find(m=>m.id===key);
+  if(top){out.push(top);continue;}
+  const el=resolveKey(s,key);
+  if(el)out.push({id:key,el,name:key,fixSize:true});
+ }
+ return out;
+}
+function applyScene(s){
+ const mods=overrideModules(s);
+ if(!s.flow){for(const m of mods)applyOne(s,m);return;}
+ const rt=rootEl(s);if(!rt)return;
+ const rootR=rt.getBoundingClientRect();if(rootR.width<2)return;
+ /* 1패스: 오버라이드된 모듈 전부 absolute 전환 (흐름 붕괴를 먼저 확정) */
+ for(const m of mods){const el=modEl(s,m);if(el)ensurePositioned(el);}
+ void rt.offsetHeight;   /* 리플로우 확정 */
+ /* 2패스: 안정된 컨테이닝 블록을 기준으로 좌표 보정 적용 */
+ for(const m of mods)applyFlowModule(s,m,rootR);
+}
+/* 부팅: HUD 는 블라인드 % 적용, flow 씬은 워처가 보일 때 적용 */
+function applyAll(){for(const s of SCENES)if(!s.flow&&UILAB.data.scenes[s.id]&&Object.keys(UILAB.data.scenes[s.id]).length)applyScene(s);}
+UILAB.applyAll=applyAll;
+/* ── flow 씬 워처 — 루트가 보이거나 크기가 바뀌면 재적용 ── */
+const SIG={};
+setInterval(()=>{
+ for(const s of SCENES){
+  if(!s.flow)continue;
+  const b=UILAB.data.scenes[s.id];
+  if(!b||!Object.keys(b).length){delete SIG[s.id];continue;}
+  const rt=rootEl(s);if(!rt){delete SIG[s.id];continue;}
+  const r=rt.getBoundingClientRect();
+  if(r.width<2){delete SIG[s.id];continue;}
+  const sig=(r.left|0)+','+(r.top|0)+','+(r.width|0)+','+(r.height|0);
+  if(SIG[s.id]!==sig){SIG[s.id]=sig;applyScene(s);}
+ }
+},400);
+addEventListener('resize',()=>{for(const k in SIG)delete SIG[k];});
+function save(){
+ clearTimeout(UILAB.saveT);
+ UILAB.saveT=setTimeout(()=>{try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));flashSaved();}catch(_){}},250);
+}
+function flashSaved(){
+ const e=$id('uiLabSaved');if(!e)return;e.style.opacity='1';
+ clearTimeout(UILAB.savedT);UILAB.savedT=setTimeout(()=>{e.style.opacity='0';},1200);
+}
+function ensureOv(s,m,withSize){
+ const el=modEl(s,m);if(!el)return null;
+ const r=el.getBoundingClientRect();          /* 전환 전 위치를 먼저 확보 */
+ let base;
+ if(s.flow){const rt=rootEl(s);if(!rt)return null;base=rt.getBoundingClientRect();}
+ else{ensurePositioned(el);base=cbOf(el).getBoundingClientRect();}
+ if(base.width<2||base.height<2)return null;
+ let o=ov(s.id,m.id);
+ const needSize=s.flow||m.fixSize;
+ if(!o){o=bag(s.id)[m.id]={l:r3((r.left-base.left)/base.width*100),t:r3((r.top-base.top)/base.height*100)};
+  if(needSize){o.w=r3(r.width/base.width*100);o.h=r3(r.height/base.height*100);}}
+ if((withSize||needSize)&&(o.w==null||o.h==null)){o.w=r3(r.width/base.width*100);o.h=r3(r.height/base.height*100);}
+ return o;
+}
+function applyModule(s,m){
+ if(!s.flow){applyOne(s,m);return;}
+ const rt=rootEl(s);if(!rt)return;
+ const rootR=rt.getBoundingClientRect();if(rootR.width<2)return;
+ applyFlowModule(s,m,rootR);
+}
+
+/* ── 편집기 DOM ── */
+let root=null,stage=null,BOX={};
+function buildUi(){
+ if(root)return;
+ root=document.createElement('div');root.id='uiLabRoot';
+ root.innerHTML=
+  '<div id="uiLabStage"><div class="uiLabGuide v" id="uiLabGvX"></div><div class="uiLabGuide h" id="uiLabGvY"></div></div>'+
+  '<div id="uiLabBar">'+
+   '<div class="uiLabRow">'+
+    '<span class="uiLabTitle">UI 레이아웃</span>'+
+    '<span id="uiLabSceneName">—</span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabUp" style="display:none">↰ 상위로</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<span id="uiLabSelName">모듈을 클릭해 선택</span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabResetSel">선택 초기화</button>'+
+    '<button type="button" class="uiLabBtn danger" id="uiLabResetScene">화면 초기화</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabCopy">JSON 복사</button>'+
+    '<button type="button" class="uiLabBtn" id="uiLabDl">JSON 저장</button>'+
+    '<span class="uiLabSep"></span>'+
+    '<button type="button" class="uiLabBtn" id="uiLabFlip">패널 ↕</button>'+
+    '<button type="button" class="uiLabBtn" id="uiLabClose">닫기 · ESC</button>'+
+    '<span id="uiLabSaved">자동 저장됨</span>'+
+   '</div>'+
+   '<div class="uiLabHint">지금 떠있는 화면을 편집중 — 드래그 이동 · Shift 드래그 = 직선(축 고정) · Alt = 스냅 해제 · 핸들 리사이즈 · <b>더블클릭 = 그룹 안으로</b> · Esc = 한 단계 위 · <b>휠 / +− = 크기(스케일)</b> · 방향키 0.1% (Shift=1%) · Tab 다음 모듈 · Del 초기화 · 즉시 적용 + 자동 저장</div>'+
+  '</div>';
+ document.body.appendChild(root);
+ stage=$id('uiLabStage');
+ $id('uiLabUp').addEventListener('click',popLevel);
+ $id('uiLabResetSel').addEventListener('click',resetSel);
+ $id('uiLabResetScene').addEventListener('click',resetScene);
+ $id('uiLabCopy').addEventListener('click',copyJson);
+ $id('uiLabDl').addEventListener('click',downloadJson);
+ $id('uiLabFlip').addEventListener('click',()=>$id('uiLabBar').classList.toggle('bottom'));
+ $id('uiLabClose').addEventListener('click',close);
+ root.addEventListener('contextmenu',e=>e.preventDefault());
+ stage.addEventListener('pointerdown',onDown);
+ stage.addEventListener('pointermove',onMove);
+ stage.addEventListener('pointerup',onUp);
+ stage.addEventListener('pointercancel',onUp);
+ stage.addEventListener('wheel',onWheel,{passive:false});
+}
+/* 현재 레벨의 모듈 목록: 스택이 비면 씬 최상위, 아니면 진입한 그룹의 직계 자식 */
+function levelModules(){
+ const s=UILAB.scene;
+ if(!UILAB.stack.length)return sceneModules(s);
+ const top=UILAB.stack[UILAB.stack.length-1];
+ const out=[];
+ Array.from(top.el.children).forEach((ch,i)=>{
+  const r=ch.getBoundingClientRect();
+  if(r.width<1&&r.height<1)return;
+  out.push({id:top.key+'>'+(i+1),el:ch,name:childLabel(ch,i),fixSize:true});
+ });
+ return out;
+}
+function buildBoxes(){
+ BOX={};
+ for(const el of Array.from(stage.querySelectorAll('.uiLabBox')))el.remove();
+ for(const m of UILAB.mods){
+  const el=modEl(UILAB.scene,m);if(!el)continue;
+  const box=document.createElement('div');box.className='uiLabBox';box.dataset.id=m.id;
+  let h='<span class="uiLabTag">'+m.name+'</span>';
+  for(const d of ['nw','n','ne','e','se','s','sw','w'])h+='<i class="uiLabH" data-dir="'+d+'"></i>';
+  box.innerHTML=h;
+  stage.appendChild(box);
+  BOX[m.id]={m,el,box,rect:null};
+ }
+ syncSel();
+}
+function syncBoxes(){
+ for(const id in BOX){
+  const b=BOX[id],r=b.el.getBoundingClientRect();b.rect=r;
+  const st=b.box.style;
+  st.left=r.left+'px';st.top=r.top+'px';
+  st.width=Math.max(8,r.width)+'px';st.height=Math.max(8,r.height)+'px';
+  b.box.classList.toggle('custom',!!ov(UILAB.scene.id,id));
+  b.box.classList.toggle('tagBelow',r.top<30);
+ }
+}
+function loop(){if(!UILAB.on)return;syncBoxes();UILAB.raf=requestAnimationFrame(loop);}
+function crumb(){
+ let t=UILAB.scene?UILAB.scene.label:'—';
+ for(const g of UILAB.stack)t+=' › '+g.name;
+ return t;
+}
+function syncSel(){
+ for(const id in BOX)BOX[id].box.classList.toggle('sel',id===UILAB.sel);
+ const nameEl=$id('uiLabSelName');
+ if(!nameEl)return;
+ const b=UILAB.sel&&BOX[UILAB.sel];
+ let label=b?b.m.name:'모듈을 클릭해 선택';
+ if(b){const o=ov(UILAB.scene.id,UILAB.sel);if(o&&o.s)label+=' · ×'+o.s.toFixed(2);}
+ nameEl.textContent=label;
+ $id('uiLabSceneName').textContent=crumb();
+ $id('uiLabUp').style.display=UILAB.stack.length?'':'none';
+}
+function select(id){UILAB.sel=id;syncSel();}
+function setLevelMods(){UILAB.mods=levelModules();buildBoxes();syncBoxes();}
+function enterGroup(m){
+ const el=modEl(UILAB.scene,m);
+ if(!el||!el.children.length)return;
+ UILAB.stack.push({key:m.id,name:m.name,el});
+ UILAB.sel=null;
+ setLevelMods();
+ typeof toast==='function'&&toast('그룹 진입 — '+m.name+' · Esc = 상위로');
+}
+function popLevel(){
+ if(!UILAB.stack.length)return;
+ UILAB.stack.pop();
+ UILAB.sel=null;
+ setLevelMods();
+}
+
+/* ── 히트 테스트 / 드래그 ── */
+function hitTest(x,y){
+ const selB=UILAB.sel&&BOX[UILAB.sel];
+ if(selB&&selB.rect&&inRect(selB.rect,x,y))return selB;
+ let best=null,bestA=Infinity;
+ for(const id in BOX){const b=BOX[id];
+  if(b.m.hitSkip)continue;          /* 전면 배경 레이어는 클릭으로 잡지 않는다 (Tab 선택) */
+  if(b.rect&&inRect(b.rect,x,y)){const a=b.rect.width*b.rect.height;if(a<bestA){bestA=a;best=b;}}}
+ return best;
+}
+function inRect(r,x,y){return x>=r.left-4&&x<=r.right+4&&y>=r.top-4&&y<=r.bottom+4;}
+function guide(axis,posPx){
+ const g=$id(axis==='x'?'uiLabGvX':'uiLabGvY');if(!g)return;
+ if(posPx==null){g.style.display='none';return;}
+ g.style.display='block';
+ if(axis==='x')g.style.left=posPx+'px';else g.style.top=posPx+'px';
+}
+let lastDown={id:null,t:0};
+function onDown(e){
+ if(e.button!==0)return;
+ syncBoxes();                       /* 저FPS/백그라운드에서도 최신 위치로 히트테스트 */
+ const t=e.target;
+ if(t.classList&&t.classList.contains('uiLabH')&&UILAB.sel){
+  startDrag('resize',t.dataset.dir,e);e.preventDefault();return;}
+ const hit=hitTest(e.clientX,e.clientY);
+ const now=performance.now();
+ if(hit&&lastDown.id===hit.m.id&&now-lastDown.t<420){   /* 더블클릭 = 그룹 진입 */
+  lastDown={id:null,t:0};
+  UILAB.drag=null;
+  select(hit.m.id);
+  enterGroup(hit.m);
+  e.preventDefault();return;
+ }
+ lastDown={id:hit?hit.m.id:null,t:now};
+ select(hit?hit.m.id:null);
+ if(hit){startDrag('move',null,e);e.preventDefault();}
+}
+function startDrag(kind,dir,e){
+ const b=BOX[UILAB.sel];if(!b)return;
+ const s=UILAB.scene;
+ const o=ensureOv(s,b.m,kind==='resize');if(!o)return;
+ applyScene(s);                                    /* 전환·보정을 먼저 확정 */
+ const base=s.flow?rootEl(s).getBoundingClientRect():cbOf(b.el).getBoundingClientRect();
+ const r=b.el.getBoundingClientRect();
+ UILAB.drag={kind,dir,b,x:e.clientX,y:e.clientY,cr:base,
+  o0:{l:o.l,t:o.t,w:o.w,h:o.h},
+  wPct:r.width/base.width*100,hPct:r.height/base.height*100};
+ try{stage.setPointerCapture(e.pointerId);}catch(_){}
+}
+function snapAxis(v,targets,th){
+ for(const t of targets)if(Math.abs(v-t)<th)return t;
+ return v;
+}
+function onMove(e){
+ const d=UILAB.drag;
+ if(!d){const hit=hitTest(e.clientX,e.clientY);
+  stage.style.cursor=(e.target.classList&&e.target.classList.contains('uiLabH'))?'':'move';
+  if(!hit)stage.style.cursor='default';
+  return;}
+ const m=d.b.m,o=ov(UILAB.scene.id,m.id);if(!o)return;
+ const dx=(e.clientX-d.x)/d.cr.width*100,dy=(e.clientY-d.y)/d.cr.height*100;
+ guide('x',null);guide('y',null);
+ if(d.kind==='move'){
+  let l=d.o0.l+dx,t=d.o0.t+dy;
+  let lockX=false,lockY=false;
+  if(e.shiftKey){                    /* Shift 드래그 = 축 고정 직선 이동 */
+   if(Math.abs(dx)>=Math.abs(dy)){t=d.o0.t;lockY=true;}
+   else{l=d.o0.l;lockX=true;}
+  }
+  if(!e.altKey){                     /* Alt = 스냅 해제 · 고정된 축은 스냅하지 않는다 */
+   const thx=8/d.cr.width*100,thy=8/d.cr.height*100;
+   const xs=[1.4,50-d.wPct/2,98.6-d.wPct,0,100-d.wPct];
+   const ys=[2,50-d.hPct/2,98-d.hPct,0,100-d.hPct];
+   const l2=lockX?l:snapAxis(l,xs,thx),t2=lockY?t:snapAxis(t,ys,thy);
+   if(l2!==l)guide('x',d.cr.left+(l2+d.wPct/2)*d.cr.width/100);
+   if(t2!==t)guide('y',d.cr.top+(t2+d.hPct/2)*d.cr.height/100);
+   l=l2;t=t2;
+  }
+  o.l=r3(Math.max(-d.wPct+.8,Math.min(99.2,l)));
+  o.t=r3(Math.max(-d.hPct+.8,Math.min(99.2,t)));
+ }else{
+  const minW=24/d.cr.width*100,minH=16/d.cr.height*100;
+  let l=d.o0.l,t=d.o0.t,w=d.o0.w,h=d.o0.h;
+  const dir=d.dir;
+  if(dir.includes('e'))w=d.o0.w+dx;
+  if(dir.includes('w')){l=d.o0.l+dx;w=d.o0.w-dx;}
+  if(dir.includes('s'))h=d.o0.h+dy;
+  if(dir.includes('n')){t=d.o0.t+dy;h=d.o0.h-dy;}
+  if(w<minW){if(dir.includes('w'))l=d.o0.l+d.o0.w-minW;w=minW;}
+  if(h<minH){if(dir.includes('n'))t=d.o0.t+d.o0.h-minH;h=minH;}
+  o.l=r3(l);o.t=r3(t);o.w=r3(w);o.h=r3(h);
+ }
+ applyModule(UILAB.scene,m);
+}
+function onUp(e){
+ if(!UILAB.drag)return;
+ guide('x',null);guide('y',null);
+ const m=UILAB.drag.b.m;
+ UILAB.drag=null;
+ try{stage.releasePointerCapture(e.pointerId);}catch(_){}
+ if(BOX[m.id])refit(UILAB.scene,m,BOX[m.id].el);
+ save();
+}
+/* 휠 = 선택 모듈 스케일 (텍스트·아이콘 포함, 좌상단 기준) */
+function scaleSel(mult){
+ if(!UILAB.sel)return;
+ const b=BOX[UILAB.sel];if(!b)return;
+ const s=UILAB.scene,o=ensureOv(s,b.m,false);if(!o)return;
+ let next=r3(Math.max(.3,Math.min(4,(o.s||1)*mult)));
+ if(Math.abs(next-1)<.01)delete o.s;else o.s=next;
+ applyModule(s,b.m);save();syncSel();
+}
+function onWheel(e){
+ e.preventDefault();
+ if(!UILAB.sel)return;
+ scaleSel(e.deltaY<0?1.05:1/1.05);
+}
+
+/* ── 초기화 / 내보내기 ── */
+function resetSel(){
+ if(!UILAB.sel||!UILAB.scene)return;
+ const b=BOX[UILAB.sel];
+ delete bag(UILAB.scene.id)[UILAB.sel];
+ delete SIG[UILAB.scene.id];
+ clearInline(b.el);refit(UILAB.scene,b.m,b.el);save();syncSel();
+}
+function resetScene(){
+ if(!UILAB.scene)return;
+ const s=UILAB.scene;
+ for(const m of overrideModules(s)){const el=modEl(s,m);if(el){clearInline(el);refit(s,m,el);}}
+ UILAB.data.scenes[s.id]={};
+ delete SIG[s.id];
+ UILAB.stack=[];
+ select(null);setLevelMods();save();
+ typeof toast==='function'&&toast(s.label+' 레이아웃 초기화');
+}
+function resetEverything(){
+ for(const s of SCENES)for(const m of overrideModules(s)){const el=modEl(s,m);if(el){clearInline(el);refit(s,m,el);}}
+ UILAB.data={v:2,scenes:{}};
+ for(const k in SIG)delete SIG[k];
+ try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));}catch(_){}
+ typeof toast==='function'&&toast('UI 레이아웃 전체 초기화 (모든 화면)');
+}
+UILAB.resetEverything=resetEverything;
+function exportJson(){
+ return JSON.stringify({schema:'tunnel-crew-ui-layout@2',app:'tunnel-crew-infinite-mode-v7.7.1',
+  exportedAt:new Date().toISOString(),scenes:UILAB.data.scenes},null,2);
+}
+UILAB.exportJson=exportJson;
+function copyJson(){
+ const txt=exportJson();
+ const done=()=>typeof toast==='function'&&toast('레이아웃 JSON 복사됨 — 확정본은 파일에 베이크 요청');
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>fallbackCopy(txt,done));
+ else fallbackCopy(txt,done);
+}
+function fallbackCopy(txt,done){
+ const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+ document.body.appendChild(ta);ta.select();
+ try{document.execCommand('copy');done();}catch(_){}
+ ta.remove();
+}
+function downloadJson(){
+ const blob=new Blob([exportJson()],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+ a.download='tunnel-crew-ui-layout.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+
+/* ── 열기 / 닫기 ── */
+function open(){
+ if(UILAB.on)return;
+ const s=detectScene();
+ if(!s){typeof toast==='function'&&toast('이 화면에는 편집할 UI가 없습니다');return;}
+ buildUi();
+ UILAB.on=true;UILAB.scene=s;UILAB.sel=null;UILAB.stack=[];
+ document.body.classList.add('uiLabEdit');
+ if(s.bodyClass)document.body.classList.add(s.bodyClass);
+ setLevelMods();
+ loop();
+ typeof toast==='function'&&toast('UI 레이아웃 편집 — '+s.label+' · 더블클릭=그룹 진입 · F8/ESC 종료');
+}
+function close(){
+ if(!UILAB.on)return;
+ UILAB.on=false;UILAB.drag=null;UILAB.sel=null;UILAB.stack=[];
+ cancelAnimationFrame(UILAB.raf);
+ document.body.classList.remove('uiLabEdit','uiLabScene-inf','uiLabScene-tunnel');
+ UILAB.scene=null;UILAB.mods=[];
+ clearTimeout(UILAB.saveT);
+ try{localStorage.setItem(LSKEY,JSON.stringify(UILAB.data));}catch(_){}
+}
+UILAB.open=open;UILAB.close=close;
+
+/* ── 월드 일시정지 — 편집중엔 패널이 열린 것으로 취급 ── */
+if(typeof window.panelOpen==='function'){
+ const _po=window.panelOpen;
+ window.panelOpen=function(){return UILAB.on||_po.apply(this,arguments);};
+}
+
+/* ── 키보드 — 캡처 단계에서 게임 입력 차단 + 편집 키 처리 ── */
+window.addEventListener('keydown',e=>{
+ if(!UILAB.on){
+  if(e.key==='F8'&&!/^(INPUT|TEXTAREA|SELECT)$/.test((e.target&&e.target.tagName)||'')){
+   e.preventDefault();open();}
+  return;
+ }
+ e.stopPropagation();
+ const k=e.key;
+ if(k==='Escape'){e.preventDefault();if(UILAB.stack.length)popLevel();else close();return;}
+ if(k==='F8'){e.preventDefault();close();return;}
+ if(k==='Tab'){
+  e.preventDefault();
+  const list=UILAB.mods.filter(m=>BOX[m.id]);
+  if(!list.length)return;
+  const i=list.findIndex(m=>m.id===UILAB.sel);
+  select(list[(i+(e.shiftKey?-1:1)+list.length)%list.length].id);
+  return;
+ }
+ if((k==='Delete'||k==='Backspace')&&UILAB.sel){e.preventDefault();resetSel();return;}
+ if((k==='+'||k==='=')&&UILAB.sel){e.preventDefault();scaleSel(1.05);return;}
+ if((k==='-'||k==='_')&&UILAB.sel){e.preventDefault();scaleSel(1/1.05);return;}
+ const step=e.shiftKey?1:.1;
+ let dx=0,dy=0;
+ if(k==='ArrowLeft')dx=-step;else if(k==='ArrowRight')dx=step;
+ else if(k==='ArrowUp')dy=-step;else if(k==='ArrowDown')dy=step;
+ if((dx||dy)&&UILAB.sel){
+  e.preventDefault();
+  const b=BOX[UILAB.sel],o=ensureOv(UILAB.scene,b.m,false);
+  if(o){o.l=r3(o.l+dx);o.t=r3(o.t+dy);applyModule(UILAB.scene,b.m);save();}
+ }
+},true);
+window.addEventListener('keyup',e=>{if(UILAB.on)e.stopPropagation();},true);
+
+/* ── 진입 버튼 배선 ── */
+function wire(){
+ const b1=$id('bUiLayout');
+ if(b1)b1.addEventListener('click',()=>{try{typeof show==='function'&&show(null);}catch(_){}open();});
+ const b2=$id('bUiLayoutReset');
+ if(b2)b2.addEventListener('click',resetEverything);
+ const b3=$id('tcSetUiLayout');
+ if(b3)b3.addEventListener('click',()=>{try{typeof crewCloseSettings==='function'&&crewCloseSettings();}catch(_){}setTimeout(open,30);});
+}
+wire();
+
+/* ── 부팅시 저장된 레이아웃 재적용 (HUD 즉시 · flow 씬은 워처가 처리) ── */
+applyAll();
+console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에서든 F8 (떠있는 화면을 감지해 편집)');
+})();
+</script>
+
 </body></html>

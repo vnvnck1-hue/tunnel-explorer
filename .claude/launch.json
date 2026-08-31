@@ -2,6 +2,18 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "coop-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["claude-work/coop/server.mjs", "5188"],
+      "port": 5188
+    },
+    {
+      "name": "coop-server-alt",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["claude-work/coop/server.mjs", "5388"],
+      "port": 5388
+    },
+    {
       "name": "tunnel-crew-static",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["--yes", "http-server", "-c-1", "."],
