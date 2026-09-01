@@ -1,0 +1,107 @@
+{
+  "name": "reely-driller-directional",
+  "source": "C:/Users/Loadcomplete/Downloads/reely-studio-260901-7699.gif",
+  "formatVersion": 1,
+  "cellSize": [224, 224],
+  "pivot": [112, 166],
+  "pivotSpace": "untrimmed-cell-pixels",
+  "trimmed": false,
+  "frameCount": 37,
+  "frameDurationMs": 100,
+  "loop": true,
+  "sheetLayout": {
+    "columns": 8,
+    "rows": 5,
+    "frameIndexToCell": "column = index % 8; row = floor(index / 8)"
+  },
+  "directions": {
+    "sw": {
+      "label": "south-west / lower-left",
+      "sourceCrop": [12, 251, 236, 475],
+      "frames": "frames/sw/frame_{index:03d}.png",
+      "sheet": "sheets/reely-driller-sw.png",
+      "previewGif": "../reely-driller-sw-transparent.gif",
+      "flipX": false
+    },
+    "w": {
+      "label": "west / left",
+      "sourceCrop": [-40, 120, 184, 344],
+      "frames": "frames/w/frame_{index:03d}.png",
+      "sheet": "sheets/reely-driller-w.png",
+      "previewGif": "../reely-driller-w-transparent.gif",
+      "flipX": false
+    },
+    "nw": {
+      "label": "north-west / upper-left",
+      "sourceCrop": [9, -12, 233, 212],
+      "frames": "frames/nw/frame_{index:03d}.png",
+      "sheet": "sheets/reely-driller-nw.png",
+      "previewGif": "../reely-driller-nw-transparent.gif",
+      "flipX": false
+    },
+    "n": {
+      "label": "north / back",
+      "sourceCrop": [128, -32, 352, 192],
+      "ownershipBox": [0, 0, 184, 224],
+      "frames": "frames/n/frame_{index:03d}.png",
+      "sheet": "sheets/reely-driller-n.png",
+      "previewGif": "../reely-driller-n-transparent.gif",
+      "flipX": false
+    },
+    "s": {
+      "label": "south / front",
+      "sourceCrop": [128, 302, 352, 526],
+      "frames": "frames/s/frame_{index:03d}.png",
+      "sheet": "sheets/reely-driller-s.png",
+      "previewGif": "../reely-driller-s-transparent.gif",
+      "flipX": false
+    }
+  },
+  "mirroredDirections": {
+    "se": {
+      "sourceDirection": "sw",
+      "flipX": true,
+      "pivot": [112, 166]
+    },
+    "e": {
+      "sourceDirection": "w",
+      "flipX": true,
+      "pivot": [112, 166]
+    },
+    "ne": {
+      "sourceDirection": "nw",
+      "flipX": true,
+      "pivot": [112, 166]
+    }
+  },
+  "actions": {
+    "walk": {
+      "sourceFrameRangeInclusive": [0, 13],
+      "frameCount": 14,
+      "frameDurationMs": 100,
+      "loop": true,
+      "sheetLayout": {
+        "columns": 8,
+        "rows": 2,
+        "frameIndexToCell": "column = index % 8; row = floor(index / 8)"
+      },
+      "frames": "../reely-driller-actions/frames/{direction}/walk/frame_{index:03d}.png",
+      "sheet": "../reely-driller-actions/sheets/reely-driller-{direction}-walk.png",
+      "previewGif": "../reely-driller-actions/gifs/reely-driller-{direction}-walk.gif"
+    },
+    "fall": {
+      "sourceFrameRangeInclusive": [14, 24],
+      "frameCount": 11,
+      "frameDurationMs": 100,
+      "loop": false,
+      "sheetLayout": {
+        "columns": 8,
+        "rows": 2,
+        "frameIndexToCell": "column = index % 8; row = floor(index / 8)"
+      },
+      "frames": "../reely-driller-actions/frames/{direction}/fall/frame_{index:03d}.png",
+      "sheet": "../reely-driller-actions/sheets/reely-driller-{direction}-fall.png",
+      "previewGif": "../reely-driller-actions/gifs/reely-driller-{direction}-fall.gif"
+    }
+  }
+}

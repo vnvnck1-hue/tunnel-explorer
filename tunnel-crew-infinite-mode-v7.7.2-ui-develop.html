@@ -353,9 +353,9 @@ body{position:fixed;inset:0}
 #crewMenu .menuCopy{position:relative;z-index:2;width:min(390px,42vw);min-width:300px}
 #crewMenu .menuKicker{margin:0 0 9px;color:#82728f;font:750 clamp(8px,.65vw,10px)/1 var(--mono);letter-spacing:.2em;text-transform:uppercase}
 #crewRoot #crewMenu h1{width:min(340px,100%);margin:0 0 clamp(18px,2.7vh,30px);text-align:left;line-height:0}
-#crewMenu .menuLogoFx{position:relative;display:block;width:100%;max-width:560px;transform-style:preserve-3d;transform:perspective(800px) translate3d(calc(var(--menu-x,0) * -1.6px),calc(var(--menu-y,0) * -1px),0) rotateX(calc(var(--menu-y,0) * -1.2deg)) rotateY(calc(var(--menu-x,0) * 1.8deg));transform-origin:50% 56%;transition:transform .16s ease-out;filter:drop-shadow(0 18px 34px rgba(0,0,0,.55));will-change:transform;pointer-events:none}
+#crewMenu .menuLogoFx{position:relative;display:block;width:100%;max-width:560px;transform-style:preserve-3d;transform:perspective(800px) translate3d(calc(var(--menu-x,0) * -7px),calc(var(--menu-y,0) * -5px),0) rotateX(calc(var(--menu-y,0) * -2.6deg)) rotateY(calc(var(--menu-x,0) * 3.4deg));transform-origin:50% 56%;transition:transform .16s ease-out;filter:drop-shadow(0 18px 34px rgba(0,0,0,.55));will-change:transform;pointer-events:none}
 #crewMenu .menuLogo{display:block;width:100%;height:auto;transform:translateZ(0);pointer-events:none}
-#crewMenu .menuLogoSheen{position:absolute;inset:0;z-index:2;display:block;pointer-events:none;opacity:.62;background:radial-gradient(circle at var(--logo-sheen-x,50%) var(--logo-sheen-y,50%),rgba(235,249,255,.76) 0 1px,rgba(105,187,255,.36) 2px,transparent 8px),linear-gradient(var(--logo-sheen-angle,112deg),transparent 34%,rgba(94,174,255,.08) 42%,rgba(234,248,255,.48) 48%,rgba(255,197,92,.34) 52%,rgba(105,178,255,.1) 58%,transparent 67%);background-size:100% 100%,220% 220%;background-position:center,var(--logo-sheen-x,50%) var(--logo-sheen-y,50%);mix-blend-mode:screen;-webkit-mask:url("assets/menu/title-tunnel-crew-v1.png") center/contain no-repeat;mask:url("assets/menu/title-tunnel-crew-v1.png") center/contain no-repeat;transform:translateZ(18px);transition:background-position .16s ease-out,opacity .2s ease;will-change:background-position}
+#crewMenu .menuLogoSheen{position:absolute;inset:0;z-index:2;display:block;pointer-events:none;opacity:.62;background:radial-gradient(circle at var(--logo-sheen-x,50%) var(--logo-sheen-y,50%),rgba(235,249,255,.76) 0 1px,rgba(105,187,255,.36) 2px,transparent 8px),linear-gradient(var(--logo-sheen-angle,112deg),transparent 34%,rgba(94,174,255,.08) 42%,rgba(234,248,255,.48) 48%,rgba(255,197,92,.34) 52%,rgba(105,178,255,.1) 58%,transparent 67%);background-size:100% 100%,220% 220%;background-position:center,var(--logo-sheen-x,50%) var(--logo-sheen-y,50%);mix-blend-mode:screen;-webkit-mask:url("assets/menu/title-tunnel-crew-v2.png") center/contain no-repeat;mask:url("assets/menu/title-tunnel-crew-v2.png") center/contain no-repeat;transform:translateZ(18px);transition:background-position .16s ease-out,opacity .2s ease;will-change:background-position}
 #crewMenu .menuLogoFx:hover .menuLogoSheen{opacity:.72}
 #crewMenu .menuLogoFallback{display:block;color:#eee8f5;font:900 clamp(42px,5.2vw,74px)/.88 "Pretendard","Malgun Gothic",sans-serif;letter-spacing:-.08em;white-space:nowrap;text-shadow:0 14px 28px rgba(0,0,0,.42)}
 #crewMenu .menuLogoFallback[hidden]{display:none}
@@ -719,7 +719,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
         <main class="menuMain">
           <section class="menuCopy">
             <p class="menuKicker">Dig · Descend · Return</p>
-            <h1><span class="menuLogoFx"><img class="menuLogo" src="assets/menu/title-tunnel-crew-v1.png" alt="TUNNEL CREW" draggable="false" decoding="async" onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false"><span class="menuLogoSheen" aria-hidden="true"></span></span><span class="menuLogoFallback" hidden>TUNNEL CREW</span></h1>
+            <h1><span class="menuLogoFx"><img class="menuLogo" src="assets/menu/title-tunnel-crew-v2.png" alt="TUNNEL CREW" draggable="false" decoding="async" onerror="this.parentElement.hidden=true;this.parentElement.nextElementSibling.hidden=false"><span class="menuLogoSheen" aria-hidden="true"></span></span><span class="menuLogoFallback" hidden>TUNNEL CREW</span></h1>
             <nav class="modeGrid" aria-label="게임 모드">
               <button class="modeBtn" id="menuSolo"><i>01</i><b>솔로 미션</b><span>MISSION / 드릴러 + 보조 드론</span><u aria-hidden="true">↗</u></button>
               <button class="modeBtn infinite" id="menuInfinite"><i>02</i><b>무한 모드</b><span>ENDLESS / 4직업 선택 · 지층 돌파</span><u aria-hidden="true">↗</u></button>
@@ -737,7 +737,7 @@ html.tcReducedMotion *,html.tcReducedMotion *:before,html.tcReducedMotion *:afte
           <aside class="menuVisual" aria-label="메인 캐릭터 키아트">
             <figure class="menuArt" aria-label="땅굴 크루 4인 캐릭터 일러스트">
               <div class="menuArtTilt">
-                <img class="menuHeroImage" src="assets/menu/hero-tunnel-crew-main-v2-casual.png" alt="미지의 동굴을 탐사하는 드릴러, 엔지니어, 스카웃, 거너" draggable="false" decoding="async" onerror="this.closest('.menuVisual').hidden=true">
+                <img class="menuHeroImage" src="assets/menu/hero-tunnel-crew-keyart-v5.webp" alt="붉은 화염 드래곤과 맞서는 드릴러, 엔지니어, 스카웃, 거너 크루" draggable="false" decoding="async" onerror="this.closest('.menuVisual').hidden=true">
                 <div class="menuSmoke" aria-hidden="true"><span class="menuSmokeLayer menuSmokeLayerC"></span><span class="menuSmokeLayer menuSmokeLayerD"></span></div>
                 <span class="menuArtLight" aria-hidden="true"></span>
               </div>
@@ -5779,6 +5779,7 @@ function update(dt){
  if(G.hintT>0&&!G.moved)G.hintT=Math.max(0,G.hintT-dt*.3); else G.hintT=Math.max(0,G.hintT-dt*2.4);
  const sh=G.sh;
  if(G.downed&&typeof infDownedTick==='function')infDownedTick(dt);   /* v7.7.2c — 기절 중 구조 진행 (stunT 로 입력 차단) */
+ if(typeof INF!=='undefined'&&INF.bossOutro&&typeof infBossOutroTick==='function')infBossOutroTick(dt);   /* v7.7.2c — 보스 격파 연출 → 연출 후 휴식 UI */
  /* 세션 압박 제거 · TE 이동/대시/무기 — WASD only */
  G.weaponLock=Math.max(0,G.weaponLock-dt);
  G.dash.cd=Math.max(0,G.dash.cd-dt);
@@ -10686,7 +10687,7 @@ function infInitFloor(){
  {const pb=(infPermState().reroll)||0;INF.cards=INF.depth<=1?{rerolls:INF_CARDS.rerollStart+pb}:{rerolls:Math.min(INF_CARDS.rerollCap+pb,((INF.cards&&INF.cards.rerolls)||0)+INF_CARDS.rerollPerStratum)};}   /* 6.3 permanent-node reroll bonus */
  INF.xpNeed=infXpNeedFor(INF.level);  /* 곡선은 행성 길이에 맞춘다 (§4.3) */
  INF.depth=G.depth;INF.floorBroken=0;INF.bossSpawned=false;INF.bossActive=false;INF.boss=null;
- INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];INF.bossWallCells=new Set();G.downed=false;G.reviveT=0;G.downT=0;INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
+ INF.floorTime=0;INF.spawnDebt=0;INF.threat=1;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];INF.bossWallCells=new Set();INF.bossOutro=null;G.downed=false;G.reviveT=0;G.downT=0;INF.drillerCracks=new Map();INF.drillerTarget=-1;INF.breakerCharges=[];INF.breakerCd=0;INF.breakerDryCd=0;INF.breakerLatch=false;INF.scoutSectors=new Set();INF.scoutSectorCount=0;INF.scoutPulseT=0;INF.scoutPulseCd=0;INF.scoutHighlights=[];INF.scoutGrappleFx=null;INF.engineerNodes=[];INF.engineerNodeSeq=0;CREW.turrets.length=0;INF.ammo=INF.magSize;INF.reloadLeft=0;
  INF.wallHpMul=infWallHpMulFor(Math.max(1,INF.depth));INF.enemyHpMul=infEnemyHpMulFor(Math.max(1,INF.depth));
  INF.totalBreakable=Math.max(1,G.cell.reduce((n,t)=>n+(t&&!SOLIDX(t)?1:0),0));
  G.enemies.length=0;G.enemyCd=3.2;CREW.timeLeft=1e9;CREW.phase='play';
@@ -11573,13 +11574,46 @@ function infProjectileBurst(x,y){
  for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dc&&!dr)continue;const cc=c+dc,rr=r+dr;if(inB(cc,rr)&&solid(cc,rr)&&!SOLIDX(G.cell[ci(cc,rr)]))damage(cc,rr,shelDps()*.42*INF.gunMul,dc,dr,true);}
  for(const e of G.enemies){const dx=e.x-x,dy=e.y-y,d=Math.hypot(dx,dy);if(d<CELL*1.35)hurtEnemy(e,DEMO.enemyGunDmg*.7*INF.gunMul,dx/(d||1),dy/(d||1));}
 }
+/* ══════════ v7.7.2c — 보스 처치 직후 플로우 정리 ══════════
+   기존에는 처치 프레임에 격파 모달이 바로 떠서 죽음 연출을 가렸다.
+   순서: ① 처치 즉시 상태 정산(코어·유물·탈출 요청) → ② 약 2.6초 격파 연출(다단 폭발·흔들림,
+   조작 유지) → ③ 연출이 끝난 뒤 휴식/보상 UI. 연출 중 런이 끝나면 UI 는 생략,
+   기절 중이면 부활할 때까지 UI 를 미룬다. */
 function infBossDefeated(e){
  if(!INF.active||!INF.bossActive)return;INF.bossActive=false;INF.boss=null;INF.bossShots=[];INF.bossShotQueue=[];INF.bossWallQueue=[];if(typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active){toast('TEST · 보스 처치 완료 · 인스펙터에서 재등장 가능');bossLabPaint();return;}const tier=(e&&e.bossTier)||'apex',td=INF_BOSS_TIER[tier];
- INF.bosses++;INF.core+=td.coreBase+INF.depth;   /* 코어는 운반 전리품 (§6.5) — 수호자는 소량, 중심부 보스는 후하게 */G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;G.php=Math.min(G.phpMax,G.php+G.phpMax*.3);CREW.phase='infiniteRest';
+ INF.bosses++;INF.core+=td.coreBase+INF.depth;   /* 코어는 운반 전리품 (§6.5) — 수호자는 소량, 중심부 보스는 후하게 */
+ G.php=Math.min(G.phpMax,G.php+G.phpMax*.3);
  if(typeof infRelicBossDrop==='function')infRelicBossDrop(e,tier);   /* 유물 — 보스 발굴 드랍 (v7.6.0) */
  /* §8.4-5 의 자동 탈출 요청은 '중심부 보스'(와 엔드게임 변종) 전용이다.
     수호자는 중간 목표이므로 처치 후에도 원정이 계속된다. */
  if(tier!=='guardian'&&typeof infAutoSummonEscape==='function')infAutoSummonEscape(e.x,e.y);
+ infBossStartOutro(e,tier);
+}
+function infBossStartOutro(e,tier){
+ const r=(e&&e.r)||100;
+ INF.bossOutro={t:0,dur:2.6,x:e.x,y:e.y,r,tier,fxCd:0,shakeCd:0};
+ J.kick(9);J.flash(e.x,e.y,Math.max(70,r*.9),'rgba(255,213,110,.9)');
+ J.text(e.x,e.y-r-34,tier==='guardian'?'수호자 격퇴!':tier==='apex'?'중심부 보스 격파!':'변종 격파!','#FFD36E',26);
+}
+function infBossOutroTick(dt){
+ const o=INF.bossOutro;if(!o)return;
+ if(CREW.phase!=='play'){INF.bossOutro=null;return;}   /* 연출 중 런 종료(정산 등) — UI 생략 */
+ o.t+=dt;o.shakeCd-=dt;o.fxCd-=dt;
+ if(o.shakeCd<=0){o.shakeCd=.15;J.kick(2.2);}
+ if(o.fxCd<=0&&o.t<o.dur*.75){o.fxCd=.2;   /* 다단 폭발 — 몸통 곳곳에서 연쇄로 터진다 */
+  const a=Math.random()*6.283,d=o.r*Math.random()*.8,x=o.x+Math.cos(a)*d,y=o.y+Math.sin(a)*d;
+  J.burst(x,y,10,['#FFD36E','#FF8D72','#C7A0FF','#FFF'],240);
+  J.ring(x,y,Math.random()<.5?'#FFD36E':'#FF8D72',6,o.r*(.5+Math.random()*.7),3);
+  J.smoke(x,y,3,'#4A3550',80);
+ }
+ if(o.t>=o.dur){
+  if(G.downed){o.t=o.dur;return;}   /* 기절 중 — 부활 후에 격파 UI */
+  const tier=o.tier;INF.bossOutro=null;infBossShowRestUI(tier);
+ }
+}
+function infBossShowRestUI(tier){
+ if(!INF.active||CREW.phase!=='play')return;
+ G.mouse.down=G.mouse.drillDown=G.mouse.gunDown=false;CREW.phase='infiniteRest';
  INF.restChosen=false;infEl('infDescend').disabled=true;
  infEl('infRestTitle').textContent=tier==='guardian'?infDepthLabel(INF.depth)+' — 수호자 격퇴':tier==='apex'?'중심부 보스 격파':infDepthLabel(INF.depth)+' — 변종 격파';
  /* 중심부 이후의 하강은 기본 캠페인이 아니라 이상지대(엔드게임) 선택이다 — §13 */

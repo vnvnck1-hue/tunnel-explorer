@@ -8,6 +8,12 @@
       "port": 5188
     },
     {
+      "name": "dist-server",
+      "runtimeExecutable": "build/TunnelCrew-v7.8.0/node/node.exe",
+      "runtimeArgs": ["build/TunnelCrew-v7.8.0/coop/server.mjs", "5288"],
+      "port": 5288
+    },
+    {
       "name": "coop-server-alt",
       "runtimeExecutable": "node",
       "runtimeArgs": ["claude-work/coop/server.mjs", "5388"],

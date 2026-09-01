@@ -1415,25 +1415,22 @@
       }
       cx.globalAlpha = 1;
 
-      /* 역할 링 — 누가 누군지 한눈에 */
-      cx.strokeStyle = col; cx.lineWidth = 2; cx.globalAlpha = m.down ? 0.5 : 0.75;
-      cx.beginPath(); cx.arc(m.x, m.y + R_SHELLY * 0.75, R_SHELLY * 0.62, 0, Math.PI * 2); cx.stroke();
+      /* 보호막처럼 실제 상태를 나타내는 효과만 캐릭터 둘레에 표시한다. */
       if (m.shieldT > 0) {
         cx.strokeStyle = '#7FEBD0'; cx.globalAlpha = 0.5 + 0.3 * Math.sin(G.t * 9);
         cx.beginPath(); cx.arc(m.x, m.y, R_SHELLY * 1.35, 0, Math.PI * 2); cx.stroke();
       }
       cx.globalAlpha = 1;
 
-      /* 명판 */
-      const label = 'AI ' + (ROLE_KO[m.roleId] || m.roleId) + ' Lv' + m.level;
-      cx.font = '800 11px ' + (typeof FNT !== 'undefined' ? FNT : 'sans-serif');
+      /* 배경 패널 없는 미니멀 플로팅 라벨 */
+      const label = 'AI ' + (ROLE_KO[m.roleId] || m.roleId) + ' · ' + m.level;
+      cx.font = '700 9.5px ' + (typeof FNT !== 'undefined' ? FNT : 'sans-serif');
       cx.textAlign = 'center';
-      const tw = cx.measureText(label).width + 14;
-      const bx = m.x - tw / 2, by = m.y - R_SHELLY - 34;
-      cx.fillStyle = 'rgba(10,6,20,.72)';
-      cx.strokeStyle = m.down ? 'rgba(255,110,140,.8)' : col;
-      cx.lineWidth = 1.5;
-      cx.fillRect(bx, by, tw, 15); cx.strokeRect(bx, by, tw, 15);
+      const by = m.y - R_SHELLY - 34;
+      cx.lineJoin = 'round';
+      cx.lineWidth = 2.5;
+      cx.strokeStyle = 'rgba(10,6,20,.82)';
+      cx.strokeText(label, m.x, by + 11);
       cx.fillStyle = m.down ? '#ffc9d6' : '#F0E6FF';
       cx.fillText(label, m.x, by + 11);
 
