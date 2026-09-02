@@ -2118,7 +2118,7 @@ function demoRegen(keepPos){
     enterDepth(G.depth||1);
   }
   if(keepPos && px!=null){
-    G.sh.x=px; G.sh.y=py;
+    G.sh.x=px; G.sh.y=py; ensureSpawnSafe(G.sh.x,G.sh.y);
     if(!G.fixed){const vw=LW/G.Z, vh=LH/G.Z;
       G.camX=clamp(G.sh.x-vw*.5,0,Math.max(0,WW-vw));
       G.camY=clamp(G.sh.y-vh*.42,0,Math.max(0,WH-vh));}
@@ -2127,7 +2127,7 @@ function demoRegen(keepPos){
 }
 function demoRespawn(){
   if(SCENE!=='depths') return;
-  G.sh.x=G.entry.x; G.sh.y=G.entry.y; G.sh.vx=G.sh.vy=0;
+  G.sh.x=G.entry.x; G.sh.y=G.entry.y; G.sh.vx=G.sh.vy=0; ensureSpawnSafe(G.sh.x,G.sh.y);
   G.dash.active=false; G.dashDust.length=0; G.projectiles.length=0; G.eshots.length=0;
   G.knock.vx=G.knock.vy=0; G.stunT=0;
   G.php=G.phpMax; G.iframes=1.2;
@@ -5046,7 +5046,9 @@ function genDepth(d){
  const carve=(c,r,rad)=>{for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
   const cc=c+dc,rr2=r+dr;if(!inB(cc,rr2)||SOLIDX(A[ci(cc,rr2)]))continue;
   if(Math.hypot(dc,dr)<=rad)A[ci(cc,rr2)]=null;}};
- const ec=Math.floor(COLS/2),er=2;
+ /* 시작 지점 무작위화 — 맵 전역 어디서든 시작한다 (상단 고정 제거) */
+ const ec=Math.max(2,Math.min(COLS-3,2+Math.floor(Math.random()*Math.max(1,COLS-4)))),
+       er=Math.max(2,Math.min(ROWS-3,2+Math.floor(Math.random()*Math.max(1,ROWS-4))));
  carve(ec,er,1.25);
  /* 미리 뚫린 통로 — 원작처럼 밀폐 상태로 시작하지 않는다 */
  const branches=COLS<=6?1:2;
@@ -5239,6 +5241,28 @@ function stepRubble(dt){
 }
 function solidAt(x,y){const c=Math.floor(x/CELL),r=Math.floor(y/CELL);
  return !inB(c,r)||!!G.cell[ci(c,r)];}
+/* ── 스폰 안전장치 ── 캐릭터가 생성되는 칸과 그 주변에 벽돌이 있으면 삭제한다.
+   외곽 경계벽은 건드리지 않는다 (맵 밖으로 빠지는 것을 막는다). */
+function spawnClearRadius(){return Math.max(1,Math.ceil((R_SHELLY+2)/CELL));}
+function ensureSpawnSafe(x,y,rad){
+ if(!G.cell||!G.cell.length)return 0;
+ const cc=toCell(x,y),c0=cc[0],r0=cc[1],R2=(rad==null?spawnClearRadius():rad);
+ let cleared=0;
+ for(let dr=-R2;dr<=R2;dr++)for(let dc=-R2;dc<=R2;dc++){
+  const c=c0+dc,r=r0+dr;
+  if(!inB(c,r)||c<=0||r<=0||c>=COLS-1||r>=ROWS-1)continue;
+  const k=ci(c,r);
+  if(!G.cell[k])continue;
+  G.cell[k]=null;
+  if(G.hp&&G.hp.delete)G.hp.delete(k);
+  if(G.vib&&G.vib.delete)G.vib.delete(k);
+  if(G.nudge&&G.nudge.delete)G.nudge.delete(k);
+  try{if(typeof INF!=='undefined'&&INF.drillerCracks&&INF.drillerCracks.delete)INF.drillerCracks.delete(k);}catch(e){}
+  cleared++;
+ }
+ if(cleared){G.compDirty=true;if(typeof LOS!=='undefined'&&LOS.markDirty)LOS.markDirty();}
+ return cleared;
+}
 function drawRubble(){
  if(!G.rub.length)return;
  /* 화면 밖은 그리지 않는다 */
@@ -5379,8 +5403,10 @@ function genTunnel(d){
  }
 
  /* ── 6) 연결성 보증 ── */
- const entryRoom=rooms.length?rooms.reduce((a,b)=>(a.cy<=b.cy?a:b)):null;
- const ex0=entryRoom?entryRoom.cx:Math.floor(W/2), er0=entryRoom?entryRoom.cy:2;
+ /* 시작 방 무작위 선택 — 최상단 고정 진입점 제거 */
+ const entryRoom=rooms.length?rooms[Math.floor(Math.random()*rooms.length)]:null;
+ const ex0=Math.max(2,Math.min(W-3,entryRoom?entryRoom.cx:2+Math.floor(Math.random()*Math.max(1,W-4)))),
+       er0=Math.max(2,Math.min(H-3,entryRoom?entryRoom.cy:2+Math.floor(Math.random()*Math.max(1,H-4))));
  set(ex0,er0,0);
  const region=new Int16Array(N);
  const flood=()=>{
@@ -5653,6 +5679,7 @@ function enterDepth(d){
   else if(G.mins.length&&once('depth1'))setTimeout(()=>say('depth1'),420);}
  if(d>SAVE.best)SAVE.best=d;
  G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;
+ ensureSpawnSafe(G.sh.x,G.sh.y);   /* 시작 칸에 벽돌이 남아 있으면 제거 */
  G.res.length=0;G.flash=1;G.descend=0;G.depCd=0;
  G.vib.clear();G.nudge.clear();G.combo=0;G.comboT=0;
  if(!G.fixed){const vw=LW/G.Z, vh=LH/G.Z;
@@ -6708,10 +6735,13 @@ function drawEnemies(){
     }
     cx.restore();
     if(e.boss&&typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active&&BOSS_LAB.showCollider){cx.save();cx.strokeStyle='rgba(127,235,208,.9)';cx.fillStyle='rgba(127,235,208,.07)';cx.lineWidth=2;cx.setLineDash([7,5]);cx.beginPath();cx.arc(e.x,e.y,e.r,0,7);cx.fill();cx.stroke();cx.setLineDash([]);cx.fillStyle='#7febd0';cx.font='900 9px ui-monospace,monospace';cx.textAlign='center';cx.fillText('COLLIDER '+Math.round(e.r)+'px',e.x,e.y+e.r+13);cx.restore();}
-    const w=e.r*2.2, fr=clamp(e.hp/e.hpMax,0,1);
-    cx.fillStyle='rgba(20,10,4,.55)';rr(cx,e.x-w/2,e.y-e.r-12,w,4,2);cx.fill();
-    cx.fillStyle=e.apex?'#FF557D':(fr>.4?(brine?'#5EE8D0':'#C7A0FF'):'#FF6B6B');
-    rr(cx,e.x-w/2,e.y-e.r-12,w*fr,4,2);cx.fill();
+    /* 보스는 개별 체력바를 달지 않는다 — 상단 장악도 게이지가 그대로 보스 체력바가 된다 */
+    if(!e.boss&&!e.apex){
+     const w=e.r*2.2, fr=clamp(e.hp/e.hpMax,0,1);
+     cx.fillStyle='rgba(20,10,4,.55)';rr(cx,e.x-w/2,e.y-e.r-12,w,4,2);cx.fill();
+     cx.fillStyle=fr>.4?(brine?'#5EE8D0':'#C7A0FF'):'#FF6B6B';
+     rr(cx,e.x-w/2,e.y-e.r-12,w*fr,4,2);cx.fill();
+    }
   }
 }
 
@@ -9814,7 +9844,7 @@ function dropCrewRelic(at){
 function crewSoftRespawn(msg){
  dropCrewRelic({x:G.sh.x,y:G.sh.y});
  CREW.relicCd=1.4;
- G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;
+ G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;ensureSpawnSafe(G.sh.x,G.sh.y);
  G.dash.active=false;G.php=G.phpMax;G.iframes=1.6;
  if(!G.fixed){const vw=LW/G.Z,vh=LH/G.Z;
   G.camX=clamp(G.entry.x-vw*.5,0,Math.max(0,WW-vw));
@@ -10412,7 +10442,7 @@ body.infActive #tcHudPolish,body.infActive #crewHud,body.infActive #resHud{displ
 #infHud{position:absolute;inset:0;z-index:72;display:none;pointer-events:none;color:#f6efff;font-family:"Pretendard","Malgun Gothic",sans-serif}
 body.infActive #infHud{display:block}
 /* ── v7.7.0 UI — 상단 중앙은 보스 배너 전용 레인 ── */
-#infHud .ihTop{position:absolute;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);width:min(560px,60vw);padding:0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65);pointer-events:none}
+#infHud .ihTop{position:absolute;left:50%;top:calc(140px + env(safe-area-inset-top));transform:translateX(-50%);width:min(560px,60vw);padding:0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.65);pointer-events:none}
 #infHud .ihRow{display:flex;align-items:center;gap:12px;font-size:12px;color:#b9a8cc}
 #infHud .ihRow strong{font-size:14px;color:#fff}
 #infThreatText{padding:3px 7px;border:1px solid rgba(255,85,125,.35);border-radius:999px;color:#ff9aae;font-size:10px;font-weight:900;letter-spacing:.03em}
@@ -10456,6 +10486,55 @@ body.infActive #infHud{display:block}
 /* ── v7.7.0 UI — 탐사(평시) HUD 페이드 ── */
 #infHud.calm .ihProg,#infHud.calm .ihChips,#infHud.calm .ihDepthRail,#infHud.calm .ihXpText,#infHud.calm .ihEscape:not(.active){opacity:.42}
 #infDomFill,#infXpFill,#infBossFill{height:100%;width:0;background:linear-gradient(90deg,#8b5bd0,#ffd36e);transition:width .18s}
+/* ── v7.8.1 UI — 땅굴 장악도: 화면 중앙 상단 대형 게이지. 크루 아이콘이 끝의 보스 아이콘으로 다가간다 ── */
+#infHud .ihDom{--dom:0;position:absolute;left:50%;top:calc(38px + env(safe-area-inset-top));transform:translateX(-50%);width:min(1240px,94vw);pointer-events:none;transition:opacity .6s}
+#infHud .ihDomHead{display:flex;align-items:baseline;justify-content:center;gap:9px;margin:0 46px 9px 0;text-shadow:0 1px 2px rgba(0,0,0,.92),0 0 12px rgba(0,0,0,.7)}
+#infHud .ihDomHead b{color:#ff8a90;font:900 12px/1 inherit;letter-spacing:.19em}
+#infHud .ihDomHead #infDomText{color:#f1e7ff;font:900 17px/1 ui-monospace,monospace;letter-spacing:.03em}
+#infHud .ihDomTrack{position:relative;height:32px;margin-right:46px;border-radius:999px;background:rgba(20,8,12,.74);box-shadow:0 0 0 1.5px rgba(247,6,23,.34),0 4px 16px rgba(0,0,0,.5),inset 0 2px 6px rgba(0,0,0,.55)}
+#infHud .ihDomTrack::after{content:'';position:absolute;inset:0;border-radius:999px;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 calc(25% - 1px),rgba(255,255,255,.16) calc(25% - 1px) 25%)}
+#infHud .ihDomBar{position:absolute;inset:0;border-radius:999px;overflow:hidden}
+#infHud #infDomFill{background:linear-gradient(90deg,#8c0410,#f70617 62%,#ff3b3f);box-shadow:inset 0 -3px 6px rgba(0,0,0,.3),inset 0 2px 3px rgba(255,255,255,.22),0 0 16px rgba(247,6,23,.42);transition:width .28s cubic-bezier(.22,.75,.3,1)}
+/* 진행 게이지 끝 = 크루 아이콘 (리소스 교체 지점: INF_DOM_ICONS.crew) */
+#infHud .ihDomCrew{position:absolute;left:calc(var(--dom) * 1%);top:50%;z-index:3;display:grid;place-items:center;width:56px;height:56px;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 7px rgba(0,0,0,.75)) drop-shadow(0 0 10px rgba(247,6,23,.4));transition:left .28s cubic-bezier(.22,.75,.3,1)}
+#infHud .ihDomCrew img{width:56px;height:56px;object-fit:contain}
+/* 게이지 맨 끝 = 보스 아이콘 (리소스 교체 지점: INF_DOM_ICONS.boss) */
+#infHud .ihDomBoss{position:absolute;left:100%;top:50%;z-index:2;display:grid;place-items:center;width:74px;height:74px;transform:translate(-46%,-50%);filter:drop-shadow(0 3px 8px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(247,6,23,.45))}
+#infHud .ihDomBoss img{position:relative;z-index:1;width:74px;height:74px;object-fit:contain}
+/* 보스 아이콘 뒤 붉은 글로우 — 장악도와 무관하게 처음부터 천천히 숨쉰다 */
+#infHud .ihDomBoss::before{content:'';position:absolute;z-index:0;left:50%;top:50%;width:150%;height:150%;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(247,6,23,.72) 0%,rgba(247,6,23,.34) 34%,rgba(247,6,23,.12) 56%,transparent 72%);animation:ihDomBossGlow 3.4s ease-in-out infinite}
+@keyframes ihDomBossGlow{0%,100%{opacity:.42;scale:.9}50%{opacity:.9;scale:1.14}}
+/* 리소스가 아직 없을 때의 자리표시 마름모 — 이미지가 들어오면 자동으로 사라진다 */
+#infHud .ihDomCrew i,#infHud .ihDomBoss i{display:none;width:13px;height:13px;border-radius:3px;background:linear-gradient(135deg,#ffd36e,#7febd0);transform:rotate(45deg)}
+#infHud .ihDomBoss i{width:16px;height:16px;border-radius:4px;background:linear-gradient(135deg,#ff557d,#ffb36b)}
+#infHud .ihDomCrew img[data-fallback],#infHud .ihDomBoss img[data-fallback]{display:none}
+#infHud .ihDomCrew img[data-fallback]+i,#infHud .ihDomBoss img[data-fallback]+i{display:block}
+/* 접근 단계 — 80%부터 보스가 깨어난다 */
+#infHud .ihDom.beat .ihDomBoss{animation:ihDomBossWake var(--beat,1.5s) ease-in-out infinite}
+#infHud .ihDom.near .ihDomTrack{box-shadow:0 0 0 1.5px rgba(247,6,23,.55),0 4px 18px rgba(0,0,0,.55),0 0 22px rgba(255,85,125,.22),inset 0 2px 6px rgba(0,0,0,.55)}
+#infHud .ihDom.near .ihDomHead #infDomText{color:#ffc2d0}
+#infHud .ihDom.boss #infDomFill{background:linear-gradient(90deg,#f70617,#ff6b2b)}
+/* 게이지가 체력바로 넘어가면 크루 아이콘은 임무 종료 — 사라진다 */
+#infHud .ihDomCrew{opacity:1;transition:left .28s cubic-bezier(.22,.75,.3,1),opacity .38s ease,scale .38s ease}
+#infHud .ihDom.boss .ihDomCrew{opacity:0;scale:.55}
+/* 게이지 아래 보스 이름 — 체력바로 전환될 때 떠오른다 */
+#infHud .ihDomName{margin:9px 46px 0 0;text-align:center;opacity:0;translate:0 -6px;transition:opacity .45s ease .25s,translate .45s ease .25s;text-shadow:0 2px 5px rgba(0,0,0,.95),0 0 16px rgba(247,6,23,.45);pointer-events:none}
+#infHud .ihDomName b{color:#fff2f3;font:900 22px/1 inherit;letter-spacing:.04em}
+#infHud .ihDomName i{display:block;margin-top:6px;color:#ff8a90;font:900 10px/1 ui-monospace,monospace;letter-spacing:.28em;font-style:normal}
+#infHud .ihDom.boss .ihDomName{opacity:1;translate:0 0}
+/* 인계 1초 — 보스 아이콘이 크게 부풀었다 제자리로. 게이지가 체력바가 됐다는 신호 */
+#infHud .ihDom.handoff .ihDomBoss{animation:ihDomHandoff 1s cubic-bezier(.2,.72,.28,1) both}
+@keyframes ihDomHandoff{
+ 0%{transform:translate(-46%,-50%) scale(1);filter:drop-shadow(0 3px 8px rgba(0,0,0,.8)) drop-shadow(0 0 12px rgba(247,6,23,.45))}
+ 32%{transform:translate(-46%,-50%) scale(1.62);filter:drop-shadow(0 6px 16px rgba(0,0,0,.85)) drop-shadow(0 0 34px rgba(247,6,23,1))}
+ 100%{transform:translate(-46%,-50%) scale(1);filter:drop-shadow(0 3px 8px rgba(0,0,0,.8)) drop-shadow(0 0 22px rgba(247,6,23,.85))}}
+#infHud .ihDom.boss .ihDomBoss{filter:drop-shadow(0 3px 8px rgba(0,0,0,.8)) drop-shadow(0 0 22px rgba(247,6,23,.85))}
+/* 한 번씩 천천히 부풀었다 가라앉는 트위닝 — 주기는 --beat 이 결정한다 */
+@keyframes ihDomBossWake{
+ 0%,100%{transform:translate(-46%,-50%) scale(1)}
+ 50%{transform:translate(-46%,-50%) scale(1.12)}}
+@media(max-width:900px){#infHud .ihDom{width:94vw}#infHud .ihDomTrack{height:24px;margin-right:36px}#infHud .ihDomName{margin-right:36px}#infHud .ihDomName b{font-size:18px}#infHud .ihDomCrew{width:44px;height:44px}#infHud .ihDomCrew img{width:44px;height:44px}#infHud .ihDomBoss{width:58px;height:58px}#infHud .ihDomBoss img{width:58px;height:58px}}
+@media(prefers-reduced-motion:reduce){#infHud .ihDom.beat .ihDomBoss,#infHud .ihDom.handoff .ihDomBoss,#infHud .ihDomBoss::before{animation:none}#infHud .ihDomCrew,#infHud #infDomFill{transition:none}}
 #infHud .ihLeft{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(18px + env(safe-area-inset-bottom));padding:12px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(127,235,208,.34);font-size:12px;line-height:1.65}
 #infAmmoRow{display:flex;align-items:center;gap:8px;margin-top:5px;color:#d8cce4;font-weight:900}#infAmmoText{min-width:76px;color:#ffd36e}.infReloadGauge{width:88px;height:5px;overflow:hidden;border-radius:999px;background:#2b2036}.infReloadGauge i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#7febd0,#ffd36e);transition:width .06s linear}#infAmmoRow.reloading #infAmmoText{color:#7febd0;animation:infAmmoPulse .55s ease-in-out infinite}@keyframes infAmmoPulse{50%{opacity:.55}}
 /* v7.8.0 UI 그레이박스 4번 — vitals 아이콘화: 초상 + HP 바 + 탄창 세그먼트, 숫자는 호버·변동시에만 */
@@ -10491,9 +10570,11 @@ body.infActive #infHud{display:block}
 /* ── v7.7.0 UI — 키 가이드: 런 시작 12초 + Tab 홀드시에만 (하단 중앙 오버레이) ── */
 #infHud .ihKeys{position:absolute;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:calc(100vw - 36px);padding:10px 14px;border-radius:14px;background:rgba(12,8,22,.86);border:1px solid rgba(255,211,110,.32);font-size:12px;color:#cbbbdc;text-align:center;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s}
 #infHud.showKeys .ihKeys{opacity:1}
-#infBossBox{display:none;margin-top:9px}#infBossBox.on{display:block}#infBossFill{background:linear-gradient(90deg,#ff557d,#ffb36b)}
+#infBossBox{display:none!important;margin-top:9px}#infBossFill{background:linear-gradient(90deg,#ff557d,#ffb36b)}
 /* ── v7.7.0 UI — 보스 집중 모드: 다른 HUD는 숨기지 않고 축소·페이드 (탈출 접근 유지) ── */
 #infHud.bossFocus .ihProg,#infHud.bossFocus .ihChips,#infHud.bossFocus .ihXpText{opacity:.5}
+/* 장악도 레일은 어떤 페이드에도 걸리지 않는다 — 언제나 선명 */
+#infHud.calm .ihDom,#infHud.bossFocus .ihDom{opacity:1}
 #infHud.bossFocus #infBossBox{display:block;margin-top:0;animation:infBossFocusIn .4s cubic-bezier(.16,.84,.3,1) both}
 #infHud.bossFocus #infBossName{font-size:24px;font-weight:950;letter-spacing:.07em;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.95),0 0 18px rgba(255,85,125,.55)}
 #infHud.bossFocus #infBossText{font-size:16px;font-weight:900;color:#ffc2d0;text-shadow:0 2px 4px rgba(0,0,0,.95)}
@@ -10698,8 +10779,16 @@ body.bossLabActive #bossLabInspector{display:flex;flex-direction:column}body.bos
  <!-- v7.7.0 UI — 좌상단 진행 모듈: 심층·위협·장악도를 한 덩어리로 -->
  <div class="ihProg">
   <div class="ihRow"><strong id="infDepth">심층 1</strong><span class="ihGrow"></span><span id="infThreatText">위협 잠잠</span></div>
-  <div class="ihRow" style="margin-top:5px"><span id="infDomText">장악도 0%</span></div>
-  <div class="ihGauge"><div id="infDomFill"></div></div>
+ </div>
+ <!-- v7.8.1 UI — 중앙 상단 장악도 레일: 크루 아이콘이 끝의 보스 아이콘으로 접근 -->
+ <div class="ihDom" id="infDomRail">
+  <div class="ihDomHead"><b id="infDomLabel">땅굴 장악도</b><span id="infDomText">장악도 0%</span></div>
+  <div class="ihDomTrack">
+   <div class="ihDomBar"><div id="infDomFill"></div></div>
+   <div class="ihDomCrew" id="infDomCrew"><img id="infDomCrewIcon" alt="" data-fallback="1"><i></i></div>
+   <div class="ihDomBoss" id="infDomBoss"><img id="infDomBossIcon" alt="" data-fallback="1"><i></i></div>
+  </div>
+  <div class="ihDomName" id="infDomName" aria-live="polite"><b id="infDomBossName">암반 포식자</b><i id="infDomBossTier">APEX PREDATOR</i></div>
  </div>
  <!-- v7.7.0 UI — 우상단 재화 칩: 읽기 전용 정보는 오른쪽으로 -->
  <div class="ihChips"><span class="ihChip" id="infLevelText">Lv.1</span><span class="ihChip" id="infCoreText">코어 0</span></div>
@@ -14219,9 +14308,72 @@ function infPaintSkills(role){
  const dashMax=(typeof TE!=='undefined'&&TE.dashCd)||1;
  set('dash',G.dash&&G.dash.cd>0?G.dash.cd/Math.max(.01,dashMax):0,false);
 }
+/* v7.8.1 UI — 중앙 장악도 레일: 채움 끝(=크루 아이콘)이 게이지 끝의 보스 아이콘으로 다가간다.
+   goalDom 은 이미 '지층 목표 대비 %' 라 100 이 곧 보스 소환 지점이다. */
+const INF_DOM_ICONS={
+ boss:'assets/ui/dom-boss-icon.png',   /* 게이지 끝 보스 아이콘 */
+ crew:'assets/ui/dom-crew-icon.png',    /* 게이지 진행 끝 크루 아이콘 (비우면 역할 배지로 대체) */
+ crewByRole:{driller:'assets/ui/role-badges/role-badge-driller.png',gunner:'assets/ui/role-badges/role-badge-gunner.png',scout:'assets/ui/role-badges/role-badge-scout.png',engineer:'assets/ui/role-badges/role-badge-engineer.png'}
+};
+/* 파일이 없으면 이미지를 감추고 CSS 마름모로 떨어진다 — 나중에 리소스만 넣으면 그대로 살아난다 */
+function infDomIcon(id,src){
+ const img=infEl(id);if(!img)return;
+ if(!src){img.dataset.src='';img.removeAttribute('src');img.dataset.fallback='1';return;}
+ if(img.dataset.src===src)return;
+ img.dataset.src=src;delete img.dataset.fallback;
+ img.onerror=()=>{img.dataset.fallback='1';};
+ img.onload=()=>{delete img.dataset.fallback;};
+ img.src=src;
+}
+let infDomWasBoss=false,infDomHandoffT=0;
+function infPaintDominance(rawDom,goalDom){
+ const rail=infEl('infDomRail');if(!rail)return;
+ const boss=INF.boss&&INF.boss.hp>0?INF.boss:null;
+ const bossPhase=!!INF.bossSpawned;                     /* 장악 100% = 보스 등장 = 체력바 모드 */
+
+ /* 인계 순간 — 장악 게이지가 체력바로 바뀌는 1초 피드백 (아이콘이 크게 부풀었다 돌아온다) */
+ if(bossPhase&&!infDomWasBoss){
+  rail.classList.remove('handoff');void rail.offsetWidth;   /* 애니메이션 재시작 */
+  rail.classList.add('handoff');
+  infDomHandoffT=performance.now()+1000;
+ }
+ if(infDomHandoffT&&performance.now()>infDomHandoffT){rail.classList.remove('handoff');infDomHandoffT=0;}
+ if(!bossPhase&&infDomWasBoss){rail.classList.remove('handoff');infDomHandoffT=0;}
+ infDomWasBoss=bossPhase;
+
+ /* 채움: 장악 단계는 지층 목표 대비 진행률, 보스 단계는 보스 체력 */
+ const p=Math.max(0,Math.min(100,bossPhase?(boss?boss.hp/boss.hpMax*100:0):goalDom));
+ infEl('infDomFill').style.width=p+'%';
+ rail.style.setProperty('--dom',p.toFixed(2));
+ rail.classList.toggle('near',!bossPhase&&p>=80);
+ rail.classList.toggle('boss',bossPhase);
+
+ /* 스케일 트위닝 — 70%에서 1.5초 주기로 시작해 100%에 가까울수록 빨라진다.
+    체력바로 전환되면 멈춘다 (인계 연출이 대신 받는다). */
+ const beat=!bossPhase&&p>=70;
+ rail.classList.toggle('beat',beat);
+ if(beat){const k=Math.max(0,Math.min(1,(p-70)/30));rail.style.setProperty('--beat',(1.5-1.08*k).toFixed(2)+'s');}
+
+ /* 문구 — 장악률 / 보스 체력 */
+ const lab=infEl('infDomLabel'),txt=infEl('infDomText');
+ if(bossPhase){
+  const armor=boss&&typeof infBossArmorAlive==='function'?infBossArmorAlive(boss):0;
+  if(lab)lab.textContent='보스 체력';
+  if(txt)txt.textContent=boss?((armor?'장갑 '+armor+' · ':'')+Math.ceil(p)+'%'):'격파';
+  const def=boss&&typeof infBossTierDef==='function'?infBossTierDef(boss):null;
+  const nm=infEl('infDomBossName'),tier=infEl('infDomBossTier');
+  if(nm&&def&&def.name)nm.textContent=def.name;
+  if(tier)tier.textContent=boss?((boss.bossTier==='guardian')?'DEEP GUARDIAN':(boss.bossTier==='variant')?'VARIANT':'APEX PREDATOR'):'DEFEATED';
+ }else{
+  if(lab)lab.textContent='땅굴 장악도';
+  if(txt)txt.textContent=Math.floor(rawDom)+'% / '+Math.round(infDominanceTarget()*100)+'%';
+ }
+ infDomIcon('infDomBossIcon',INF_DOM_ICONS.boss);
+ infDomIcon('infDomCrewIcon',INF_DOM_ICONS.crew||INF_DOM_ICONS.crewByRole[INF.roleId]||'');
+}
 function infPaint(){
  if(!INF.active)return;const rawDom=Math.min(100,INF.floorBroken/Math.max(1,INF.totalBreakable)*100),goalDom=Math.min(100,rawDom/(infDominanceTarget()*100)*100),xp=Math.min(100,INF.xp/INF.xpNeed*100);
- infEl('infDepth').textContent=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active?'BOSS TEST':infDepthLabel(INF.depth);infEl('infDomText').textContent=INF.bossSpawned?(INF.boss?infBossTierDef(INF.boss).name:'보스')+' 침공':('장악도 '+Math.floor(rawDom)+'% / '+Math.round(infDominanceTarget()*100)+'%');infEl('infDomFill').style.width=goalDom+'%';infEl('infLevelText').textContent='Lv.'+INF.level;infEl('infCoreText').textContent='코어 '+INF.core;infEl('infXpText').textContent=INF.xp+' / '+INF.xpNeed;infEl('infXpFill').style.width=xp+'%';infPaintEscapeHud();
+ infEl('infDepth').textContent=typeof BOSS_LAB!=='undefined'&&BOSS_LAB.active?'BOSS TEST':infDepthLabel(INF.depth);infPaintDominance(rawDom,goalDom);infEl('infLevelText').textContent='Lv.'+INF.level;infEl('infCoreText').textContent='코어 '+INF.core;infEl('infXpText').textContent=INF.xp+' / '+INF.xpNeed;infEl('infXpFill').style.width=xp+'%';infPaintEscapeHud();
  const threat=infThreatValue();INF.threat=threat;const ti=Math.min(4,Math.floor((threat-1)/1.35)),tn=['잠잠','경계','위험','폭주','붕괴'][ti];infEl('infThreatText').textContent='위협 '+tn+' · '+G.enemies.filter(e=>e.hp>0&&!e.boss).length;
  const role=INF_ROLES[INF.roleId]||INF_ROLES.driller;let terrainStatus='';
  if(role.id==='driller'){let crack=INF.drillerTarget>=0&&INF.drillerCracks.get(INF.drillerTarget);if(!crack)for(const v of INF.drillerCracks.values())if(!crack||v.p>crack.p)crack=v;terrainStatus='고압 드릴 ×'+(INF.drillMul*role.dig).toFixed(2)+' · 기반암 '+INF.drillerBroken+(crack?' · 균열 '+Math.floor(crack.p*100)+'%':'');}
@@ -15113,6 +15265,126 @@ body.tcBossCine #bossLabInspector{
 </script>
 
 
+<!-- AI_GEO_V1 (v7.8.1) — AI 크루·관전 리더 공용 지형 판정.
+     "기반암 건너편 벽을 목표로 잡고 구석만 비비는" 무한 루프를 원천 차단한다. -->
+<script>
+(function () {
+  /* ══════════════════════════════════════════════════════════════════
+     AIGEO — AI 가 벽을 고르기 전에 반드시 통과해야 하는 지형 게이트
+     ──────────────────────────────────────────────────────────────────
+     문제: 기존 pickMine 은 "네 면 중 하나가 뚫려 있으면" 캘 수 있다고 봤다.
+     그 열린 면이 기반암(rock/core) 건너편이면 AI 는 영원히 그 벽에 닿지
+     못한 채 모서리에 몸을 비빈다. 목표 유효시간이 끝나도 같은 벽이 다시
+     최고점을 받아 재선택되므로 루프가 끊기지 않는다.
+
+     해법 세 겹:
+       1) 도달성  — 열린 면이 "내가 서 있는 열린 공간 성분(G.comp)"에
+                    속할 때만 목표가 된다. 엔진이 이미 유지하는 연결 성분을
+                    그대로 쓴다 (targetsR 과 같은 기준).
+       2) 접촉    — 기반암 모서리를 대각으로 관통해 파는 것을 막는다.
+       3) 봉인    — 진척이 없는 벽은 일정 시간 후보에서 제외한다.
+                    같은 벽을 즉시 다시 잡는 재발을 끊는 안전망.
+     ══════════════════════════════════════════════════════════════════ */
+  const A = {};
+  const kOf = (c, r) => r * COLS + c;
+  const inb = (c, r) => c >= 1 && r >= 1 && c < COLS - 1 && r < ROWS - 1;
+  const hardAt = (c, r) => {
+    if (c < 0 || r < 0 || c >= COLS || r >= ROWS) return true;
+    const t = G.cell[kOf(c, r)];
+    return typeof SOLIDX === 'function' ? !!SOLIDX(t) : (t === 'rock' || t === 'core');
+  };
+  const bad = (t) => !t || (typeof SOLIDX === 'function' ? SOLIDX(t) : (t === 'rock' || t === 'core'));
+
+  /* ── 봉인 목록 ── */
+  const BAN = new Map();
+  A.ban = function (c, r, sec) { BAN.set(kOf(c, r), (G.t || 0) + (sec || 14)); };
+  A.banned = function (c, r) {
+    const k = kOf(c, r), until = BAN.get(k);
+    if (until == null) return false;
+    if (until <= (G.t || 0)) { BAN.delete(k); return false; }
+    return true;
+  };
+  A.clearBans = function () { BAN.clear(); };
+
+  /* ── 도달성 ── (x,y) 에 선 액터가 걸어가서 실제로 붙을 수 있는 벽인가 */
+  A.canMine = function (x, y, c, r) {
+    if (typeof G === 'undefined' || !G.cell || !inb(c, r)) return false;
+    if (bad(G.cell[kOf(c, r)])) return false;
+    if (A.banned(c, r)) return false;
+    if (typeof compOf !== 'function') return true;              /* 성분 정보가 없으면 막지 않는다 */
+    const comp = compOf(x, y);                                  /* 필요하면 여기서 성분을 다시 만든다 */
+    if (!G.comp) return true;
+    if (comp < 0) return false;
+    for (let i = 0; i < 4; i++) {
+      const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
+      if (!inb(nc, nr)) continue;
+      const nk = kOf(nc, nr);
+      if (!G.cell[nk] && G.comp[nk] === comp) return true;
+    }
+    return false;
+  };
+
+  /* ── 접촉 ── 드릴이 실제로 닿는 칸인가.
+       같은 칸·상하좌우는 허용, 대각은 기반암 모서리를 관통하지 않을 때만 허용. */
+  A.inReach = function (x, y, c, r) {
+    const mc = Math.floor(x / CELL), mr = Math.floor(y / CELL);
+    const dc = Math.abs(mc - c), dr = Math.abs(mr - r);
+    if (dc + dr <= 1) return true;
+    if (dc === 1 && dr === 1) return !(hardAt(c, mr) && hardAt(mc, r));
+    return false;
+  };
+
+  /* ── 경계벽 ── 내 열린 공간에 닿아 있는 벽 전체에서 최고점을 고른다.
+       무작위 표본과 달리 "닿을 수 없는 벽"이 절대 나오지 않는다. */
+  A.frontier = function (x, y, score) {
+    if (typeof G === 'undefined' || !G.cell) return null;
+    if (typeof compOf !== 'function') return null;
+    const comp = compOf(x, y);
+    if (!G.comp || comp < 0) return null;
+    let best = null, bs = -1e9;
+    for (let r = 1; r < ROWS - 1; r++) for (let c = 1; c < COLS - 1; c++) {
+      const t = G.cell[kOf(c, r)];
+      if (bad(t) || A.banned(c, r)) continue;
+      let touch = false;
+      for (let i = 0; i < 4; i++) {
+        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
+        if (!inb(nc, nr)) continue;
+        const nk = kOf(nc, nr);
+        if (!G.cell[nk] && G.comp[nk] === comp) { touch = true; break; }
+      }
+      if (!touch) continue;
+      const s = score(c, r, t);
+      if (s > bs) { bs = s; best = { c, r, x: cxw(c), y: cyw(r), type: t }; }
+    }
+    return best;
+  };
+
+  /* ── 진척 감시 ── 목표 벽 체력이 줄고 있는가.
+       state 는 아무 객체나 (크루 멤버 / OBS). 멈춰 있으면 false 를 돌려준다. */
+  A.wallHp = function (c, r) {
+    if (!inb(c, r)) return -1;
+    const k = kOf(c, r), t = G.cell[k];
+    if (bad(t)) return -1;
+    if (G.hp && G.hp.has(k)) return G.hp.get(k);
+    const mul = (typeof INF !== 'undefined' && typeof infTraitCardsEnabled === 'function' && infTraitCardsEnabled()) ? (INF.wallHpMul || 1) : 1;
+    return ((typeof HPT !== 'undefined' && HPT[t]) || 100) * mul;
+  };
+  A.progressReset = function (s) { s._geoC = -1; s._geoR = -1; s._geoT = 0; };
+  A.progress = function (s, c, r, dt, limit) {
+    const hp = A.wallHp(c, r);
+    if (hp < 0) { A.progressReset(s); return true; }          /* 이미 부숴짐 */
+    if (s._geoC !== c || s._geoR !== r) { s._geoC = c; s._geoR = r; s._geoHp = hp; s._geoT = 0; return true; }
+    if (hp < (s._geoHp == null ? hp : s._geoHp) - 0.01) { s._geoHp = hp; s._geoT = 0; return true; }
+    s._geoT = (s._geoT || 0) + dt;
+    if (s._geoT > (limit || 1.8)) { A.progressReset(s); return false; }
+    return true;
+  };
+
+  window.AIGEO = A;
+})();
+</script>
+
+
 <!-- AI_CREW_INJECTED_V1 — ai/crew-ai.js 에서 생성. 원본을 고치려면 그 파일을 고치고
      python ai/inject-ai-crew.py 를 다시 실행하세요. -->
 <script>
@@ -15218,6 +15490,11 @@ body.tcBossCine #bossLabInspector{
   const cellOf = (c, r) => (c >= 0 && c < COLS && r >= 0 && r < ROWS ? G.cell[idx(c, r)] : 'rock');
   const unbreakable = (t) => (typeof SOLIDX === 'function' ? SOLIDX(t) : t === 'rock' || t === 'core');
   const rnd = (a, b) => a + Math.random() * (b - a);
+  /* v7.8.1 — 지형 게이트 (AI_GEO_V1). 모듈이 없으면 예전 동작으로 흘려보낸다 */
+  const GEO = (typeof AIGEO !== 'undefined') ? AIGEO : {
+    canMine: () => true, inReach: () => true, banned: () => false,
+    ban: () => {}, frontier: () => null, progress: () => true, progressReset: () => {},
+  };
 
   /* ══════════ 편성 ══════════ */
 
@@ -15804,6 +16081,7 @@ body.tcBossCine #bossLabInspector{
     const wx = cxw(c), wy = cyw(r);
     m.aim = Math.atan2(wy - m.y, wx - m.x);
     if (Math.hypot(wx - m.x, wy - m.y) > CELL * 1.35) return false;   /* 너무 멀면 못 판다 */
+    if (!GEO.inReach(m.x, m.y, c, r)) return false;   /* v7.8.1 — 기반암 모서리 대각 관통 금지 */
     m.digging = true; m.drill = 1;
     const nx = Math.cos(m.aim), ny = Math.sin(m.aim);
     const dv = shelDps() * DRILL_DMG() * m.kit.digMul * dt;
@@ -16178,12 +16456,9 @@ body.tcBossCine #bossLabInspector{
       if (c < 1 || r < 1 || c >= COLS - 1 || r >= ROWS - 1) continue;
       const t = G.cell[idx(c, r)];
       if (!t || unbreakable(t)) continue;
-      let open = false;
-      for (let i = 0; i < 4; i++) {
-        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
-        if (!cellOf(nc, nr)) { open = true; break; }
-      }
-      if (!open) continue;
+      /* v7.8.1 — "열린 면이 있다"가 아니라 "내가 걸어가서 붙을 수 있다"로 판정한다.
+         열린 면이 기반암 건너편이면 영원히 닿지 못하고 모서리만 비빈다 */
+      if (!GEO.canMine(m.x, m.y, c, r)) continue;
       let claimed = false;
       for (const q of claims) if (Math.abs(q.c - c) <= 1 && Math.abs(q.r - r) <= 1) { claimed = true; break; }
       if (claimed) continue;
@@ -16292,7 +16567,8 @@ body.tcBossCine #bossLabInspector{
     if (m.mineTarget) {
       const t = cellOf(m.mineTarget.c, m.mineTarget.r);
       const far = Math.hypot(m.mineTarget.x - ax, m.mineTarget.y - ay) > CELL * (leash + 4);
-      if (!t || unbreakable(t) || far || m.mineTarget.until < G.t) m.mineTarget = null;
+      if (!t || unbreakable(t) || far || m.mineTarget.until < G.t
+          || !GEO.canMine(m.x, m.y, m.mineTarget.c, m.mineTarget.r)) m.mineTarget = null;
       else return { kind: 'mine', x: m.mineTarget.x, y: m.mineTarget.y, c: m.mineTarget.c, r: m.mineTarget.r, label: '채굴' };
     }
     /* 거너는 파쇄탄이 식기 전엔 벽을 붙잡지 않는다 — 대신 구역을 지킨다 */
@@ -16300,6 +16576,12 @@ body.tcBossCine #bossLabInspector{
     let pick = pickMine(m, ax, ay, Math.max(4, leash - 2));
     if (!pick) pick = pickMine(m, ax, ay, leash + 3);        /* 주변이 이미 다 파였으면 더 멀리 본다 */
     if (!pick) pick = pickMine(m, G.sh.x, G.sh.y, leash + 6);
+    /* v7.8.1 — 반경 안이 다 파였으면 "내 열린 공간의 경계벽"에서 고른다.
+       반경 확장만으로는 기반암 너머 벽이 계속 후보로 올라온다 */
+    if (!pick) pick = GEO.frontier(m.x, m.y, (c, r, t) => {
+      const ore = t === 'gem' ? 28 : t === 'crys' ? 22 : t === 'ore' ? 16 : t === 'stone' ? 3 : 2;
+      return ore - Math.hypot(cxw(c) - m.x, cyw(r) - m.y) / CELL * 1.4;
+    });
     if (pick) {
       m.mineTarget = { c: pick.c, r: pick.r, x: pick.x, y: pick.y, until: G.t + 14 };
       return { kind: 'mine', x: pick.x, y: pick.y, c: pick.c, r: pick.r, label: '채굴' };
@@ -16408,10 +16690,20 @@ body.tcBossCine #bossLabInspector{
 
     if (goal.kind === 'mine') {
       const d = Math.hypot(goal.x - m.x, goal.y - m.y);
-      if (d > CELL * 1.25) { followStep(m, goal, dt); return; }
+      const gunner = m.roleId === 'gunner';
+      /* v7.8.1 — 거너는 파쇄탄으로 원거리 처리, 나머지는 드릴이 실제로 닿을 때만 굴착.
+         유클리드 거리만 보면 기반암 모서리 너머 벽을 붙잡고 제자리에서 비빈다 */
+      const touch = gunner ? d <= CELL * 1.25 : GEO.inReach(m.x, m.y, goal.c, goal.r);
+      if (!touch) { followStep(m, goal, dt); GEO.progressReset(m); return; }
       steer(m, goal.x, goal.y, dt, 0.4);
-      if (m.roleId === 'gunner') fireBreaker(m, goal.c, goal.r);
-      else digAt(m, goal.c, goal.r, dt);
+      if (gunner) { fireBreaker(m, goal.c, goal.r); return; }
+      /* 굴착이 성립하지 않거나 벽 체력이 줄지 않으면 그 벽을 봉인하고 다른 목표로 —
+         같은 벽이 즉시 재선택되는 무한 루프를 끊는 마지막 안전망 */
+      if (!digAt(m, goal.c, goal.r, dt) || !GEO.progress(m, goal.c, goal.r, dt, 1.8)) {
+        GEO.ban(goal.c, goal.r, 14);
+        m.mineTarget = null; m.goal = null;
+        m.path = []; m.pathKey = ''; m.pathAge = 0;
+      }
       return;
     }
 
@@ -16481,7 +16773,10 @@ body.tcBossCine #bossLabInspector{
       m.jitter = 0.5; m.jitterA = Math.random() * Math.PI * 2;
       /* 동료 길막으로 굳은 채굴은 그 벽을 포기하고 다른 목표를 잡는다 —
          claims 회피 덕에 다음 목표는 자연히 다른 벽이 된다 */
-      if (m.goal && m.goal.kind === 'mine') { m.mineTarget = null; m.goal = null; }
+      if (m.goal && m.goal.kind === 'mine') {
+        if (m.mineTarget) GEO.ban(m.mineTarget.c, m.mineTarget.r, 10);   /* v7.8.1 — 재선택 차단 */
+        m.mineTarget = null; m.goal = null;
+      }
     }
   }
 
@@ -17231,7 +17526,8 @@ const SCENES=[
  {id:'inf',label:'무한 모드 HUD',root:'#infHud',bodyClass:'uiLabScene-inf',
   detect:()=>typeof INF!=='undefined'&&INF.active&&typeof SCENE!=='undefined'&&SCENE==='depths',
   modules:[
-   {id:'ihProg',sel:'.ihProg',name:'진행 · 심층/위협/장악도'},
+   {id:'ihProg',sel:'.ihProg',name:'진행 · 심층/위협'},
+   {id:'ihDom',sel:'.ihDom',name:'장악도 레일 (중앙 상단)'},
    {id:'ihChips',sel:'.ihChips',name:'재화 칩 (Lv·코어)'},
    {id:'ihDepthRail',sel:'.ihDepthRail',name:'깊이 게이지',fixSize:true},
    {id:'ihTop',sel:'.ihTop',name:'보스 배너 레인'},
@@ -17875,6 +18171,11 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
   const unbreak = (t) => (typeof SOLIDX === 'function' ? SOLIDX(t) : t === 'rock' || t === 'core');
   const kit = () => LEADER_KIT[INF.roleId] || LEADER_KIT.driller;
   const say = (msg) => { if (typeof toast === 'function') toast(msg); };
+  /* v7.8.1 — 지형 게이트 (AI_GEO_V1) */
+  const GEO = (typeof AIGEO !== 'undefined') ? AIGEO : {
+    canMine: () => true, inReach: () => true, banned: () => false,
+    ban: () => {}, frontier: () => null, progress: () => true, progressReset: () => {},
+  };
 
   /* ══════════ 경로 — AI 크루와 같은 다익스트라 (벽 = 뚫는 시간만큼 비싼 통로) ══════════ */
 
@@ -18012,12 +18313,8 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
       if (c < 1 || r < 1 || c >= COLS - 1 || r >= ROWS - 1) continue;
       const t = G.cell[idx(c, r)];
       if (!t || unbreak(t)) continue;
-      let open = false;
-      for (let i = 0; i < 4; i++) {
-        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
-        if (!cellAt(nc, nr)) { open = true; break; }
-      }
-      if (!open) continue;
+      /* v7.8.1 — 걸어가서 붙을 수 있는 벽만. 열린 면이 기반암 건너편이면 제외 */
+      if (!GEO.canMine(G.sh.x, G.sh.y, c, r)) continue;
       let claimed = false;
       for (const q of claims) if (Math.abs(q.c - c) <= 1 && Math.abs(q.r - r) <= 1) { claimed = true; break; }
       if (claimed) continue;
@@ -18027,14 +18324,14 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
     }
     return best;
   }
-  /* 주변이 다 파였으면 무작위 표본으로 멀리 있는 벽을 찾는다 — 장악도를 계속 올린다 */
+  /* 주변이 다 파였으면 더 먼 벽을 찾는다 — 장악도를 계속 올린다.
+     v7.8.1 — 무작위 표본은 기반암 너머·완전 봉인된 벽을 뽑아 리더를 구석에
+     붙여 놓았다. 내 열린 공간에 닿아 있는 경계벽만 후보로 삼는다 */
   function pickFrontier() {
-    for (let i = 0; i < 60; i++) {
-      const c = 1 + ((Math.random() * (COLS - 2)) | 0), r = 1 + ((Math.random() * (ROWS - 2)) | 0);
-      const t = G.cell[idx(c, r)];
-      if (t && !unbreak(t)) return { c, r, x: cxw(c), y: cyw(r) };
-    }
-    return null;
+    return GEO.frontier(G.sh.x, G.sh.y, (c, r, t) => {
+      const ore = t === 'gem' ? 28 : t === 'crys' ? 22 : t === 'ore' ? 16 : t === 'stone' ? 3 : 2;
+      return ore - Math.hypot(cxw(c) - G.sh.x, cyw(r) - G.sh.y) / CELL * 1.2;
+    });
   }
 
   /* ══════════ 판단 ══════════ */
@@ -18063,7 +18360,8 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
     /* 4) 채굴 — 한 번 고른 벽은 부술 때까지 붙잡는다 */
     if (OBS.mineTarget) {
       const t = cellAt(OBS.mineTarget.c, OBS.mineTarget.r);
-      if (!t || unbreak(t) || OBS.mineTarget.until < G.t) OBS.mineTarget = null;
+      if (!t || unbreak(t) || OBS.mineTarget.until < G.t
+          || !GEO.canMine(G.sh.x, G.sh.y, OBS.mineTarget.c, OBS.mineTarget.r)) OBS.mineTarget = null;
       else return { kind: 'mine', x: OBS.mineTarget.x, y: OBS.mineTarget.y, label: '채굴' };
     }
     const pick = pickMine(6) || pickMine(11) || pickMine(17) || pickFrontier();
@@ -18084,8 +18382,13 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
       /* 앞이 벽 — 조준하고 드릴(거너는 같은 입력으로 파쇄탄이 나간다) */
       aimAt(wx, wy);
       const d = Math.hypot(wx - G.sh.x, wy - G.sh.y);
-      if (d < CELL * 1.35) G.mouse.drillDown = true;
-      else keysToward(wx, wy);
+      /* v7.8.1 — 드릴이 실제로 닿는 칸일 때만 입력을 넣고, 닿을 때까지 계속 붙는다.
+         기반암 모서리 너머로 드릴을 눌러도 팁이 닿지 않아 제자리 비비기가 된다 */
+      if (d < CELL * 1.35 && GEO.inReach(G.sh.x, G.sh.y, c, r)) {
+        G.mouse.drillDown = true;
+        OBS.drillCell = { c: c, r: r };
+        if (d > CELL * 0.95) keysToward(wx, wy);
+      } else keysToward(wx, wy);
       return;
     }
     keysToward(wx, wy); aimAt(wx, wy);
@@ -18145,7 +18448,20 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
       shootNear(8);
       return;
     }
-    if (goal.kind === 'mine') { followPath(goal.x, goal.y); return; }
+    if (goal.kind === 'mine') {
+      followPath(goal.x, goal.y);
+      /* v7.8.1 — 드릴을 넣고 있는데 벽 체력이 줄지 않으면 그 벽을 봉인하고 다른 목표로.
+         드릴 입력은 KEY 를 늘리지 않아 watchStuck 이 못 잡는 사각지대였다 */
+      const dcell = OBS.drillCell;
+      if (!dcell) { GEO.progressReset(OBS); return; }
+      const lim = INF.roleId === 'gunner' ? 6.0 : 2.0;   /* 거너는 파쇄탄 재장전을 기다린다 */
+      if (!GEO.progress(OBS, dcell.c, dcell.r, dt, lim)) {
+        GEO.ban(dcell.c, dcell.r, 14);
+        OBS.mineTarget = null; OBS.goal = null;
+        OBS.path = []; OBS.pathKey = ''; OBS.pathAge = 0;
+      }
+      return;
+    }
     /* idle — 주변 경계 */
     shootNear(9);
   }
@@ -18167,6 +18483,9 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
     OBS.goal = null; OBS.react = 0;
     OBS.path = []; OBS.pathKey = ''; OBS.pathAge = 0;
     OBS.mineTarget = null; OBS.stuckT = 0; OBS.jitter = 0;
+    OBS.drillCell = null;
+    if (GEO.clearBans) GEO.clearBans();               /* v7.8.1 — 층이 바뀌면 봉인도 초기화 */
+    GEO.progressReset(OBS);
     OBS.tLevel = OBS.tRest = OBS.tResult = OBS.idleT = 0;
   }
 
@@ -18188,6 +18507,7 @@ console.info('[UILAB] UI 레이아웃 편집 모드 준비 — 어느 화면에�
     /* 가상 입력으로 완전히 대체한다 — 실제 입력은 캡처 단계에서 이미 끊겨 있다 */
     KEY.clear();
     G.mouse.drillDown = false; G.mouse.gunDown = false;
+    OBS.drillCell = null;                             /* v7.8.1 — 이 프레임의 굴착 대상 */
     if (G.downed) { G.mouse.down = false; return; }   /* 기절 — AI 크루의 구조를 기다린다 */
     OBS.react -= dt; OBS.pathAge -= dt;
     if (OBS.react <= 0 || !OBS.goal) { OBS.goal = decide(); OBS.react = 0.15 + Math.random() * 0.08; }

@@ -13,9 +13,9 @@ const AMBI={
   /* 메인 로비 */
   lobby:[{url:'assets/audio/ambience/lobby-cave.webm', g:1.00}],
   /* 땅굴 — 두 장을 동시에 깐다. 길이가 서로 달라서 루프 주기가 겹치지 않는다 */
-  tunnel:[{url:'assets/audio/ambience/tunnel-dungeon.ogg',     g:0.85},
+  tunnel:[{url:'assets/audio/ambience/tunnel-dungeon.ogg',     g:1.19},
           /* 원본 녹음 레벨이 매우 낮아서 크게 올려야 두 겹이 대등하게 들린다 (실측 보정) */
-          {url:'assets/audio/ambience/tunnel-cave-stereo.ogg', g:3.20}]
+          {url:'assets/audio/ambience/tunnel-cave-stereo.ogg', g:4.48}]
  },
  bus:null, buf:{}, live:{}, pending:{}, failed:{}, els:{}, elMode:false,
  fadeIn:1.4, fadeOut:0.9,

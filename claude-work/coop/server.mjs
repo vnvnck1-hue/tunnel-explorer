@@ -27,7 +27,7 @@ const MAX_SEATS = 4;
    오래 열어둔 어제 탭이 새 서버에 붙어 조용히 어긋나는 것을 막는다. */
 const PROTO_VER = 4;
 /* '/' 로 접속하면 여는 본편 파일. 새 버전이 나오면 여기만 바꾼다. */
-const GAME_HTML = process.env.GAME || '/tunnel-crew-infinite-mode-v7.7.2-ui-develop.html';
+const GAME_HTML = process.env.GAME || '/tunnel-crew-infinite-mode-v7.8.1.html';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -44,6 +44,8 @@ const MIME = {
   '.wav': 'audio/wav',
   '.mp3': 'audio/mpeg',
   '.ogg': 'audio/ogg',
+  '.webm': 'audio/webm',
+  '.webp': 'image/webp',
   '.gif': 'image/gif',
 };
 

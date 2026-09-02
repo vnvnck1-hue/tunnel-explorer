@@ -2098,7 +2098,7 @@ function demoRegen(keepPos){
     enterDepth(G.depth||1);
   }
   if(keepPos && px!=null){
-    G.sh.x=px; G.sh.y=py;
+    G.sh.x=px; G.sh.y=py; ensureSpawnSafe(G.sh.x,G.sh.y);
     if(!G.fixed){const vw=LW/G.Z, vh=LH/G.Z;
       G.camX=clamp(G.sh.x-vw*.5,0,Math.max(0,WW-vw));
       G.camY=clamp(G.sh.y-vh*.42,0,Math.max(0,WH-vh));}
@@ -2107,7 +2107,7 @@ function demoRegen(keepPos){
 }
 function demoRespawn(){
   if(SCENE!=='depths') return;
-  G.sh.x=G.entry.x; G.sh.y=G.entry.y; G.sh.vx=G.sh.vy=0;
+  G.sh.x=G.entry.x; G.sh.y=G.entry.y; G.sh.vx=G.sh.vy=0; ensureSpawnSafe(G.sh.x,G.sh.y);
   G.dash.active=false; G.dashDust.length=0; G.projectiles.length=0; G.eshots.length=0;
   G.knock.vx=G.knock.vy=0; G.stunT=0;
   G.php=G.phpMax; G.iframes=1.2;
@@ -4392,7 +4392,9 @@ function genDepth(d){
  const carve=(c,r,rad)=>{for(let dr=-2;dr<=2;dr++)for(let dc=-2;dc<=2;dc++){
   const cc=c+dc,rr2=r+dr;if(!inB(cc,rr2)||SOLIDX(A[ci(cc,rr2)]))continue;
   if(Math.hypot(dc,dr)<=rad)A[ci(cc,rr2)]=null;}};
- const ec=Math.floor(COLS/2),er=2;
+ /* 시작 지점 무작위화 — 맵 전역 어디서든 시작한다 (상단 고정 제거) */
+ const ec=Math.max(2,Math.min(COLS-3,2+Math.floor(Math.random()*Math.max(1,COLS-4)))),
+       er=Math.max(2,Math.min(ROWS-3,2+Math.floor(Math.random()*Math.max(1,ROWS-4))));
  carve(ec,er,1.25);
  /* 미리 뚫린 통로 — 원작처럼 밀폐 상태로 시작하지 않는다 */
  const branches=COLS<=6?1:2;
@@ -4585,6 +4587,28 @@ function stepRubble(dt){
 }
 function solidAt(x,y){const c=Math.floor(x/CELL),r=Math.floor(y/CELL);
  return !inB(c,r)||!!G.cell[ci(c,r)];}
+/* ── 스폰 안전장치 ── 캐릭터가 생성되는 칸과 그 주변에 벽돌이 있으면 삭제한다.
+   외곽 경계벽은 건드리지 않는다 (맵 밖으로 빠지는 것을 막는다). */
+function spawnClearRadius(){return Math.max(1,Math.ceil((R_SHELLY+2)/CELL));}
+function ensureSpawnSafe(x,y,rad){
+ if(!G.cell||!G.cell.length)return 0;
+ const cc=toCell(x,y),c0=cc[0],r0=cc[1],R2=(rad==null?spawnClearRadius():rad);
+ let cleared=0;
+ for(let dr=-R2;dr<=R2;dr++)for(let dc=-R2;dc<=R2;dc++){
+  const c=c0+dc,r=r0+dr;
+  if(!inB(c,r)||c<=0||r<=0||c>=COLS-1||r>=ROWS-1)continue;
+  const k=ci(c,r);
+  if(!G.cell[k])continue;
+  G.cell[k]=null;
+  if(G.hp&&G.hp.delete)G.hp.delete(k);
+  if(G.vib&&G.vib.delete)G.vib.delete(k);
+  if(G.nudge&&G.nudge.delete)G.nudge.delete(k);
+  try{if(typeof INF!=='undefined'&&INF.drillerCracks&&INF.drillerCracks.delete)INF.drillerCracks.delete(k);}catch(e){}
+  cleared++;
+ }
+ if(cleared){G.compDirty=true;if(typeof LOS!=='undefined'&&LOS.markDirty)LOS.markDirty();}
+ return cleared;
+}
 function drawRubble(){
  if(!G.rub.length)return;
  /* 화면 밖은 그리지 않는다 */
@@ -4725,8 +4749,10 @@ function genTunnel(d){
  }
 
  /* ── 6) 연결성 보증 ── */
- const entryRoom=rooms.length?rooms.reduce((a,b)=>(a.cy<=b.cy?a:b)):null;
- const ex0=entryRoom?entryRoom.cx:Math.floor(W/2), er0=entryRoom?entryRoom.cy:2;
+ /* 시작 방 무작위 선택 — 최상단 고정 진입점 제거 */
+ const entryRoom=rooms.length?rooms[Math.floor(Math.random()*rooms.length)]:null;
+ const ex0=Math.max(2,Math.min(W-3,entryRoom?entryRoom.cx:2+Math.floor(Math.random()*Math.max(1,W-4)))),
+       er0=Math.max(2,Math.min(H-3,entryRoom?entryRoom.cy:2+Math.floor(Math.random()*Math.max(1,H-4))));
  set(ex0,er0,0);
  const region=new Int16Array(N);
  const flood=()=>{
@@ -4999,6 +5025,7 @@ function enterDepth(d){
   else if(G.mins.length&&once('depth1'))setTimeout(()=>say('depth1'),420);}
  if(d>SAVE.best)SAVE.best=d;
  G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;
+ ensureSpawnSafe(G.sh.x,G.sh.y);   /* 시작 칸에 벽돌이 남아 있으면 제거 */
  G.res.length=0;G.flash=1;G.descend=0;G.depCd=0;
  G.vib.clear();G.nudge.clear();G.combo=0;G.comboT=0;
  if(!G.fixed){const vw=LW/G.Z, vh=LH/G.Z;
@@ -9102,7 +9129,7 @@ function dropCrewRelic(at){
 function crewSoftRespawn(msg){
  dropCrewRelic({x:G.sh.x,y:G.sh.y});
  CREW.relicCd=1.4;
- G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;
+ G.sh.x=G.entry.x;G.sh.y=G.entry.y;G.sh.vx=G.sh.vy=0;ensureSpawnSafe(G.sh.x,G.sh.y);
  G.dash.active=false;G.php=G.phpMax;G.iframes=1.6;
  if(!G.fixed){const vw=LW/G.Z,vh=LH/G.Z;
   G.camX=clamp(G.entry.x-vw*.5,0,Math.max(0,WW-vw));

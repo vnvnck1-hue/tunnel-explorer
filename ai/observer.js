@@ -1,3 +1,122 @@
+/* ══════════════════════════════════════════════════════════════════
+   AI_GEO_V1 (v7.8.1) — AI 크루·관전 리더 공용 지형 판정.
+   본편 HTML 에도 같은 블록이 들어가 있다. 먼저 정의된 쪽이 이긴다.
+   ══════════════════════════════════════════════════════════════════ */
+(function () {
+  if (window.AIGEO) return;   /* 이미 주입본이 정의했다 */
+  /* ══════════════════════════════════════════════════════════════════
+     AIGEO — AI 가 벽을 고르기 전에 반드시 통과해야 하는 지형 게이트
+     ──────────────────────────────────────────────────────────────────
+     문제: 기존 pickMine 은 "네 면 중 하나가 뚫려 있으면" 캘 수 있다고 봤다.
+     그 열린 면이 기반암(rock/core) 건너편이면 AI 는 영원히 그 벽에 닿지
+     못한 채 모서리에 몸을 비빈다. 목표 유효시간이 끝나도 같은 벽이 다시
+     최고점을 받아 재선택되므로 루프가 끊기지 않는다.
+
+     해법 세 겹:
+       1) 도달성  — 열린 면이 "내가 서 있는 열린 공간 성분(G.comp)"에
+                    속할 때만 목표가 된다. 엔진이 이미 유지하는 연결 성분을
+                    그대로 쓴다 (targetsR 과 같은 기준).
+       2) 접촉    — 기반암 모서리를 대각으로 관통해 파는 것을 막는다.
+       3) 봉인    — 진척이 없는 벽은 일정 시간 후보에서 제외한다.
+                    같은 벽을 즉시 다시 잡는 재발을 끊는 안전망.
+     ══════════════════════════════════════════════════════════════════ */
+  const A = {};
+  const kOf = (c, r) => r * COLS + c;
+  const inb = (c, r) => c >= 1 && r >= 1 && c < COLS - 1 && r < ROWS - 1;
+  const hardAt = (c, r) => {
+    if (c < 0 || r < 0 || c >= COLS || r >= ROWS) return true;
+    const t = G.cell[kOf(c, r)];
+    return typeof SOLIDX === 'function' ? !!SOLIDX(t) : (t === 'rock' || t === 'core');
+  };
+  const bad = (t) => !t || (typeof SOLIDX === 'function' ? SOLIDX(t) : (t === 'rock' || t === 'core'));
+
+  /* ── 봉인 목록 ── */
+  const BAN = new Map();
+  A.ban = function (c, r, sec) { BAN.set(kOf(c, r), (G.t || 0) + (sec || 14)); };
+  A.banned = function (c, r) {
+    const k = kOf(c, r), until = BAN.get(k);
+    if (until == null) return false;
+    if (until <= (G.t || 0)) { BAN.delete(k); return false; }
+    return true;
+  };
+  A.clearBans = function () { BAN.clear(); };
+
+  /* ── 도달성 ── (x,y) 에 선 액터가 걸어가서 실제로 붙을 수 있는 벽인가 */
+  A.canMine = function (x, y, c, r) {
+    if (typeof G === 'undefined' || !G.cell || !inb(c, r)) return false;
+    if (bad(G.cell[kOf(c, r)])) return false;
+    if (A.banned(c, r)) return false;
+    if (typeof compOf !== 'function' || !G.comp) return true;   /* 성분 정보가 없으면 막지 않는다 */
+    const comp = compOf(x, y);
+    if (comp < 0) return false;
+    for (let i = 0; i < 4; i++) {
+      const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
+      if (!inb(nc, nr)) continue;
+      const nk = kOf(nc, nr);
+      if (!G.cell[nk] && G.comp[nk] === comp) return true;
+    }
+    return false;
+  };
+
+  /* ── 접촉 ── 드릴이 실제로 닿는 칸인가.
+       같은 칸·상하좌우는 허용, 대각은 기반암 모서리를 관통하지 않을 때만 허용. */
+  A.inReach = function (x, y, c, r) {
+    const mc = Math.floor(x / CELL), mr = Math.floor(y / CELL);
+    const dc = Math.abs(mc - c), dr = Math.abs(mr - r);
+    if (dc + dr <= 1) return true;
+    if (dc === 1 && dr === 1) return !(hardAt(c, mr) && hardAt(mc, r));
+    return false;
+  };
+
+  /* ── 경계벽 ── 내 열린 공간에 닿아 있는 벽 전체에서 최고점을 고른다.
+       무작위 표본과 달리 "닿을 수 없는 벽"이 절대 나오지 않는다. */
+  A.frontier = function (x, y, score) {
+    if (typeof G === 'undefined' || !G.cell) return null;
+    if (typeof compOf !== 'function' || !G.comp) return null;
+    const comp = compOf(x, y);
+    if (comp < 0) return null;
+    let best = null, bs = -1e9;
+    for (let r = 1; r < ROWS - 1; r++) for (let c = 1; c < COLS - 1; c++) {
+      const t = G.cell[kOf(c, r)];
+      if (bad(t) || A.banned(c, r)) continue;
+      let touch = false;
+      for (let i = 0; i < 4; i++) {
+        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
+        if (!inb(nc, nr)) continue;
+        const nk = kOf(nc, nr);
+        if (!G.cell[nk] && G.comp[nk] === comp) { touch = true; break; }
+      }
+      if (!touch) continue;
+      const s = score(c, r, t);
+      if (s > bs) { bs = s; best = { c, r, x: cxw(c), y: cyw(r), type: t }; }
+    }
+    return best;
+  };
+
+  /* ── 진척 감시 ── 목표 벽 체력이 줄고 있는가.
+       state 는 아무 객체나 (크루 멤버 / OBS). 멈춰 있으면 false 를 돌려준다. */
+  A.wallHp = function (c, r) {
+    if (!inb(c, r)) return -1;
+    const k = kOf(c, r), t = G.cell[k];
+    if (bad(t)) return -1;
+    if (G.hp && G.hp.has(k)) return G.hp.get(k);
+    const mul = (typeof INF !== 'undefined' && typeof infTraitCardsEnabled === 'function' && infTraitCardsEnabled()) ? (INF.wallHpMul || 1) : 1;
+    return ((typeof HPT !== 'undefined' && HPT[t]) || 100) * mul;
+  };
+  A.progressReset = function (s) { s._geoC = -1; s._geoR = -1; s._geoT = 0; };
+  A.progress = function (s, c, r, dt, limit) {
+    const hp = A.wallHp(c, r);
+    if (hp < 0) { A.progressReset(s); return true; }          /* 이미 부숴짐 */
+    if (s._geoC !== c || s._geoR !== r) { s._geoC = c; s._geoR = r; s._geoHp = hp; s._geoT = 0; return true; }
+    if (hp < (s._geoHp == null ? hp : s._geoHp) - 0.01) { s._geoHp = hp; s._geoT = 0; return true; }
+    s._geoT = (s._geoT || 0) + dt;
+    if (s._geoT > (limit || 1.8)) { A.progressReset(s); return false; }
+    return true;
+  };
+
+  window.AIGEO = A;
+})();
+
 /* ══════════════════════════════════════════════════════════════════════
    관전 모드 (OBSERVER) — v1
    ──────────────────────────────────────────────────────────────────────
@@ -41,15 +160,26 @@
   /* ══════════ 빙의 — 관전 중 Esc 로 현재 시점의 크루를 직접 조종한다 (F9 관전 복귀) ══════════ */
   OBS.possess = null;                    /* 조종 중인 AI 크루 (null = 빙의 없음) */
   window.OBS_MANUAL = null;              /* AICREW.manualAct 가 읽는 실입력 채널 */
+  /* Esc 교대 — 보고 있던 크루와 몸(위치·직업)을 통째로 교환하고 관전을 해제한다.
+     그 직업을 골라 시작한 것처럼 무기·스킬·HUD·키 가이드 전부가 본편 시스템으로 맞춰진다. */
   function enterPossess(focusIdx) {
     if (typeof AICREW === 'undefined') return;
     const m = AICREW.members[focusIdx - 1];
     if (!m) return;
+    if (m.down) { say('다운된 크루는 조종할 수 없습니다 — 구조를 기다리세요'); return; }
+    if (typeof G !== 'undefined' && G.downed) { say('리더가 기절 상태라 교대할 수 없습니다'); return; }
     releasePossess();
-    OBS.possess = m; m.manual = true; m.goal = null; m.path = [];
-    window.OBS_MANUAL = { keys: new Set(), sx: null, sy: null, aimX: null, aimY: null, fire: false, dash: false, q: false, e: false };
-    say('빙의 — ' + (ROLE_KO[m.roleId] || m.roleId) + ' 직접 조종 · Tab/F9 관전 복귀');
-    paintBadge();
+    const newRole = m.roleId, oldRole = (typeof INF !== 'undefined') ? INF.roleId : 'driller';
+    /* 위치 교환 — 카메라가 보던 자리에 그대로 리더가 들어간다 */
+    const px = G.sh.x, py = G.sh.y, pa = G.sh.aim || 0;
+    G.sh.x = m.x; G.sh.y = m.y; G.sh.aim = m.aim || 0; G.sh.vx = 0; G.sh.vy = 0;
+    if (G.dash) G.dash.active = false;
+    m.x = px; m.y = py; m.aim = pa; m.vx = 0; m.vy = 0;
+    /* 직업 교환 — 크루는 리더의 직업으로, 플레이어는 크루의 직업으로 */
+    if (typeof AICREW.setRole === 'function') AICREW.setRole(m, oldRole);
+    if (typeof infSwitchRoleMidRun === 'function') infSwitchRoleMidRun(newRole);
+    resetBrain();
+    OBS.exit((ROLE_KO[newRole] || newRole) + ' 교대 — 직접 플레이');
   }
   function releasePossess() {
     if (!OBS.possess) return;
@@ -76,6 +206,11 @@
   const unbreak = (t) => (typeof SOLIDX === 'function' ? SOLIDX(t) : t === 'rock' || t === 'core');
   const kit = () => LEADER_KIT[INF.roleId] || LEADER_KIT.driller;
   const say = (msg) => { if (typeof toast === 'function') toast(msg); };
+  /* v7.8.1 — 지형 게이트 (AI_GEO_V1) */
+  const GEO = (typeof AIGEO !== 'undefined') ? AIGEO : {
+    canMine: () => true, inReach: () => true, banned: () => false,
+    ban: () => {}, frontier: () => null, progress: () => true, progressReset: () => {},
+  };
 
   /* ══════════ 경로 — AI 크루와 같은 다익스트라 (벽 = 뚫는 시간만큼 비싼 통로) ══════════ */
 
@@ -213,12 +348,8 @@
       if (c < 1 || r < 1 || c >= COLS - 1 || r >= ROWS - 1) continue;
       const t = G.cell[idx(c, r)];
       if (!t || unbreak(t)) continue;
-      let open = false;
-      for (let i = 0; i < 4; i++) {
-        const nc = c + (i === 0 ? 1 : i === 1 ? -1 : 0), nr = r + (i === 2 ? 1 : i === 3 ? -1 : 0);
-        if (!cellAt(nc, nr)) { open = true; break; }
-      }
-      if (!open) continue;
+      /* v7.8.1 — 걸어가서 붙을 수 있는 벽만. 열린 면이 기반암 건너편이면 제외 */
+      if (!GEO.canMine(G.sh.x, G.sh.y, c, r)) continue;
       let claimed = false;
       for (const q of claims) if (Math.abs(q.c - c) <= 1 && Math.abs(q.r - r) <= 1) { claimed = true; break; }
       if (claimed) continue;
@@ -228,14 +359,14 @@
     }
     return best;
   }
-  /* 주변이 다 파였으면 무작위 표본으로 멀리 있는 벽을 찾는다 — 장악도를 계속 올린다 */
+  /* 주변이 다 파였으면 더 먼 벽을 찾는다 — 장악도를 계속 올린다.
+     v7.8.1 — 무작위 표본은 기반암 너머·완전 봉인된 벽을 뽑아 리더를 구석에
+     붙여 놓았다. 내 열린 공간에 닿아 있는 경계벽만 후보로 삼는다 */
   function pickFrontier() {
-    for (let i = 0; i < 60; i++) {
-      const c = 1 + ((Math.random() * (COLS - 2)) | 0), r = 1 + ((Math.random() * (ROWS - 2)) | 0);
-      const t = G.cell[idx(c, r)];
-      if (t && !unbreak(t)) return { c, r, x: cxw(c), y: cyw(r) };
-    }
-    return null;
+    return GEO.frontier(G.sh.x, G.sh.y, (c, r, t) => {
+      const ore = t === 'gem' ? 28 : t === 'crys' ? 22 : t === 'ore' ? 16 : t === 'stone' ? 3 : 2;
+      return ore - Math.hypot(cxw(c) - G.sh.x, cyw(r) - G.sh.y) / CELL * 1.2;
+    });
   }
 
   /* ══════════ 판단 ══════════ */
@@ -264,7 +395,8 @@
     /* 4) 채굴 — 한 번 고른 벽은 부술 때까지 붙잡는다 */
     if (OBS.mineTarget) {
       const t = cellAt(OBS.mineTarget.c, OBS.mineTarget.r);
-      if (!t || unbreak(t) || OBS.mineTarget.until < G.t) OBS.mineTarget = null;
+      if (!t || unbreak(t) || OBS.mineTarget.until < G.t
+          || !GEO.canMine(G.sh.x, G.sh.y, OBS.mineTarget.c, OBS.mineTarget.r)) OBS.mineTarget = null;
       else return { kind: 'mine', x: OBS.mineTarget.x, y: OBS.mineTarget.y, label: '채굴' };
     }
     const pick = pickMine(6) || pickMine(11) || pickMine(17) || pickFrontier();
@@ -285,8 +417,13 @@
       /* 앞이 벽 — 조준하고 드릴(거너는 같은 입력으로 파쇄탄이 나간다) */
       aimAt(wx, wy);
       const d = Math.hypot(wx - G.sh.x, wy - G.sh.y);
-      if (d < CELL * 1.35) G.mouse.drillDown = true;
-      else keysToward(wx, wy);
+      /* v7.8.1 — 드릴이 실제로 닿는 칸일 때만 입력을 넣고, 닿을 때까지 계속 붙는다.
+         기반암 모서리 너머로 드릴을 눌러도 팁이 닿지 않아 제자리 비비기가 된다 */
+      if (d < CELL * 1.35 && GEO.inReach(G.sh.x, G.sh.y, c, r)) {
+        G.mouse.drillDown = true;
+        OBS.drillCell = { c: c, r: r };
+        if (d > CELL * 0.95) keysToward(wx, wy);
+      } else keysToward(wx, wy);
       return;
     }
     keysToward(wx, wy); aimAt(wx, wy);
@@ -346,7 +483,20 @@
       shootNear(8);
       return;
     }
-    if (goal.kind === 'mine') { followPath(goal.x, goal.y); return; }
+    if (goal.kind === 'mine') {
+      followPath(goal.x, goal.y);
+      /* v7.8.1 — 드릴을 넣고 있는데 벽 체력이 줄지 않으면 그 벽을 봉인하고 다른 목표로.
+         드릴 입력은 KEY 를 늘리지 않아 watchStuck 이 못 잡는 사각지대였다 */
+      const dcell = OBS.drillCell;
+      if (!dcell) { GEO.progressReset(OBS); return; }
+      const lim = INF.roleId === 'gunner' ? 6.0 : 2.0;   /* 거너는 파쇄탄 재장전을 기다린다 */
+      if (!GEO.progress(OBS, dcell.c, dcell.r, dt, lim)) {
+        GEO.ban(dcell.c, dcell.r, 14);
+        OBS.mineTarget = null; OBS.goal = null;
+        OBS.path = []; OBS.pathKey = ''; OBS.pathAge = 0;
+      }
+      return;
+    }
     /* idle — 주변 경계 */
     shootNear(9);
   }
@@ -368,6 +518,9 @@
     OBS.goal = null; OBS.react = 0;
     OBS.path = []; OBS.pathKey = ''; OBS.pathAge = 0;
     OBS.mineTarget = null; OBS.stuckT = 0; OBS.jitter = 0;
+    OBS.drillCell = null;
+    if (GEO.clearBans) GEO.clearBans();               /* v7.8.1 — 층이 바뀌면 봉인도 초기화 */
+    GEO.progressReset(OBS);
     OBS.tLevel = OBS.tRest = OBS.tResult = OBS.idleT = 0;
   }
 
@@ -389,6 +542,7 @@
     /* 가상 입력으로 완전히 대체한다 — 실제 입력은 캡처 단계에서 이미 끊겨 있다 */
     KEY.clear();
     G.mouse.drillDown = false; G.mouse.gunDown = false;
+    OBS.drillCell = null;                             /* v7.8.1 — 이 프레임의 굴착 대상 */
     if (G.downed) { G.mouse.down = false; return; }   /* 기절 — AI 크루의 구조를 기다린다 */
     OBS.react -= dt; OBS.pathAge -= dt;
     if (OBS.react <= 0 || !OBS.goal) { OBS.goal = decide(); OBS.react = 0.15 + Math.random() * 0.08; }
@@ -592,6 +746,7 @@
   /* 런 도중 재개 — 편성을 건드리지 않고 오토파일럿만 켠다 (F8) */
   OBS.resume = function () {
     OBS.active = true; OBS.everUsed = true; OBS.focus = 0; OBS.camX = null;
+    if (typeof AICREW !== 'undefined') AICREW.enabled = true;   /* 관전 = 전원 AI — 꺼져 있던 크루도 되살린다 */
     resetBrain();
     document.body.classList.add('obsActive');
     say('관전 모드 재개 — Tab 시점 전환 · Esc 해제');
