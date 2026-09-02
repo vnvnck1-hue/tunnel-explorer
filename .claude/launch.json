@@ -4,27 +4,59 @@
     {
       "name": "coop-server",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["claude-work/coop/server.mjs", "5188"],
+      "runtimeArgs": [
+        "claude-work/coop/server.mjs",
+        "5188"
+      ],
       "port": 5188
     },
     {
       "name": "dist-server",
-      "runtimeExecutable": "build/TunnelCrew-v7.8.0/node/node.exe",
-      "runtimeArgs": ["build/TunnelCrew-v7.8.0/coop/server.mjs", "5288"],
+      "runtimeExecutable": "build/TunnelCrew-v7.8.1/node/node.exe",
+      "runtimeArgs": [
+        "build/TunnelCrew-v7.8.1/coop/server.mjs",
+        "5288"
+      ],
       "port": 5288
     },
     {
       "name": "coop-server-alt",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["claude-work/coop/server.mjs", "5388"],
+      "runtimeArgs": [
+        "claude-work/coop/server.mjs",
+        "5388"
+      ],
       "port": 5388
     },
     {
       "name": "tunnel-crew-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server", "-c-1", "."],
+      "runtimeArgs": [
+        "--yes",
+        "http-server",
+        "-c-1",
+        "."
+      ],
       "autoPort": true,
       "port": 8321
+    },
+    {
+      "name": "ping-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "coop/server.mjs",
+        "5488"
+      ],
+      "port": 5488
+    },
+    {
+      "name": "load-server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "coop/server.mjs",
+        "5588"
+      ],
+      "port": 5588
     }
   ]
 }
