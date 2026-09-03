@@ -4676,6 +4676,9 @@ const FEEL={
 };
 
 /* ══════════ 게임필 (임팩트 스택) ══════════ */
+/* PERF_J_SPAWN_CAP — step()의 상한(불꽃 220·파편 170·연기 320)까지만 생성한다.
+   전에는 대량 파괴 한 프레임에 수천 개를 만들어 놓고 step()에서 잘라내 GC·정렬 비용만 냈다. */
+function jSpawnRoom(list,n,cap){const room=cap-list.length;return room<=0?0:(n<=room?n:room);}
 const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],shake:0,sdx:0,sdy:0,hs:0,
  dmg(x,y,v,big){
   if(v<1)return;
@@ -4715,10 +4718,10 @@ const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],s
  },
  square(x,y,col,r0,r1,w){this.sq.push({x,y,col,r0,r1,w:w||3,life:1});},
  star(x,y,col,r){this.sr.push({x,y,col,r,life:1});},
- burst(x,y,n,col,sp){for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.4+Math.random()*.9);
+ burst(x,y,n,col,sp){n=jSpawnRoom(this.p,n,220);for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.4+Math.random()*.9);
   this.p.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:1,
    col:Array.isArray(col)?col[i%col.length]:col,r:2+Math.random()*4});}},
- chunks(x,y,n,cols,sp,dx,dy){const bias=(dx||dy);
+ chunks(x,y,n,cols,sp,dx,dy){const bias=(dx||dy);n=jSpawnRoom(this.ch,n,170);
   for(let i=0;i<n;i++){
    const a=bias?Math.atan2(dy,dx)+(Math.random()-.5)*2.0:Math.random()*6.283;
    const s2=sp*(.45+Math.random()*1.05);
@@ -4734,7 +4737,7 @@ const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],s
  spikes(x,y,n,col,len,dx,dy){const base=(dx||dy)?Math.atan2(dy,dx):Math.random()*6.283;
   for(let i=0;i<n;i++){const a=base+i*(6.283/n)+(Math.random()-.5)*.4;
    this.sp.push({x,y,a,len:len*(.7+Math.random()*.6),col,life:1});}},
- smoke(x,y,n,col,sp){for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.3+Math.random()*.8);
+ smoke(x,y,n,col,sp){n=jSpawnRoom(this.sm,n,320);for(let i=0;i<n;i++){const a=Math.random()*6.283,s=sp*(.3+Math.random()*.8);
   this.sm.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:9+Math.random()*13,col,life:1});}},
  ceiling(x,y,rocks,dust,alpha,height,delay,spreadMul){
   const count=Math.max(0,(rocks|0)+(dust|0)),rockCount=Math.max(0,rocks|0),sm=spreadMul==null?1:Math.max(.1,spreadMul),wait=Math.max(0,delay||0);
@@ -4816,9 +4819,10 @@ const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],s
    cx.restore();
   }
   /* 파편 — 먼지 꼬리 + 각진 돌덩이 */
+  const chDense=this.ch.length>72;   /* PERF_CH_DENSE — 파편이 많으면 꼬리·음영 생략, 본체만 */
   for(const q of this.ch){
    const al=Math.min(1,q.life*1.4);
-   if(q.tail&&q.tr){
+   if(!chDense&&q.tail&&q.tr){
     cx.globalAlpha=al*.30;cx.strokeStyle=q.col;cx.lineCap='round';
     cx.lineWidth=q.sz*.92;
     cx.beginPath();cx.moveTo(q.x,q.y);cx.lineTo(q.tr[2],q.tr[3]);cx.stroke();
@@ -4839,11 +4843,12 @@ const J={p:[],t:[],ch:[],rg:[],fl:[],af:[],sp:[],sm:[],bd:[],sq:[],sr:[],dm:[],s
     const px3=Math.cos(a2)*rr3, py3=Math.sin(a2)*rr3;
     if(v)cx.lineTo(px3,py3);else cx.moveTo(px3,py3);}
    cx.closePath();cx.fill();
-   /* 아래쪽 음영 → 위쪽 하이라이트 */
+   /* 아래쪽 음영 → 위쪽 하이라이트 (PERF_CH_DENSE — 밀집 시 생략) */
+   if(!chDense){
    cx.fillStyle='rgba(28,15,6,.24)';
    cx.beginPath();cx.ellipse(R2*.18,R2*.28,R2*.66,R2*.46,0,0,7);cx.fill();
    cx.fillStyle='rgba(255,246,228,.30)';
-   cx.beginPath();cx.ellipse(-R2*.20,-R2*.26,R2*.44,R2*.30,-.5,0,7);cx.fill();
+   cx.beginPath();cx.ellipse(-R2*.20,-R2*.26,R2*.44,R2*.30,-.5,0,7);cx.fill();}
    cx.restore();}
   for(const q of this.p){cx.globalAlpha=Math.max(0,q.life)*.9;cx.fillStyle=q.col;
    cx.beginPath();cx.arc(q.x,q.y,q.r*q.life,0,7);cx.fill();}
@@ -5859,6 +5864,11 @@ function startIncursion(mode){
 }
 
 /* ══════════ 채굴 ══════════ */
+/* PERF_BRK_BURST — 180ms 창 안에서 깨진 블록 수. 폭발·연쇄 붕괴처럼 한 번에 수십 개가 깨질 때
+   사운드 노드·히트스톱·파티클이 블록 수만큼 쌓여 프레임이 튀는 것을 막는다.
+   창은 첫 파괴 시점에 고정되므로 드릴로 천천히 연달아 깨는 일반 굴착에는 영향이 없다. */
+let _brkBurstN=0,_brkBurstAt=0;
+function brkBurstTick(){const n=performance.now();if(n-_brkBurstAt>180){_brkBurstAt=n;_brkBurstN=0;}return ++_brkBurstN;}
  function damage(c,r,d,hx,hy,quiet){
  if(!solid(c,r)||SOLIDX(G.cell[ci(c,r)]))return false;
  const k=ci(c,r),t=G.cell[k],full=HPT[t];
@@ -5883,13 +5893,14 @@ function startIncursion(mode){
   J.flash(x,y,CELL*DEMO.brkFlash,oreCol?'rgba(255,255,255,.95)':'rgba(255,232,196,.85)');
   J.ring(x,y,oreCol||'rgba(255,224,180,.95)',CELL*.16,CELL*(1.0+cb*.4),4);
   if(oreCol)J.ring(x,y,'rgba(255,255,255,.8)',CELL*.1,CELL*.66,2.2);
-  const nChk=oreCol?(DEMO.brkOreChunks|0):(DEMO.brkChunks|0);
+  const brkBurst=brkBurstTick(),burstCut=brkBurst>3?.35:1;   /* PERF_BRK_BURST — 대량 파괴 중엔 블록당 파티클 35% */
+  const nChk=Math.ceil((oreCol?(DEMO.brkOreChunks|0):(DEMO.brkChunks|0))*burstCut);
   if(nChk>0)J.chunks(x,y,nChk,oreCol?[oreCol,pal[2],pal[0]]:pal,DEMO.brkChunkSp+cb*140,hx,hy);
   /* ── 바닥에 남는 파편 — 관성으로 흩어져 한동안 그대로 있다 ── */
-  const nRub=(DEMO.brkRubble|0)+((Math.random()*(DEMO.brkRubbleRand+1))|0)+(oreCol?2:0);
+  const nRub=Math.ceil(((DEMO.brkRubble|0)+((Math.random()*(DEMO.brkRubbleRand+1))|0)+(oreCol?2:0))*burstCut);
   if(nRub>0)spawnRubble(x,y,oreCol?[pal[1],pal[2],oreCol]:[pal[0],pal[1],pal[2]], nRub, hx, hy);
-  if(DEMO.brkBurst>0)J.burst(x,y,DEMO.brkBurst|0,[pal[1],pal[2],'rgba(255,235,205,.7)'],DEMO.brkBurstSp);
-  if(DEMO.brkSmoke>0)J.smoke(x,y,DEMO.brkSmoke|0,oreCol?'#FFE9C9':pal[2],70);
+  if(DEMO.brkBurst>0)J.burst(x,y,Math.ceil((DEMO.brkBurst|0)*burstCut),[pal[1],pal[2],'rgba(255,235,205,.7)'],DEMO.brkBurstSp);
+  if(DEMO.brkSmoke>0)J.smoke(x,y,Math.ceil((DEMO.brkSmoke|0)*burstCut),oreCol?'#FFE9C9':pal[2],70);
   const nSpk=oreCol?(DEMO.brkOreSpikes|0):(DEMO.brkSpikes|0);
   if(nSpk>0)J.spikes(x,y,nSpk,oreCol?'#FFFFFF':'rgba(255,226,182,.95)',CELL*(.52+cb*.22),hx,hy);
   J.square(x,y,oreCol?'rgba(255,255,255,.92)':'rgba(255,230,186,.8)',CELL*.32,CELL*(.9+cb*.3),3.4);
@@ -5899,8 +5910,9 @@ function startIncursion(mode){
    if(!solid(c+dcc,r+drr))continue;
    G.nudge.set(ci(c+dcc,r+drr),{dx:dcc*5.6,dy:drr*5.6,t:.19});}
   const hard=t==='stone';
-  if(oreCol)(SFX.oreBreak?SFX.oreBreak():SFX.ore());else SFX.brk();
-  J.stop(oreCol?78:hard?56:40);
+  /* PERF_BRK_BURST — 같은 창에서 사운드는 4개, 히트스톱은 3개까지만 (그 이상은 겹쳐 쌓이기만 한다) */
+  if(brkBurst<=4){if(oreCol)(SFX.oreBreak?SFX.oreBreak():SFX.ore());else SFX.brk();}
+  if(brkBurst<=3)J.stop(oreCol?78:hard?56:40);
   J.kick(oreCol?DEMO.brkKickOre:hard?DEMO.brkKickHard:DEMO.brkKickSoft, hx||0, hy||0);
   if(G.combo>=10&&G.combo%10===0){J.text(x,y-CELL*.5,'×'+G.combo,P.worm,20+Math.min(10,G.combo/10*3));
    J.ring(x,y,P.worm,CELL*.3,CELL*1.6,3);J.kick(4.0,hx||0,hy||0);}
@@ -7788,7 +7800,7 @@ const LIT=(function(){
    out.push({L,lx,ly,R});
   }
   out.sort((a,b)=>b.L[3]-a.L[3]);
-  return out.slice(0,Math.max(1,T.wLights|0));
+  return out.slice(0,Math.max(1,OPT.lq?1:T.wLights|0));   /* PERF_LIT_LQ — 저품질이면 가장 밝은 광원 하나만 */
  }
  function pass(g,mode,sel){
   const P2=PASS[mode];
@@ -7796,7 +7808,7 @@ const LIT=(function(){
   const CW=cv.width, CH=cv.height;
   const tw=Math.max(2,Math.round(CW*q)), th=Math.max(2,Math.round(CH*q));
   if(tmpCv.width!==tw||tmpCv.height!==th){tmpCv.width=tw;tmpCv.height=th;}
-  const steps=mode==='shadow'?Math.max(1,T.wSteps|0):1;
+  const steps=mode==='shadow'?(OPT.lq?1:Math.max(1,T.wSteps|0)):1;   /* PERF_LIT_LQ */
 
   for(let i=0;i<sel.length;i++){
    const {L,lx,ly,R}=sel[i];
@@ -12357,8 +12369,19 @@ function infXpWeight(kind){
    획득처를 늘려도 가중치·상한·기록이 한곳에서 유지된다.
    opts.capped 를 준 지급만 지층당 상한을 소비한다. */
 /* XP 게이지 끝 "+N" 팝 — 데미지 로그처럼 획득량을 계속 보여준다. 짧은 간격의 획득은 하나로 합산한다. */
-let _xpPopEl=null,_xpPopAt=0,_xpPopSum=0;
+/* PERF_XPPOP_COALESCE — 블록이 한 프레임에 수십 개 깨지면 호출마다 DOM 쓰기와 offsetWidth 강제 리플로우가
+   일어나 큰 스파이크가 났다. 획득량만 누적하고 실제 DOM 갱신은 마이크로태스크에서 프레임당 한 번만 한다. */
+let _xpPopEl=null,_xpPopAt=0,_xpPopSum=0,_xpPopPending=0,_xpPopQueued=false;
 function infXpPop(gain){
+ _xpPopPending+=gain;
+ if(_xpPopQueued)return;
+ _xpPopQueued=true;
+ if(typeof queueMicrotask==='function')queueMicrotask(infXpPopFlush);else Promise.resolve().then(infXpPopFlush);
+}
+function infXpPopFlush(){
+ _xpPopQueued=false;
+ const gain=_xpPopPending;_xpPopPending=0;
+ if(!(gain>0))return;
  const hud=document.getElementById('infHud');if(!hud)return;
  const now=performance.now();
  if(_xpPopEl&&_xpPopEl.isConnected&&now-_xpPopAt<420){_xpPopSum+=gain;}
