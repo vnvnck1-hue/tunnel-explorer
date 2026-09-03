@@ -329,6 +329,7 @@ function leaveRoom(ws, asGhost) {
 /* 게임 이벤트는 검사 없이 릴레이한다. 새 이벤트 타입은 여기만 추가하면 된다. */
 const RELAY_TYPES = new Set([
   'state', 'dig', 'break', 'hp', 'loot', 'lamp', 'skill', 'end', 'ping',
+  'chat',    /* 크루 채팅 {text} — chat/tc-chat.js (from/fromName 은 서버가 붙인다) */
   /* 트랙 F — 본편 무한 모드 */
   'escape',  /* 탈출 포트 요청/재현 {x,y,need,auto} */
   'board',   /* 탈출 포트 탑승 확정 */

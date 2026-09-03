@@ -12,9 +12,9 @@
     },
     {
       "name": "dist-server",
-      "runtimeExecutable": "build/TunnelCrew-v7.8.1/node/node.exe",
+      "runtimeExecutable": "build/TunnelCrew-v7.9.0/node/node.exe",
       "runtimeArgs": [
-        "build/TunnelCrew-v7.8.1/coop/server.mjs",
+        "build/TunnelCrew-v7.9.0/coop/server.mjs",
         "5288"
       ],
       "port": 5288

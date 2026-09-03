@@ -7,10 +7,12 @@
   등을 가로채서 자산 맵에서 찾아준다. 본문 게임 코드는 수정하지 않는다.
 
   사용:  node tools/build-single-html.mjs [원본.html] [출력.html]
-  기본:  build/TunnelCrew-v7.8.1/tunnel-crew-infinite-mode-v7.8.1.html
-         → build/tunnel-crew-infinite-mode-v7.8.1-single.html
+  기본:  원본 = 프로젝트 루트의 최신 tunnel-crew-infinite-mode-v*.html
+         출력 = build/<원본 이름>-single.html
+  자산은 원본 HTML 이 있는 폴더 기준(assets/ · monster_assets_v1.5.4/ · tunnel_crew_tile_resources_v1/)으로 찾는다.
 
   단일 파일에서 빠지는 것: LAN 코옵(ws 서버)·서버 저장(coop/saves).
+  → 메인 메뉴의 LAN 코옵 버튼은 잠금(locked·disabled) 상태로 남겨 둔다.
 */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,7 +20,17 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT = path.resolve(__dirname, '..');
-const SRC = path.resolve(process.argv[2] || path.join(PROJECT, 'build/TunnelCrew-v7.8.1/tunnel-crew-infinite-mode-v7.8.1.html'));
+
+/* 루트에서 가장 높은 버전의 본선 HTML 을 고른다 (v7.9.0 > v7.8.1) */
+function newestMainHtml() {
+  const cands = fs.readdirSync(PROJECT)
+    .map(f => ({ f, m: f.match(/^tunnel-crew-infinite-mode-v(\d+)\.(\d+)\.(\d+)\.html$/) }))
+    .filter(x => x.m)
+    .sort((a, b) => (+b.m[1] - +a.m[1]) || (+b.m[2] - +a.m[2]) || (+b.m[3] - +a.m[3]));
+  if (!cands.length) throw new Error('루트에 tunnel-crew-infinite-mode-vX.Y.Z.html 이 없습니다 — 원본 경로를 인자로 주세요');
+  return path.join(PROJECT, cands[0].f);
+}
+const SRC = path.resolve(process.argv[2] || newestMainHtml());
 const OUT = path.resolve(process.argv[3] || path.join(PROJECT, 'build', path.basename(SRC, '.html') + '-single.html'));
 const ROOT = path.dirname(SRC);
 
@@ -61,7 +73,13 @@ for (const m of html.matchAll(tokenRe)) {
 /* ── 3. 동적 폴더 규칙 ─────────────────────────────────────────────── */
 const dynDirs = new Set();
 // 몬스터 프레임: ENEMY_SPRITE_BASE='monster_assets_v1.5.4/frames' + dir + frame_NN.png
-if (html.includes('monster_assets_v1.5.4/frames')) dynDirs.add('monster_assets_v1.5.4/frames');
+// dir 목록은 Object.entries({crawler:'crawler',spitter:'spitter',broodBeast:'brood-beast'}) 에서 읽는다 (frames/archive 같은 보관 폴더 제외)
+{
+  const baseM = html.match(/ENEMY_SPRITE_BASE='([^']+)'/);
+  const dirsM = html.match(/for\(const \[kind,dir\] of Object\.entries\(\{([^}]+)\}\)\)/);
+  if (baseM && dirsM) for (const m of dirsM[1].matchAll(/'([^']+)'/g)) dynDirs.add(baseM[1] + '/' + m[1]);
+  else if (html.includes('monster_assets_v1.5.4/frames')) dynDirs.add('monster_assets_v1.5.4/frames');
+}
 // 캐릭터 액션 시트: *_SHEET_ROOT='assets/characters/reely-xxx-actions/sheets/'
 for (const m of html.matchAll(/['"`](assets\/[A-Za-z0-9_\-./]+\/sheets\/)['"`]/g)) dynDirs.add(m[1].replace(/\/$/, ''));
 // 보스 드래곤: BOSS_DRAGON_ANIMS 의 folder:'…' + frame_NN.png / fallback:'…gif'
@@ -106,13 +124,54 @@ for (const t of tokens) {
 const unmatched = [...tokens].filter(t => !tokenHit.has(t))
   .filter(t => !allFiles.some(f => f === t || f.endsWith('/' + t) || f.endsWith(t)));
 
-/* ── 5. 인코딩 ─────────────────────────────────────────────────────── */
+/* ── 5-a. PNG → 무손실 WebP (용량 다이어트 2번) ─────────────────────────
+   원본 자산은 그대로 두고, 인라인할 바이트만 WebP 로 바꾼다. 픽셀 동일(lossless).
+   파일마다 PNG 와 WebP 중 작은 쪽을 고른다(타일처럼 WebP 가 더 커지는 파일은 PNG 유지).
+   변환 결과는 build/.single-cache/ 에 캐시해 재빌드를 빠르게 한다.  --no-webp 로 끌 수 있다. */
+import { spawnSync } from 'node:child_process';
+const NO_WEBP = process.argv.includes('--no-webp');
+const CACHE = path.join(PROJECT, 'build', '.single-cache', 'webp');
+const webpFor = new Map(); // rel → cached webp path
+if (!NO_WEBP) {
+  const jobs = [];
+  for (const rel of included.keys()) {
+    if (!/\.png$/i.test(rel)) continue;
+    const abs = path.join(ROOT, rel);
+    const st = fs.statSync(abs);
+    const key = rel.replace(/[^A-Za-z0-9._-]/g, '_') + `__${st.size}_${Math.floor(st.mtimeMs)}.webp`;
+    const dst = path.join(CACHE, key);
+    webpFor.set(rel, dst);
+    if (!fs.existsSync(dst)) jobs.push([abs, dst]);
+  }
+  if (jobs.length) {
+    console.log(`WebP 변환 ${jobs.length}개 (무손실, 캐시 ${CACHE}) …`);
+    // -X utf8 + PYTHONUTF8: 한글 경로가 stdin/stdout 을 UTF-8 로 오가게 한다 (기본 cp949 면 경로가 깨져 파일을 못 찾는다)
+    const py = spawnSync('python', ['-X', 'utf8', path.join(__dirname, 'webp-lossless.py')],
+      { input: JSON.stringify(jobs), encoding: 'utf8', maxBuffer: 64 * 1048576, env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' } });
+    let res = null; try { res = JSON.parse(py.stdout); } catch {}
+    if (py.status !== 0 || !Array.isArray(res)) {
+      console.warn('경고: WebP 변환 실패 — PNG 그대로 인라인합니다.', (res && res.error) || py.stderr || py.error || '');
+      webpFor.clear();
+    } else {
+      const failed = res.filter(r => !r.ok);
+      if (failed.length) console.warn(`경고: WebP 변환 실패 ${failed.length}개 (PNG 유지):`, failed.slice(0, 3).map(f => path.relative(ROOT, f.src) + ' — ' + f.error).join('; '), failed.length > 3 ? '…' : '');
+    }
+  }
+}
+
+/* ── 5-b. 인코딩 ───────────────────────────────────────────────────── */
 const map = {};
-let rawBytes = 0;
+let rawBytes = 0, pngBytes = 0, webpBytes = 0, webpUsed = 0, webpKept = 0;
 const byReason = {};
 for (const [rel, reason] of [...included].sort()) {
-  const buf = fs.readFileSync(path.join(ROOT, rel));
-  const ext = rel.slice(rel.lastIndexOf('.') + 1).toLowerCase();
+  let buf = fs.readFileSync(path.join(ROOT, rel));
+  let ext = rel.slice(rel.lastIndexOf('.') + 1).toLowerCase();
+  const wp = webpFor.get(rel);
+  if (wp && fs.existsSync(wp)) {
+    const wbuf = fs.readFileSync(wp);
+    if (wbuf.length < buf.length) { pngBytes += buf.length; webpBytes += wbuf.length; buf = wbuf; ext = 'webp'; webpUsed++; }
+    else webpKept++;
+  }
   const mime = MIME[ext] || 'application/octet-stream';
   map[rel] = `data:${mime};base64,${buf.toString('base64')}`;
   rawBytes += buf.length;
@@ -143,10 +202,13 @@ out = out.replace(/<link\b[^>]*\bhref=["']((?:\.\/)?assets\/[^"']+\.css)["'][^>]
   return `<style data-inlined-from="${norm(href)}">\n${css}\n</style>`;
 });
 
-// 6-b. 마크업/문자열 속의 src="assets/…" · href="assets/…" (파서가 직접 세팅하는 속성은 setter 를 타지 않으므로 빌드 시 치환)
-out = out.replace(new RegExp(`(\\s(?:src|href|poster)=)(["'])(${ROOT_RE_SRC}[^"']+?)\\2`, 'g'), (m, a, q, p) => {
-  const d = lookup(p); if (!d) { missing.add(p); return m; }
-  replaced++; return a + q + d + q;
+// 6-b. 마크업/문자열 속의 src="assets/…" · href="assets/…" (용량 다이어트 1번 — 중복 제거)
+//      파서가 직접 세팅하는 속성은 setter 를 타지 않는다. 예전엔 여기서 data URI 로 바꿔 맵과 이중으로 들어갔다(키아트 5MB 등).
+//      이제는 data-tc-src 로 바꿔 두고 shim 의 MutationObserver 가 요소가 생기는 즉시 맵에서 채운다 → 바이트는 맵에 한 번만.
+let deferredAttrs = 0;
+out = out.replace(new RegExp(`(\\s)(src|href|poster)=(["'])(${ROOT_RE_SRC}[^"']+?)\\3`, 'g'), (m, ws, attr, q, p) => {
+  if (!lookup(p)) { missing.add(p); return m; }
+  deferredAttrs++; return `${ws}data-tc-${attr}=${q}${p}${q}`;
 });
 // 6-c. CSS url(assets/…)
 out = out.replace(new RegExp(`url\\((['"]?)(${ROOT_RE_SRC}[^'")]+?)\\1\\)`, 'g'), (m, q, p) => {
@@ -157,6 +219,15 @@ out = out.replace(new RegExp(`url\\((['"]?)(${ROOT_RE_SRC}[^'")]+?)\\1\\)`, 'g')
 // 6-d. 코옵 클라이언트 (서버가 내려주는 /coop/client.js) 제거 — 단일 파일에선 서버가 없다
 out = out.replace(/<script\b[^>]*\bsrc=["']\/coop\/client\.js["'][^>]*><\/script>/g,
   '<!-- single-file build: /coop/client.js 제거 (LAN 코옵은 START.bat 패키지에서만) -->');
+
+// 6-d1. 메인 메뉴 LAN 코옵 버튼 잠금 — 서버가 없는 단일 파일에서는 눌러도 동작하지 않으므로 잠금 표시로 남긴다
+{
+  const before = out;
+  out = out.replace(
+    /<button class="modeBtn coop" id="menuCoop">(<i>[^<]*<\/i>)<b>LAN 코옵<\/b><span>[^<]*<\/span>/,
+    '<button class="modeBtn coop locked" id="menuCoop" disabled aria-disabled="true" title="단일 파일 버전에서는 LAN 코옵을 사용할 수 없습니다">$1<b>LAN 코옵 <span class="lockedTag">단일 파일 미지원</span></b><span>서버 포함 패키지(START.bat)에서만 가능</span>');
+  if (before === out) console.warn('경고: 메인 메뉴 LAN 코옵 버튼을 찾지 못해 잠금 처리 못 함');
+}
 
 // 6-d2. 코옵 안내 카드 문구 — 단일 파일 버전용으로 교체 (없으면 그대로 둔다)
 {
@@ -196,8 +267,8 @@ function cssResolve(v){
 }
 function htmlResolve(h){
   if(typeof h!=='string'||!ROOT_RE.test(h))return h;
-  return h.replace(/(\s(?:src|href|poster)=)(["'])((?:\.\/)?(?:assets|monster_assets_v1\.5\.4|tunnel_crew_tile_resources_v1)\/[^"']+?)\2/g,
-      function(mm,a,q,p){var r=resolve(p);return r?a+q+r+q:mm;})
+  return h.replace(/(\s)(?:data-tc-)?(src|href|poster)=(["'])((?:\.\/)?(?:assets|monster_assets_v1\.5\.4|tunnel_crew_tile_resources_v1)\/[^"']+?)\3/g,
+      function(mm,ws,a,q,p){var r=resolve(p);return r?ws+a+'='+q+r+q:mm;})
     .replace(/url\((['"]?)((?:\.\/)?(?:assets|monster_assets_v1\.5\.4|tunnel_crew_tile_resources_v1)\/[^'")]+?)\1\)/g,
       function(mm,q,p){var r=resolve(p);return r?'url("'+r+'")':mm;});
 }
@@ -243,16 +314,38 @@ XMLHttpRequest.prototype.open=function(m,u){var a=Array.prototype.slice.call(arg
 var OA=window.Audio;
 function Audio(src){var a=new OA();if(arguments.length&&src!=null)a.src=src;return a;}
 Audio.prototype=OA.prototype; window.Audio=Audio;
+/* 빌드 시 data-tc-src/href/poster 로 바꿔 둔 마크업 속성을, 요소가 파싱되는 즉시 맵에서 채운다 (맵과 마크업의 이중 인라인 방지) */
+var DEF_ATTRS=['src','href','poster'];
+function fixEl(el){
+  if(!el||el.nodeType!==1||!el.hasAttribute)return;
+  for(var i=0;i<DEF_ATTRS.length;i++){var a=DEF_ATTRS[i],d='data-tc-'+a;
+    if(el.hasAttribute(d)){var v=el.getAttribute(d);el.removeAttribute(d);el.setAttribute(a,resolve(v)||v);}}
+}
+function fixTree(root){
+  fixEl(root);
+  if(root&&root.querySelectorAll){var q=root.querySelectorAll('[data-tc-src],[data-tc-href],[data-tc-poster]');for(var i=0;i<q.length;i++)fixEl(q[i]);}
+}
+try{
+  new MutationObserver(function(recs){for(var r=0;r<recs.length;r++){var ad=recs[r].addedNodes;for(var i=0;i<ad.length;i++)fixTree(ad[i]);}})
+    .observe(document.documentElement,{childList:true,subtree:true});
+}catch(e){}
+document.addEventListener('DOMContentLoaded',function(){fixTree(document.documentElement);});
 window.__TC_ASSET_RESOLVE=resolve;
 window.__TC_ASSET_REPORT=function(){var m=M(),n=0,b=0;for(var k in m){n++;b+=m[k].length;}return {files:n,base64Chars:b,approxMB:+(b*0.75/1048576).toFixed(1)};};
 })();
 </script>
 `;
 const mapScript = `<script id="tcSingleFileAssets">window.__TC_ASSETS=${JSON.stringify(map)};</script>\n`;
+/* 메인 메뉴의 .modeBtn.locked 흐림(opacity .28)이 메뉴 전용 규칙에 눌려 코옵 버튼에 안 먹는다 — 단일 파일용으로 확정 */
+const singleCss = `<style id="tcSingleFileCss">
+#menuCoop.locked,#crewMenu #menuCoop.locked{opacity:.34!important;cursor:not-allowed!important;filter:saturate(.4)}
+#menuCoop.locked u{opacity:0!important}
+</style>
+`;
 
 const metaRe = /<meta\s+charset=["']utf-8["']\s*\/?>/i;
 if (!metaRe.test(out)) throw new Error('<meta charset="utf-8"> 를 찾지 못했습니다 — 삽입 지점 확인 필요');
-out = out.replace(metaRe, m => m + '\n<meta name="tc-build" content="single-file">\n' + mapScript + shim);
+out = out.replace(metaRe, m => m + '\n<meta name="tc-build" content="single-file">\n' + mapScript + shim + singleCss);
 
 // 6-f. 제목에 표기
 out = out.replace(/<title>([^<]*)<\/title>/, (m, t) => `<title>${t} · 단일 파일</title>`);
@@ -263,8 +356,11 @@ fs.writeFileSync(OUT, out, 'utf8');
 /* ── 7. 리포트 ─────────────────────────────────────────────────────── */
 console.log('원본  :', SRC, fmtMB(Buffer.byteLength(html)));
 console.log('출력  :', OUT, fmtMB(Buffer.byteLength(out)));
-console.log('자산  :', included.size, '개 /', fmtMB(rawBytes), '(raw) → base64 ≈', fmtMB(rawBytes * 4 / 3));
-console.log('치환  :', replaced, '건 (마크업 src/href · CSS url · link→style)');
+console.log('자산  :', included.size, '개 /', fmtMB(rawBytes), '(인라인 바이트) → base64 ≈', fmtMB(rawBytes * 4 / 3));
+console.log('WebP  :', NO_WEBP ? '끔 (--no-webp)' : `${webpUsed}개 무손실 변환 (PNG ${fmtMB(pngBytes)} → WebP ${fmtMB(webpBytes)}) · ${webpKept}개는 PNG 가 더 작아 유지`);
+console.log('치환  :', replaced, '건 (CSS url · link→style) · 마크업 src/href 지연 해석', deferredAttrs, '건 (맵 중복 없음)');
+const outMB = Buffer.byteLength(out) / 1048576;
+console.log(outMB <= 100 ? `용량  : ${outMB.toFixed(1)} MB ≤ 100 MB ✓` : `용량  : ${outMB.toFixed(1)} MB — 100 MB 초과! 다이어트 필요`);
 console.log('\n[포함 내역 — 상위 폴더별]');
 for (const [k, v] of Object.entries(byReason).sort((a, b) => b[1] - a[1])) console.log('  ', fmtMB(v).padStart(10), k);
 console.log('\n[동적 폴더]'); for (const d of dynDirs) console.log('  ', d); for (const d of suffixDirs) console.log('  ', d, '(접미사 매칭)');

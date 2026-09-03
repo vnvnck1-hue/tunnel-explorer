@@ -472,6 +472,7 @@
   }
   function inputOk() {
     if (!playing() || modalOpen()) return false;
+    if (window.TCCHAT && TCCHAT.open) return false;   /* 채팅 입력 중엔 G·V 를 글자로 쓴다 */
     const I = inf(); if (I && I.escape && I.escape.state === 'placing') return false;
     if ((typeof DLG !== 'undefined') && DLG.on) return false;
     return true;

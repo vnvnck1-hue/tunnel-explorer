@@ -1,3 +1,4 @@
 ﻿build/*.zip
 
 build/*-single.html
+build/.single-cache/
