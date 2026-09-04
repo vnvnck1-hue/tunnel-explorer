@@ -46,6 +46,8 @@ python ai/inject-ai-crew.py
 | `demos/tunnel-explorer.html` | 탐험가 본체 HTML 변형 |
 | `docs/tunnel-crew-gdd.md` | 땅굴 크루 게임 확장 기획서 (GDD v0.1) |
 | `docs/tunnel-crew-main-game-structure.md` | **본편 누적 기준안** — 행성 원정, 런 성장, 영구 성장, 코옵 경제와 미결정 사항 |
+| `docs/unity-port-plan.md` | **Unity 포팅 계획** — 기준 빌드 v7.9.2 동결, 3층 아키텍처, 추출 파이프라인, 마일스톤 M0~M8 |
+| `docs/unity-port/` | 포팅 근거 코드 분석 3편 — 코어 시뮬레이션 / 엔티티·전투·AI / 셸·오디오·네트·자산 |
 | `prototypes/` | SeedLoop FoW·트리, Hole-Is-Ours 등 선행 프로토 |
 
 ## 코어루프 데모 조작
