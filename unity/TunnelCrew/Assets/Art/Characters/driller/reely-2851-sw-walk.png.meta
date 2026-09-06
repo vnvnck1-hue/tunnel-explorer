@@ -1,0 +1,482 @@
+fileFormatVersion: 2
+guid: 88f2d9008fadded4d9f7833529462ad6
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4557371073355551658
+    second: reely-2851-sw-walk_0
+  - first:
+      213: 2896694018338661567
+    second: reely-2851-sw-walk_1
+  - first:
+      213: 3960135704253048216
+    second: reely-2851-sw-walk_2
+  - first:
+      213: 9050038543898214302
+    second: reely-2851-sw-walk_3
+  - first:
+      213: 5965728840906415037
+    second: reely-2851-sw-walk_4
+  - first:
+      213: 2738442389138590291
+    second: reely-2851-sw-walk_5
+  - first:
+      213: -8976153596221612014
+    second: reely-2851-sw-walk_6
+  - first:
+      213: -5070112541019773871
+    second: reely-2851-sw-walk_7
+  - first:
+      213: -4045907529365752257
+    second: reely-2851-sw-walk_8
+  - first:
+      213: 7930855337199886440
+    second: reely-2851-sw-walk_9
+  - first:
+      213: 6217036531816100783
+    second: reely-2851-sw-walk_10
+  - first:
+      213: -1031048618458567556
+    second: reely-2851-sw-walk_00
+  - first:
+      213: -2713005512941441351
+    second: reely-2851-sw-walk_01
+  - first:
+      213: 8920172569867842168
+    second: reely-2851-sw-walk_02
+  - first:
+      213: -5450590975090917824
+    second: reely-2851-sw-walk_03
+  - first:
+      213: 117891143008138267
+    second: reely-2851-sw-walk_04
+  - first:
+      213: -95171918788179852
+    second: reely-2851-sw-walk_05
+  - first:
+      213: 6439862948521042555
+    second: reely-2851-sw-walk_06
+  - first:
+      213: 1910214726889708040
+    second: reely-2851-sw-walk_07
+  - first:
+      213: 1998647525174460001
+    second: reely-2851-sw-walk_08
+  - first:
+      213: 2557731518860254414
+    second: reely-2851-sw-walk_09
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 81.08597
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7cae968ebaf0b1f0800000000000000
+      internalID: -1031048618458567556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_01
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bee27f2cd7795ad0800000000000000
+      internalID: -2713005512941441351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_02
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 872f722f0b1dacb70800000000000000
+      internalID: 8920172569867842168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_03
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e71c9f26c9b54b0800000000000000
+      internalID: -5450590975090917824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_04
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b143a25be55d2a100800000000000000
+      internalID: 117891143008138267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_05
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 478c904e4a1edaef0800000000000000
+      internalID: -95171918788179852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_06
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b72ebc85b3dfe5950800000000000000
+      internalID: 6439862948521042555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_07
+      rect:
+        serializedVersion: 2
+        x: 1568
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a1bf06c22728a10800000000000000
+      internalID: 1910214726889708040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16ebc39b55f9cbb10800000000000000
+      internalID: 1998647525174460001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_09
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc5c74d343ee7320800000000000000
+      internalID: 2557731518860254414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-walk_10
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa3768259c9574650800000000000000
+      internalID: 6217036531816100783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      reely-2851-sw-walk_0: -4557371073355551658
+      reely-2851-sw-walk_00: -1031048618458567556
+      reely-2851-sw-walk_01: -2713005512941441351
+      reely-2851-sw-walk_02: 8920172569867842168
+      reely-2851-sw-walk_03: -5450590975090917824
+      reely-2851-sw-walk_04: 117891143008138267
+      reely-2851-sw-walk_05: -95171918788179852
+      reely-2851-sw-walk_06: 6439862948521042555
+      reely-2851-sw-walk_07: 1910214726889708040
+      reely-2851-sw-walk_08: 1998647525174460001
+      reely-2851-sw-walk_09: 2557731518860254414
+      reely-2851-sw-walk_1: 2896694018338661567
+      reely-2851-sw-walk_10: 6217036531816100783
+      reely-2851-sw-walk_2: 3960135704253048216
+      reely-2851-sw-walk_3: 9050038543898214302
+      reely-2851-sw-walk_4: 5965728840906415037
+      reely-2851-sw-walk_5: 2738442389138590291
+      reely-2851-sw-walk_6: -8976153596221612014
+      reely-2851-sw-walk_7: -5070112541019773871
+      reely-2851-sw-walk_8: -4045907529365752257
+      reely-2851-sw-walk_9: 7930855337199886440
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

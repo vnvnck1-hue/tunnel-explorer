@@ -5,7 +5,8 @@
         "TunnelCrew.Sim",
         "TunnelCrew.Data",
         "TunnelCrew.Presentation",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Universal.2D.Runtime"
     ],
     "includePlatforms": [
         "Editor"

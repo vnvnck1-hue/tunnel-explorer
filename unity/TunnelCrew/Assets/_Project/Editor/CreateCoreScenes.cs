@@ -63,13 +63,9 @@ namespace TunnelCrew.EditorTools
 
             // 1셀 = 1유닛(PPU 50). 원본 카메라의 세로 42% 앵커·동적 줌은 M1 에서
             // Cinemachine 으로 붙인다. 여기서는 자리만 잡는다.
-            CreateCamera("Main Camera", orthographicSize: 9f, isMain: true);
+            // M1: 부트스트랩이 월드·플레이어·카메라를 코드로 세운다.
+            new GameObject("RunBootstrap").AddComponent<RunBootstrap>();
 
-            new GameObject("World");      // Tilemap 2~3장이 들어갈 자리 (M1)
-            new GameObject("Actors");     // 플레이어·AI 크루·적 (M1/M3)
-            new GameObject("Lighting");   // Global Light 2D · 손전등 · 랜턴 (M2)
-            new GameObject("VFX");        // 파티클 풀 (M3)
-            new GameObject("HUD");        // UGUI 캔버스 (M4)
 
             return Save(scene, "Run");
         }

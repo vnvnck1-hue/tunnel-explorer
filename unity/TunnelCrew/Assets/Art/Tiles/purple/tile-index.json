@@ -1,0 +1,2422 @@
+{
+  "biome": "purple",
+  "cellPixels": 50,
+  "count": 268,
+  "note": "slot 은 원본 tileAtlasIndex() 와 같은 번호다. 런타임 조회는 이 번호로 한다.",
+  "floorSheet": "purple_floor_sheet_150x50.png",
+  "floorVariants": 3,
+  "tiles": [
+    {
+      "file": "purple_dirt_b0_s0_d0.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 0
+    },
+    {
+      "file": "purple_dirt_b0_s0_d1.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 1
+    },
+    {
+      "file": "purple_dirt_b0_s0_d2.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 2
+    },
+    {
+      "file": "purple_dirt_b0_s0_d3.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 3
+    },
+    {
+      "file": "purple_dirt_b0_s1_d0.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 4
+    },
+    {
+      "file": "purple_dirt_b0_s1_d1.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 5
+    },
+    {
+      "file": "purple_dirt_b0_s1_d2.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 6
+    },
+    {
+      "file": "purple_dirt_b0_s1_d3.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 7
+    },
+    {
+      "file": "purple_dirt_b0_s2_d0.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 8
+    },
+    {
+      "file": "purple_dirt_b0_s2_d1.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 9
+    },
+    {
+      "file": "purple_dirt_b0_s2_d2.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 10
+    },
+    {
+      "file": "purple_dirt_b0_s2_d3.png",
+      "type": "dirt",
+      "band": 0,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 11
+    },
+    {
+      "file": "purple_dirt_b1_s0_d0.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 12
+    },
+    {
+      "file": "purple_dirt_b1_s0_d1.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 13
+    },
+    {
+      "file": "purple_dirt_b1_s0_d2.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 14
+    },
+    {
+      "file": "purple_dirt_b1_s0_d3.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 15
+    },
+    {
+      "file": "purple_dirt_b1_s1_d0.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 16
+    },
+    {
+      "file": "purple_dirt_b1_s1_d1.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 17
+    },
+    {
+      "file": "purple_dirt_b1_s1_d2.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 18
+    },
+    {
+      "file": "purple_dirt_b1_s1_d3.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 19
+    },
+    {
+      "file": "purple_dirt_b1_s2_d0.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 20
+    },
+    {
+      "file": "purple_dirt_b1_s2_d1.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 21
+    },
+    {
+      "file": "purple_dirt_b1_s2_d2.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 22
+    },
+    {
+      "file": "purple_dirt_b1_s2_d3.png",
+      "type": "dirt",
+      "band": 1,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 23
+    },
+    {
+      "file": "purple_dirt_b2_s0_d0.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 24
+    },
+    {
+      "file": "purple_dirt_b2_s0_d1.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 25
+    },
+    {
+      "file": "purple_dirt_b2_s0_d2.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 26
+    },
+    {
+      "file": "purple_dirt_b2_s0_d3.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 27
+    },
+    {
+      "file": "purple_dirt_b2_s1_d0.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 28
+    },
+    {
+      "file": "purple_dirt_b2_s1_d1.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 29
+    },
+    {
+      "file": "purple_dirt_b2_s1_d2.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 30
+    },
+    {
+      "file": "purple_dirt_b2_s1_d3.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 31
+    },
+    {
+      "file": "purple_dirt_b2_s2_d0.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 32
+    },
+    {
+      "file": "purple_dirt_b2_s2_d1.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 33
+    },
+    {
+      "file": "purple_dirt_b2_s2_d2.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 34
+    },
+    {
+      "file": "purple_dirt_b2_s2_d3.png",
+      "type": "dirt",
+      "band": 2,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 35
+    },
+    {
+      "file": "purple_dirt_b3_s0_d0.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 36
+    },
+    {
+      "file": "purple_dirt_b3_s0_d1.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 37
+    },
+    {
+      "file": "purple_dirt_b3_s0_d2.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 38
+    },
+    {
+      "file": "purple_dirt_b3_s0_d3.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 39
+    },
+    {
+      "file": "purple_dirt_b3_s1_d0.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 40
+    },
+    {
+      "file": "purple_dirt_b3_s1_d1.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 41
+    },
+    {
+      "file": "purple_dirt_b3_s1_d2.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 42
+    },
+    {
+      "file": "purple_dirt_b3_s1_d3.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 43
+    },
+    {
+      "file": "purple_dirt_b3_s2_d0.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 44
+    },
+    {
+      "file": "purple_dirt_b3_s2_d1.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 45
+    },
+    {
+      "file": "purple_dirt_b3_s2_d2.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 46
+    },
+    {
+      "file": "purple_dirt_b3_s2_d3.png",
+      "type": "dirt",
+      "band": 3,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 47
+    },
+    {
+      "file": "purple_stone_b0_s0_d0.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 48
+    },
+    {
+      "file": "purple_stone_b0_s0_d1.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 49
+    },
+    {
+      "file": "purple_stone_b0_s0_d2.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 50
+    },
+    {
+      "file": "purple_stone_b0_s0_d3.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 51
+    },
+    {
+      "file": "purple_stone_b0_s1_d0.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 52
+    },
+    {
+      "file": "purple_stone_b0_s1_d1.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 53
+    },
+    {
+      "file": "purple_stone_b0_s1_d2.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 54
+    },
+    {
+      "file": "purple_stone_b0_s1_d3.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 55
+    },
+    {
+      "file": "purple_stone_b0_s2_d0.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 56
+    },
+    {
+      "file": "purple_stone_b0_s2_d1.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 57
+    },
+    {
+      "file": "purple_stone_b0_s2_d2.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 58
+    },
+    {
+      "file": "purple_stone_b0_s2_d3.png",
+      "type": "stone",
+      "band": 0,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 59
+    },
+    {
+      "file": "purple_stone_b1_s0_d0.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 60
+    },
+    {
+      "file": "purple_stone_b1_s0_d1.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 61
+    },
+    {
+      "file": "purple_stone_b1_s0_d2.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 62
+    },
+    {
+      "file": "purple_stone_b1_s0_d3.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 63
+    },
+    {
+      "file": "purple_stone_b1_s1_d0.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 64
+    },
+    {
+      "file": "purple_stone_b1_s1_d1.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 65
+    },
+    {
+      "file": "purple_stone_b1_s1_d2.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 66
+    },
+    {
+      "file": "purple_stone_b1_s1_d3.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 67
+    },
+    {
+      "file": "purple_stone_b1_s2_d0.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 68
+    },
+    {
+      "file": "purple_stone_b1_s2_d1.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 69
+    },
+    {
+      "file": "purple_stone_b1_s2_d2.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 70
+    },
+    {
+      "file": "purple_stone_b1_s2_d3.png",
+      "type": "stone",
+      "band": 1,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 71
+    },
+    {
+      "file": "purple_stone_b2_s0_d0.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 72
+    },
+    {
+      "file": "purple_stone_b2_s0_d1.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 73
+    },
+    {
+      "file": "purple_stone_b2_s0_d2.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 74
+    },
+    {
+      "file": "purple_stone_b2_s0_d3.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 75
+    },
+    {
+      "file": "purple_stone_b2_s1_d0.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 76
+    },
+    {
+      "file": "purple_stone_b2_s1_d1.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 77
+    },
+    {
+      "file": "purple_stone_b2_s1_d2.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 78
+    },
+    {
+      "file": "purple_stone_b2_s1_d3.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 79
+    },
+    {
+      "file": "purple_stone_b2_s2_d0.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 80
+    },
+    {
+      "file": "purple_stone_b2_s2_d1.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 81
+    },
+    {
+      "file": "purple_stone_b2_s2_d2.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 82
+    },
+    {
+      "file": "purple_stone_b2_s2_d3.png",
+      "type": "stone",
+      "band": 2,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 83
+    },
+    {
+      "file": "purple_stone_b3_s0_d0.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 84
+    },
+    {
+      "file": "purple_stone_b3_s0_d1.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 85
+    },
+    {
+      "file": "purple_stone_b3_s0_d2.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 86
+    },
+    {
+      "file": "purple_stone_b3_s0_d3.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 87
+    },
+    {
+      "file": "purple_stone_b3_s1_d0.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 88
+    },
+    {
+      "file": "purple_stone_b3_s1_d1.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 89
+    },
+    {
+      "file": "purple_stone_b3_s1_d2.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 90
+    },
+    {
+      "file": "purple_stone_b3_s1_d3.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 91
+    },
+    {
+      "file": "purple_stone_b3_s2_d0.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 92
+    },
+    {
+      "file": "purple_stone_b3_s2_d1.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 93
+    },
+    {
+      "file": "purple_stone_b3_s2_d2.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 94
+    },
+    {
+      "file": "purple_stone_b3_s2_d3.png",
+      "type": "stone",
+      "band": 3,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 95
+    },
+    {
+      "file": "purple_ore_b0_s0_d0.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 96
+    },
+    {
+      "file": "purple_ore_b0_s0_d1.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 97
+    },
+    {
+      "file": "purple_ore_b0_s0_d2.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 98
+    },
+    {
+      "file": "purple_ore_b0_s0_d3.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 99
+    },
+    {
+      "file": "purple_ore_b0_s1_d0.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 100
+    },
+    {
+      "file": "purple_ore_b0_s1_d1.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 101
+    },
+    {
+      "file": "purple_ore_b0_s1_d2.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 102
+    },
+    {
+      "file": "purple_ore_b0_s1_d3.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 103
+    },
+    {
+      "file": "purple_ore_b0_s2_d0.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 104
+    },
+    {
+      "file": "purple_ore_b0_s2_d1.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 105
+    },
+    {
+      "file": "purple_ore_b0_s2_d2.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 106
+    },
+    {
+      "file": "purple_ore_b0_s2_d3.png",
+      "type": "ore",
+      "band": 0,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 107
+    },
+    {
+      "file": "purple_ore_b1_s0_d0.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 108
+    },
+    {
+      "file": "purple_ore_b1_s0_d1.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 109
+    },
+    {
+      "file": "purple_ore_b1_s0_d2.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 110
+    },
+    {
+      "file": "purple_ore_b1_s0_d3.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 111
+    },
+    {
+      "file": "purple_ore_b1_s1_d0.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 112
+    },
+    {
+      "file": "purple_ore_b1_s1_d1.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 113
+    },
+    {
+      "file": "purple_ore_b1_s1_d2.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 114
+    },
+    {
+      "file": "purple_ore_b1_s1_d3.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 115
+    },
+    {
+      "file": "purple_ore_b1_s2_d0.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 116
+    },
+    {
+      "file": "purple_ore_b1_s2_d1.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 117
+    },
+    {
+      "file": "purple_ore_b1_s2_d2.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 118
+    },
+    {
+      "file": "purple_ore_b1_s2_d3.png",
+      "type": "ore",
+      "band": 1,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 119
+    },
+    {
+      "file": "purple_ore_b2_s0_d0.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 120
+    },
+    {
+      "file": "purple_ore_b2_s0_d1.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 121
+    },
+    {
+      "file": "purple_ore_b2_s0_d2.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 122
+    },
+    {
+      "file": "purple_ore_b2_s0_d3.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 123
+    },
+    {
+      "file": "purple_ore_b2_s1_d0.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 124
+    },
+    {
+      "file": "purple_ore_b2_s1_d1.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 125
+    },
+    {
+      "file": "purple_ore_b2_s1_d2.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 126
+    },
+    {
+      "file": "purple_ore_b2_s1_d3.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 127
+    },
+    {
+      "file": "purple_ore_b2_s2_d0.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 128
+    },
+    {
+      "file": "purple_ore_b2_s2_d1.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 129
+    },
+    {
+      "file": "purple_ore_b2_s2_d2.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 130
+    },
+    {
+      "file": "purple_ore_b2_s2_d3.png",
+      "type": "ore",
+      "band": 2,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 131
+    },
+    {
+      "file": "purple_ore_b3_s0_d0.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 132
+    },
+    {
+      "file": "purple_ore_b3_s0_d1.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 133
+    },
+    {
+      "file": "purple_ore_b3_s0_d2.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 134
+    },
+    {
+      "file": "purple_ore_b3_s0_d3.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 135
+    },
+    {
+      "file": "purple_ore_b3_s1_d0.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 136
+    },
+    {
+      "file": "purple_ore_b3_s1_d1.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 137
+    },
+    {
+      "file": "purple_ore_b3_s1_d2.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 138
+    },
+    {
+      "file": "purple_ore_b3_s1_d3.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 139
+    },
+    {
+      "file": "purple_ore_b3_s2_d0.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 140
+    },
+    {
+      "file": "purple_ore_b3_s2_d1.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 141
+    },
+    {
+      "file": "purple_ore_b3_s2_d2.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 142
+    },
+    {
+      "file": "purple_ore_b3_s2_d3.png",
+      "type": "ore",
+      "band": 3,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 143
+    },
+    {
+      "file": "purple_gem_b0_s0_d0.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 144
+    },
+    {
+      "file": "purple_gem_b0_s0_d1.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 145
+    },
+    {
+      "file": "purple_gem_b0_s0_d2.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 146
+    },
+    {
+      "file": "purple_gem_b0_s0_d3.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 147
+    },
+    {
+      "file": "purple_gem_b0_s1_d0.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 148
+    },
+    {
+      "file": "purple_gem_b0_s1_d1.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 149
+    },
+    {
+      "file": "purple_gem_b0_s1_d2.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 150
+    },
+    {
+      "file": "purple_gem_b0_s1_d3.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 151
+    },
+    {
+      "file": "purple_gem_b0_s2_d0.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 152
+    },
+    {
+      "file": "purple_gem_b0_s2_d1.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 153
+    },
+    {
+      "file": "purple_gem_b0_s2_d2.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 154
+    },
+    {
+      "file": "purple_gem_b0_s2_d3.png",
+      "type": "gem",
+      "band": 0,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 155
+    },
+    {
+      "file": "purple_gem_b1_s0_d0.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 156
+    },
+    {
+      "file": "purple_gem_b1_s0_d1.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 157
+    },
+    {
+      "file": "purple_gem_b1_s0_d2.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 158
+    },
+    {
+      "file": "purple_gem_b1_s0_d3.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 159
+    },
+    {
+      "file": "purple_gem_b1_s1_d0.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 160
+    },
+    {
+      "file": "purple_gem_b1_s1_d1.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 161
+    },
+    {
+      "file": "purple_gem_b1_s1_d2.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 162
+    },
+    {
+      "file": "purple_gem_b1_s1_d3.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 163
+    },
+    {
+      "file": "purple_gem_b1_s2_d0.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 164
+    },
+    {
+      "file": "purple_gem_b1_s2_d1.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 165
+    },
+    {
+      "file": "purple_gem_b1_s2_d2.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 166
+    },
+    {
+      "file": "purple_gem_b1_s2_d3.png",
+      "type": "gem",
+      "band": 1,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 167
+    },
+    {
+      "file": "purple_gem_b2_s0_d0.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 168
+    },
+    {
+      "file": "purple_gem_b2_s0_d1.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 169
+    },
+    {
+      "file": "purple_gem_b2_s0_d2.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 170
+    },
+    {
+      "file": "purple_gem_b2_s0_d3.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 171
+    },
+    {
+      "file": "purple_gem_b2_s1_d0.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 172
+    },
+    {
+      "file": "purple_gem_b2_s1_d1.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 173
+    },
+    {
+      "file": "purple_gem_b2_s1_d2.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 174
+    },
+    {
+      "file": "purple_gem_b2_s1_d3.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 175
+    },
+    {
+      "file": "purple_gem_b2_s2_d0.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 176
+    },
+    {
+      "file": "purple_gem_b2_s2_d1.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 177
+    },
+    {
+      "file": "purple_gem_b2_s2_d2.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 178
+    },
+    {
+      "file": "purple_gem_b2_s2_d3.png",
+      "type": "gem",
+      "band": 2,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 179
+    },
+    {
+      "file": "purple_gem_b3_s0_d0.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 180
+    },
+    {
+      "file": "purple_gem_b3_s0_d1.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 181
+    },
+    {
+      "file": "purple_gem_b3_s0_d2.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 182
+    },
+    {
+      "file": "purple_gem_b3_s0_d3.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 183
+    },
+    {
+      "file": "purple_gem_b3_s1_d0.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 184
+    },
+    {
+      "file": "purple_gem_b3_s1_d1.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 185
+    },
+    {
+      "file": "purple_gem_b3_s1_d2.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 186
+    },
+    {
+      "file": "purple_gem_b3_s1_d3.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 187
+    },
+    {
+      "file": "purple_gem_b3_s2_d0.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 188
+    },
+    {
+      "file": "purple_gem_b3_s2_d1.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 189
+    },
+    {
+      "file": "purple_gem_b3_s2_d2.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 190
+    },
+    {
+      "file": "purple_gem_b3_s2_d3.png",
+      "type": "gem",
+      "band": 3,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 191
+    },
+    {
+      "file": "purple_crys_b0_s0_d0.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 192
+    },
+    {
+      "file": "purple_crys_b0_s0_d1.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 193
+    },
+    {
+      "file": "purple_crys_b0_s0_d2.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 194
+    },
+    {
+      "file": "purple_crys_b0_s0_d3.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 195
+    },
+    {
+      "file": "purple_crys_b0_s1_d0.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 196
+    },
+    {
+      "file": "purple_crys_b0_s1_d1.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 197
+    },
+    {
+      "file": "purple_crys_b0_s1_d2.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 198
+    },
+    {
+      "file": "purple_crys_b0_s1_d3.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 199
+    },
+    {
+      "file": "purple_crys_b0_s2_d0.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 200
+    },
+    {
+      "file": "purple_crys_b0_s2_d1.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 201
+    },
+    {
+      "file": "purple_crys_b0_s2_d2.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 202
+    },
+    {
+      "file": "purple_crys_b0_s2_d3.png",
+      "type": "crys",
+      "band": 0,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 203
+    },
+    {
+      "file": "purple_crys_b1_s0_d0.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 204
+    },
+    {
+      "file": "purple_crys_b1_s0_d1.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 205
+    },
+    {
+      "file": "purple_crys_b1_s0_d2.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 206
+    },
+    {
+      "file": "purple_crys_b1_s0_d3.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 207
+    },
+    {
+      "file": "purple_crys_b1_s1_d0.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 208
+    },
+    {
+      "file": "purple_crys_b1_s1_d1.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 209
+    },
+    {
+      "file": "purple_crys_b1_s1_d2.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 210
+    },
+    {
+      "file": "purple_crys_b1_s1_d3.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 211
+    },
+    {
+      "file": "purple_crys_b1_s2_d0.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 212
+    },
+    {
+      "file": "purple_crys_b1_s2_d1.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 213
+    },
+    {
+      "file": "purple_crys_b1_s2_d2.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 214
+    },
+    {
+      "file": "purple_crys_b1_s2_d3.png",
+      "type": "crys",
+      "band": 1,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 215
+    },
+    {
+      "file": "purple_crys_b2_s0_d0.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 216
+    },
+    {
+      "file": "purple_crys_b2_s0_d1.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 217
+    },
+    {
+      "file": "purple_crys_b2_s0_d2.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 218
+    },
+    {
+      "file": "purple_crys_b2_s0_d3.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 219
+    },
+    {
+      "file": "purple_crys_b2_s1_d0.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 220
+    },
+    {
+      "file": "purple_crys_b2_s1_d1.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 221
+    },
+    {
+      "file": "purple_crys_b2_s1_d2.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 222
+    },
+    {
+      "file": "purple_crys_b2_s1_d3.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 223
+    },
+    {
+      "file": "purple_crys_b2_s2_d0.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 224
+    },
+    {
+      "file": "purple_crys_b2_s2_d1.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 225
+    },
+    {
+      "file": "purple_crys_b2_s2_d2.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 226
+    },
+    {
+      "file": "purple_crys_b2_s2_d3.png",
+      "type": "crys",
+      "band": 2,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 227
+    },
+    {
+      "file": "purple_crys_b3_s0_d0.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 228
+    },
+    {
+      "file": "purple_crys_b3_s0_d1.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 0,
+      "damage": 1,
+      "variant": 0,
+      "slot": 229
+    },
+    {
+      "file": "purple_crys_b3_s0_d2.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 0,
+      "damage": 2,
+      "variant": 0,
+      "slot": 230
+    },
+    {
+      "file": "purple_crys_b3_s0_d3.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 0,
+      "damage": 3,
+      "variant": 0,
+      "slot": 231
+    },
+    {
+      "file": "purple_crys_b3_s1_d0.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 1,
+      "damage": 0,
+      "variant": 0,
+      "slot": 232
+    },
+    {
+      "file": "purple_crys_b3_s1_d1.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 1,
+      "damage": 1,
+      "variant": 0,
+      "slot": 233
+    },
+    {
+      "file": "purple_crys_b3_s1_d2.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 1,
+      "damage": 2,
+      "variant": 0,
+      "slot": 234
+    },
+    {
+      "file": "purple_crys_b3_s1_d3.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 1,
+      "damage": 3,
+      "variant": 0,
+      "slot": 235
+    },
+    {
+      "file": "purple_crys_b3_s2_d0.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 2,
+      "damage": 0,
+      "variant": 0,
+      "slot": 236
+    },
+    {
+      "file": "purple_crys_b3_s2_d1.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 2,
+      "damage": 1,
+      "variant": 0,
+      "slot": 237
+    },
+    {
+      "file": "purple_crys_b3_s2_d2.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 2,
+      "damage": 2,
+      "variant": 0,
+      "slot": 238
+    },
+    {
+      "file": "purple_crys_b3_s2_d3.png",
+      "type": "crys",
+      "band": 3,
+      "surface": 2,
+      "damage": 3,
+      "variant": 0,
+      "slot": 239
+    },
+    {
+      "file": "purple_rock_b0.png",
+      "type": "rock",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 240
+    },
+    {
+      "file": "purple_rock_b1.png",
+      "type": "rock",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 241
+    },
+    {
+      "file": "purple_rock_b2.png",
+      "type": "rock",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 242
+    },
+    {
+      "file": "purple_rock_b3.png",
+      "type": "rock",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 243
+    },
+    {
+      "file": "purple_core_top_b0_v0.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 244
+    },
+    {
+      "file": "purple_core_top_b0_v1.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 1,
+      "slot": 245
+    },
+    {
+      "file": "purple_core_top_b0_v2.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 2,
+      "slot": 246
+    },
+    {
+      "file": "purple_core_top_b0_v3.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 3,
+      "slot": 247
+    },
+    {
+      "file": "purple_core_top_b0_v4.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 4,
+      "slot": 248
+    },
+    {
+      "file": "purple_core_top_b0_v5.png",
+      "type": "core_top",
+      "band": 0,
+      "surface": 0,
+      "damage": 0,
+      "variant": 5,
+      "slot": 249
+    },
+    {
+      "file": "purple_core_top_b1_v0.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 250
+    },
+    {
+      "file": "purple_core_top_b1_v1.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 1,
+      "slot": 251
+    },
+    {
+      "file": "purple_core_top_b1_v2.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 2,
+      "slot": 252
+    },
+    {
+      "file": "purple_core_top_b1_v3.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 3,
+      "slot": 253
+    },
+    {
+      "file": "purple_core_top_b1_v4.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 4,
+      "slot": 254
+    },
+    {
+      "file": "purple_core_top_b1_v5.png",
+      "type": "core_top",
+      "band": 1,
+      "surface": 0,
+      "damage": 0,
+      "variant": 5,
+      "slot": 255
+    },
+    {
+      "file": "purple_core_top_b2_v0.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 256
+    },
+    {
+      "file": "purple_core_top_b2_v1.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 1,
+      "slot": 257
+    },
+    {
+      "file": "purple_core_top_b2_v2.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 2,
+      "slot": 258
+    },
+    {
+      "file": "purple_core_top_b2_v3.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 3,
+      "slot": 259
+    },
+    {
+      "file": "purple_core_top_b2_v4.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 4,
+      "slot": 260
+    },
+    {
+      "file": "purple_core_top_b2_v5.png",
+      "type": "core_top",
+      "band": 2,
+      "surface": 0,
+      "damage": 0,
+      "variant": 5,
+      "slot": 261
+    },
+    {
+      "file": "purple_core_top_b3_v0.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 0,
+      "slot": 262
+    },
+    {
+      "file": "purple_core_top_b3_v1.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 1,
+      "slot": 263
+    },
+    {
+      "file": "purple_core_top_b3_v2.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 2,
+      "slot": 264
+    },
+    {
+      "file": "purple_core_top_b3_v3.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 3,
+      "slot": 265
+    },
+    {
+      "file": "purple_core_top_b3_v4.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 4,
+      "slot": 266
+    },
+    {
+      "file": "purple_core_top_b3_v5.png",
+      "type": "core_top",
+      "band": 3,
+      "surface": 0,
+      "damage": 0,
+      "variant": 5,
+      "slot": 267
+    }
+  ]
+}

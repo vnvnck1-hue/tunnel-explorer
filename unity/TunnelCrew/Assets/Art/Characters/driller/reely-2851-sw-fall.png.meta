@@ -1,0 +1,612 @@
+fileFormatVersion: 2
+guid: a8544616bf5e10f4ea497d8efc581ab3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 549445015009627474
+    second: reely-2851-sw-fall_0
+  - first:
+      213: -7998252341491123242
+    second: reely-2851-sw-fall_1
+  - first:
+      213: 6940377547230211192
+    second: reely-2851-sw-fall_2
+  - first:
+      213: -6555186012504344898
+    second: reely-2851-sw-fall_3
+  - first:
+      213: -2713168093576726928
+    second: reely-2851-sw-fall_4
+  - first:
+      213: -3754552164885645596
+    second: reely-2851-sw-fall_5
+  - first:
+      213: -6959926875438797401
+    second: reely-2851-sw-fall_6
+  - first:
+      213: 8000899008135453089
+    second: reely-2851-sw-fall_7
+  - first:
+      213: -5706064344270224476
+    second: reely-2851-sw-fall_8
+  - first:
+      213: -3201635774913420900
+    second: reely-2851-sw-fall_9
+  - first:
+      213: -3203115077560500711
+    second: reely-2851-sw-fall_10
+  - first:
+      213: -6280288670845051136
+    second: reely-2851-sw-fall_11
+  - first:
+      213: 3852762431643570050
+    second: reely-2851-sw-fall_12
+  - first:
+      213: 2560837160885490284
+    second: reely-2851-sw-fall_13
+  - first:
+      213: 649016155783771828
+    second: reely-2851-sw-fall_14
+  - first:
+      213: 2433409956391605466
+    second: reely-2851-sw-fall_15
+  - first:
+      213: 8289614369101223930
+    second: reely-2851-sw-fall_00
+  - first:
+      213: -8440181837047103473
+    second: reely-2851-sw-fall_01
+  - first:
+      213: 7985791179740358032
+    second: reely-2851-sw-fall_02
+  - first:
+      213: 9093879623359553036
+    second: reely-2851-sw-fall_03
+  - first:
+      213: -1406194709523179494
+    second: reely-2851-sw-fall_04
+  - first:
+      213: 7243249198713519599
+    second: reely-2851-sw-fall_05
+  - first:
+      213: 1854226705416693161
+    second: reely-2851-sw-fall_06
+  - first:
+      213: 5375421158707149203
+    second: reely-2851-sw-fall_07
+  - first:
+      213: -7525533912886492450
+    second: reely-2851-sw-fall_08
+  - first:
+      213: 2507961142465863908
+    second: reely-2851-sw-fall_09
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 81.08597
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af790433950aa0370800000000000000
+      internalID: 8289614369101223930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_01
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f008a1356537eda80800000000000000
+      internalID: -8440181837047103473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_02
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0952fd674ca33de60800000000000000
+      internalID: 7985791179740358032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_03
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e52840653f33e70800000000000000
+      internalID: 9093879623359553036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_04
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1856ddac513c7ce0800000000000000
+      internalID: -1406194709523179494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_05
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fedb3f415c0358460800000000000000
+      internalID: 7243249198713519599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_06
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a5a76d4d598bb910800000000000000
+      internalID: 1854226705416693161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_07
+      rect:
+        serializedVersion: 2
+        x: 1568
+        y: 224
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 399bbda4015599a40800000000000000
+      internalID: 5375421158707149203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed2ce3937ceef8790800000000000000
+      internalID: -7525533912886492450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_09
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e0292f0f511ec220800000000000000
+      internalID: 2507961142465863908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_10
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91efe4bcecf3c83d0800000000000000
+      internalID: -3203115077560500711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_11
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00fde5f6abee7d8a0800000000000000
+      internalID: -6280288670845051136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_12
+      rect:
+        serializedVersion: 2
+        x: 896
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28fc51ec403c77530800000000000000
+      internalID: 3852762431643570050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_13
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c62133674dbe98320800000000000000
+      internalID: 2560837160885490284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_14
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b63bfa41c4c10900800000000000000
+      internalID: 649016155783771828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: reely-2851-sw-fall_15
+      rect:
+        serializedVersion: 2
+        x: 1568
+        y: 0
+        width: 224
+        height: 224
+      alignment: 9
+      pivot: {x: 0.5, y: 0.26785713}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad4de9b667535c120800000000000000
+      internalID: 2433409956391605466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      reely-2851-sw-fall_0: 549445015009627474
+      reely-2851-sw-fall_00: 8289614369101223930
+      reely-2851-sw-fall_01: -8440181837047103473
+      reely-2851-sw-fall_02: 7985791179740358032
+      reely-2851-sw-fall_03: 9093879623359553036
+      reely-2851-sw-fall_04: -1406194709523179494
+      reely-2851-sw-fall_05: 7243249198713519599
+      reely-2851-sw-fall_06: 1854226705416693161
+      reely-2851-sw-fall_07: 5375421158707149203
+      reely-2851-sw-fall_08: -7525533912886492450
+      reely-2851-sw-fall_09: 2507961142465863908
+      reely-2851-sw-fall_1: -7998252341491123242
+      reely-2851-sw-fall_10: -3203115077560500711
+      reely-2851-sw-fall_11: -6280288670845051136
+      reely-2851-sw-fall_12: 3852762431643570050
+      reely-2851-sw-fall_13: 2560837160885490284
+      reely-2851-sw-fall_14: 649016155783771828
+      reely-2851-sw-fall_15: 2433409956391605466
+      reely-2851-sw-fall_2: 6940377547230211192
+      reely-2851-sw-fall_3: -6555186012504344898
+      reely-2851-sw-fall_4: -2713168093576726928
+      reely-2851-sw-fall_5: -3754552164885645596
+      reely-2851-sw-fall_6: -6959926875438797401
+      reely-2851-sw-fall_7: 8000899008135453089
+      reely-2851-sw-fall_8: -5706064344270224476
+      reely-2851-sw-fall_9: -3201635774913420900
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

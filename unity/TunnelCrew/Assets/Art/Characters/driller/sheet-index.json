@@ -1,0 +1,171 @@
+{
+  "role": "driller",
+  "note": "좌측 5방향만 원본이다. se/e/ne 는 런타임에 X 반전해서 쓴다(원본 2822행 주석).",
+  "mirroredDirections": {
+    "se": "sw",
+    "e": "w",
+    "ne": "nw"
+  },
+  "sheets": [
+    {
+      "file": "reely-2851-sw-walk.png",
+      "direction": "sw",
+      "action": "walk",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          164
+        ],
+        "frames": 11
+      }
+    },
+    {
+      "file": "reely-2851-sw-fall.png",
+      "direction": "sw",
+      "action": "fall",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          164
+        ],
+        "frames": 16
+      }
+    },
+    {
+      "file": "reely-2851-w-walk.png",
+      "direction": "w",
+      "action": "walk",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          176
+        ],
+        "frames": 11
+      }
+    },
+    {
+      "file": "reely-2851-w-fall.png",
+      "direction": "w",
+      "action": "fall",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          176
+        ],
+        "frames": 16
+      }
+    },
+    {
+      "file": "reely-2851-nw-walk.png",
+      "direction": "nw",
+      "action": "walk",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          178
+        ],
+        "frames": 11
+      }
+    },
+    {
+      "file": "reely-2851-nw-fall.png",
+      "direction": "nw",
+      "action": "fall",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          178
+        ],
+        "frames": 16
+      }
+    },
+    {
+      "file": "reely-2851-n-walk.png",
+      "direction": "n",
+      "action": "walk",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          165
+        ],
+        "frames": 11
+      }
+    },
+    {
+      "file": "reely-2851-n-fall.png",
+      "direction": "n",
+      "action": "fall",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          165
+        ],
+        "frames": 16
+      }
+    },
+    {
+      "file": "reely-2851-s-walk.png",
+      "direction": "s",
+      "action": "walk",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          176
+        ],
+        "frames": 11
+      }
+    },
+    {
+      "file": "reely-2851-s-fall.png",
+      "direction": "s",
+      "action": "fall",
+      "meta": {
+        "cellWidth": 224,
+        "cellHeight": 224,
+        "columns": 8,
+        "rows": 2,
+        "pivotInCell": [
+          112,
+          176
+        ],
+        "frames": 16
+      }
+    }
+  ]
+}

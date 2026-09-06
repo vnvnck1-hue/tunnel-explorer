@@ -1,0 +1,107 @@
+using System;
+using TunnelCrew.Sim;
+using UnityEngine;
+
+namespace TunnelCrew.Presentation
+{
+    /// <summary>
+    /// 원본 카메라(7364~7402행)를 그대로 옮긴 것. 데드존 → 룩어헤드 → 추종 → 클램프.
+    ///
+    /// **M1 한정 결정**: analysis-04 §5 는 Cinemachine 3 으로 대체하기로 했지만,
+    /// M1 의 목표가 "원본과 같은 감각인가" 를 확인하는 것이라 먼저 원본 공식을 그대로 옮긴다.
+    /// Cinemachine 이 실제로 필요해지는 시점(M3, Impulse · Target Group)에 이전한다.
+    /// 그때 이 파일의 수치가 이전 기준이 된다.
+    /// </summary>
+    [RequireComponent(typeof(Camera))]
+    public sealed class CameraRig : MonoBehaviour
+    {
+        [SerializeField] float _zoomLerpRate = (float)SimTuning.ZoomLerpRate;
+
+        Camera _cam;
+        WorldGrid _world;
+        Func<PlayerState> _player;
+
+        /// <summary>원본 G.zDyn — 부드럽게 따라가는 줌.</summary>
+        float _zoom;
+        /// <summary>원본 G.camX/camY — 뷰 좌상단.</summary>
+        Vector2 _camOrigin;
+        bool _initialized;
+
+        void Awake() => _cam = GetComponent<Camera>();
+
+        public void Bind(WorldGrid world, Func<PlayerState> player)
+        {
+            _world = world;
+            _player = player;
+            _initialized = false;
+        }
+
+        void LateUpdate()
+        {
+            if (_world == null || _player == null) return;
+            var p = _player();
+            if (p == null) return;
+
+            // ── 줌. 원본은 화면 픽셀 배율이지만, 여기서는 직교 카메라 높이(셀)로 다룬다.
+            // 원본 G.Z 는 "1 월드픽셀 → 몇 화면픽셀" 이라 셀 단위로는 화면 높이 = LH / (Z*CELL).
+            // 기준 줌(baseZoom)에서 세로로 보이는 셀 수를 화면 비율과 무관하게 고정한다.
+            float baseCells = (float)(1080.0 / (SimTuning.BaseZoom * SimTuning.PxPerCell));
+            float targetCells = baseCells / (float)SimTuning.ZoomInMul;
+
+            if (!_initialized) _zoom = targetCells;
+            else _zoom = Mathf.Lerp(_zoom, targetCells, Mathf.Min(1f, Time.deltaTime * _zoomLerpRate));
+
+            _cam.orthographicSize = _zoom * 0.5f;
+
+            float vh = _zoom;
+            float vw = vh * _cam.aspect;
+
+            // ── 룩어헤드: 조준 방향으로 앞서 본다
+            var pos = new Vector2((float)p.Position.X, (float)p.Position.Y);
+            var look = new Vector2(Mathf.Cos((float)p.Aim), Mathf.Sin((float)p.Aim)) * (float)SimTuning.LookAhead;
+            Vector2 target = pos + look;
+
+            // ── 데드존 + 추종. 카메라 중심은 화면 세로 42% 지점(상하 비대칭).
+            // 원본은 y 가 아래로 증가하므로 위에서 42%, Unity 는 위로 증가하므로 아래에서 58%.
+            float anchorFromBottom = 1f - (float)SimTuning.VerticalAnchor;
+            Vector2 center = _initialized
+                ? _camOrigin + new Vector2(vw * 0.5f, vh * anchorFromBottom)
+                : target;
+
+            if (_initialized)
+            {
+                Vector2 d = target - center;
+                float dist = d.magnitude;
+                float dead = (float)SimTuning.DeadZone;
+                if (dist > dead)
+                {
+                    Vector2 n = d / dist;
+                    Vector2 aim = center + n * (dist - dead);
+                    float t = Mathf.Min(1f, (float)SimTuning.FollowSpeed * 60f * Time.deltaTime);
+                    center += (aim - center) * t;
+                }
+            }
+
+            // ── 월드 경계 클램프. 원본 tcClampCamera 의 여유값.
+            Vector2 origin = center - new Vector2(vw * 0.5f, vh * anchorFromBottom);
+            float padX = Mathf.Min(vw * (float)SimTuning.CameraPadRatio, (float)SimTuning.CameraPadMax);
+            float padY = Mathf.Min(vh * (float)SimTuning.CameraPadRatio, (float)SimTuning.CameraPadMax);
+            origin.x = Mathf.Clamp(origin.x, -padX, Mathf.Max(-padX, _world.Cols - vw + padX));
+            origin.y = Mathf.Clamp(origin.y, -padY, Mathf.Max(-padY, _world.Rows - vh + padY));
+
+            _camOrigin = origin;
+            _initialized = true;
+
+            Vector2 finalCenter = origin + new Vector2(vw * 0.5f, vh * anchorFromBottom);
+            transform.position = new Vector3(finalCenter.x, finalCenter.y, -10f);
+        }
+
+        /// <summary>화면 좌표 → 월드 좌표(셀 단위).</summary>
+        public Vector2 ScreenToWorld(Vector3 screen)
+        {
+            if (_cam == null) _cam = GetComponent<Camera>();
+            var w = _cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_cam.transform.position.z));
+            return new Vector2(w.x, w.y);
+        }
+    }
+}

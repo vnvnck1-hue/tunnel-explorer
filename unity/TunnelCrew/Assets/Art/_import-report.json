@@ -1,0 +1,12 @@
+{
+  "generated": "2026-09-06T09:42:00.160Z",
+  "tiles": {
+    "copied": 268,
+    "overlays": 8,
+    "floorSheet": true
+  },
+  "characters": {
+    "driller": 10
+  },
+  "missing": []
+}
