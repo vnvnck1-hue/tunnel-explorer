@@ -123,6 +123,15 @@ namespace TunnelCrew.Sim
         public event Action<BossPatternEvent> Pattern;
         public event Action<BossWallEvent> WallRaised;
         public event Action<BossShotHitEvent> ShotHit;
+        /// <summary>보스탄 착탄을 AI 크루에게도 알린다 (원본 AI.bossShotHit) — (착탄점, 반경, 피해).</summary>
+        public Action<Vec2, double, double> CrewShotHit;
+
+        /// <summary>날아가는 예고탄과 대기열의 (착탄점, 남은 시간, 반경) — AI 크루 회피용 (원본 INF.bossShots + bossShotQueue).</summary>
+        public void CollectShotThreats(List<(Vec2 target, double eta, double radius)> into)
+        {
+            foreach (var s in Shots) into.Add((s.Target, Math.Max(0, s.Flight - s.T), s.Radius));
+            foreach (var q in _shotQueue) into.Add((q.Target, Math.Max(0, q.Delay) + q.Flight, q.Radius));
+        }
         public event Action<BossDefeatedEvent> Defeated;
 
         public BossSystem(WorldGrid world, EnemySystem enemies, RunState run, uint seed = 0xB055)
@@ -332,14 +341,15 @@ namespace TunnelCrew.Sim
         {
             double d = Vec2.Distance(player.Position, s.Target);
             bool hit = d <= s.Radius && player.IFrames <= 0 && !player.Downed;
+            double baseDmg = JsMath.Round(Math.Max(9, JsMath.Round(SimTuning.EnemyDamage * (3.55 + Math.Max(0, _run.Depth - 1) * .35 * Planet.GrowthScale))) * s.Power);
             double dmg = 0;
             if (hit)
             {
-                dmg = Math.Max(9, JsMath.Round(SimTuning.EnemyDamage * (3.55 + Math.Max(0, _run.Depth - 1) * .35 * Planet.GrowthScale)));
-                dmg = JsMath.Round(dmg * s.Power);
+                dmg = baseDmg;
                 var dir = (s.Target - s.Start).Normalized;
                 _enemies.DamagePlayerDirect(player, dmg, dir);
             }
+            CrewShotHit?.Invoke(s.Target, s.Radius, baseDmg);
             ShotHit?.Invoke(new BossShotHitEvent { At = s.Target, Radius = s.Radius, HitPlayer = hit, Damage = dmg });
         }
 

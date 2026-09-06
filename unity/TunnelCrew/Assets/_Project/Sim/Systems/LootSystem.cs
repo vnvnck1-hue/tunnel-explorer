@@ -161,6 +161,18 @@ namespace TunnelCrew.Sim
             Items.RemoveAll(q => q.Collected);
         }
 
+        /// <summary>외부(AI 크루)가 줍는다 — 사람의 픽업과 같은 곳으로 정산된다(팀 재화, §9.6.6).</summary>
+        public int Collect(LootItem q)
+        {
+            if (q.Collected) return 0;
+            q.Collected = true;
+            int v = Math.Max(1, JsMath.Round(q.Value * DepthMul));
+            if (q.Kind == ResourceKind.Pulp) Pulp += v; else Bloom += v;
+            TotalCollected += v;
+            Collected?.Invoke(new ResourceCollectedEvent { Kind = q.Kind, Amount = v, Position = q.Position });
+            return v;
+        }
+
         public void Clear()
         {
             Items.Clear();

@@ -36,6 +36,8 @@ namespace TunnelCrew.Sim
         public event Action<EscapeEvent> Changed;
         /// <summary>탑승 완료 — 런 성공. 호출자가 결과 화면으로 넘긴다.</summary>
         public event Action Boarded;
+        /// <summary>AI 크루가 있으면 그들도 태워야 뜬다 (§8.4-3·4). 기본은 솔로 판정(항상 참).</summary>
+        public Func<bool> CrewAllAboard = () => true;
 
         public EscapeSystem(WorldGrid world) { _world = world; }
 
@@ -111,7 +113,8 @@ namespace TunnelCrew.Sim
                     if (Vec2.Distance(p.Position, Position) <= BoardRange)
                     {
                         Board += dt;
-                        if (Board >= BoardTime)
+                        if (Board >= BoardTime && !CrewAllAboard()) Board = BoardTime;   // 사람만 타면 대기
+                        else if (Board >= BoardTime)
                         {
                             Phase = EscapePhase.Boarded;
                             Changed?.Invoke(new EscapeEvent { Phase = Phase, At = Position, Need = Need });

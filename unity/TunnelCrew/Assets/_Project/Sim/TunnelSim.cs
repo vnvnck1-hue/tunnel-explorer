@@ -27,6 +27,16 @@ namespace TunnelCrew.Sim
         public BossSystem Bosses { get; private set; }
         /// <summary>탈출 포트.</summary>
         public EscapeSystem Escape { get; private set; }
+        /// <summary>AI 크루 (원본 AICREW). 편성은 런 사이에도 유지된다.</summary>
+        public AiCrewSystem Crew { get; }
+        /// <summary>지금 벽을 깎는 주체. AI 크루면 굴착 XP 가 그 크루에게 간다 (원본 AI.breakSrc). null = 사람.</summary>
+        public object BreakSource;
+        bool _crewFresh; double _downT, _reviveT;
+        /// <summary>사람이 쓰러져 동료의 구조를 기다리는 중 (원본 G.downed · v7.7.2c).</summary>
+        public bool PlayerDownedWaiting => Player.Downed && _downT > 0;
+        public double ReviveProgress => Math.Min(1, _reviveT / ReviveNeedSec);
+        public const double ReviveNeedSec = 5, ReviveRange = 1.6, ReviveHpRatio = .5;
+        public event Action PlayerDowned;
         /// <summary>런 상태. Playing 에서만 틱이 돈다. Rest/Result 전환은 Sim 이 정하고 화면은 Presentation 이 맡는다.</summary>
         public GamePhase Phase { get; private set; } = GamePhase.Playing;
         /// <summary>보스 격파 직후 — 연출이 끝나면 Presentation 이 <see cref="EnterRest"/> 를 부른다.</summary>
@@ -101,6 +111,7 @@ namespace TunnelCrew.Sim
         public TunnelSim(int fxSeed = 12345)
         {
             Loot = new LootSystem(fxSeed);
+            Crew = new AiCrewSystem(this);
             Loot.Collected += e => ResourceCollected?.Invoke(e);
 
             // Run / Xp 는 런 내내 하나다 — 구독은 여기서 한 번만
@@ -331,6 +342,7 @@ namespace TunnelCrew.Sim
                 LastSettlement = _meta.Settle(Loot.Core, escaped, Perm, relicKeepRate: RelicFx.Has("r_smuggler") ? .25 : 0);
             }
             else LastSettlement = new MetaState.Settlement { Returned = escaped ? Loot.Core : 0, Lost = escaped ? 0 : Loot.Core, Escaped = escaped };
+            Crew.OnRunEnd();
             RunEnded?.Invoke(escaped, reason);
         }
 
@@ -351,6 +363,7 @@ namespace TunnelCrew.Sim
             _startCardsPending = Perm.StartCards;
             Run.BossesKilled = 0;
             RunEscaped = false; RunEndReason = "";
+            _crewFresh = true; _downT = _reviveT = 0;
             Phase = GamePhase.Playing;
         }
 
@@ -379,7 +392,11 @@ namespace TunnelCrew.Sim
             Enemies.EnemyHurt += e =>
             {
                 // 보스 격파 집계(BossesKilled · BossActive)는 BossSystem.OnDefeated 가 맡는다
-                if (e.Killed) Xp.OnEnemyKilled(e.Enemy, Build.Role, e.ByTurret);
+                if (e.Killed)
+                {
+                    if (Enemies.DamageSource is CrewMember cm) Crew.AwardKill(cm, e.Enemy, e.ByTurret);   // AI 처치 — AI 개인 XP (§9.6.7)
+                    else Xp.OnEnemyKilled(e.Enemy, Build.Role, e.ByTurret);
+                }
                 EnemyHurt?.Invoke(e);
             };
             Enemies.PlayerHurt += e => PlayerHurt?.Invoke(e);
@@ -409,6 +426,13 @@ namespace TunnelCrew.Sim
             Escape.Changed += e => EscapeChanged?.Invoke(e);
             Escape.Boarded += () => EndRun(escaped: true, "탈출 포트 탑승");
             Roles = new RoleSystem(World, Enemies, Projectiles, Build);
+            // AI 크루 훅 — 적 표적·크루 피격·AI 탄 굴착 크레딧·보스탄 착탄·전원 탑승
+            Enemies.TargetOf = e => Crew.TargetFor(e);
+            Enemies.HurtTarget = (t, dmg, dir) => { if (t is PlayerState) Enemies.ApplyPlayerDamage(Player, dmg, dir); else if (t is CrewMember m) Crew.Hurt(m, dmg, dir); };
+            Enemies.HitTest = (at, r) => Crew.HitTest(at, r);
+            Projectiles.BreakSourceSetter = o => BreakSource = o;
+            Bosses.CrewShotHit = (at, r, dmg) => Crew.BossShotHit(at, r, dmg);
+            Escape.CrewAllAboard = () => Crew.EscapeAllAboard() != false;
             RelicFx.Bind(World, Enemies, Player, Build,
                 (c, r, rad, pow) => TraitBlast(c, r, rad, pow),
                 (from, angle, vid, power) => Projectiles.Projectiles.Add(new Projectile { Position = from, Velocity = Vec2.FromAngle(angle) * SimTuning.TeCells(300), Life = .9, Power = power, VisualId = vid }));
@@ -449,6 +473,8 @@ namespace TunnelCrew.Sim
 
             FloorTime = 0;
             _accumulator = 0;
+
+            if (_crewFresh) { _crewFresh = false; Crew.OnRunStart(); } else Crew.OnFloorInit();
         }
 
         void OnTileBroken(TileBrokenEvent e)
@@ -460,9 +486,14 @@ namespace TunnelCrew.Sim
             // 층 진행 — 장악도·스폰 압력·굴착 XP (원본 infOnBlockBroken)
             double cdCap = Run.OnBlockBroken();
             Enemies.ClampSpawnCooldown(cdCap);
-            Xp.OnBlockBroken(e.Type, Build.Role, WorldGrid.CellCenter(e.Col, e.Row));
-            _blockCounter++;
             var at = WorldGrid.CellCenter(e.Col, e.Row);
+            // AI 크루가 부순 블록: 장악도·코어는 팀에 기여하고 경험치는 그 크루 개인에게 간다. 사람의 특성 발동은 건드리지 않는다 (원본 AI.creditBreak)
+            var crewSrc = BreakSource as CrewMember;
+            if (crewSrc != null) Crew.CreditBreak(crewSrc, e.Type, at);
+            else Xp.OnBlockBroken(e.Type, Build.Role, at);
+            if (crewSrc == null)
+            {
+            _blockCounter++;
 
             // 굴착 보호막 — 벽을 부술 때마다 짧은 방어막 (원본 breakShield)
             if (Build.BreakShield > 0)
@@ -499,18 +530,26 @@ namespace TunnelCrew.Sim
                 TraitFx?.Invoke(new TraitFxEvent { Kind = "grandCollapse", At = at, Radius = 3.5 });
             }
 
+            }   // crewSrc == null
+
             // 희귀 광물 → 코어 +1 (+추가 코어 확률), 광석 회복, 원격 전송 (원본 infOnBlockBroken rare 분기)
             bool rare = e.Type == TileType.Ore || e.Type == TileType.Gem || e.Type == TileType.Crys;
-            RelicFx.OnBlock(at);
-            if (e.HadBuriedRelic) RelicFx.BuriedFind(at);
+            if (crewSrc == null) { RelicFx.OnBlock(at); if (e.HadBuriedRelic) RelicFx.BuriedFind(at); }
             if (rare)
             {
-                int core = 1 + (_coreRng.NextDouble() < Build.CoreBonusChance ? 1 : 0);
-                core += RelicFx.OnRare(at, core, Depth);
+                int core = 1;
+                if (crewSrc == null)
+                {
+                    core += _coreRng.NextDouble() < Build.CoreBonusChance ? 1 : 0;
+                    core += RelicFx.OnRare(at, core, Depth);
+                }
                 Loot.Core += core;
                 RemoteTick(core);
-                if (Build.OreHeal > 0) Player.Hp = Math.Min(Player.HpMax, Player.Hp + Build.OreHeal);
-                Xp.Award(2, XpKind.Loot, Build.Role, label: "코어", at: at, checkLevel: false);
+                if (crewSrc == null)
+                {
+                    if (Build.OreHeal > 0) Player.Hp = Math.Min(Player.HpMax, Player.Hp + Build.OreHeal);
+                    Xp.Award(2, XpKind.Loot, Build.Role, label: "코어", at: at, checkLevel: false);
+                }
                 TraitFx?.Invoke(new TraitFxEvent { Kind = "core", At = at, Label = $"코어 +{core}" });
             }
 
@@ -623,6 +662,7 @@ namespace TunnelCrew.Sim
             Roles.Tick(Player, Build, dt, Depth);
             if (input.ReloadPressed) Projectiles.StartReload(Build, true);
             Projectiles.Tick(Player, Build, dt);
+            Crew.Tick(dt);   // AI 크루 — 판단·이동·사격·굴착·설치 (원본 AI.update)
 
             // 동적 위협 — 시간·진행도로 스포너 파라미터를 매 틱 갱신 (원본 12226~12229)
             RelicFx.Tick(dt, Build, Phase == GamePhase.Playing);
@@ -643,14 +683,18 @@ namespace TunnelCrew.Sim
 
             if (Player.Downed)
             {
-                if (RelicFx.TryPhoenix(Roles)) { }
-                else if (TryPermRevive()) { }
-                else EndRun(escaped: false, Bosses.Active ? "보스에게 쓰러짐" : "적에게 쓰러짐");
+                if (_downT <= 0 && RelicFx.TryPhoenix(Roles)) { }
+                else if (_downT <= 0 && TryPermRevive()) { }
+                else if (Crew.RescuersAlive() > 0) TickDowned(dt);   // 구조할 동료가 있으면 기절 — 5초 치료 (원본 playerEnterDowned)
+                else EndRun(escaped: false, _downT > 0 ? "쓰러짐 — 구조할 동료가 없었다" : Bosses.Active ? "보스에게 쓰러짐" : "적에게 쓰러짐");
             }
+            else _downT = 0;
 
             // 시야는 이동·채굴이 끝난 뒤 마지막에 갱신한다 (원본 update 순서와 동일).
             _visionSources.Clear();
             _visionSources.Add(VisionSource.Crew(Player.Position));
+            foreach (var m in Crew.Members) if (!m.Down) _visionSources.Add(VisionSource.Crew(m.Position));   // AI 크루 시야 합산 (원본 AI.visionXY)
+            foreach (var f in Roles.Flares) if (f.VisionRange > 0) _visionSources.Add(new VisionSource { Position = f.Position, Range = f.VisionRange, Rays = SimTuning.CrewVisionRays });   // 플레어·노드 visionRange
             Los.Compute(Player.Position, _visionSources);
         }
 
@@ -675,6 +719,27 @@ namespace TunnelCrew.Sim
         }
 
         bool _drillHeld;
+
+        /// <summary>원본 infDownedTick — 기절 중 구조 진행. 동료가 1.6칸 안에 있으면 5초 뒤 HP 50% 로 부활, 없으면 게이지가 천천히 빠진다.</summary>
+        void TickDowned(double dt)
+        {
+            if (_downT <= 0) PlayerDowned?.Invoke();
+            _downT += dt;
+            Player.StunTime = Math.Max(Player.StunTime, .4); Player.IFrames = Math.Max(Player.IFrames, .4);
+            Player.Velocity = Vec2.Zero; Player.DashActive = false;
+            if (Crew.HelpersNear(Player.Position, ReviveRange) > 0)
+            {
+                _reviveT += dt;
+                if (_reviveT >= ReviveNeedSec)
+                {
+                    Player.Downed = false; Player.Hp = Math.Max(1, Math.Round(Player.HpMax * ReviveHpRatio));
+                    Player.IFrames = Math.Max(Player.IFrames, 2.2); Player.StunTime = 0;
+                    _reviveT = 0; _downT = 0;
+                    Revived?.Invoke(Player.Position);
+                }
+            }
+            else _reviveT = Math.Max(0, _reviveT - dt * .5);
+        }
 
         /// <summary>보간용. 렌더가 틱 사이를 부드럽게 잇는 데 쓴다.</summary>
         public double InterpolationAlpha => _accumulator / SimTuning.FixedDeltaTime;

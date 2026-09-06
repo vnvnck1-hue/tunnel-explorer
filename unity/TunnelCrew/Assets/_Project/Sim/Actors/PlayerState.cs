@@ -4,7 +4,7 @@ namespace TunnelCrew.Sim
     /// 원본 <c>G.sh</c> + 흩어져 있던 플레이어 관련 <c>G.*</c> 필드를 한곳에 모은 것.
     /// (G.dash / G.knock / G.stunT / G.drillWarm / G.drillHeat / G.php …)
     /// </summary>
-    public sealed class PlayerState
+    public sealed class PlayerState : ICrewTarget
     {
         public Vec2 Position;
         public Vec2 Velocity;
@@ -57,6 +57,10 @@ namespace TunnelCrew.Sim
         /// <summary>압쇄 비트 — 같은 벽을 깎은 시간 (특성).</summary>
         public int FocusCell = -1;
         public double FocusTime;
+
+        Vec2 ICrewTarget.Pos => Position;
+        bool ICrewTarget.IsDowned => Downed;
+        double ICrewTarget.HitRadius => SimTuning.PlayerRadius;
 
         public bool CanMove => StunTime <= 0 && !Downed;
 

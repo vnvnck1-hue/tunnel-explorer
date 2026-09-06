@@ -64,6 +64,7 @@ namespace TunnelCrew.Presentation
         PlayerView _playerView;
         LootView _lootView;
         EnemyView _enemyView;
+        CrewView _crewView;
         CombatView _combatView;
         Feedback _feedback;
         FxSystem _fx;
@@ -264,10 +265,33 @@ namespace TunnelCrew.Presentation
                 if (!saved) Log("<color=#ff6060>저장 실패 — 기록이 남지 않았다</color>");
                 foreach (var u in Sim.LastUnlocks) Log($"해금: {u}");
             };
+            // AI 크루 — 연출·토스트 (원본 J.ring/J.burst/J.text/toast 호출을 이벤트로 받는다)
+            Sim.Crew.Fx += e =>
+            {
+                var col = Hex(e.Color);
+                switch (e.Kind)
+                {
+                    case CrewFxKind.Ring: _fx?.Ring(V(e.At), col, .2f, (float)e.Radius); break;
+                    case CrewFxKind.Burst: _fx?.Burst(V(e.At), e.Count, new[] { col, Color.white }, (float)e.Size); break;
+                    case CrewFxKind.Flash: _fx?.Flash(V(e.At), (float)e.Radius, col); break;
+                    case CrewFxKind.Text: _combatView?.Text(e.At, e.Label, col, (float)e.Size); break;
+                    case CrewFxKind.Kick: _feedback?.Kick((float)e.Size, V(e.Dir)); break;
+                    case CrewFxKind.Chunks: _fx?.Chunks(V(e.At), e.Count, new[] { col, Hex("#FFD36E"), Hex("#FFF3D6") }, (float)e.Size, V(e.Dir)); break;
+                }
+            };
+            Sim.Crew.Toast += Log;
+            Sim.PlayerDowned += () =>
+            {
+                _feedback?.Kick(6f, Vector2.zero);
+                _fx?.Ring(V(Sim.Player.Position), new Color(1f, .33f, .49f), .3f, 2f);
+                _combatView?.Text(Sim.Player.Position + new Vec2(0, .92), "기절!", new Color(1f, .55f, .66f), 20);
+                Log("기절 — 동료가 곁에서 5초간 치료하면 체력 50%로 부활합니다");
+            };
             Sim.Revived += at => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(60f); _fx?.BigRing(V(at), new Color(1f, .83f, .43f), 1.8f); _combatView?.Text(at + new Vec2(0, .9), "긴급 재기동", new Color(1f, .83f, .43f), 20); Log("긴급 재기동 — 체력 35%로 다시 일어섰다"); };
         }
 
         static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+        static Color Hex(string hex) { if (string.IsNullOrEmpty(hex) || !ColorUtility.TryParseHtmlString(hex, out var c)) return Color.white; return c; }
         static string PatternName(string p) => p switch { "wallField" => "암벽 융기", "wallWave" => "지각 파동", "wallPrison" => "석화 감옥!", "dashPrison" => "협곡 돌진 — 갇혔다!", _ => p };
 
         void Log(string s)
@@ -343,6 +367,8 @@ namespace TunnelCrew.Presentation
             _lootView = new GameObject("Loot").AddComponent<LootView>();
             _enemyView = new GameObject("Enemies").AddComponent<EnemyView>();
             _enemyView.Bind(_monsterSheets);
+            _crewView = new GameObject("Crew").AddComponent<CrewView>();
+            _crewView.Bind(_sheets);
             _enemyView.BossFacing = e => Sim.Bosses?.Boss != null && Sim.Bosses.Boss.Body == e ? Sim.Bosses.Boss.Facing : -1;
             _combatView = new GameObject("Combat").AddComponent<CombatView>();
             _fx = new GameObject("Fx").AddComponent<FxSystem>();
@@ -547,6 +573,7 @@ namespace TunnelCrew.Presentation
             _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
             _wallShadows.Bind(Sim.World);
             _rig.Bind(Sim.World, () => Sim.Player);
+            if (_crewView != null) _crewView.crewWorld = Sim.World;
             Time.timeScale = 1f;
         }
 
@@ -611,6 +638,7 @@ namespace TunnelCrew.Presentation
             _playerView.Render(Sim.Player, Time.deltaTime);
             _lootView.Render(Sim.Loot);
             _enemyView.Render(Sim.Enemies.Enemies, Time.deltaTime);
+            _crewView.Render(Sim.Crew, Time.deltaTime);
             _combatView.Render(Sim, Time.deltaTime);
             UpdateLighting();
         }
@@ -795,12 +823,40 @@ namespace TunnelCrew.Presentation
                     {
                         EscapePhase.Placing => "탈출 지점 지정 중 — 좌클릭 확정 · 우클릭 취소",
                         EscapePhase.Incoming => $"탈출 포트 도착까지 {Mathf.CeilToInt((float)(Sim.Escape.Need - Sim.Escape.Elapsed))}초 — 지점을 사수하세요",
-                        EscapePhase.Ready => $"탈출 포트 도착 — 탑승 {Sim.Escape.BoardProgress:P0}",
+                        EscapePhase.Ready => $"탈출 포트 도착 — 탑승 {Sim.Escape.BoardProgress:P0}" + (Sim.Crew.EscapeCount() is var ec && ec.HasValue ? $"   생존자 탑승 {ec.Value.boarded + (Sim.Escape.BoardProgress >= 1 ? 1 : 0)} / {ec.Value.total}" : ""),
                         _ => "탑승 완료",
                     };
                     GUI.Label(R(x + 12, ly, 540, 28), $"<color=#ff8da8><b>{esc}</b></color>", _sSmall); ly += 30;
                 }
                 foreach (var line in _log) { GUI.Label(R(x + 12, ly, 540, 26), "<color=#ffd080>· " + line + "</color>", _sSmall); ly += 26; }
+            }
+
+            // ── 우상단: AI 크루 — 각 AI 가 지금 뭘 하는지 (원본 .aiHud). 플레이테스트에서 이게 제일 중요하다
+            if (Sim.Crew.Members.Count > 0)
+            {
+                float rw = 420, rh = 44, x = W - rw - 28, y = 130;
+                for (int i = 0; i < Sim.Crew.Members.Count; i++)
+                {
+                    var m = Sim.Crew.Members[i];
+                    var col = Hex(AiCrewSystem.ColorOf(m.Role));
+                    var rc = R(x, y + i * (rh + 6), rw, rh);
+                    Panel(rc, .62f);
+                    GUI.color = col; GUI.DrawTexture(R(x + 12, y + i * (rh + 6) + 16, 12, 12), _white); GUI.color = Color.white;
+                    GUI.Label(R(x + 32, y + i * (rh + 6), 110, rh), $"<b><color=#{ColorUtility.ToHtmlStringRGB(col)}>{AiCrewSystem.NameOf(m.Role)}</color></b> <color=#ffd36e>Lv{m.Level}</color>", _sSmall);
+                    float hp = Mathf.Clamp01((float)(m.Hp / m.HpMax));
+                    Bar(R(x + 150, y + i * (rh + 6) + 12, 70, 10), hp, new Color(.2f, .12f, .16f), m.Down ? new Color(1f, .33f, .49f) : hp > .5f ? new Color(.5f, .92f, .82f) : hp > .25f ? new Color(1f, .83f, .43f) : new Color(1f, .55f, .66f));
+                    Bar(R(x + 150, y + i * (rh + 6) + 26, 70, 5), Mathf.Clamp01((float)m.Xp / Mathf.Max(1, m.XpNeed)), new Color(.16f, .14f, .22f), new Color(.78f, .63f, 1f));
+                    GUI.Label(R(x + 232, y + i * (rh + 6), rw - 244, rh), m.Down ? "<color=#ff8da8>다운 · 구조 필요</color>" : $"<color=#b8a9d4>{m.StateLabel}</color>", Sz(_sSmall, 15, TextAnchor.MiddleLeft));
+                }
+            }
+
+            // ── 기절 — 동료의 구조를 기다린다 (원본 playerEnterDowned · infDownedTick)
+            if (Sim.PlayerDownedWaiting)
+            {
+                Panel(R(W * .5f - 360, H * .5f - 70, 720, 120), .7f);
+                GUI.Label(R(W * .5f - 340, H * .5f - 60, 680, 44), "<color=#ff8da8><b>기절</b></color>  —  동료가 곁에서 5초간 치료하면 체력 50%로 부활", new GUIStyle(_sMid) { alignment = TextAnchor.MiddleCenter });
+                Bar(R(W * .5f - 300, H * .5f - 8, 600, 18), (float)Sim.ReviveProgress, new Color(.2f, .12f, .16f), new Color(.5f, .92f, .82f));
+                GUI.Label(R(W * .5f - 300, H * .5f + 14, 600, 28), Sim.Crew.HelpersNear(Sim.Player.Position, TunnelSim.ReviveRange) > 0 ? $"치료 중 {Sim.ReviveProgress:P0}" : "구조자가 오는 중…", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
             }
 
             // ── 특성 카드 3택 — 화면 중앙 하단, 크게

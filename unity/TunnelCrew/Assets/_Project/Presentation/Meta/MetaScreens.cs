@@ -403,8 +403,27 @@ namespace TunnelCrew.Presentation
                 GUI.Label(new Rect(rc.x + 18 * _k, ty + 140 * _k, rc.width - 36 * _k, 30 * _k), $"채굴 ×{st.dig:0.00}　전투 ×{st.gun:0.00}　기동 ×{st.dash:0.00}", St(15, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(1f, .93f, .8f)));
                 int ranks = PermanentNodes.All.Where(n => n.Owner == role.ToString().ToLowerInvariant()).Sum(n => meta.RankOf(n.Id));
                 GUI.Label(new Rect(rc.x + 18 * _k, ty + 172 * _k, rc.width - 36 * _k, 30 * _k), $"<color=#aaa>영구 노드 랭크 {ranks} · 공용 {PermanentNodes.All.Where(n => n.Owner == "crew").Sum(n => meta.RankOf(n.Id))}</color>", St(14));
-                if (rc.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) { if (_selected == role && Event.current.clickCount >= 2) Launch(); _selected = role; }
+                // 카드 우측 상단 [− n + AI] — AI 크루 편성 (원본 .aiCrewChip). 카드 선택 클릭과 섞이지 않게 칩 영역은 제외한다
+                var crew = _run.Sim.Crew; int nAi = crew.Count(role);
+                var chip = new Rect(rc.xMax - 172 * _k, rc.y + 8 * _k, 160 * _k, 34 * _k);
+                Fill(chip, new Color(.05f, .03f, .08f, .86f));
+                if (Button(new Rect(chip.x, chip.y, 40 * _k, chip.height), "−", nAi > 0)) crew.Remove(role);
+                GUI.Label(new Rect(chip.x + 42 * _k, chip.y, 30 * _k, chip.height), $"<b>{nAi}</b>", St(16, FontStyle.Bold, TextAnchor.MiddleCenter, false, nAi > 0 ? RoleColors[i] : new Color(.43f, .38f, .5f)));
+                if (Button(new Rect(chip.x + 74 * _k, chip.y, 86 * _k, chip.height), "+ AI", crew.Roster.Count < AiCrewSystem.Max, RoleColors[i])) crew.Add(role);
+                if (rc.Contains(Event.current.mousePosition) && !chip.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) { if (_selected == role && Event.current.clickCount >= 2) Launch(); _selected = role; }
                 if (sel && Button(new Rect(rc.x + 18 * _k, rc.yMax - 70 * _k, rc.width - 36 * _k, 54 * _k), "선택 완료 · 출격   <color=#aaa>Enter</color>", true, RoleColors[i])) Launch();
+            }
+            // 카드 그리드 아래의 편성 요약 (원본 .aiCrewBar)
+            {
+                var crew = _run.Sim.Crew;
+                float by = y0 + ch + 14, bw = total, bx = x0;
+                Panel(R(bx, by, bw, 46), .5f);
+                var sb = new System.Text.StringBuilder("<b>크루 편성</b>   <color=#ffe6a8>[ 나 ]</color>");
+                foreach (var r in crew.Roster) sb.Append($"  <color=#{ColorUtility.ToHtmlStringRGB(RoleColors[(int)r])}>[ AI {AiCrewSystem.NameOf(r)} ]</color>");
+                for (int k = crew.Roster.Count; k < AiCrewSystem.Max; k++) sb.Append("  <color=#5f5473>[ 빈 자리 ]</color>");
+                sb.Append("   <color=#7b6f8f>카드 우측 상단 + AI 로 동료를 넣는다 · 같은 세계·같은 적을 공유하는 로컬 동료</color>");
+                GUI.Label(R(bx + 16, by, bw - 220, 46), sb.ToString(), St(15));
+                if (crew.Roster.Count > 0 && Button(R(bx + bw - 190, by + 6, 176, 34), "모두 비우기", true, new Color(.6f, .6f, .65f))) crew.Clear();
             }
             GUI.Label(R(80, H - 60, 1200, 40), "<color=#aaa>Esc 행성 지도로</color>", St(16));
         }

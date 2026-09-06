@@ -17,6 +17,10 @@ namespace TunnelCrew.Sim
         /// <summary>연출용 분류. standard / multi / pierce / ricochet / explosive / rain / laser.</summary>
         public string VisualId = "standard";
         public double Age;
+        /// <summary>AI 크루 탄 — 사람의 특성 배율을 타지 않고 AiMul 로만 계산한다 (원본 p.ai/aiMul/aiOwner). null 이면 사람 탄.</summary>
+        public object Owner;
+        public double AiMul;
+        public bool AiTurret;
     }
 
     public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public int Count; }
@@ -34,6 +38,15 @@ namespace TunnelCrew.Sim
         public event Action<ProjectileFiredEvent> Fired;
         public event Action<ProjectileEndedEvent> Ended;
         public event Action<ReloadEvent> Reload;
+        /// <summary>AI 탄이 벽을 깎을 때 굴착 크레딧 주인을 TunnelSim 에 알린다.</summary>
+        public Action<object> BreakSourceSetter;
+
+        /// <summary>외부(AI 크루·센트리)가 만든 탄을 넣고 발사 이벤트를 낸다.</summary>
+        public void Emit(Projectile p, double angle)
+        {
+            Projectiles.Add(p);
+            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, Count = 1 });
+        }
 
         readonly WorldGrid _world;
         readonly EnemySystem _enemies;
@@ -142,8 +155,12 @@ namespace TunnelCrew.Sim
                     if (!e.Alive) continue;
                     if (Vec2.Distance(p.Position, e.Position) >= e.Radius + SimTuning.PxCells(6.0)) continue;
 
-                    double dmg = SimTuning.EnemyGunDamage * gunMul * p.Power * (p.Laser ? 1.65 : 1.0);
-                    _enemies.HurtEnemy(e, dmg, n, player.Position, byTurret: p.VisualId == "support");
+                    bool ai = p.Owner != null;
+                    double dmg = ai ? SimTuning.EnemyGunDamage * p.AiMul * p.Power
+                                    : SimTuning.EnemyGunDamage * gunMul * p.Power * (p.Laser ? 1.65 : 1.0);
+                    if (ai) _enemies.DamageSource = p.Owner;
+                    _enemies.HurtEnemy(e, dmg, n, p.Owner is ICrewTarget ct ? ct.Pos : player.Position, byTurret: p.AiTurret || p.VisualId == "support");
+                    if (ai) _enemies.DamageSource = null;
 
                     if (p.Pierce > 0) { p.Pierce--; p.Position += n * SimTuning.PxCells(12.0); }
                     else hit = true;
@@ -162,8 +179,11 @@ namespace TunnelCrew.Sim
                             int k = _world.Index(c, r);
                             if (k != p.LastCell)
                             {
-                                double wallDmg = SimTuning.DrillDps * 0.28 * build.GunWallMul * p.Power * (p.Laser ? 1.8 : 1.0);
+                                double wallDmg = p.Owner != null ? SimTuning.DrillDps * 0.28 * p.Power
+                                               : SimTuning.DrillDps * 0.28 * build.GunWallMul * p.Power * (p.Laser ? 1.8 : 1.0);
+                                if (p.Owner != null) BreakSourceSetter?.Invoke(p.Owner);
                                 _world.Damage(c, r, wallDmg, n);
+                                if (p.Owner != null) BreakSourceSetter?.Invoke(null);
                                 p.LastCell = k;
                             }
 

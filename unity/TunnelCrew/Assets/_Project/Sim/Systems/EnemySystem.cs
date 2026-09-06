@@ -216,7 +216,9 @@ namespace TunnelCrew.Sim
                     e.BlinkCooldown = 2.4 + _rng.NextDouble() * 4.2;
                 }
 
-                Vec2 delta = player.Position - e.Position;
+                ICrewTarget tgt = TargetOf?.Invoke(e);
+                Vec2 targetPos = tgt != null ? tgt.Pos : player.Position;
+                Vec2 delta = targetPos - e.Position;
                 double dist = Math.Max(1e-6, delta.Length);
 
                 e.JumpCooldown = Math.Max(0, e.JumpCooldown - dt);
@@ -242,9 +244,9 @@ namespace TunnelCrew.Sim
                 }
                 else
                 {
-                    EnemyAiSystem.Tick(_world, e, player.Position, dt, baseSpeed, timeSpeed, _rng,
+                    EnemyAiSystem.Tick(_world, e, targetPos, dt, baseSpeed, timeSpeed, _rng,
                         a => Alerted?.Invoke(new EnemyAlertEvent { Enemy = a }),
-                        MeleeStrike(player),
+                        MeleeStrike(player, tgt),
                         FireShot);
                 }
 
@@ -306,12 +308,13 @@ namespace TunnelCrew.Sim
         }
 
         // ───────────────────────────── 공격
-        Action<EnemyState> MeleeStrike(PlayerState player) => e =>
+        Action<EnemyState> MeleeStrike(PlayerState player, ICrewTarget tgt) => e =>
         {
             // 타격 순간 자기 자신이 앞으로 밀린다
             e.Knock += e.AttackDir * SimTuning.EnemyLungeSpeed;
 
-            Vec2 delta = player.Position - e.Position;
+            bool crew = tgt != null && !(tgt is PlayerState);
+            Vec2 delta = (crew ? tgt.Pos : player.Position) - e.Position;
             double d = Math.Max(1e-6, delta.Length);
             double reach = e.Radius + SimTuning.PlayerRadius
                          + SimTuning.EnemyReach * SimTuning.EnemyStrikeReachMul;
@@ -321,7 +324,8 @@ namespace TunnelCrew.Sim
             double dot = (delta.X / d) * e.AttackDir.X + (delta.Y / d) * e.AttackDir.Y;
             if (dot < SimTuning.EnemyStrikeDot) return;
 
-            ApplyPlayerDamage(player, SimTuning.EnemyDamage * e.DamageMul, delta / d);
+            if (crew) HurtTarget?.Invoke(tgt, SimTuning.EnemyDamage * e.DamageMul, delta / d);
+            else ApplyPlayerDamage(player, SimTuning.EnemyDamage * e.DamageMul, delta / d);
         };
 
         void FireShot(EnemyState e)
@@ -357,7 +361,14 @@ namespace TunnelCrew.Sim
                     ApplyPlayerDamage(player, s.Damage, dir);
                 }
 
-                if (s.Life <= 0 || hitWall || hitPlayer) Shots.RemoveAt(i);
+                ICrewTarget crewHit = null;
+                if (!hitPlayer && HitTest != null)
+                {
+                    crewHit = HitTest(s.Position, s.Radius);
+                    if (crewHit != null) HurtTarget?.Invoke(crewHit, s.Damage, (crewHit.Pos - s.Position).Normalized);
+                }
+
+                if (s.Life <= 0 || hitWall || hitPlayer || crewHit != null) Shots.RemoveAt(i);
             }
         }
 
@@ -423,6 +434,14 @@ namespace TunnelCrew.Sim
         public Action<EnemyState> EnemyKilled;
         /// <summary>시간 정지 — 적·적탄이 멈춘다 (모래시계).</summary>
         public Func<bool> TimeStopped = () => false;
+        /// <summary>적이 노릴 대상 — AI 크루가 있으면 가장 가까운 크루 (원본 AI_TGT). null 이면 사람.</summary>
+        public Func<EnemyState, ICrewTarget> TargetOf;
+        /// <summary>사람이 아닌 표적(AI 크루)에게 피해를 준다.</summary>
+        public Action<ICrewTarget, double, Vec2> HurtTarget;
+        /// <summary>적 투사체가 크루에 맞았는가 (원본 AI.hitTest).</summary>
+        public Func<Vec2, double, ICrewTarget> HitTest;
+        /// <summary>지금 들어오는 피해의 주인 — AI 크루면 처치 XP 가 그 크루에게 간다. 호출자가 설정·해제한다.</summary>
+        public object DamageSource;
 
         public void ApplyPlayerDamage(PlayerState player, double raw, Vec2 hitDir)
         {
