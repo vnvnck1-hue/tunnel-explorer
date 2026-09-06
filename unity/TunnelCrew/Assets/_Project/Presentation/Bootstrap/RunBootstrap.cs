@@ -341,11 +341,37 @@ namespace TunnelCrew.Presentation
                     _playerView.SetWalkFrames(d.direction, d.walk);
         }
 
-        /// <summary>확인용 — 시작 직후 플레이어 주변에 적을 몇 마리 깐다.</summary>
+        /// <summary>
+        /// 확인용 — 시작 직후 플레이어 주변에 적을 깐다.
+        /// 스포너의 스폰 링은 어그로 반경(35셀) 기준이라 20셀 밖에 떨어진다. 그대로 두면
+        /// 배회 상태로 멀리 있어 한참 못 만나므로, 여기서는 3.5~7셀 안의 빈 칸에 놓고 추격 상태로 시작시킨다.
+        /// </summary>
         void Prespawn()
         {
-            for (int i = 0; i < _prespawnEnemies; i++)
-                Sim.Enemies.Spawn(Sim.Player.Position);
+            var world = Sim.World;
+            var pp = Sim.Player.Position;
+            var spots = new List<Vec2>();
+            for (int r = 2; r < world.Rows - 2; r++)
+                for (int c = 2; c < world.Cols - 2; c++)
+                {
+                    if (world.IsSolid(c, r)) continue;
+                    var q = WorldGrid.CellCenter(c, r);
+                    double d = Vec2.Distance(q, pp);
+                    if (d >= 3.5 && d <= 7.0) spots.Add(q);
+                }
+            var rng = new System.Random(Sim.Depth * 7919 + 17);
+            for (int i = 0; i < _prespawnEnemies && spots.Count > 0; i++)
+            {
+                var e = Sim.Enemies.Spawn(pp);
+                if (e == null) break;
+                int k = rng.Next(spots.Count);
+                e.Position = e.Home = spots[k];
+                spots.RemoveAt(k);
+                e.Ai = EnemyAi.Chase;
+                e.LastSeen = pp;
+                e.LostTime = 0;   // 기본값 99 라 그대로면 첫 틱에 배회로 떨어진다
+                e.FaceAngle = (pp - e.Position).Angle;
+            }
         }
 
         /// <summary>직업을 바꾸고 층을 다시 만든다 (숫자키 1~4).</summary>
