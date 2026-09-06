@@ -166,6 +166,29 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 - `GameFlow` 빈 상태 머신, 빈 씬 3개(Boot / Menu / Run)
 - **완료 기준**: 에디터에서 타일 아틀라스·캐릭터 시트·오디오가 임포트 오류 0으로 보이고, SO 데이터가 원본 값과 일치(스팟체크 20개)
 
+**진행 상황 (2026-09-06)** — 커밋 `f704570`
+
+| 항목 | 상태 |
+|---|---|
+| Unity 6.3.15f1 + URP 2D 프로젝트 `unity/TunnelCrew` | 완료. 불필요한 서비스 패키지 18종 제거(39개 남음) |
+| asmdef | 완료 (계획의 3개 → **6개**: Sim / Data / Presentation / Editor / Tests.EditMode / Tests.PlayMode). Data 를 분리한 이유는 Sim 을 `noEngineReferences=true` 순수 C# 으로 유지하기 위함 |
+| `dump-tuning.mjs` | 완료. **44 / 44** 추출 |
+| `extract-embedded-audio.mjs` | 완료. **53 파일** (SFX 25종/48, 드릴 3, BGM 2) |
+| 자산 임포트 (타일·캐릭터·몬스터·드래곤) | **미완** |
+| 원본 JSON → ScriptableObject 변환 | **미완** |
+| 빈 씬 3개 (Boot / Menu / Run) + 빌드 설정 | 완료 |
+| `GameFlow` 상태 머신 골격 | 완료 (`GamePhase` 12상태, 3중 상태 통합) |
+| 검증 | 배치 모드 컴파일 에러 0 · 경고 0 · EditMode 테스트 **11/11 통과** |
+
+부수 성과: `Sim/Math/Rng.cs` 가 원본 mulberry32 + FNV-1a 를 비트 단위로 재현하는 것을
+JS 기준값과 대조해 확인했다(`RngParityTests`). §6 맵 생성 패리티의 전제가 성립한다.
+
+**계획과 달라진 점**
+- 특성 수는 기획 문서의 "약 60종" 이 아니라 **72종**이다. M4 수작업 표의 작업량을 이 숫자로 잡는다.
+- `Sim` 은 `noEngineReferences=true` 로 UnityEngine 을 전혀 참조하지 않는다.
+  `System.Numerics` · `System.MathF` 를 쓰고, ScriptableObject ↔ Sim 구조체 변환은 `Data` 가 맡는다.
+- 바이너리 자산은 `unity/TunnelCrew/.gitattributes` 로 **Git LFS** 추적한다(범위는 이 폴더 한정).
+
 ### M1 — 코어 루프 그레이박스 (파고, 걷고, 줍는다)
 - `WorldGrid`, `Rng`, `DungeonGenerator`(genTunnel 11단계), `Connectivity`
 - `Movement`+`Collision`(원-AABB 3회), 대시(4px 서브스텝→0.08셀), 넉백·기절

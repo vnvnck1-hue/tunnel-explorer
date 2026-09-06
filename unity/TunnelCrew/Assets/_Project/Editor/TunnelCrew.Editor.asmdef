@@ -1,0 +1,21 @@
+{
+    "name": "TunnelCrew.Editor",
+    "rootNamespace": "TunnelCrew.EditorTools",
+    "references": [
+        "TunnelCrew.Sim",
+        "TunnelCrew.Data",
+        "TunnelCrew.Presentation",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
