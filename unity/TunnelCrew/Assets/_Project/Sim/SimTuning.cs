@@ -112,6 +112,24 @@ namespace TunnelCrew.Sim
         public const double LootMagnetSpeed = 7.5;
         public const int ResourceMax = 480;
 
+        // ───────────────────────────── 시야 (LOS)
+        /// <summary>플레이어 시야 반경(타일). DEMO.losRange.</summary>
+        public const int LosRange = 19;
+        /// <summary>레이 개수. DEMO.losRays.</summary>
+        public const int LosRays = 360;
+        /// <summary>탐색 기억이 남는 반경(타일). DEMO.losMemory.</summary>
+        public const int LosMemory = 11;
+        /// <summary>탐색 지역의 최대 농도(0~1). DEMO.losExplored → 255 배 하면 74.</summary>
+        public const double LosExplored = 0.29;
+        /// <summary>
+        /// 멀어진 탐색 지역이 유지하는 최소 농도 비율. 원본 주석: "갑자기 완전 검정으로
+        /// 잘리지 않게 한다". 실제 식은 exp * (0.30 + 0.70 * fade²).
+        /// </summary>
+        public const double LosMemoryFloor = 0.30;
+        /// <summary>크루 각자가 주변을 밝히는 반경·레이. 원본 crewRange/crewRays.</summary>
+        public const int CrewVisionRange = 5;
+        public const int CrewVisionRays = 72;
+
         // ───────────────────────────── 시뮬레이션 루프
         /// <summary>고정 60Hz 틱 (계획 D6).</summary>
         public const double FixedDeltaTime = 1.0 / 60.0;

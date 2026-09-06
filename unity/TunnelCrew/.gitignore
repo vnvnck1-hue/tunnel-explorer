@@ -44,3 +44,6 @@ crashlytics-build.properties
 *.aab
 *.unitypackage
 *.app
+
+# MCP 캡처 산출물 (임시)
+/*.png

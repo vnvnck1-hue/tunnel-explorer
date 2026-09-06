@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TunnelCrew.Sim
 {
@@ -14,6 +15,10 @@ namespace TunnelCrew.Sim
         public WorldGrid World { get; private set; }
         public PlayerState Player { get; } = new PlayerState();
         public LootSystem Loot { get; }
+        /// <summary>시야. 층마다 새로 만든다.</summary>
+        public LosService Los { get; private set; }
+        /// <summary>이번 층의 생성 결과. 랜턴·소품 배치를 Presentation 이 읽는다.</summary>
+        public DungeonResult Generation { get; private set; }
 
         public int Depth { get; private set; }
         /// <summary>런 누적 시간(초). 히트스톱과 무관하다 (원본 G.rt).</summary>
@@ -22,6 +27,7 @@ namespace TunnelCrew.Sim
         public double FloorTime { get; private set; }
 
         double _accumulator;
+        readonly List<VisionSource> _visionSources = new List<VisionSource>();
 
         public event Action<TileBrokenEvent> TileBroken;
         public event Action<TileDamagedEvent> TileDamaged;
@@ -41,8 +47,10 @@ namespace TunnelCrew.Sim
         {
             Depth = depth;
             var gen = new DungeonGenerator(cfg).Generate(depth);
+            Generation = gen;
 
             World = new WorldGrid(gen);
+            Los = new LosService(World);
             World.TileBroken += OnTileBroken;
             World.TileDamaged += e => TileDamaged?.Invoke(e);
 
@@ -67,6 +75,10 @@ namespace TunnelCrew.Sim
 
         void OnTileBroken(TileBrokenEvent e)
         {
+            // 벽이 사라지면 시야가 달라진다. 원본은 각 변경 지점이 LOS.markDirty() 를
+            // 손으로 불러야 했지만, 여기서는 파괴 이벤트 한 곳에서 처리한다.
+            Los?.MarkDirty();
+
             var (kind, amount) = TileTypes.Yield(e.Type);
             if (amount > 0)
             {
@@ -111,6 +123,11 @@ namespace TunnelCrew.Sim
                 e => DrillBounced?.Invoke(e),
                 (pos, dmg) => DrillBeat?.Invoke(pos, dmg));
             Loot.Tick(World, Player.Position, dt);
+
+            // 시야는 이동·채굴이 끝난 뒤 마지막에 갱신한다 (원본 update 순서와 동일).
+            _visionSources.Clear();
+            _visionSources.Add(VisionSource.Crew(Player.Position));
+            Los.Compute(Player.Position, _visionSources);
         }
 
         /// <summary>보간용. 렌더가 틱 사이를 부드럽게 잇는 데 쓴다.</summary>

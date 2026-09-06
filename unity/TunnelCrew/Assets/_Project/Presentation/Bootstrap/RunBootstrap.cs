@@ -24,6 +24,10 @@ namespace TunnelCrew.Presentation
         [SerializeField] CharacterSheetAsset _drillerSheets;
         [SerializeField] int _depth = 1;
 
+        [Header("조명")]
+        [SerializeField, Range(0f, 1f)] float _ambientIntensity = 0.16f;
+        [SerializeField] bool _flashlightOn = true;
+
         [Header("디버그")]
         [SerializeField] bool _showHud = true;
 
@@ -34,6 +38,9 @@ namespace TunnelCrew.Presentation
         WorldRenderer _worldRenderer;
         PlayerView _playerView;
         LootView _lootView;
+        Light2D _globalLight, _flashlight, _playerHalo;
+        readonly List<Light2D> _lamps = new List<Light2D>();
+        DarknessOverlay _darkness;
 
         void Start()
         {
@@ -121,11 +128,81 @@ namespace TunnelCrew.Presentation
 
         void BuildLighting()
         {
-            // M2 에서 제대로 만든다. 지금은 타일이 보이도록 전역광만 켠다.
-            var go = new GameObject("Global Light 2D");
-            var light = go.AddComponent<Light2D>();
-            light.lightType = Light2D.LightType.Global;
-            light.intensity = 1f;
+            var root = new GameObject("Lighting");
+
+            // 전역광 — 원본 TE.ambient. 아무것도 없는 곳도 완전 검정은 아니다.
+            var globalGo = new GameObject("Global Light 2D");
+            globalGo.transform.SetParent(root.transform, false);
+            _globalLight = globalGo.AddComponent<Light2D>();
+            _globalLight.lightType = Light2D.LightType.Global;
+            _globalLight.intensity = _ambientIntensity;
+            _globalLight.color = new Color(0.62f, 0.58f, 0.80f);
+
+            // 손전등 — 원본 halfAngle 28°, flashRange 468px = 9.36셀. F 로 켜고 끈다.
+            var flashGo = new GameObject("Flashlight");
+            flashGo.transform.SetParent(root.transform, false);
+            _flashlight = flashGo.AddComponent<Light2D>();
+            _flashlight.lightType = Light2D.LightType.Point;
+            _flashlight.pointLightInnerAngle = 40f;    // 원본 원뿔 반각 28° → 전체 56°
+            _flashlight.pointLightOuterAngle = 56f;
+            _flashlight.pointLightInnerRadius = 0.6f;
+            _flashlight.pointLightOuterRadius = 9.36f;
+            _flashlight.intensity = 1.35f;
+            _flashlight.color = new Color(1f, 0.94f, 0.80f);
+
+            // 플레이어를 감싸는 약한 원 — 손전등을 꺼도 발밑은 보인다
+            var haloGo = new GameObject("Player Halo");
+            haloGo.transform.SetParent(root.transform, false);
+            _playerHalo = haloGo.AddComponent<Light2D>();
+            _playerHalo.lightType = Light2D.LightType.Point;
+            _playerHalo.pointLightInnerAngle = 360f;
+            _playerHalo.pointLightOuterAngle = 360f;
+            _playerHalo.pointLightInnerRadius = 0.2f;
+            _playerHalo.pointLightOuterRadius = 2.6f;
+            _playerHalo.intensity = 0.9f;
+            _playerHalo.color = new Color(0.95f, 0.88f, 0.78f);
+
+            // 던전 랜턴 — 생성기가 배치한 자리 그대로
+            var lamps = Sim.Generation?.Lamps;
+            if (lamps != null)
+            {
+                foreach (var (col, row) in lamps)
+                {
+                    var go = new GameObject($"Lamp_{col}_{row}");
+                    go.transform.SetParent(root.transform, false);
+                    go.transform.position = new Vector3(col + 0.5f, row + 0.5f, 0f);
+                    var l = go.AddComponent<Light2D>();
+                    l.lightType = Light2D.LightType.Point;
+                    l.pointLightInnerAngle = 360f;
+                    l.pointLightOuterAngle = 360f;
+                    l.pointLightInnerRadius = 0.4f;
+                    // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 그보다 넓게 퍼진다.
+                    l.pointLightOuterRadius = 5.2f;
+                    l.intensity = 1.1f;
+                    l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
+                    _lamps.Add(l);
+                }
+            }
+
+            // 시야 밖 어둠 — 조명 위에 덮인다
+            var darkGo = new GameObject("Darkness");
+            darkGo.transform.SetParent(_cam.transform, false);
+            darkGo.transform.localPosition = new Vector3(0, 0, 1f);
+            _darkness = darkGo.AddComponent<DarknessOverlay>();
+            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+        }
+
+        void UpdateLighting()
+        {
+            var p = Sim.Player;
+            var pos = new Vector3((float)p.Position.X, (float)p.Position.Y, 0f);
+
+            _playerHalo.transform.position = pos;
+            _flashlight.transform.position = pos;
+            // Light2D 스팟은 위쪽(+Y)이 기준이라 90도를 뺀다
+            _flashlight.transform.rotation =
+                Quaternion.Euler(0, 0, (float)(p.Aim * Mathf.Rad2Deg) - 90f);
+            _flashlight.enabled = _flashlightOn;
         }
 
         void LoadDrillerFrames()
@@ -143,6 +220,7 @@ namespace TunnelCrew.Presentation
             Sim.Advance(Time.deltaTime, ReadInput());
             _playerView.Render(Sim.Player, Time.deltaTime);
             _lootView.Render(Sim.Loot);
+            UpdateLighting();
         }
 
         SimInput ReadInput()
@@ -160,6 +238,7 @@ namespace TunnelCrew.Presentation
                 if (move.sqrMagnitude > 0.0001f) move.Normalize();
                 input.Move = new Vec2(move.x, move.y);
                 input.DashPressed = kb.spaceKey.wasPressedThisFrame;
+                if (kb.fKey.wasPressedThisFrame) _flashlightOn = !_flashlightOn;   // 원본 F 토글
             }
 
             if (mouse != null && _rig != null)
@@ -172,6 +251,14 @@ namespace TunnelCrew.Presentation
             else input.AimWorld = Sim.Player.Position + new Vec2(1, 0);
 
             return input;
+        }
+
+        int VisibleCellCount()
+        {
+            if (Sim?.Los == null) return 0;
+            int n = 0;
+            foreach (var b in Sim.Los.Visible) if (b != 0) n++;
+            return n;
         }
 
         // ───────────────────────────── 임시 HUD
@@ -192,7 +279,9 @@ namespace TunnelCrew.Presentation
                             $"   {(p.IsDigging ? "채굴 중" : "")}{(p.BounceActive ? "  암반 반동" : "")}", style);
             GUILayout.Label($"전리품 {Sim.Loot.Items.Count}개   출구 {(Sim.World.ExitOpen ? "열림" : "미개방")}", style);
             GUILayout.Space(6);
-            GUILayout.Label("WASD 이동 · 마우스 조준 · 좌클릭 드릴 · Space 대시", style);
+            GUILayout.Label($"손전등 {(_flashlightOn ? "켜짐" : "꺼짐")}   랜턴 {_lamps.Count}개   " +
+                            $"보이는 칸 {VisibleCellCount()}", style);
+            GUILayout.Label("WASD 이동 · 마우스 조준 · 좌클릭 드릴 · Space 대시 · F 손전등", style);
             GUILayout.EndArea();
         }
     }
