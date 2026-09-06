@@ -85,6 +85,19 @@ namespace TunnelCrew.Presentation
         }
 
         // ───────────────────────────── 화면 전환
+        /// <summary>디버그·스모크용 — 화면을 직접 연다 (키 입력 없이).</summary>
+        public void Show(Screen s, SettleView view = SettleView.Summary)
+        {
+            switch (s)
+            {
+                case Screen.MainMenu: GoMenu(); break;
+                case Screen.Starmap: GoStarmap(); break;
+                case Screen.RoleSelect: GoRoleSelect(); break;
+                case Screen.Settlement: OpenSettlement(fromMenu: true); _view = view; break;
+                case Screen.Run: Launch(); break;
+                default: Current = s; break;
+            }
+        }
         void GoMenu() { _run?.SuspendRun(); Current = Screen.MainMenu; MetaStore.Save(); }
         void GoStarmap() { Current = Screen.Starmap; _planetIdx = 0; }
         void GoRoleSelect() { Current = Screen.RoleSelect; }
