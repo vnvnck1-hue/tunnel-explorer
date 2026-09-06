@@ -160,6 +160,31 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 
 각 마일스톤은 "플레이 가능한 상태"를 끝점으로 한다. 순서는 기획서 §15 수직 슬라이스 제안을 따른다.
 
+### 현황 요약 (2026-09-07 기준)
+
+| 마일스톤 | 상태 | 비고 |
+|---|---|---|
+| M0 준비 · M1 코어 루프 · M2 시야/조명 · M3 전투/4직업 · M4 런 구조 | 완료 | M3·M4 사용자 체크포인트 통과. 어둠 톤은 사용자가 직접 조정(고치지 않음) |
+| M5 메타 — 정산·영구 노드 80·유물 33·저장·메뉴·와이프·로딩·설정 | 완료 | UGUI 정식 배치는 보류(IMGUI 1080p 배율 유지, Pretendard 도착 후 M7 잔여로) |
+| M6 AI 크루·핑·채팅·퀵크래프트 | 완료 | 관전 모드(OBSERVER)는 계획 범위 밖으로 미포팅 |
+| M7 오디오·연출·게임패드·빌드 | 구현 완료 · **체크포인트 대기** | 완료 기준 "원본 v7.9.2 와 나란히 10분 비교 리뷰"는 사용자 확인 필요 |
+| M8 코옵 (선택) | 미착수 | 착수 여부 결정 대기 |
+
+- 테스트: EditMode 134/134 (Dungeon/World/Combat/RunState/Boss/Escape/Trait/TraitSubsystem/Meta/Relic/Crew/Team).
+- 빌드: `unity/Build/Windows/TunnelCrew.exe` (Windows 64, 392MB, 에러 0, 메인 메뉴 진입 확인). 빌드 산출물은 git 제외.
+- 검증 캡처: `unity/TunnelCrew/m3_*.png · m4_*.png · m5_*.png · m6_*.png · m7_*.png` (git 제외, 로컬 참고용).
+
+**남은 작업**
+
+1. **M7 체크포인트** — 사용자가 원본과 나란히 10분 플레이: 드릴 루프/벽 파괴/사격/보스 BGM 전환 소리, AI 크루 동행감, 핑(G/V)·채팅(Enter)·제작(C) 조작감, 보스 등장·격파 연출 타이밍.
+2. **로비 BGM 원본 복원** — `assets/audio/ambience/lobby-cave.webm` 은 Unity 가 못 읽어 땅굴 던전 레이어 한 겹으로 대체 중. ffmpeg 으로 ogg 변환 후 `Resources/Audio/music` 에 넣고 `AudioDirector.BuildMusic` 의 로비 트랙만 바꾼다.
+3. **Pretendard 폰트** — 파일이 프로젝트에 없다. 도착하면 IMGUI 스타일(RunBootstrap.EnsureStyles · MetaScreens.St · TeamOverlay)에 일괄 적용.
+4. **UGUI 정식 배치** — 현재 IMGUI(1080p 배율)로 전 화면이 동작한다. 폰트와 함께 옮길지, IMGUI 로 확정할지 결정.
+5. **게임패드 리매핑 UI** — 기본 매핑만 있음(설정 화면에 키 재지정 없음).
+6. **M8 코옵** — SimCommand 큐를 네트워크 입력으로 확장, 호스트 권위·시드 동기화. 착수 시 원본 알려진 불일치(게스트 유물 미적용, 보스탄 경감 이중 적용) 재설계.
+7. 소소한 정리 — 게임 뷰 라벨(CrewView TextMesh) 크기 튠, `.gitignore` 의 캡처 png 정책, 프로젝트 이름 `2D_URP` 흔적(persistentDataPath 는 `Tunnel Crew Team/Tunnel Crew` 로 바뀌어 M5 이전 세이브 파일 위치가 달라짐 — 필요하면 마이그레이션).
+
+
 ### M0 — 준비 (추출·골격)
 - Unity 6 LTS 선택 — 이 PC에 Unity Hub와 6000.0.69f1 · 6000.3.15f1, .NET SDK 10이 이미 설치되어 있음(2026-09-06 확인). **6000.3.15f1(Unity 6.3 LTS)** 사용. URP 2D 템플릿으로 `unity/TunnelCrew` 생성, asmdef 3개(Sim / Presentation / Tests)
 - §4 추출 스크립트 전부 실행, `data/*.json` + 자산 임포트 완료
