@@ -182,6 +182,12 @@ function hashSeed(s){ ... }         // 2369 — FNV-1a
 ```js
 {rmin:2, rmax:5, blob:55, cw:1, jit:20, loop:30, ca:0, core:14, ore:8, bur:5, cache:13}
 ```
+
+> **정정 (2026-09-06)**: 위는 `DUNGEN` 리터럴이고, 실제 런타임은 `applyDemoToDungen()` 이
+> `DEMO` 값으로 덮어쓴 뒤다. **실제 값**은 `{rmin:2, rmax:5, blob:100, cw:1, jit:47, loop:30, ca:5,
+> core:25, ore:2, bur:5, cache:6}`. 특히 **`ca` 는 0 이 아니라 5 라서 세포 자동자가 실제로 5회 돈다.**
+> 아래 11단계 표의 "기본 0 = 비활성" 은 틀렸다. core 도 14%가 아니라 25%, ore 는 8%가 아니라 2%다.
+> 근거: `tools/unity-export/dump-tuning.mjs` 출력과 C# 패리티 테스트 통과.
 `tunRooms(c,r)=max(5, round((c-2)*(r-2)/68))` → 80×72이면 약 **80개 방**.
 
 11단계 파이프라인:

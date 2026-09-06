@@ -1,0 +1,53 @@
+{
+  "source": "tunnel-crew-infinite-mode-v7.9.2.html",
+  "generated": "2026-09-06T09:26:06.338Z",
+  "note": "genTunnel 의 Math.random() 을 시드 RNG 로 바꾼 사본에서 덤프했다. C# 포팅도 동일하게 한다.",
+  "mathRandomReplaced": 8,
+  "fixtures": [
+    {
+      "file": "map-tunnel-891730050-d1.json",
+      "depth": 1,
+      "rooms": 80,
+      "counts": {
+        "rock": 592,
+        "dirt": 2262,
+        "(빈칸)": 1711,
+        "core": 829,
+        "stone": 257,
+        "gem": 2,
+        "ore": 104,
+        "crys": 3
+      }
+    },
+    {
+      "file": "map-tunnel-891730050-d2.json",
+      "depth": 2,
+      "rooms": 80,
+      "counts": {
+        "rock": 592,
+        "(빈칸)": 1699,
+        "core": 1279,
+        "stone": 213,
+        "dirt": 1867,
+        "ore": 99,
+        "gem": 6,
+        "crys": 5
+      }
+    },
+    {
+      "file": "map-tunnel-891730050-d3.json",
+      "depth": 3,
+      "rooms": 80,
+      "counts": {
+        "rock": 592,
+        "core": 1283,
+        "dirt": 1801,
+        "stone": 211,
+        "(빈칸)": 1764,
+        "ore": 106,
+        "gem": 2,
+        "crys": 1
+      }
+    }
+  ]
+}

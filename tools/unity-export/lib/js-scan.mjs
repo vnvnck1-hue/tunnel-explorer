@@ -119,6 +119,46 @@ export function extractProperty(src, key, fromIndex = 0) {
   return { line: src.slice(0, valueStart).split('\n').length, expr: src.slice(valueStart, i).trim() };
 }
 
+/**
+ * `function NAME(...) { ... }` 선언 전체를 소스 그대로 잘라낸다.
+ * 본문의 중괄호 짝을 세므로 중첩 함수·객체가 있어도 안전하다.
+ */
+export function extractFunction(src, name) {
+  const re = new RegExp(String.raw`(?:^|[\n;}])\s*function\s+${name}\s*\(`, 'm');
+  const m = re.exec(src);
+  if (!m) return null;
+  const declStart = m.index + m[0].length - (name.length + 'function ('.length);
+  const fnStart = src.indexOf('function', m.index);
+
+  // 본문 여는 중괄호 찾기
+  let i = src.indexOf('{', m.index + m[0].length);
+  if (i < 0) return null;
+
+  let depth = 0;
+  while (i < src.length) {
+    const c = src[i], n2 = src[i + 1];
+    if (c === '/' && n2 === '/') { i = src.indexOf('\n', i); if (i < 0) return null; continue; }
+    if (c === '/' && n2 === '*') { i = src.indexOf('*/', i + 2); if (i < 0) return null; i += 2; continue; }
+    if (c === '"' || c === "'" || c === '`') {
+      const q = c; i++;
+      while (i < src.length) {
+        if (src[i] === '\\') { i += 2; continue; }
+        if (src[i] === q) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c === '{') depth++;
+    else if (c === '}') { depth--; if (depth === 0) { i++; break; } }
+    i++;
+  }
+  void declStart;
+  return {
+    line: src.slice(0, fnStart).split('\n').length,
+    source: src.slice(fnStart, i),
+  };
+}
+
 /** data URI 를 {mime, ext, buffer} 로 디코드. data URI 가 아니면 null. */
 export function decodeDataUri(s) {
   if (typeof s !== 'string') return null;
