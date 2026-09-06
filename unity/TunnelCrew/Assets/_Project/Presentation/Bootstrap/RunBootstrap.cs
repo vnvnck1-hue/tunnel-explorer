@@ -53,6 +53,7 @@ namespace TunnelCrew.Presentation
         Light2D _globalLight, _flashlight, _playerHalo;
         readonly List<Light2D> _lamps = new List<Light2D>();
         readonly List<Light2D> _flareLights = new List<Light2D>();
+        Light2D _bossLight;
         Transform _lightRoot;
         DarknessOverlay _darkness;
         Volume _volume;
@@ -341,6 +342,26 @@ namespace TunnelCrew.Presentation
                 Quaternion.Euler(0, 0, (float)(p.Aim * Mathf.Rad2Deg) - 90f);
             _flashlight.enabled = _flashlightOn;
 
+            // 보스 조명 — 원본 BOSS_TUNE lightRadiusMul 2.4 · intensity .5 (맥동 4%)
+            var boss = Sim.Bosses?.Boss;
+            if (_bossLight == null)
+            {
+                var bg = new GameObject("Boss Light"); bg.transform.SetParent(_lightRoot, false);
+                _bossLight = bg.AddComponent<Light2D>();
+                _bossLight.lightType = Light2D.LightType.Point;
+                _bossLight.pointLightInnerAngle = 360f; _bossLight.pointLightOuterAngle = 360f;
+                _bossLight.pointLightInnerRadius = 0.5f;
+                _bossLight.color = new Color(1f, 0.45f, 0.55f);
+            }
+            _bossLight.enabled = boss != null && boss.Body.Alive;
+            if (_bossLight.enabled)
+            {
+                float r = (float)boss.Body.Radius;
+                _bossLight.transform.position = new Vector3((float)boss.Body.Position.X, (float)boss.Body.Position.Y, 0);
+                _bossLight.pointLightOuterRadius = r * 2.4f;
+                _bossLight.intensity = 0.5f * (1f + 0.04f * Mathf.Sin(Time.time * 1.15f * Mathf.PI * 2f));
+            }
+
             // 플레어 · 엔지니어 노드 조명 — 개수만큼 Light2D 를 재사용
             var flares = Sim.Roles.Flares;
             while (_flareLights.Count < flares.Count)
@@ -418,8 +439,8 @@ namespace TunnelCrew.Presentation
             Time.timeScale = 1f;
         }
 
-        /// <summary>직업을 바꾸고 층을 다시 만든다 (숫자키 1~4).</summary>
-        void SwitchRole(RoleId role)
+        /// <summary>직업을 바꾸고 층을 다시 만든다 (숫자키 1~4). 결과 화면의 Enter · 스모크 테스트도 이 경로.</summary>
+        public void SwitchRole(RoleId role)
         {
             _role = role;
             Sim.StartRun(role);
