@@ -118,7 +118,7 @@ namespace TunnelCrew.Presentation
         void GoStarmap() => Wipe(() => { Current = Screen.Starmap; _planetIdx = 0; });
         void GoRoleSelect() => Wipe(() => Current = Screen.RoleSelect);
         void GoSettings() => Wipe(() => Current = Screen.Settings);
-        void Launch() => Wipe(() => { _run.LaunchRun(_selected); Current = Screen.Run; }, loading: true);
+        void Launch() => Wipe(() => { AudioDirector.Instance?.Deploy(); _run.LaunchRun(_selected); Current = Screen.Run; }, loading: true);
         void OpenSettlement(bool fromMenu, SettleView? view = null) => Wipe(() =>
         {
             _settleFromMenu = fromMenu; _view = view ?? (fromMenu ? SettleView.Map : SettleView.Summary); Current = Screen.Settlement;
@@ -140,52 +140,60 @@ namespace TunnelCrew.Presentation
                 return;   // 전환 중에는 입력을 받지 않는다
             }
             var kb = Keyboard.current; if (kb == null) return;
+            // 런 밖 화면은 로비 앰비언스 (원본 BGM_ROUTE.useLobby)
+            if (Current != Screen.Run && Current != Screen.Pause && AudioDirector.Instance != null && AudioDirector.Instance.Current != AudioDirector.Route.Lobby) AudioDirector.Instance.UseLobby();
+            // 게임패드 — A 확인 · B 뒤로 · D패드/왼스틱 좌우 선택 (원본에는 없던 M7 항목)
+            var gp = Gamepad.current;
+            bool gA = gp != null && gp.buttonSouth.wasPressedThisFrame, gB = gp != null && gp.buttonEast.wasPressedThisFrame;
+            bool gL = gp != null && (gp.dpad.left.wasPressedThisFrame || (gp.leftStick.left.wasPressedThisFrame)), gR = gp != null && (gp.dpad.right.wasPressedThisFrame || gp.leftStick.right.wasPressedThisFrame);
             switch (Current)
             {
                 case Screen.MainMenu:
-                    if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame) GoStarmap();
+                    if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA) GoStarmap();
                     else if (kb.digit2Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
                     else if (kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
                     else if (kb.digit4Key.wasPressedThisFrame) GoSettings();
                     break;
                 case Screen.Settings:
-                    if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame) { SaveSettings(); GoMenu(); }
+                    if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame || gA || gB) { SaveSettings(); GoMenu(); }
                     break;
                 case Screen.Starmap:
-                    if (kb.escapeKey.wasPressedThisFrame) GoMenu();
-                    else if (kb.enterKey.wasPressedThisFrame && !Planets[_planetIdx].locked) GoRoleSelect();
-                    else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame) _planetIdx = (_planetIdx + Planets.Length - 1) % Planets.Length;
-                    else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame) _planetIdx = (_planetIdx + 1) % Planets.Length;
+                    if (kb.escapeKey.wasPressedThisFrame || gB) { AudioDirector.Instance?.Back(); GoMenu(); }
+                    else if ((kb.enterKey.wasPressedThisFrame || gA) && !Planets[_planetIdx].locked) GoRoleSelect();
+                    else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame || gL) { _planetIdx = (_planetIdx + Planets.Length - 1) % Planets.Length; AudioDirector.Instance?.Tick(); }
+                    else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame || gR) { _planetIdx = (_planetIdx + 1) % Planets.Length; AudioDirector.Instance?.Tick(); }
                     break;
                 case Screen.RoleSelect:
-                    if (kb.escapeKey.wasPressedThisFrame) GoStarmap();
+                    if (kb.escapeKey.wasPressedThisFrame || gB) { AudioDirector.Instance?.Back(); GoStarmap(); }
                     else if (kb.digit1Key.wasPressedThisFrame) _selected = RoleId.Driller;
                     else if (kb.digit2Key.wasPressedThisFrame) _selected = RoleId.Gunner;
                     else if (kb.digit3Key.wasPressedThisFrame) _selected = RoleId.Scout;
                     else if (kb.digit4Key.wasPressedThisFrame) _selected = RoleId.Engineer;
-                    else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame) _selected = (RoleId)(((int)_selected + 3) % 4);
-                    else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame) _selected = (RoleId)(((int)_selected + 1) % 4);
-                    else if (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame) Launch();
+                    else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame || gL) { _selected = (RoleId)(((int)_selected + 3) % 4); AudioDirector.Instance?.Pick(); }
+                    else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame || gR) { _selected = (RoleId)(((int)_selected + 1) % 4); AudioDirector.Instance?.Pick(); }
+                    else if (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame || gA) Launch();
                     break;
                 case Screen.Settlement:
                     if (kb.digit1Key.wasPressedThisFrame) _view = SettleView.Summary;
                     else if (kb.digit2Key.wasPressedThisFrame) _view = SettleView.Map;
                     else if (kb.digit3Key.wasPressedThisFrame) _view = SettleView.Relics;
-                    else if (kb.escapeKey.wasPressedThisFrame)
+                    else if (kb.escapeKey.wasPressedThisFrame || gB)
                     {
+                        AudioDirector.Instance?.Back();
                         // 원본 infSettleEscape — 요약으로, 요약에서는 메뉴로
                         if (_view != SettleView.Summary && !_settleFromMenu) _view = SettleView.Summary; else GoMenu();
                     }
-                    else if (kb.enterKey.wasPressedThisFrame && _view == SettleView.Summary) GoMenu();
+                    else if ((kb.enterKey.wasPressedThisFrame || gA) && _view == SettleView.Summary) GoMenu();
                     else if (kb.rKey.wasPressedThisFrame && _view == SettleView.Map) CenterMap();
                     if (_fxT > 0) _fxT -= Time.unscaledDeltaTime;
                     break;
                 case Screen.Pause:
-                    if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame) { _run.SetPaused(false); Current = Screen.Run; }
+                    if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame || gA || gB) { _run.SetPaused(false); Current = Screen.Run; }
                     else if (kb.mKey.wasPressedThisFrame) { _run.Sim.EndRun(false, "원정 포기"); _run.SetPaused(false); Current = Screen.Run; }
                     break;
                 case Screen.Run:
                     if (_run != null && _run.Paused) Current = Screen.Pause;
+                    else if (gp != null && gp.startButton.wasPressedThisFrame && _run != null && _run.Sim.Phase == GamePhase.Playing) { _run.SetPaused(true); Current = Screen.Pause; }
                     break;
             }
         }
@@ -207,8 +215,12 @@ namespace TunnelCrew.Presentation
             Fill(r, enabled ? (hover ? new Color(.22f, .18f, .32f) : new Color(.14f, .12f, .2f)) : new Color(.1f, .1f, .12f));
             Fill(new Rect(r.x, r.y, 5 * _k, r.height), enabled ? acc : new Color(.3f, .3f, .3f));
             GUI.Label(r, label, St(22, FontStyle.Bold, TextAnchor.MiddleCenter, false, enabled ? null : new Color(.5f, .5f, .55f)));
-            return enabled && hover && Event.current.type == EventType.MouseDown && Event.current.button == 0;
+            bool click = enabled && hover && Event.current.type == EventType.MouseDown && Event.current.button == 0;
+            if (click) AudioDirector.Instance?.MenuClick();
+            if (hover && enabled && Event.current.type == EventType.Repaint && _hoverRect != r) { _hoverRect = r; AudioDirector.Instance?.Hover(); }
+            return click;
         }
+        Rect _hoverRect;
 
         void OnGUI()
         {

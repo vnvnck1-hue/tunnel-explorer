@@ -52,9 +52,9 @@ namespace TunnelCrew.Presentation
         public event Action PauseMenuRequested;
 
         /// <summary>메뉴에서 출격. 층을 만들고 HUD 를 켠다.</summary>
-        public void LaunchRun(RoleId role) { SwitchRole(role); RunActive = true; Paused = false; }
+        public void LaunchRun(RoleId role) { SwitchRole(role); RunActive = true; Paused = false; _audio?.UseTunnel(); _audio?.RunStart(); }
         /// <summary>런을 내려놓고 메뉴로 — Sim 은 남겨 두고(배경으로 보인다) 틱과 HUD 만 멈춘다.</summary>
-        public void SuspendRun() { RunActive = false; Paused = false; Time.timeScale = 1f; }
+        public void SuspendRun() { RunActive = false; Paused = false; Time.timeScale = 1f; _audio?.UseLobby(); _audio?.DrillKill(); _cine?.Stop(); }
         public void SetPaused(bool on) { Paused = on; }
         public RoleId CurrentRole => _role;
 
@@ -66,6 +66,13 @@ namespace TunnelCrew.Presentation
         EnemyView _enemyView;
         CrewView _crewView;
         TeamOverlay _team;
+        AudioDirector _audio;
+        BossIntroCinematic _cine;
+        CeilingFx _ceiling;
+        float _stepAcc; bool _wasDigging, _wasLocked; Vec2 _outroAt; float _outroR, _outroFxCd, _outroShakeCd;
+        readonly Dictionary<string, Texture2D> _traitIconTex = new Dictionary<string, Texture2D>();
+        /// <summary>보스 등장 시네마틱 중 — 월드를 멈추고 렌더만 돌린다 (원본 CREW.phase='bossIntro').</summary>
+        public bool CinematicActive => _cine != null && _cine.Active;
         CombatView _combatView;
         Feedback _feedback;
         FxSystem _fx;
@@ -100,6 +107,7 @@ namespace TunnelCrew.Presentation
             Application.runInBackground = true;
             // 런 바깥 화면(메뉴·정산·일시정지). 씬을 손으로 꾸미지 않는 원칙대로 코드에서 붙인다.
             if (GetComponent<MetaScreens>() == null) gameObject.AddComponent<MetaScreens>();
+            if (AudioDirector.Instance == null) { var ago = new GameObject("Audio"); _audio = ago.AddComponent<AudioDirector>(); } else _audio = AudioDirector.Instance;
             _bossIcon = Resources.Load<Texture2D>("UI/boss-icon");
             foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
             {
@@ -288,6 +296,32 @@ namespace TunnelCrew.Presentation
                 _combatView?.Text(Sim.Player.Position + new Vec2(0, .92), "기절!", new Color(1f, .55f, .66f), 20);
                 Log("기절 — 동료가 곁에서 5초간 치료하면 체력 50%로 부활합니다");
             };
+            // ── 오디오 (원본 SFX 호출 지점) · 보스 등장 시네마틱 · 천장 붕괴
+            Sim.TileBroken += e => { if (e.Type == TileType.Ore || e.Type == TileType.Gem || e.Type == TileType.Crys) _audio?.OreBreak(); else _audio?.Brk(); };
+            Sim.DrillBeat += (tip, dmg) => _audio?.Dig();
+            Sim.ProjectileFired += e => { if (!e.Ai) _audio?.Shot(); };
+            Sim.EnemyHurt += e => { if (e.Killed) _audio?.Kill(); };
+            Sim.ResourceCollected += e => _audio?.Res();
+            Sim.ReloadChanged += e => { if (e.Started) _audio?.Reload(e.Manual); else _audio?.ReloadDone(); };
+            Sim.PlayerDashed += e => _audio?.Dash();
+            Sim.TraitOffered += e => _audio?.CardFlip();
+            Sim.TraitPicked += e => _audio?.CardPick();
+            Sim.LeveledUp += e => _audio?.Ready();
+            Sim.EscapeChanged += e => { if (e.Phase == EscapePhase.Ready) _audio?.Exit(); else if (e.Phase == EscapePhase.Incoming) _audio?.Warn(); };
+            Sim.BossSpawned += e => { _cine?.Begin(e.Boss); _audio?.UseBoss(); };
+            Sim.BossDefeated += e => { _outroAt = e.Boss.Body.Position; _outroR = (float)e.Boss.Body.Radius; _outroFxCd = 0; _outroShakeCd = 0; _audio?.Cache(); _audio?.EndBoss(3.0f, 2.6f); };
+            Sim.BossPattern += e =>
+            {
+                // 체상돌진 착지 — 20% 확률로 화면 전체 천장이 무너진다 (원본 dashCeiling*: clusters 11 · rocks 2 · dust 4 · alpha .22 · height r×2.6 · wave .55 · shake 3.4)
+                if (e.Pattern == "dashEnd" && _ceiling != null && _cam != null && UnityEngine.Random.value < .2f)
+                {
+                    float vh = _cam.orthographicSize * 2, vw = vh * _cam.aspect; var c = _cam.transform.position;
+                    _ceiling.CeilingArea(new Rect(c.x - vw / 2, c.y - vh / 2, vw, vh), 11, 2, 4, .22f, (float)e.Boss.Body.Radius * 2.6f, .55f, V(e.Boss.Body.Position));
+                    _feedback?.Kick(3.4f, Vector2.zero);
+                }
+            };
+            Sim.RunEnded += (escaped, reason) => { if (escaped) _audio?.Dawn(); else _audio?.Fail(); _audio?.EndBoss(1.4f); _audio?.DrillKill(); };
+            Sim.PlayerDowned += () => _audio?.Timeout();
             Sim.Revived += at => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(60f); _fx?.BigRing(V(at), new Color(1f, .83f, .43f), 1.8f); _combatView?.Text(at + new Vec2(0, .9), "긴급 재기동", new Color(1f, .83f, .43f), 20); Log("긴급 재기동 — 체력 35%로 다시 일어섰다"); };
         }
 
@@ -370,10 +404,15 @@ namespace TunnelCrew.Presentation
             _enemyView.Bind(_monsterSheets);
             _crewView = new GameObject("Crew").AddComponent<CrewView>();
             _crewView.Bind(_sheets);
+            _cine = new GameObject("BossIntro").AddComponent<BossIntroCinematic>();
+            _cine.Bind(Sim, _rig, _cam, _feedback, _fx);
+            _ceiling = new GameObject("CeilingFx").AddComponent<CeilingFx>();
             _team = new GameObject("TeamOverlay").AddComponent<TeamOverlay>();
             _team.Bind(Sim, _cam, () => RunActive && !Paused);
             _team.Log = Log;
-            Sim.Ping.Sound += (type, at) => _feedback?.Kick(.6f, Vector2.zero);   // M7 오디오 전까지는 살짝 흔들림으로 대신
+            Sim.Ping.Sound += (type, at) => _audio?.Ping(type);
+            Sim.Craft.Sfx += n => _audio?.Named(n);
+            Sim.Chat.Posted += m => { if (m.Local) _audio?.Ui(); };
             Sim.Craft.Toast += Log;
             Sim.Craft.Fx += e =>
             {
@@ -592,6 +631,7 @@ namespace TunnelCrew.Presentation
             _wallShadows.Bind(Sim.World);
             _rig.Bind(Sim.World, () => Sim.Player);
             if (_crewView != null) _crewView.crewWorld = Sim.World;
+            Sim.Enemies.Alerted += e => { float d = (float)Vec2.Distance(e.Enemy.Position, Sim.Player.Position); _audio?.Growl(Mathf.Clamp(.18f * (1 - d / 14f), .02f, .18f)); };
             Time.timeScale = 1f;
         }
 
@@ -640,12 +680,22 @@ namespace TunnelCrew.Presentation
             // 보스 격파 연출(2.6초) 뒤 휴식 화면 — 원본 infBossOutroTick
             if (Sim.RestPending)
             {
-                _outroT += Time.unscaledDeltaTime;
+                float odt = Time.unscaledDeltaTime; _outroT += odt; _outroShakeCd -= odt; _outroFxCd -= odt;
+                if (_outroShakeCd <= 0) { _outroShakeCd = .15f; _feedback?.Kick(2.2f, Vector2.zero); }
+                if (_outroFxCd <= 0 && _outroT < 2.6f * .75f)
+                {
+                    _outroFxCd = .2f;   // 다단 폭발 — 몸통 곳곳에서 연쇄로 터진다 (원본 infBossOutroTick)
+                    float a = UnityEngine.Random.value * 6.283f, d = _outroR * UnityEngine.Random.value * .8f;
+                    var at = V(_outroAt) + new Vector2(Mathf.Cos(a) * d, Mathf.Sin(a) * d);
+                    _fx?.Burst(at, 10, new[] { new Color(1f, .83f, .43f), new Color(1f, .55f, .45f), new Color(.78f, .63f, 1f), Color.white }, 240);
+                    _fx?.Ring(at, UnityEngine.Random.value < .5f ? new Color(1f, .83f, .43f) : new Color(1f, .55f, .45f), .2f, _outroR * (.5f + UnityEngine.Random.value * .7f), 3f);
+                    _fx?.Smoke(at, 3, new Color(.29f, .21f, .31f), 80);
+                }
                 if (_outroT >= 2.6f) { _outroT = 0; Sim.EnterRest(); }
             }
             if (Sim.Phase == GamePhase.Rest && kb != null)
             {
-                if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) { Sim.Descend(); RebindWorld(); Prespawn(); Log(Planet.DepthLabel(Sim.Depth) + " 진입"); }
+                if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) { Sim.Descend(); RebindWorld(); Prespawn(); Log(Planet.DepthLabel(Sim.Depth) + " 진입"); _audio?.Descend(); _audio?.EndBoss(1.0f); _audio?.UseTunnel(); }
                 else if (kb.escapeKey.wasPressedThisFrame && Sim.LastBossTier != BossTier.Guardian) { Sim.ReturnFromRest(); Log("이 층에 남아 탈출한다"); }
             }
             if (Sim.Phase == GamePhase.Result && kb != null && kb.enterKey.wasPressedThisFrame)
@@ -653,7 +703,9 @@ namespace TunnelCrew.Presentation
                 if (ResultDismissed != null) ResultDismissed.Invoke(); else SwitchRole(_role);
             }
 
-            Sim.Advance(Time.deltaTime, ReadInput());
+            if (!CinematicActive) Sim.Advance(Time.deltaTime, ReadInput());
+            else Sim.RefreshVision();   // 월드는 멈춰도 보스 시야원은 열어야 카메라가 보스를 비춘다 (원본은 렌더 루프가 LOS 를 돌렸다)
+            TickAudioState();
             _playerView.Render(Sim.Player, Time.deltaTime);
             _lootView.Render(Sim.Loot);
             _enemyView.Render(Sim.Enemies.Enemies, Time.deltaTime);
@@ -662,11 +714,32 @@ namespace TunnelCrew.Presentation
             UpdateLighting();
         }
 
+        /// <summary>드릴 루프(start/loop/release · 열 디튠) · 과부하 · 발소리 — 원본 SFX.drillHum/drillHeat/drillOverload · STEPS.</summary>
+        void TickAudioState()
+        {
+            if (_audio == null) return;
+            var p = Sim.Player;
+            bool digging = p.IsDigging && Sim.Phase == GamePhase.Playing;
+            if (digging != _wasDigging) { _audio.Drill(digging); _wasDigging = digging; }
+            _audio.DrillHeat((float)p.DrillHeat);
+            bool locked = p.DrillHeatLock > 0;
+            if (locked && !_wasLocked) _audio.DrillOverload();
+            _wasLocked = locked;
+            // 발소리 — 보폭 60px(1.2칸) 마다 한 번. 대시 중엔 발이 안 닿는다
+            if (!p.Downed && Sim.Phase == GamePhase.Playing)
+            {
+                if (p.DashActive) _stepAcc = .6f;
+                else { float sp = (float)p.Velocity.Length; if (sp > .05f) { _stepAcc += sp * Time.deltaTime; if (_stepAcc >= 1.2f) { _stepAcc = 0; _audio.Step(); } } }
+            }
+            foreach (var m in Sim.Crew.Members) if (!m.Down && m.Velocity.Length > .6) { _audio.StepCrew(); break; }
+        }
+
         SimInput ReadInput()
         {
             var input = new SimInput();
             var kb = Keyboard.current;
             var mouse = Mouse.current;
+            var gp = Gamepad.current;
 
             if (kb != null)
             {
@@ -694,6 +767,20 @@ namespace TunnelCrew.Presentation
                 input.SecondaryPressed = mouse.rightButton.wasPressedThisFrame;
             }
             else input.AimWorld = Sim.Player.Position + new Vec2(1, 0);
+
+            if (gp != null)
+            {
+                var ls = gp.leftStick.ReadValue(); if (ls.magnitude > .18f) input.Move = new Vec2(ls.x, ls.y);
+                var rs = gp.rightStick.ReadValue(); if (rs.magnitude > .25f) input.AimWorld = Sim.Player.Position + new Vec2(rs.x, rs.y).Normalized * 6;
+                if (gp.rightTrigger.ReadValue() > .4f) input.FireHeld = true;
+                if (gp.leftTrigger.ReadValue() > .4f || gp.rightShoulder.isPressed) input.DrillHeld = true;
+                if (gp.buttonSouth.wasPressedThisFrame) input.DashPressed = true;
+                if (gp.buttonWest.wasPressedThisFrame) input.ReloadPressed = true;
+                if (gp.leftShoulder.wasPressedThisFrame) input.SkillQPressed = true;
+                if (gp.buttonNorth.wasPressedThisFrame) input.SkillEPressed = true;
+                if (gp.dpad.down.wasPressedThisFrame) input.EscapePressed = true;
+                if (gp.dpad.up.wasPressedThisFrame) _flashlightOn = !_flashlightOn;
+            }
 
             // 팀 오버레이 — 채팅 중엔 모든 키가 글자, 핑/크래프트 휠·배치 중엔 좌우클릭이 장비로 새지 않는다 (원본 캡처 단계 stopImmediatePropagation)
             if (_team != null)
@@ -753,7 +840,7 @@ namespace TunnelCrew.Presentation
 
         void OnGUI()
         {
-            if (!_showHud || Sim?.World == null || !RunActive) return;
+            if (!_showHud || Sim?.World == null || !RunActive || CinematicActive) return;
             // 1920×1080 기준 좌표계 — 창 크기가 달라도 비율이 유지된다. R()/Sz() 가 k 를 곱한다.
             _k = Screen.height / 1080f;
             EnsureStyles();
@@ -906,6 +993,8 @@ namespace TunnelCrew.Presentation
                     GUI.color = tier; GUI.DrawTexture(new Rect(rc.x, rc.y, rc.width, 6 * _k), _white); GUI.DrawTexture(new Rect(rc.x, rc.y, 6 * _k, rc.height), _white);
                     GUI.color = Color.white;
                     if (_portraits.TryGetValue(Sim.Build.Role, out var por) && c.Role != null) { GUI.color = new Color(1, 1, 1, .18f); GUI.DrawTexture(new Rect(rc.xMax - 150 * _k, rc.yMax - 150 * _k, 150 * _k, 150 * _k), por, ScaleMode.ScaleToFit); GUI.color = Color.white; }
+                    var ico = TraitIcon(c.Id);
+                    if (ico != null) GUI.DrawTexture(new Rect(rc.xMax - 100 * _k, rc.y + 16 * _k, 84 * _k, 84 * _k), ico, ScaleMode.ScaleToFit);
                     GUILayout.BeginArea(new Rect(rc.x + 18 * _k, rc.y + 14 * _k, rc.width - 36 * _k, rc.height - 28 * _k));
                     GUILayout.Label($"<color=#{ColorUtility.ToHtmlStringRGB(tier)}>[{i + 1}]  T{c.Tier} · {c.Kind}</color>", _sSmall);
                     GUILayout.Label(c.Name, _sCard);
@@ -957,6 +1046,12 @@ namespace TunnelCrew.Presentation
             }
         }
 
+        Texture2D TraitIcon(string cardId)
+        {
+            var n = TraitIcons.For(cardId); if (n == null) return null;
+            if (!_traitIconTex.TryGetValue(n, out var t)) _traitIconTex[n] = t = Resources.Load<Texture2D>("UI/icons/" + n);
+            return t;
+        }
         static string RoleName(RoleId r) => r switch { RoleId.Driller => "드릴러", RoleId.Gunner => "거너", RoleId.Scout => "스카우트", _ => "엔지니어" };
         static string QName(RoleId r) => r switch { RoleId.Driller => "돌파 파기", RoleId.Gunner => "방어막", RoleId.Scout => "장거리 플레어", _ => "전력 노드" };
         static string EName(RoleId r) => r switch { RoleId.Gunner => "조기 기폭", RoleId.Scout => "그래플 훅", RoleId.Engineer => "센트리 터렛", _ => "—" };

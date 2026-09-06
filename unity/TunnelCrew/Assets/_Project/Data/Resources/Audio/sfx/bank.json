@@ -1,0 +1,179 @@
+{
+ "bank": [
+  {
+   "name": "dig",
+   "cat": "dig",
+   "g": 0.075,
+   "jit": 0.1,
+   "n": 5
+  },
+  {
+   "name": "brk",
+   "cat": "brk",
+   "g": 0.28,
+   "jit": 0.08,
+   "n": 3
+  },
+  {
+   "name": "shot",
+   "cat": "combat",
+   "g": 0.11,
+   "jit": 0.07,
+   "n": 3
+  },
+  {
+   "name": "shard",
+   "cat": "loot",
+   "g": 0.07,
+   "jit": 0.06,
+   "n": 1
+  },
+  {
+   "name": "reload",
+   "cat": "combat",
+   "g": 0.14,
+   "jit": 0.04,
+   "n": 1
+  },
+  {
+   "name": "reloadDone",
+   "cat": "combat",
+   "g": 0.09,
+   "jit": 0.03,
+   "n": 1
+  },
+  {
+   "name": "growl",
+   "cat": "",
+   "g": 0.15,
+   "jit": 0.16,
+   "n": 3
+  },
+  {
+   "name": "orebrk",
+   "cat": "brk",
+   "g": 0.16,
+   "jit": 0.07,
+   "n": 3
+  },
+  {
+   "name": "kill",
+   "cat": "combat",
+   "g": 0.11,
+   "jit": 0.1,
+   "n": 4
+  },
+  {
+   "name": "killwet",
+   "cat": "combat",
+   "g": 0.055,
+   "jit": 0.14,
+   "n": 1
+  },
+  {
+   "name": "res",
+   "cat": "loot",
+   "g": 0.06,
+   "jit": 0.09,
+   "n": 2
+  },
+  {
+   "name": "ui",
+   "cat": "ui",
+   "g": 0.09,
+   "jit": 0.05,
+   "n": 1
+  },
+  {
+   "name": "hover",
+   "cat": "ui",
+   "g": 0.05,
+   "jit": 0.04,
+   "n": 1
+  },
+  {
+   "name": "menuclick",
+   "cat": "ui",
+   "g": 0.09,
+   "jit": 0.03,
+   "n": 1
+  },
+  {
+   "name": "back",
+   "cat": "ui",
+   "g": 0.075,
+   "jit": 0.04,
+   "n": 1
+  },
+  {
+   "name": "pick",
+   "cat": "ui",
+   "g": 0.055,
+   "jit": 0.04,
+   "n": 1
+  },
+  {
+   "name": "deploy",
+   "cat": "ui",
+   "g": 0.055,
+   "jit": 0.03,
+   "n": 1
+  },
+  {
+   "name": "cardflip",
+   "cat": "ui",
+   "g": 0.16,
+   "jit": 0.05,
+   "n": 1
+  },
+  {
+   "name": "cardpick",
+   "cat": "ui",
+   "g": 0.07,
+   "jit": 0.02,
+   "n": 1
+  },
+  {
+   "name": "step",
+   "cat": "",
+   "g": 0.06,
+   "jit": 0.08,
+   "n": 4
+  },
+  {
+   "name": "stepcrew",
+   "cat": "",
+   "g": 0.032,
+   "jit": 0.1,
+   "n": 3
+  },
+  {
+   "name": "cloth",
+   "cat": "",
+   "g": 0.033,
+   "jit": 0.12,
+   "n": 2
+  },
+  {
+   "name": "gear",
+   "cat": "",
+   "g": 0.13,
+   "jit": 0.06,
+   "n": 2
+  },
+  {
+   "name": "ovl",
+   "cat": "dig",
+   "g": 0.2,
+   "jit": 0.02,
+   "n": 1
+  },
+  {
+   "name": "ovl2",
+   "cat": "dig",
+   "g": 0.24,
+   "jit": 0.02,
+   "n": 1
+  }
+ ]
+}

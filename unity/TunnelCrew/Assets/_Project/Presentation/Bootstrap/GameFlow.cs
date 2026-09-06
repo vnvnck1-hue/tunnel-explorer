@@ -39,6 +39,13 @@ namespace TunnelCrew.Presentation
             DontDestroyOnLoad(gameObject);
         }
 
+        /// <summary>Boot 씬은 GameFlow 만 들고 있다 — 곧바로 Run 씬으로 넘어간다. Run 의 RunBootstrap 이 MetaScreens(메인 메뉴)를 띄우고 런은 정지 상태로 시작한다 (M5 결정: 메뉴·정산이 같은 씬에 산다).</summary>
+        void Start()
+        {
+            var active = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (active.name == "Boot") UnityEngine.SceneManagement.SceneManager.LoadScene("Run");
+        }
+
         void OnDestroy()
         {
             if (Instance == this) Instance = null;
@@ -52,7 +59,6 @@ namespace TunnelCrew.Presentation
             PhaseChanged?.Invoke(prev, next);
         }
 
-        // TODO(M1): Boot -> MainMenu 자동 전이, 씬 로드 연결
         // TODO(M4): 보스 소환 이벤트 -> BossIntro, Timeline 재생 후 Playing 복귀
         // TODO(M5): Paused 진입/복귀, Loading 진행도 표시
     }

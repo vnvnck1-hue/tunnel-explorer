@@ -413,6 +413,23 @@ X 로 탈출 포트 지정 → 좌클릭 확정 → 20초 후 도착 → 포트 
 - **완료 기준**: 사람 1 + AI 3 편성으로 M4 사이클 완주. AI가 벽에 갇혀 정지하는 사례 0(10분 관찰)
 
 ### M7 — 오디오·연출·빌드
+
+#### 진행 (2026-09-07)
+
+| 항목 | 상태 |
+|---|---|
+| `AudioSynth` — 원본 AU.tone/AU.hit 를 오프라인 렌더(파형 4종·지수 슬라이드/엔벌로프·RBJ 바이쿼드 LP/BP/HP 스윕·노이즈 버퍼 (1-i/n)^.5·소프트 리미터 .62/tanh) → AudioClip 캐시 | 완료 |
+| `AudioDirector` — SFX 뱅크 25종+(ui/back/dig/brk/ore/oreBreak/res/shard/deploy/pick/rescue/cache/exit/descend/tick/shot/reload(수동 2단)/reloadDone/warn/ready/fail/start/timeout/buy/dawn/kill/growl/cardFlip/cardPick/step/stepCrew/dash/drillOverload/rumble/roar) 원본 수치 그대로, Kenney 샘플 우선·절차 폴백(bank.json 25항목 · 게인·피치 지터·카테고리 게인 dig 2.2/brk 1.2/combat 1.45/ui 1.85/loot 1.2/alert 1.35), 스로틀(dig 70 · res 60 · growl 420 · reload 120 · crewStep 215~345ms), 팀 핑 음형 9종 | 완료 |
+| 드릴 — HTML 내장 폴리싱 WAV(start/loop/release) 추출, start→loop 조인 141ms·release 249ms 크로스페이드, 열 → 디튠 1200·log2(1+.45h^1.25) + 떨림(12Hz·28+137h²cent) + 드리프트 | 완료 |
+| BGM 라우터 — 로비 / 땅굴 2겹(dungeon 1.19 · cave-stereo ×4.48 프리게인) / 보스(.78, in .55 · out 2.8) · 처치 3.0/2.6 복귀 · 런 종료 1.4 · 층 전환 1.0 · 앰비언스 in 1.4/out .9 · 레이어 시작 위치 랜덤. **로비 lobby-cave.webm 은 Unity 가 못 읽어 tunnel-dungeon 한 겹(.8)으로 대체** | 완료 (webm 대체는 ffmpeg 도착 후 교체) |
+| 훅 — 벽 파괴/광석/드릴 비트/사격(사람만)/처치/재화/재장전/대시/카드 등장·선택/레벨업/탈출 도착·요청/기절/런 종료(생환 dawn·다운 fail)/보스 등장·처치, 메뉴 클릭·호버·뒤로·선택·출격, 채팅 전송, 크래프트, 적 각성 growl(거리 감쇠) | 완료 |
+| 보스 등장 시네마틱 `BossIntroCinematic` — 월드 정지(렌더만) · 레터박스 11.5% · 비네트 · 카메라 팬(dim .55 · pan 1.05 · hold .35 · roar 1.75 · back .95, 줌 ×1.15, 저주파 흔들림) · 이름 플레이트(티어 카피) · 포효(킥 13 · 링 2 · 버스트 42 · 플래시 · 천장 먼지 85ms) · 포효 음성 = fireBreath 15프레임 시점 · 클릭/Esc 스킵 · 감속 모드 생략. `CameraRig.CineOverride` · **보스 시야원**(LOS bossSources: r×2.4+2, 탐색 기록 없음) 추가 — 원본에 있었으나 M2 에서 빠졌던 것 | 완료 (m7_bossintro.png) |
+| 보스 격파 연출 — 다단 폭발(.2s 간격, 몸통 .8r 안 버스트·링·연기) + .15s 킥 2.2, 2.6s 뒤 휴식 | 완료 |
+| 천장 붕괴 `CeilingFx` — 돌/먼지 z 낙하(55~120px/s)·착지 후 소멸, 보스 돌진 착지 20% 확률로 화면 전체 파동(clusters 11 · rocks 2 · dust 4 · alpha .22 · height r×2.6 · wave .55 · shake 3.4) | 완료 |
+| 특성 카드 아이콘 — `TraitIcons`(원본 INF_TRAIT_ICON_ASSET 89항목) → HUD 카드 우상단 | 완료 |
+| 게임패드 — 왼스틱 이동 · 오른스틱 조준 · RT 사격 · LT/RB 드릴 · A 대시 · X 재장전 · LB Q · Y E · D↓ 탈출 · D↑ 손전등 · Start 일시정지 / 메뉴: A 확인 · B 뒤로 · D패드/스틱 좌우 선택 (리매핑 UI 는 미착수) | 완료 |
+| Windows 빌드 `BuildWindows` — 제품명 Tunnel Crew · 아이콘 app-icon-dragon · Boot/Menu/Run · unity/Build/Windows/TunnelCrew.exe (392MB, 에러 0) · Boot 씬이 Run 씬을 자동 로드(GameFlow.Start) · 실행 시 메인 메뉴 진입 확인, Player.log 예외 0 | 완료 (m7_build.png) |
+| 미착수 | Pretendard 폰트(파일 미도착), 원본 v7.9.2 나란히 10분 비교 리뷰(사용자 체크포인트) |
 - SFX 뱅크 25종(카테고리 게인·피치 지터·소프트 리미터 대체 = Audio Mixer), 드릴 start/loop/release, BGM 라우터(lobby/purple/boss·revision 가드), 앰비언스 2겹, 보스 BGM 페이드 규칙(spawn→useBoss, defeated→3.0s/2.6s)
 - 게임패드 전 화면 내비게이션, 리매핑
 - Windows 빌드 + `app-icon-dragon.ico`, 빌드 검증 체크리스트(AGENTS.md 규칙 준용)

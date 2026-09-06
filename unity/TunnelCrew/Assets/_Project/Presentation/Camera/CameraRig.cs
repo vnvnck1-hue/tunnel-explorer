@@ -26,6 +26,8 @@ namespace TunnelCrew.Presentation
         /// <summary>원본 G.camX/camY — 뷰 좌상단.</summary>
         Vector2 _camOrigin;
         bool _initialized;
+        /// <summary>시네마틱이 잡고 있으면 (중심, 줌 배율) — 추종 상태는 건드리지 않고 최종 위치만 바꾼다 (원본 tcBossFx 의 G.camX/camY/G.Z 직접 제어).</summary>
+        public Func<(Vector2 center, float zoomMul)?> CineOverride;
 
         void Awake() => _cam = GetComponent<Camera>();
 
@@ -52,6 +54,13 @@ namespace TunnelCrew.Presentation
             else _zoom = Mathf.Lerp(_zoom, targetCells, Mathf.Min(1f, Time.deltaTime * _zoomLerpRate));
 
             _cam.orthographicSize = _zoom * 0.5f;
+            var cine = CineOverride?.Invoke();
+            if (cine.HasValue)
+            {
+                _cam.orthographicSize = _zoom * 0.5f / Mathf.Max(.2f, cine.Value.zoomMul);
+                transform.position = new Vector3(cine.Value.center.x, cine.Value.center.y, -10f);
+                return;
+            }
 
             float vh = _zoom;
             float vw = vh * _cam.aspect;

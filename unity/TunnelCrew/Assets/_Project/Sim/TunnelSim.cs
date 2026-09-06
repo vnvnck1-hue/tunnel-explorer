@@ -707,10 +707,19 @@ namespace TunnelCrew.Sim
             else _downT = 0;
 
             // 시야는 이동·채굴이 끝난 뒤 마지막에 갱신한다 (원본 update 순서와 동일).
+            RefreshVision();
+        }
+
+        /// <summary>시야 광원(크루·AI 크루·플레어/노드·보스)을 모아 LOS 를 계산한다. 시네마틱처럼 월드가 멈춘 동안에도 Presentation 이 부를 수 있다.</summary>
+        public void RefreshVision()
+        {
+            if (Los == null) return;
             _visionSources.Clear();
             _visionSources.Add(VisionSource.Crew(Player.Position));
             foreach (var m in Crew.Members) if (!m.Down) _visionSources.Add(VisionSource.Crew(m.Position));   // AI 크루 시야 합산 (원본 AI.visionXY)
             foreach (var f in Roles.Flares) if (f.VisionRange > 0) _visionSources.Add(new VisionSource { Position = f.Position, Range = f.VisionRange, Rays = SimTuning.CrewVisionRays });   // 플레어·노드 visionRange
+            // 보스 시야원 — 보스는 스스로 빛나 시야에 들어온다 (원본 LOS.bossSources: range = max(5, round(r×2.4)+2), 탐색 기록은 남기지 않는다)
+            if (Bosses != null && Bosses.Active) _visionSources.Add(new VisionSource { Position = Bosses.Boss.Body.Position, Range = Math.Max(5, (int)Math.Round(Bosses.Boss.Body.Radius * 2.4) + 2), Rays = Math.Max(56, Math.Min(160, (int)(Bosses.Boss.Body.Radius * 2.4 * 16))), VisibleOnly = true });
             Los.Compute(Player.Position, _visionSources);
         }
 

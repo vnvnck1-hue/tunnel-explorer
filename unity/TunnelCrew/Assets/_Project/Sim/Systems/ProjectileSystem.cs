@@ -23,7 +23,7 @@ namespace TunnelCrew.Sim
         public bool AiTurret;
     }
 
-    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public int Count; }
+    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public int Count; public bool Ai; }
     public struct ProjectileEndedEvent { public Vec2 Position; public bool Exploded; public string VisualId; }
     public struct ReloadEvent { public bool Started; public bool Manual; }
 
@@ -45,7 +45,7 @@ namespace TunnelCrew.Sim
         public void Emit(Projectile p, double angle)
         {
             Projectiles.Add(p);
-            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, Count = 1 });
+            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, Count = 1, Ai = p.Owner != null || p.VisualId == "support" });
         }
 
         readonly WorldGrid _world;
