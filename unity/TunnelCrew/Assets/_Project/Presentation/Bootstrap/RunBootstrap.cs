@@ -4,6 +4,7 @@ using TunnelCrew.Data;
 using TunnelCrew.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 using SimInput = TunnelCrew.Sim.PlayerInput;
@@ -41,6 +42,7 @@ namespace TunnelCrew.Presentation
         Light2D _globalLight, _flashlight, _playerHalo;
         readonly List<Light2D> _lamps = new List<Light2D>();
         DarknessOverlay _darkness;
+        Volume _volume;
 
         void Start()
         {
@@ -76,8 +78,10 @@ namespace TunnelCrew.Presentation
             _cam.orthographic = true;
             _cam.clearFlags = CameraClearFlags.SolidColor;
             _cam.backgroundColor = new Color(0.04f, 0.03f, 0.07f);
-            if (!camGo.TryGetComponent<UniversalAdditionalCameraData>(out _))
-                camGo.AddComponent<UniversalAdditionalCameraData>();
+            if (!camGo.TryGetComponent<UniversalAdditionalCameraData>(out var camData))
+                camData = camGo.AddComponent<UniversalAdditionalCameraData>();
+            camData.renderPostProcessing = true;   // Volume 오버라이드가 먹으려면 필요하다
+            camData.antialiasing = AntialiasingMode.None;
             if (!camGo.TryGetComponent(out _rig)) _rig = camGo.AddComponent<CameraRig>();
         }
 
@@ -190,6 +194,32 @@ namespace TunnelCrew.Presentation
             darkGo.transform.localPosition = new Vector3(0, 0, 1f);
             _darkness = darkGo.AddComponent<DarknessOverlay>();
             _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+
+            BuildVolume(root);
+        }
+
+        /// <summary>
+        /// 지층별 Volume 프로파일. 원본 LX 4레이어(contrast · zone · core)를 대신한다.
+        /// 지층이 바뀌면 프로파일을 교체한다 (M4 에서 연결).
+        /// </summary>
+        void BuildVolume(GameObject root)
+        {
+            string[] names = { "Stratum1_Surface", "Stratum2_Fracture", "Stratum3_Core", "Abyss" };
+            int idx = Mathf.Clamp(Sim.Depth - 1, 0, names.Length - 1);
+            var profile = Resources.Load<VolumeProfile>("Volume_" + names[idx]);
+            if (profile == null)
+            {
+                Debug.LogWarning("[M2] Volume 프로파일을 찾지 못했다. " +
+                    "메뉴 'Tunnel Crew/M2 · 지층별 Volume 프로파일 생성' 을 실행할 것.");
+                return;
+            }
+
+            var go = new GameObject("Global Volume");
+            go.transform.SetParent(root.transform, false);
+            _volume = go.AddComponent<Volume>();
+            _volume.isGlobal = true;
+            _volume.priority = 0f;
+            _volume.sharedProfile = profile;
         }
 
         void UpdateLighting()

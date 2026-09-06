@@ -10,7 +10,8 @@
         "Unity.RenderPipelines.Universal.2D.Runtime",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
-        "Unity.Timeline"
+        "Unity.Timeline",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
