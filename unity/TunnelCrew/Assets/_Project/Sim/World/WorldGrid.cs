@@ -146,6 +146,25 @@ namespace TunnelCrew.Sim
             return false;
         }
 
+        /// <summary>
+        /// 규칙을 거치지 않고 칸을 비운다. 기반암 균열(드릴러)·엔지니어 발판·보스 벽처럼
+        /// 체력 감산이 아닌 경로로 타일이 사라질 때 쓴다. 파괴 이벤트는 그대로 낸다.
+        /// </summary>
+        public void ForceClear(int c, int r)
+        {
+            if (!InBounds(c, r)) return;
+            int k = Index(c, r);
+            var t = _tiles[k];
+            if (t == TileType.Empty) return;
+            _tiles[k] = TileType.Empty;
+            _hp.Remove(k);
+            BlocksBroken++;
+            Version++;
+            bool hadRelic = BuriedRelics.Remove(k);
+            if (k == ExitCell) ExitOpen = true;
+            TileBroken?.Invoke(new TileBrokenEvent { Cell = k, Col = c, Row = r, Type = t, HadBuriedRelic = hadRelic, OpenedExit = k == ExitCell });
+        }
+
         public event Action<TileBrokenEvent> TileBroken;
         public event Action<TileDamagedEvent> TileDamaged;
     }

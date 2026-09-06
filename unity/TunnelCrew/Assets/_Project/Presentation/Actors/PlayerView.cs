@@ -56,6 +56,21 @@ namespace TunnelCrew.Presentation
 
             int f = frames.Length > 0 ? ((int)_animTime % frames.Length + frames.Length) % frames.Length : 0;
             _renderer.sprite = frames[f];
+
+            // 손맛 변형 — 원본 FEEL.transform(). 피벗이 발밑이라 스케일은 발을 기준으로 먹는다.
+            if (Feedback.Instance != null)
+            {
+                var sq = Feedback.Instance.PlayerSquash(new Vector2((float)p.Velocity.X, (float)p.Velocity.Y));
+                transform.localScale = new Vector3(sq.ScaleX, sq.ScaleY, 1f);
+                transform.position += new Vector3(sq.OffsetX, sq.OffsetY, 0f);
+            }
+
+            // 무적 프레임 깜빡임 · 기절 어둡게 · 다운 회색
+            Color c = Color.white;
+            if (p.Downed) c = new Color(0.45f, 0.45f, 0.5f);
+            else if (p.StunTime > 0) c = new Color(0.75f, 0.7f, 0.8f);
+            else if (p.IFrames > 0 && ((int)(Time.unscaledTime * 24) & 1) == 0) c = new Color(1f, 0.55f, 0.55f, 0.75f);
+            _renderer.color = c;
         }
 
         /// <summary>

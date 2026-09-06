@@ -12,18 +12,26 @@ using SimInput = TunnelCrew.Sim.PlayerInput;
 namespace TunnelCrew.Presentation
 {
     /// <summary>
-    /// M1 그레이박스 진입점. 씬에 이 컴포넌트 하나만 두면 월드·플레이어·카메라를 만들어 돌린다.
+    /// 그레이박스 진입점. 씬에 이 컴포넌트 하나만 두면 월드·플레이어·적·카메라·조명을 만들어 돌린다.
     ///
     /// 씬을 손으로 꾸미지 않고 코드로 세우는 이유는, 이 단계의 목표가 "원본과 같은 규칙·감각인가"
-    /// 확인이라 재현 가능해야 하기 때문이다. 실제 씬 구성은 M2 이후 조명·HUD 와 함께 잡는다.
+    /// 확인이라 재현 가능해야 하기 때문이다. 실제 씬 구성은 M4 이후 HUD 와 함께 잡는다.
+    ///
+    /// M3: 직업 선택(<see cref="_role"/>), Q/E 스킬, 우클릭 사격, R 재장전, 적·투사체 뷰,
+    /// <see cref="Feedback"/> 로 히트스톱·킥·스쿼시. 숫자키 1~4 로 직업을 바꾸며 층을 다시 만든다.
     /// </summary>
     public sealed class RunBootstrap : MonoBehaviour
     {
         [Header("데이터")]
         [Tooltip("비워 두면 Resources 에서 찾는다.")]
         [SerializeField] TileSetAsset _tileSet;
-        [SerializeField] CharacterSheetAsset _drillerSheets;
+        [SerializeField] MonsterSheetAsset _monsterSheets;
         [SerializeField] int _depth = 1;
+
+        [Header("런")]
+        [SerializeField] RoleId _role = RoleId.Driller;
+        [Tooltip("시작 직후 적을 몇 마리 미리 깔아 두는가 (확인용). 0 이면 스포너만 쓴다.")]
+        [SerializeField] int _prespawnEnemies = 4;
 
         [Header("조명")]
         [SerializeField, Range(0f, 1f)] float _ambientIntensity = 0.16f;
@@ -39,23 +47,39 @@ namespace TunnelCrew.Presentation
         WorldRenderer _worldRenderer;
         PlayerView _playerView;
         LootView _lootView;
+        EnemyView _enemyView;
+        CombatView _combatView;
+        Feedback _feedback;
         Light2D _globalLight, _flashlight, _playerHalo;
         readonly List<Light2D> _lamps = new List<Light2D>();
+        readonly List<Light2D> _flareLights = new List<Light2D>();
+        Transform _lightRoot;
         DarknessOverlay _darkness;
         Volume _volume;
         WallShadowBuilder _wallShadows;
+        readonly Dictionary<RoleId, CharacterSheetAsset> _sheets = new Dictionary<RoleId, CharacterSheetAsset>();
+        readonly List<string> _log = new List<string>();
 
         void Start()
         {
             if (_tileSet == null) _tileSet = Resources.Load<TileSetAsset>("TileSet_purple");
-            if (_drillerSheets == null) _drillerSheets = Resources.Load<CharacterSheetAsset>("Sheets_driller");
+            if (_monsterSheets == null) _monsterSheets = Resources.Load<MonsterSheetAsset>("MonsterSheets");
+            foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
+            {
+                var sh = Resources.Load<CharacterSheetAsset>("Sheets_" + r.ToString().ToLowerInvariant());
+                if (sh != null) _sheets[r] = sh;
+            }
 
             if (_tileSet == null)
                 Debug.LogError("[M1] TileSet 을 찾지 못했다. " +
                     "`Tunnel Crew/M1 · 아트 임포트 설정 + 타일셋 생성` 을 먼저 실행할 것.");
 
+            Application.runInBackground = true;
+
             Sim = new TunnelSim();
+            Sim.StartRun(_role);
             Sim.EnterDepth(_depth, DungeonConfig.Runtime);
+            SubscribeSim();
 
             BuildCamera();
             BuildWorld();
@@ -63,6 +87,49 @@ namespace TunnelCrew.Presentation
             BuildLighting();
 
             _rig.Bind(Sim.World, () => Sim.Player);
+            Prespawn();
+        }
+
+        void OnDestroy() { Time.timeScale = 1f; }
+
+        // ───────────────────────────── Sim → 연출 이벤트
+        void SubscribeSim()
+        {
+            Sim.TileBroken += e =>
+            {
+                bool ore = e.Type == TileType.Ore || e.Type == TileType.Gem || e.Type == TileType.Crys;
+                bool hard = e.Type == TileType.Stone || e.Type == TileType.Core;
+                _feedback?.BlockBroken(ore, hard, V(e.HitDir));
+            };
+            Sim.DrillBeat += (pos, dmg) => _feedback?.DrillBeat(V(Vec2.FromAngle(Sim.Player.Aim)));
+            Sim.PlayerDashed += e => _feedback?.Dash(V(e.Direction));
+            Sim.EnemyHurt += e =>
+            {
+                _feedback?.EnemyHit(e.Killed, e.Enemy.IsApex, e.Enemy.IsBoss, (float)e.Damage, V(e.HitDir));
+                var col = e.WasCritical ? new Color(1f, 0.85f, 0.3f) : e.Killed ? new Color(1f, 0.5f, 0.4f) : Color.white;
+                _combatView?.Text(e.Enemy.Position, ((int)System.Math.Round(e.Damage)).ToString(), col, e.Killed ? 0.42f : 0.32f);
+            };
+            Sim.PlayerHurt += e =>
+            {
+                _feedback?.PlayerHurt((float)e.Damage, (float)Sim.Player.Hp, (float)Sim.Player.HpMax, V(e.HitDir));
+                _combatView?.Text(Sim.Player.Position, "-" + (int)System.Math.Round(e.Damage), new Color(1f, 0.35f, 0.35f), 0.4f);
+                Log(e.Downed ? "다운!" : $"피격 -{e.Damage:F0}");
+            };
+            Sim.ProjectileFired += e => _feedback?.Shot((float)e.Angle, e.VisualId);
+            Sim.ProjectileEnded += e => { if (e.Exploded) { _feedback?.Kick(2.2f, Vector2.zero); _feedback?.Hitstop(18f); } };
+            Sim.ReloadChanged += e => { if (e.Started) Log(e.Manual ? "재장전 (R)" : "탄창 비어 재장전"); };
+            Sim.SkillUsed += e => { Log($"{e.Role} {(e.IsQ ? "Q" : "E")} 사용"); _feedback?.Kick(0.9f, Vector2.zero); };
+            Sim.BreakerExploded += e => { _feedback?.Kick(3.0f, Vector2.zero); _feedback?.Hitstop(30f); Log(e.Early ? "파쇄탄 조기 폭발" : "파쇄탄 폭발"); };
+            Sim.FoundationBroken += e => { _feedback?.Kick(4.5f, Vector2.zero); _feedback?.Hitstop(60f); Log("기반암 균열 파쇄"); };
+            Sim.EnemySpawned += e => { if (e.Enemy.IsApex) Log("광란종 출현"); };
+        }
+
+        static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+
+        void Log(string s)
+        {
+            _log.Add(s);
+            if (_log.Count > 6) _log.RemoveAt(0);
         }
 
         // ───────────────────────────── 씬 구성
@@ -73,7 +140,6 @@ namespace TunnelCrew.Presentation
 
             // UnityEngine.Object 에는 `??` 를 쓰면 안 된다. GetComponent 가 돌려주는 "가짜 null"
             // 은 C# 기준으로는 null 이 아니라서 `??` 가 우변으로 넘어가지 않는다.
-            // 그러면 컴포넌트가 실제로 붙지 않은 채 진행돼 MissingComponentException 이 난다.
             if (!camGo.TryGetComponent(out _cam)) _cam = camGo.AddComponent<Camera>();
 
             _cam.orthographic = true;
@@ -84,6 +150,8 @@ namespace TunnelCrew.Presentation
             camData.renderPostProcessing = true;   // Volume 오버라이드가 먹으려면 필요하다
             camData.antialiasing = AntialiasingMode.None;
             if (!camGo.TryGetComponent(out _rig)) _rig = camGo.AddComponent<CameraRig>();
+
+            if (!camGo.TryGetComponent(out _feedback)) _feedback = camGo.AddComponent<Feedback>();
         }
 
         void BuildWorld()
@@ -126,14 +194,18 @@ namespace TunnelCrew.Presentation
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             f?.SetValue(_playerView, sr);
 
-            LoadDrillerFrames();
+            LoadRoleFrames(_role);
 
             _lootView = new GameObject("Loot").AddComponent<LootView>();
+            _enemyView = new GameObject("Enemies").AddComponent<EnemyView>();
+            _enemyView.Bind(_monsterSheets);
+            _combatView = new GameObject("Combat").AddComponent<CombatView>();
         }
 
         void BuildLighting()
         {
             var root = new GameObject("Lighting");
+            _lightRoot = root.transform;
 
             // 전역광 — 원본 TE.ambient. 아무것도 없는 곳도 완전 검정은 아니다.
             var globalGo = new GameObject("Global Light 2D");
@@ -148,7 +220,7 @@ namespace TunnelCrew.Presentation
             flashGo.transform.SetParent(root.transform, false);
             _flashlight = flashGo.AddComponent<Light2D>();
             _flashlight.lightType = Light2D.LightType.Point;
-            _flashlight.pointLightInnerAngle = 40f;    // 원본 원뿔 반각 28° → 전체 56°
+            _flashlight.pointLightInnerAngle = 40f;
             _flashlight.pointLightOuterAngle = 56f;
             _flashlight.pointLightInnerRadius = 0.6f;
             _flashlight.pointLightOuterRadius = 9.36f;
@@ -181,8 +253,7 @@ namespace TunnelCrew.Presentation
                     l.pointLightInnerAngle = 360f;
                     l.pointLightOuterAngle = 360f;
                     l.pointLightInnerRadius = 0.4f;
-                    // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 그보다 넓게 퍼진다.
-                    l.pointLightOuterRadius = 5.2f;
+                    l.pointLightOuterRadius = 5.2f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 더 넓게 퍼진다.
                     l.intensity = 1.1f;
                     l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
                     _lamps.Add(l);
@@ -203,10 +274,7 @@ namespace TunnelCrew.Presentation
             _wallShadows.Bind(Sim.World);
         }
 
-        /// <summary>
-        /// 지층별 Volume 프로파일. 원본 LX 4레이어(contrast · zone · core)를 대신한다.
-        /// 지층이 바뀌면 프로파일을 교체한다 (M4 에서 연결).
-        /// </summary>
+        /// <summary>지층별 Volume 프로파일. 원본 LX 4레이어(contrast · zone · core)를 대신한다.</summary>
         void BuildVolume(GameObject root)
         {
             string[] names = { "Stratum1_Surface", "Stratum2_Fracture", "Stratum3_Core", "Abyss" };
@@ -238,23 +306,83 @@ namespace TunnelCrew.Presentation
             _flashlight.transform.rotation =
                 Quaternion.Euler(0, 0, (float)(p.Aim * Mathf.Rad2Deg) - 90f);
             _flashlight.enabled = _flashlightOn;
+
+            // 플레어 · 엔지니어 노드 조명 — 개수만큼 Light2D 를 재사용
+            var flares = Sim.Roles.Flares;
+            while (_flareLights.Count < flares.Count)
+            {
+                var go = new GameObject("Flare Light");
+                go.transform.SetParent(_lightRoot, false);
+                var l = go.AddComponent<Light2D>();
+                l.lightType = Light2D.LightType.Point;
+                l.pointLightInnerAngle = 360f; l.pointLightOuterAngle = 360f;
+                l.pointLightInnerRadius = 0.3f;
+                _flareLights.Add(l);
+            }
+            for (int i = 0; i < _flareLights.Count; i++)
+            {
+                bool on = i < flares.Count;
+                _flareLights[i].enabled = on;
+                if (!on) continue;
+                var f = flares[i];
+                float life = (float)(f.Ttl / System.Math.Max(0.01, f.MaxTtl));
+                _flareLights[i].transform.position = new Vector3((float)f.Position.X, (float)f.Position.Y, 0);
+                _flareLights[i].pointLightOuterRadius = (float)f.LightRadius;
+                _flareLights[i].intensity = (f.IsEngineerNode ? 0.9f : 1.3f) * Mathf.Clamp01(life * 3f);
+                _flareLights[i].color = f.IsEngineerNode ? new Color(0.5f, 0.95f, 0.85f) : new Color(1f, 0.85f, 0.45f);
+            }
         }
 
-        void LoadDrillerFrames()
+        void LoadRoleFrames(RoleId role)
         {
-            if (_drillerSheets == null) return;
-            foreach (var d in _drillerSheets.directions)
+            if (!_sheets.TryGetValue(role, out var sheet) && !_sheets.TryGetValue(RoleId.Driller, out sheet)) return;
+            foreach (var d in sheet.directions)
                 if (d.walk != null && d.walk.Length > 0)
                     _playerView.SetWalkFrames(d.direction, d.walk);
+        }
+
+        /// <summary>확인용 — 시작 직후 플레이어 주변에 적을 몇 마리 깐다.</summary>
+        void Prespawn()
+        {
+            for (int i = 0; i < _prespawnEnemies; i++)
+                Sim.Enemies.Spawn(Sim.Player.Position);
+        }
+
+        /// <summary>직업을 바꾸고 층을 다시 만든다 (숫자키 1~4).</summary>
+        void SwitchRole(RoleId role)
+        {
+            _role = role;
+            Sim.StartRun(role);
+            Sim.EnterDepth(_depth, DungeonConfig.Runtime);
+            _worldRenderer.Bind(Sim.World);
+            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+            _wallShadows.Bind(Sim.World);
+            _rig.Bind(Sim.World, () => Sim.Player);
+            LoadRoleFrames(role);
+            Prespawn();
+            Log($"직업 → {role}");
         }
 
         // ───────────────────────────── 루프
         void Update()
         {
             if (Sim?.World == null) return;
+
+            var kb = Keyboard.current;
+            if (kb != null)
+            {
+                if (kb.digit1Key.wasPressedThisFrame) SwitchRole(RoleId.Driller);
+                else if (kb.digit2Key.wasPressedThisFrame) SwitchRole(RoleId.Gunner);
+                else if (kb.digit3Key.wasPressedThisFrame) SwitchRole(RoleId.Scout);
+                else if (kb.digit4Key.wasPressedThisFrame) SwitchRole(RoleId.Engineer);
+                else if (kb.f5Key.wasPressedThisFrame) SwitchRole(_role);
+            }
+
             Sim.Advance(Time.deltaTime, ReadInput());
             _playerView.Render(Sim.Player, Time.deltaTime);
             _lootView.Render(Sim.Loot);
+            _enemyView.Render(Sim.Enemies.Enemies, Time.deltaTime);
+            _combatView.Render(Sim, Time.deltaTime);
             UpdateLighting();
         }
 
@@ -273,6 +401,9 @@ namespace TunnelCrew.Presentation
                 if (move.sqrMagnitude > 0.0001f) move.Normalize();
                 input.Move = new Vec2(move.x, move.y);
                 input.DashPressed = kb.spaceKey.wasPressedThisFrame;
+                input.ReloadPressed = kb.rKey.wasPressedThisFrame;
+                input.SkillQPressed = kb.qKey.wasPressedThisFrame;
+                input.SkillEPressed = kb.eKey.wasPressedThisFrame;
                 if (kb.fKey.wasPressedThisFrame) _flashlightOn = !_flashlightOn;   // 원본 F 토글
             }
 
@@ -296,28 +427,61 @@ namespace TunnelCrew.Presentation
             return n;
         }
 
-        // ───────────────────────────── 임시 HUD
+        // ───────────────────────────── 임시 HUD (IMGUI — M4 에서 UI Toolkit 으로)
         void OnGUI()
         {
             if (!_showHud || Sim?.World == null) return;
             var p = Sim.Player;
+            var b = Sim.Build;
+            var roles = Sim.Roles;
             var style = new GUIStyle(GUI.skin.label) { fontSize = 14, richText = true };
 
-            GUILayout.BeginArea(new Rect(12, 12, 460, 260), GUI.skin.box);
-            GUILayout.Label($"<b>심층 {Sim.Depth}</b>  ·  {Sim.World.Cols}×{Sim.World.Rows}  " +
-                            $"·  {Application.targetFrameRate}  {(1f / Mathf.Max(0.0001f, Time.smoothDeltaTime)):F0} fps", style);
-            GUILayout.Label($"위치 ({p.Position.X:F2}, {p.Position.Y:F2})   속도 {p.Velocity.Length:F2} 셀/s", style);
-            GUILayout.Label($"부순 블록 {Sim.World.BlocksBroken}   PULP {Sim.Loot.Pulp}   BLOOM {Sim.Loot.Bloom}", style);
-            GUILayout.Label($"드릴 예열 {p.DrillWarm:P0} (배율 {MiningSystem.WarmMul(p):F2})   " +
-                            $"과열 {p.DrillHeat:P0}{(p.DrillHeatLock > 0 ? $"  잠금 {p.DrillHeatLock:F1}s" : "")}", style);
-            GUILayout.Label($"대시 {(p.DashActive ? "진행" : p.DashCooldown > 0 ? $"쿨 {p.DashCooldown:F2}s" : "준비")}" +
-                            $"   {(p.IsDigging ? "채굴 중" : "")}{(p.BounceActive ? "  암반 반동" : "")}", style);
-            GUILayout.Label($"전리품 {Sim.Loot.Items.Count}개   출구 {(Sim.World.ExitOpen ? "열림" : "미개방")}", style);
-            GUILayout.Space(6);
-            GUILayout.Label($"손전등 {(_flashlightOn ? "켜짐" : "꺼짐")}   랜턴 {_lamps.Count}개   " +
-                            $"보이는 칸 {VisibleCellCount()}", style);
-            GUILayout.Label("WASD 이동 · 마우스 조준 · 좌클릭 드릴 · Space 대시 · F 손전등", style);
+            GUILayout.BeginArea(new Rect(12, 12, 480, 330), GUI.skin.box);
+            GUILayout.Label($"<b>{RoleName(b.Role)}</b>  ·  심층 {Sim.Depth}  ·  {Sim.World.Cols}×{Sim.World.Rows}  " +
+                            $"·  {(1f / Mathf.Max(0.0001f, Time.unscaledDeltaTime)):F0} fps", style);
+            GUILayout.Label($"<b>HP {p.Hp:F0}/{p.HpMax:F0}</b>{(p.Downed ? "  <color=#ff6060>다운</color>" : p.StunTime > 0 ? "  기절" : "")}" +
+                            $"   위협 {Sim.Enemies.Threat:F2}   적 {Sim.Enemies.Enemies.Count}마리", style);
+            GUILayout.Label($"부순 블록 {Sim.World.BlocksBroken}   PULP {Sim.Loot.Pulp}   BLOOM {Sim.Loot.Bloom}   출구 {(Sim.World.ExitOpen ? "열림" : "미개방")}", style);
+
+            string ammo = b.RoleHasGun
+                ? (b.IsReloading ? $"재장전 {b.ReloadLeft:F2}s" : $"탄 {b.Ammo}/{b.MagSize}")
+                : "총 없음";
+            GUILayout.Label($"{ammo}   드릴 예열 {p.DrillWarm:P0}   과열 {p.DrillHeat:P0}{(p.DrillHeatLock > 0 ? $" 잠금 {p.DrillHeatLock:F1}s" : "")}", style);
+
+            string q = roles.QCooldown > 0 ? $"{roles.QCooldown:F1}s" : "준비";
+            string e = RoleSystem.HasE(b.Role) ? (roles.ECooldown > 0 ? $"{roles.ECooldown:F1}s" : "준비") : "—";
+            GUILayout.Label($"Q {QName(b.Role)} [{q}]   E {EName(b.Role)} [{e}]   " +
+                            $"대시 {(p.DashActive ? "진행" : p.DashCooldown > 0 ? $"{p.DashCooldown:F1}s" : "준비")}", style);
+
+            string extra = b.Role switch
+            {
+                RoleId.Gunner => $"방어막 {roles.ShieldTime:F1}s   파쇄탄 쿨 {roles.BreakerCooldown:F1}s   장착 {roles.Breakers.Count}",
+                RoleId.Driller => $"돌파 {roles.BreachTime:F1}s   균열 {roles.Cracks.Count}칸",
+                RoleId.Scout => $"플레어 {roles.Flares.Count(f => !f.IsEngineerNode)}개",
+                RoleId.Engineer => $"노드 {roles.Nodes.Count}/{roles.EngineerMaxNodes}   센트리 {roles.Turrets.Count}/{roles.EngineerMaxTurrets}",
+                _ => "",
+            };
+            GUILayout.Label(extra, style);
+            GUILayout.Space(4);
+            GUILayout.Label($"손전등 {(_flashlightOn ? "켜짐" : "꺼짐")}   보이는 칸 {VisibleCellCount()}   timeScale {Time.timeScale:F2}", style);
+            GUILayout.Label("WASD 이동 · 마우스 조준 · 좌클릭 드릴(거너: 파쇄탄) · 우클릭 사격 · R 재장전", style);
+            GUILayout.Label("Q/E 스킬 · Space 대시 · F 손전등 · 1~4 직업 교체 · F5 층 재생성", style);
+            GUILayout.Space(4);
+            foreach (var line in _log) GUILayout.Label("<color=#ffd080>· " + line + "</color>", style);
             GUILayout.EndArea();
+
+            // 피격 비네트 — Feedback.HurtLevel
+            if (_feedback != null && _feedback.HurtLevel > 0)
+            {
+                float a = 0.12f * _feedback.HurtLevel * _feedback.HurtProgress;
+                GUI.color = new Color(1f, 0.15f, 0.1f, a);
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+            }
         }
+
+        static string RoleName(RoleId r) => r switch { RoleId.Driller => "드릴러", RoleId.Gunner => "거너", RoleId.Scout => "스카우트", _ => "엔지니어" };
+        static string QName(RoleId r) => r switch { RoleId.Driller => "돌파", RoleId.Gunner => "방어막", RoleId.Scout => "플레어", _ => "전력 노드" };
+        static string EName(RoleId r) => r switch { RoleId.Gunner => "파쇄탄 기폭", RoleId.Scout => "그래플", RoleId.Engineer => "센트리", _ => "—" };
     }
 }

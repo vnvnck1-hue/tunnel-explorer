@@ -20,6 +20,7 @@ namespace TunnelCrew.EditorTools
     {
         const string TileDir = "Assets/Art/Tiles/purple";
         const string CharDir = "Assets/Art/Characters";
+        const string MonsterDir = "Assets/Art/Monsters";
         const string OutDir = "Assets/_Project/Data/Resources";
 
         [Serializable] class TileEntry { public string file; public string type; public int band, surface, damage, variant, slot; }
@@ -37,10 +38,12 @@ namespace TunnelCrew.EditorTools
             int chars = ConfigureCharacters();
             var set = BuildTileSet();
             int sheets = BuildCharacterSheets();
+            int monsters = ConfigureMonsters();
+            BuildMonsterSheets();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log($"[M1] 아트 설정 완료 — 타일 텍스처 {tiles}, 캐릭터 시트 {chars}, " +
-                      $"타일셋 슬롯 {set.slots.Count(s => s != null)}/268, 바닥 {set.floorVariants.Count(s => s != null)}/3, 직업 시트 SO {sheets}");
+                      $"타일셋 슬롯 {set.slots.Count(s => s != null)}/268, 바닥 {set.floorVariants.Count(s => s != null)}/3, 직업 시트 SO {sheets}, 몬스터 프레임 {monsters}");
         }
 
         // ───────────────────────────── 타일: 1장 = 1 스프라이트, PPU 50
@@ -153,6 +156,55 @@ namespace TunnelCrew.EditorTools
             return n;
         }
 
+
+        // ───────────────────────────── 몬스터: 256x256 단일 프레임 16장 × 3종
+        // 실제 화면 크기는 EnemyView 가 반지름(e.r*3.15)에 맞춰 스케일하므로 PPU 는 기준값만 준다.
+        static int ConfigureMonsters()
+        {
+            if (!Directory.Exists(MonsterDir)) return 0;
+            int n = 0;
+            foreach (string path in AssetDatabase.FindAssets("t:Texture2D", new[] { MonsterDir })
+                                                 .Select(AssetDatabase.GUIDToAssetPath))
+            {
+                var im = (TextureImporter)AssetImporter.GetAtPath(path);
+                if (im == null) continue;
+                im.textureType = TextureImporterType.Sprite;
+                im.spriteImportMode = SpriteImportMode.Single;
+                im.spritePixelsPerUnit = 128f;      // 256px → 2셀 기준
+                im.spritePivot = new Vector2(0.5f, 0.5f);
+                im.filterMode = FilterMode.Bilinear;
+                im.mipmapEnabled = false;
+                im.alphaIsTransparency = true;
+                im.textureCompression = TextureImporterCompression.Uncompressed;
+                im.SaveAndReimport();
+                n++;
+            }
+            return n;
+        }
+
+        static void BuildMonsterSheets()
+        {
+            if (!Directory.Exists(MonsterDir)) return;
+            string assetPath = $"{OutDir}/MonsterSheets.asset";
+            var so = AssetDatabase.LoadAssetAtPath<MonsterSheetAsset>(assetPath);
+            if (so == null)
+            {
+                so = ScriptableObject.CreateInstance<MonsterSheetAsset>();
+                AssetDatabase.CreateAsset(so, assetPath);
+            }
+            var kinds = new List<MonsterSheetAsset.Kind>();
+            foreach (string dir in Directory.GetDirectories(MonsterDir))
+            {
+                string id = Path.GetFileName(dir);
+                var frames = Directory.GetFiles(dir, "frame_*.png")
+                    .OrderBy(f => f, StringComparer.Ordinal)
+                    .Select(f => AssetDatabase.LoadAssetAtPath<Sprite>(f.Replace('\\', '/')))
+                    .Where(s => s != null).ToArray();
+                if (frames.Length > 0) kinds.Add(new MonsterSheetAsset.Kind { id = id, frames = frames });
+            }
+            so.kinds = kinds.ToArray();
+            EditorUtility.SetDirty(so);
+        }
 
         // ───────────────────────────── 캐릭터 시트 SO (런타임 조회용)
         static int BuildCharacterSheets()

@@ -71,5 +71,8 @@ namespace TunnelCrew.Sim
         public bool DrillHeld;
         public bool FireHeld;
         public bool DashPressed;
+        public bool ReloadPressed;
+        public bool SkillQPressed;
+        public bool SkillEPressed;
     }
 }

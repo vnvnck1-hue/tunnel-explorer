@@ -57,6 +57,12 @@
         "5588"
       ],
       "port": 5588
+    },
+    {
+      "name": "tunnel-crew",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude/serve.mjs"],
+      "port": 8791
     }
   ]
 }

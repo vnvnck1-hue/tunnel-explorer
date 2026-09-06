@@ -1,12 +1,20 @@
 {
-  "generated": "2026-09-06T09:42:00.160Z",
+  "generated": "2026-09-06T11:37:15.932Z",
   "tiles": {
     "copied": 268,
     "overlays": 8,
     "floorSheet": true
   },
   "characters": {
-    "driller": 10
+    "driller": 10,
+    "gunner": 10,
+    "scout": 10,
+    "engineer": 10
   },
-  "missing": []
+  "missing": [],
+  "monsters": {
+    "crawler": 16,
+    "spitter": 16,
+    "broodBeast": 16
+  }
 }

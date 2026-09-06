@@ -146,6 +146,28 @@ function importRole(role, report) {
   report.characters[role] = sheets.length;
 }
 
+// ─────────────────────────────────────────────── 몬스터 (단일 방향 16프레임 스트립)
+const MONSTERS = { crawler: "crawler", spitter: "spitter", broodBeast: "brood-beast" };
+function importMonsters(report) {
+  const out = {};
+  for (const [kind, dir] of Object.entries(MONSTERS)) {
+    const src = `monster_assets_v1.5.4/frames/${dir}`;
+    const dst = `${ART}/Monsters/${kind}`;
+    let n = 0;
+    for (let i = 1; i <= 16; i++) {
+      const f = `frame_${String(i).padStart(2, "0")}.png`;
+      if (copy(path.join(src, f), dst)) n++; else report.missing.push(`${src}/${f}`);
+    }
+    out[kind] = n;
+  }
+  fs.writeFileSync(`${ART}/Monsters/monster-index.json`, JSON.stringify({
+    note: "단일 방향 16프레임. walk 0~5 · idle 6~7 · blink 8~11 · sprint 12~17(광란종). 좌우 반전 없음(원본 규칙)",
+    clips: { walk: [0,5], idle: [6,7], blink: [8,11], sprint: [12,15] },
+    kinds: out,
+  }, null, 2) + "\n");
+  report.monsters = out;
+}
+
 // ─────────────────────────────────────────────── 실행
 function main() {
   const report = { generated: new Date().toISOString(), tiles: null, characters: {}, missing: [] };
@@ -153,6 +175,7 @@ function main() {
   importTiles(report);
   importRole('driller', report);
   if (ALL) for (const r of ['gunner', 'scout', 'engineer']) importRole(r, report);
+  if (ALL) importMonsters(report);
 
   fs.mkdirSync(ART, { recursive: true });
   fs.writeFileSync(`${ART}/_import-report.json`, JSON.stringify(report, null, 2) + '\n');
@@ -161,6 +184,7 @@ function main() {
               `${report.tiles.floorSheet ? ' + 바닥 시트' : ''}`);
   for (const [role, n] of Object.entries(report.characters))
     console.log(`캐릭터   : ${role} 시트 ${n}장`);
+  if (report.monsters) console.log(`몬스터   : ${JSON.stringify(report.monsters)}`);
   if (report.missing.length) {
     console.log(`누락 ${report.missing.length}개:`);
     for (const m of report.missing.slice(0, 10)) console.log('  -', m);

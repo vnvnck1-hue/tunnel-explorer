@@ -9,8 +9,11 @@ namespace TunnelCrew.Sim
     public static class MovementSystem
     {
         public static void Tick(WorldGrid world, PlayerState p, in PlayerInput input, double dt,
-                                Action<PlayerDashedEvent> onDash = null)
+                                Action<PlayerDashedEvent> onDash = null,
+                                PlayerBuild build = null)
         {
+            double moveMul = build != null ? build.MoveMul : 1.0;
+            double dashMul = build != null ? build.RoleDashMul : 1.0;
             p.DashCooldown = Math.Max(0, p.DashCooldown - dt);
             p.StunTime = Math.Max(0, p.StunTime - dt);
             p.RockBounceCooldown = Math.Max(0, p.RockBounceCooldown - dt);
@@ -40,11 +43,12 @@ namespace TunnelCrew.Sim
                 if (move.Length >= 0.2) dir = move.Normalized;
                 else if (dir.Length < 0.2) dir = Vec2.FromAngle(p.Aim);
 
-                double speed = SimTuning.DashDistance / Math.Max(0.04, SimTuning.DashDuration);
+                // 원본 tryDash: 거리에 직업 배율, 배율이 1.2 를 넘으면(스카웃) 쿨도 짧아진다
+                double speed = SimTuning.DashDistance * dashMul / Math.Max(0.04, SimTuning.DashDuration);
                 p.DashActive = true;
                 p.DashVelocity = dir * speed;
                 p.DashTimeLeft = SimTuning.DashDuration;
-                p.DashCooldown = SimTuning.DashCooldown;
+                p.DashCooldown = SimTuning.DashCooldown / (dashMul > 1.2 ? 1.15 : 1.0);
                 onDash?.Invoke(new PlayerDashedEvent { Position = p.Position, Direction = dir });
             }
 
@@ -95,7 +99,7 @@ namespace TunnelCrew.Sim
             }
             else
             {
-                p.Velocity = move * SimTuning.MoveSpeed;
+                p.Velocity = move * (SimTuning.MoveSpeed * moveMul);
                 p.Position += p.Velocity * dt;
                 CollisionSystem.Resolve(world, ref p.Position, SimTuning.PlayerRadius);
             }

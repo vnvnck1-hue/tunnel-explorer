@@ -1,0 +1,26 @@
+{
+  "note": "단일 방향 16프레임. walk 0~5 · idle 6~7 · blink 8~11 · sprint 12~17(광란종). 좌우 반전 없음(원본 규칙)",
+  "clips": {
+    "walk": [
+      0,
+      5
+    ],
+    "idle": [
+      6,
+      7
+    ],
+    "blink": [
+      8,
+      11
+    ],
+    "sprint": [
+      12,
+      15
+    ]
+  },
+  "kinds": {
+    "crawler": 16,
+    "spitter": 16,
+    "broodBeast": 16
+  }
+}

@@ -93,6 +93,9 @@ namespace TunnelCrew.Presentation
             _initialized = true;
 
             Vector2 finalCenter = origin + new Vector2(vw * 0.5f, vh * anchorFromBottom);
+            // 킥·흔들림은 추종 상태(_camOrigin)에는 넣지 않고 최종 위치에만 더한다.
+            // 그래야 흔들림이 끝나면 정확히 원래 자리로 돌아온다.
+            if (Feedback.Instance != null) finalCenter += Feedback.Instance.CameraOffset;
             transform.position = new Vector3(finalCenter.x, finalCenter.y, -10f);
         }
 

@@ -12,8 +12,14 @@ namespace TunnelCrew.Sim
     {
         public static void Tick(WorldGrid world, PlayerState p, in PlayerInput input, double dt,
                                 Action<DrillBouncedEvent> onBounce = null,
-                                Action<Vec2, double> onDrillBeat = null)
+                                Action<Vec2, double> onDrillBeat = null,
+                                PlayerBuild build = null,
+                                Func<int, int, double, bool> onBedrock = null)
         {
+            // 직업 dig 배율 × 특성 drillMul. 거너는 dig 0 이라 드릴이 없다.
+            double digMul = build != null ? build.RoleDigMul * build.DrillMul : 1.0;
+            double reach = build != null ? build.DrillReach : 1.0;
+            if (digMul <= 0) { p.IsDigging = false; p.DrillSpin = 0; return; }
             p.IsDigging = false;
 
             bool wantDrill = input.DrillHeld && p.CanMove && p.CanDrill;
@@ -38,7 +44,7 @@ namespace TunnelCrew.Sim
 
             foreach (var (lenMul, _) in SimTuning.DrillSamples)
             {
-                double len = SimTuning.DrillTip * lenMul;
+                double len = SimTuning.DrillTip * reach * lenMul;
                 var sample = new Vec2(p.Position.X + ca * len, p.Position.Y + sa * len);
                 if (!TryFindNearestBreakable(world, sample, out int cell, out Vec2 center, out double d)) continue;
                 if (d < SimTuning.DrillReachCells && d < bestD)
@@ -57,7 +63,7 @@ namespace TunnelCrew.Sim
                 if (dd < 1e-9) dd = 1;
                 Vec2 normal = delta / dd;
 
-                double dv = SimTuning.DrillDps * SimTuning.DrillDamageMul * WarmMul(p) * dt;
+                double dv = SimTuning.DrillDps * SimTuning.DrillDamageMul * digMul * WarmMul(p) * dt;
                 world.Damage(c, r, dv, normal);
 
                 p.DrillDamageAccum += dv;
@@ -90,6 +96,15 @@ namespace TunnelCrew.Sim
                 {
                     rockD = d; rockCell = world.Index(sc, sr); rockCenter = center;
                 }
+            }
+
+            // 원본 7252행: 드릴러(onBedrock 이 true 를 돌려주면)는 기반암을 물고 압력을 쌓는다. 튕기지 않는다.
+            if (rockCell >= 0 && onBedrock != null && onBedrock(rockCell % world.Cols, rockCell / world.Cols, dt))
+            {
+                p.IsDigging = true;
+                p.DrillDamageAccum = 0;
+                p.DrillTimeAccum = 0;
+                return;
             }
 
             if (rockCell >= 0 && p.RockBounceCooldown <= 0)

@@ -354,12 +354,16 @@ namespace TunnelCrew.Sim
         }
 
         /// <summary>원본 <c>applyPlayerDamage()</c> (6535~6562).</summary>
+        /// <summary>거너 방어막 등 외부 피해 배율. 원본 shieldT>0 이면 ×0.35.</summary>
+        public Func<double> IncomingDamageMul = () => 1.0;
+
         public void ApplyPlayerDamage(PlayerState player, double raw, Vec2 hitDir)
         {
             if (player.IFrames > 0 || player.Downed) return;
 
-            // 플레이 중에는 15% 경감 + 최소 4
+            // 플레이 중에는 15% 경감 + 최소 4, 방어막이면 추가 ×0.35
             double dmg = Math.Max(4, JsMath.Round(raw * 0.85));
+            dmg *= IncomingDamageMul();
 
             player.Hp -= dmg;
             player.IFrames = SimTuning.PlayerIFrame;
