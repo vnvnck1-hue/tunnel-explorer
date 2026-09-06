@@ -60,13 +60,18 @@ namespace TunnelCrew.Presentation
         {
             var camGo = Camera.main != null ? Camera.main.gameObject : new GameObject("Main Camera");
             camGo.tag = "MainCamera";
-            _cam = camGo.GetComponent<Camera>() ?? camGo.AddComponent<Camera>();
+
+            // UnityEngine.Object 에는 `??` 를 쓰면 안 된다. GetComponent 가 돌려주는 "가짜 null"
+            // 은 C# 기준으로는 null 이 아니라서 `??` 가 우변으로 넘어가지 않는다.
+            // 그러면 컴포넌트가 실제로 붙지 않은 채 진행돼 MissingComponentException 이 난다.
+            if (!camGo.TryGetComponent(out _cam)) _cam = camGo.AddComponent<Camera>();
+
             _cam.orthographic = true;
             _cam.clearFlags = CameraClearFlags.SolidColor;
             _cam.backgroundColor = new Color(0.04f, 0.03f, 0.07f);
-            if (camGo.GetComponent<UniversalAdditionalCameraData>() == null)
+            if (!camGo.TryGetComponent<UniversalAdditionalCameraData>(out _))
                 camGo.AddComponent<UniversalAdditionalCameraData>();
-            _rig = camGo.GetComponent<CameraRig>() ?? camGo.AddComponent<CameraRig>();
+            if (!camGo.TryGetComponent(out _rig)) _rig = camGo.AddComponent<CameraRig>();
         }
 
         void BuildWorld()
