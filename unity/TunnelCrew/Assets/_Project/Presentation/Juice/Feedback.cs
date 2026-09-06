@@ -25,16 +25,20 @@ namespace TunnelCrew.Presentation
         [SerializeField] float _hitstopCapMs = 95f;
         [SerializeField] bool _reducedMotion = false;
 
-        [Header("카메라 킥")]
-        [Tooltip("킥 1 단위가 카메라를 몇 셀 밀어내는가. 원본은 픽셀 단위 J.sdx 였다.")]
-        [SerializeField] float _kickCellsPerUnit = 0.045f;
-        [SerializeField] float _kickDecay = 9f;
-        [SerializeField] float _shakeFrequency = 34f;
+        [Header("카메라 킥 — 원본 J.kick / J.step / 8082행")]
+        [Tooltip("킥 1 단위 = 화면 1px. 1셀 = 50px 이므로 0.02셀. 원본 OPT.shake 배율은 1.")]
+        [SerializeField] float _kickCellsPerUnit = 0.02f;
+        [Tooltip("원본 this.shake *= pow(.035, dt) — 약 0.3초 안에 사라진다")]
+        [SerializeField] float _shakeDecayBase = 0.035f;
+        [Tooltip("원본 sph += dt*26, 감쇠 exp(-sph*.16)")]
+        [SerializeField] float _shakePhaseRate = 26f;
+        [SerializeField] float _shakeNoise = 0.16f;
 
         float _hitstopLeft;      // 실시간 초
-        Vector2 _kickVel;
+        float _shake;            // 원본 J.shake (px 단위)
+        Vector2 _shakeDir;       // 원본 J.sdx/sdy
+        float _shakePhase;       // 원본 J.sph
         Vector2 _kickOffset;
-        float _shakePhase;
 
         // 스쿼시 — 원본 FEEL.p
         float _recoil, _recoilA, _recoilT;
@@ -66,10 +70,13 @@ namespace TunnelCrew.Presentation
                 Time.timeScale = _hitstopLeft > 0 ? _hitstopScale : 1f;
             }
 
-            // 카메라 킥 — 스프링 감쇠 + 진동. 원본 J.shake*cos(sph)*exp(-sph*.16)
-            _shakePhase += dt * _shakeFrequency;
-            _kickVel = Vector2.Lerp(_kickVel, Vector2.zero, 1f - Mathf.Exp(-_kickDecay * dt));
-            _kickOffset = _kickVel * Mathf.Cos(_shakePhase);
+            // 카메라 킥 — 둔탁한 한 방: 방향성 감쇠 사인 + 아주 약한 노이즈 (원본 8082행)
+            _shakePhase += dt * _shakePhaseRate;
+            _shake *= Mathf.Pow(_shakeDecayBase, dt);
+            if (_shake < 0.12f) { _shake = 0; _shakeDir = Vector2.zero; }
+            float osc = Mathf.Cos(_shakePhase) * Mathf.Exp(-_shakePhase * 0.16f);
+            var noise = new Vector2(Random.value - 0.5f, Random.value - 0.5f) * (_shake * _shakeNoise);
+            _kickOffset = (-_shakeDir * (_shake * 1.05f) * osc + noise) * _kickCellsPerUnit;
 
             // 스쿼시 타이머
             float sdt = Time.deltaTime;
@@ -95,8 +102,11 @@ namespace TunnelCrew.Presentation
         public void Kick(float strength, Vector2 dir)
         {
             if (_reducedMotion) strength *= 0.35f;
-            if (dir.sqrMagnitude < 1e-6f) dir = Random.insideUnitCircle.normalized;
-            _kickVel += -dir.normalized * (strength * _kickCellsPerUnit);
+            // 원본: 진행 중인 흔들림의 72% 보다 약한 킥은 무시한다 — 연타가 누적돼 폭주하지 않는다
+            if (strength < _shake * 0.72f) return;
+            _shake = Mathf.Max(_shake, strength);
+            _shakePhase = 0f;
+            if (dir.sqrMagnitude > 1e-6f) _shakeDir = dir.normalized;
         }
 
         /// <summary>원본 FEEL.shot — 사격 반동.</summary>
@@ -144,7 +154,7 @@ namespace TunnelCrew.Presentation
         }
 
         /// <summary>드릴 타격 비트. 원본 drillKick 6.</summary>
-        public void DrillBeat(Vector2 dir) => Kick(6f * 0.25f, dir);
+        public void DrillBeat(Vector2 dir) => Kick(6f, dir);
 
         /// <summary>HUD 가 읽는 피격 단계 (0=없음).</summary>
         public int HurtLevel { get; private set; }

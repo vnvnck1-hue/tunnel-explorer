@@ -21,7 +21,15 @@ namespace TunnelCrew.Presentation
         readonly Stack<DamageText> _textPool = new Stack<DamageText>();
         Sprite _dot, _square;
 
-        sealed class DamageText { public GameObject Go; public TextMesh Mesh; public Vector3 Vel; public float Life, MaxLife; }
+        sealed class DamageText
+        {
+            public GameObject Go; public TextMesh Mesh, Shadow;
+            public Vector2 Pos, Vel; public float Life, Rot, VRot, PopMul = 1, SzMul = 1;
+            public bool Big, Label; public Color Col;
+        }
+        // 원본 DEMO 기본값: 크기 25/34px · 팝 1.45(감쇠 3.4/s) · 스쿼시 .22 · 페이드 2.2 · 수명 1.3/.56 · 상승 120px/s · 중력 980
+        const float DmgBase = 25f, DmgBig = 34f, DmgPop = 1.45f, DmgPopDec = 3.4f, DmgSquash = .22f, DmgFade = 2.2f;
+        const float DmgLifeRate = 1.3f / .56f, DmgRise = 120f, DmgGravity = 980f, DmgDamp = .97f, DmgJx = 12f, DmgJy = 9f, DmgDrift = 40f, Px = 1f / 50f;
 
         static readonly Dictionary<string, Color> ProjColor = new Dictionary<string, Color>
         {
@@ -151,15 +159,41 @@ namespace TunnelCrew.Presentation
                 _dashLine.SetPosition(1, new Vector3(a.x + d.x * len, a.y + d.y * len, -0.05f));
             }
 
-            // 데미지 텍스트
+            // 데미지 숫자 — 원본 J.step(dm) + 그리기: 중력·감속·회전, 팝·스쿼시·페이드
             for (int i = _texts.Count - 1; i >= 0; i--)
             {
                 var t = _texts[i];
-                t.Life -= dt;
-                t.Go.transform.position += t.Vel * dt;
-                t.Vel *= Mathf.Exp(-3.2f * dt);
-                var c = t.Mesh.color; c.a = Mathf.Clamp01(t.Life / (t.MaxLife * 0.4f)); t.Mesh.color = c;
-                if (t.Life <= 0) { t.Go.SetActive(false); _textPool.Push(t); _texts.RemoveAt(i); }
+                if (t.Label)
+                {
+                    // J.text — 위로 뜨며 사라지는 라벨 (vy*=.945, life 1.3/s)
+                    t.Vel *= Mathf.Pow(.945f, dt * 60f);
+                    t.Pos += t.Vel * dt;
+                    t.Life -= dt * 1.3f;
+                }
+                else
+                {
+                    t.Vel.y -= DmgGravity * Px * dt;
+                    float drag = Mathf.Pow(DmgDamp, dt * 60f);
+                    t.Vel *= drag;
+                    t.Pos += t.Vel * dt;
+                    t.Rot += t.VRot * dt;
+                    t.Life -= dt * DmgLifeRate;
+                }
+                if (t.Life <= 0) { t.Go.SetActive(false); _textPool.Push(t); _texts.RemoveAt(i); continue; }
+
+                float age = 1 - t.Life;
+                float popN = DmgPop * t.PopMul;
+                float pop = t.Label ? 1f : 1 + (popN - 1) * Mathf.Max(0, 1 - age * DmgPopDec);
+                float sqY = t.Label ? 1f : 1 + DmgSquash * Mathf.Max(0, 1 - age * 5) * t.PopMul;
+                float sqX = 1 / Mathf.Max(.55f, sqY);
+                float px = (t.Big ? DmgBig : DmgBase) * pop * t.SzMul;          // 화면 px (원본 기준 줌 1)
+                float cellH = px * Px * 1.15f;                                   // 1셀 = 50px
+                float a = Mathf.Min(1, t.Life * DmgFade);
+                t.Go.transform.position = new Vector3(t.Pos.x, t.Pos.y, -0.1f);
+                t.Go.transform.rotation = Quaternion.Euler(0, 0, t.Rot * Mathf.Rad2Deg);
+                t.Go.transform.localScale = new Vector3(sqX, sqY, 1) * (cellH / 6.4f);   // fontSize 64 · characterSize 1 = 6.4 유닛
+                var c = t.Col; c.a = a; t.Mesh.color = c;
+                t.Shadow.color = new Color(20 / 255f, 10 / 255f, 4 / 255f, .30f * a + .35f * a);
             }
         }
 
@@ -179,24 +213,69 @@ namespace TunnelCrew.Presentation
             sr.sprite = sp; sr.color = c; sr.transform.localScale = Vector3.one * size;
         }
 
-        /// <summary>원본 J.dmg / J.text — 위로 뜨며 사라지는 숫자.</summary>
-        public void Text(Vec2 at, string text, Color color, float size = 0.32f)
+        /// <summary>원본 J.dmg(x,y,v,big) — 위로 튀어 오르며 떨어지는 숫자. 드릴 열(hfx)은 M7 과열 연출과 함께.</summary>
+        public void Damage(Vec2 at, double value, bool big, float heat = 0f)
+        {
+            if (value < 1) return;
+            float hfx = Mathf.Clamp01(heat);
+            float jx = DmgJx * (1 + hfx * .85f), jy = DmgJy * (1 + hfx * .85f);
+            float spd0 = DmgRise * (1 + hfx * 1.05f);
+            float lr = Mathf.Min(1, .45f + hfx * .35f);
+            float drift = DmgDrift * (1 + hfx * 1.1f);
+            float spreadDeg = Mathf.Min(360, 90 + 270 * hfx * .92f + hfx * 40);
+            float half = spreadDeg * Mathf.Deg2Rad * .5f;
+            float ang = Mathf.PI * .5f + (Random.value * 2 - 1) * half;   // 원본은 -π/2 (y 아래 증가) → Unity 는 +π/2
+            float spd = spd0 * (1 - lr * .5f + Random.value * lr) * (big ? 1.18f : 1) * (1 + hfx * .25f);
+            var vel = new Vector2(Mathf.Cos(ang) * spd + (Random.value - .5f) * drift * .35f, Mathf.Sin(ang) * spd + (Random.value - .5f) * drift * .15f) * Px;
+
+            var col0 = new Color(1f, .99f, .96f); var colB0 = new Color(1f, .92f, .71f);
+            var hot = new Color(1f, .16f, .16f); var hotB = new Color(1f, .35f, .23f);
+            var t = Rent();
+            t.Label = false; t.Big = big;
+            t.Pos = new Vector2((float)at.X + (Random.value - .5f) * jx * Px, (float)at.Y + (Random.value - .5f) * jy * Px);
+            t.Vel = vel; t.Life = 1;
+            t.Rot = big ? (Random.value - .5f) * 18f * (1 + hfx) * Mathf.Deg2Rad : (Random.value - .5f) * .2f;
+            t.VRot = (Random.value - .5f) * 1.2f * (1 + hfx * 1.35f) * (big ? 1.6f : 1);
+            t.SzMul = 1 + hfx * .95f; t.PopMul = 1 + hfx * .75f;
+            t.Col = Color.Lerp(big ? colB0 : col0, big ? hotB : hot, hfx);
+            t.Mesh.text = t.Shadow.text = Mathf.RoundToInt((float)value).ToString();
+            t.Mesh.fontStyle = t.Shadow.fontStyle = FontStyle.Bold;
+            _texts.Add(t);
+            if (_texts.Count > 44) { var old = _texts[0]; old.Go.SetActive(false); _textPool.Push(old); _texts.RemoveAt(0); }
+        }
+
+        /// <summary>원본 J.text(x,y,t,col,sz) — 라벨. sz 는 화면 px (기본 20, ×1.15).</summary>
+        public void Text(Vec2 at, string text, Color color, float sizePx = 20f)
+        {
+            var t = Rent();
+            t.Label = true; t.Big = false;
+            t.Pos = new Vector2((float)at.X, (float)at.Y);
+            t.Vel = new Vector2(0, 38f * Px); t.Life = 1; t.Rot = 0; t.VRot = 0;
+            t.SzMul = sizePx / DmgBase; t.PopMul = 1;
+            t.Col = color;
+            t.Mesh.text = t.Shadow.text = text;
+            t.Mesh.fontStyle = t.Shadow.fontStyle = FontStyle.Bold;
+            _texts.Add(t);
+        }
+
+        DamageText Rent()
         {
             DamageText t = _textPool.Count > 0 ? _textPool.Pop() : New();
             t.Go.SetActive(true);
-            t.Go.transform.position = new Vector3((float)at.X, (float)at.Y + 0.4f, -0.1f);
-            t.Mesh.text = text; t.Mesh.color = color; t.Mesh.characterSize = size * 0.35f;
-            t.Vel = new Vector3(Random.Range(-0.4f, 0.4f), 1.8f, 0);
-            t.Life = t.MaxLife = 0.85f;
-            _texts.Add(t);
+            return t;
 
             DamageText New()
             {
                 var go = new GameObject("DmgText"); go.transform.SetParent(transform, false);
+                var sh = new GameObject("shadow"); sh.transform.SetParent(go.transform, false);
+                sh.transform.localPosition = new Vector3(0.18f, -0.18f, 0.01f);   // 외곽선 대용 그림자
+                var tmS = sh.AddComponent<TextMesh>();
+                tmS.anchor = TextAnchor.MiddleCenter; tmS.fontSize = 64; tmS.characterSize = 1f;
+                sh.GetComponent<MeshRenderer>().sortingOrder = 59;
                 var tm = go.AddComponent<TextMesh>();
-                tm.anchor = TextAnchor.MiddleCenter; tm.fontSize = 48; tm.fontStyle = FontStyle.Bold;
+                tm.anchor = TextAnchor.MiddleCenter; tm.fontSize = 64; tm.characterSize = 1f;
                 go.GetComponent<MeshRenderer>().sortingOrder = 60;
-                return new DamageText { Go = go, Mesh = tm };
+                return new DamageText { Go = go, Mesh = tm, Shadow = tmS };
             }
         }
 
