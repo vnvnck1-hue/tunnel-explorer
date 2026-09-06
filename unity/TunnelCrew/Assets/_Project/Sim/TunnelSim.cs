@@ -17,6 +17,8 @@ namespace TunnelCrew.Sim
         public LootSystem Loot { get; }
         /// <summary>시야. 층마다 새로 만든다.</summary>
         public LosService Los { get; private set; }
+        /// <summary>적. 층마다 새로 만든다.</summary>
+        public EnemySystem Enemies { get; private set; }
         /// <summary>이번 층의 생성 결과. 랜턴·소품 배치를 Presentation 이 읽는다.</summary>
         public DungeonResult Generation { get; private set; }
 
@@ -35,6 +37,9 @@ namespace TunnelCrew.Sim
         public event Action<DrillBouncedEvent> DrillBounced;
         public event Action<Vec2, double> DrillBeat;
         public event Action<ResourceCollectedEvent> ResourceCollected;
+        public event Action<EnemyHurtEvent> EnemyHurt;
+        public event Action<PlayerHurtEvent> PlayerHurt;
+        public event Action<EnemySpawnedEvent> EnemySpawned;
 
         public TunnelSim(int fxSeed = 12345)
         {
@@ -51,6 +56,10 @@ namespace TunnelCrew.Sim
 
             World = new WorldGrid(gen);
             Los = new LosService(World);
+            Enemies = new EnemySystem(World);
+            Enemies.EnemyHurt += e => EnemyHurt?.Invoke(e);
+            Enemies.PlayerHurt += e => PlayerHurt?.Invoke(e);
+            Enemies.Spawned += e => EnemySpawned?.Invoke(e);
             World.TileBroken += OnTileBroken;
             World.TileDamaged += e => TileDamaged?.Invoke(e);
 
@@ -67,6 +76,7 @@ namespace TunnelCrew.Sim
             Player.DrillHeatLock = 0;
 
             Loot.Clear();
+            Enemies.Clear();
             Loot.DepthMul = 1.0 + 0.25 * (depth - 1);
 
             FloorTime = 0;
@@ -118,17 +128,44 @@ namespace TunnelCrew.Sim
 
             Player.IFrames = Math.Max(0, Player.IFrames - dt);
 
+            _drillHeld = input.DrillHeld;
             MovementSystem.Tick(World, Player, input, dt, e => PlayerDashed?.Invoke(e));
             MiningSystem.Tick(World, Player, input, dt,
                 e => DrillBounced?.Invoke(e),
                 (pos, dmg) => DrillBeat?.Invoke(pos, dmg));
             Loot.Tick(World, Player.Position, dt);
 
+            // 드릴 끝이 적에게 닿으면 피해를 준다 (원본 updateEnemies 7003~7010)
+            TickDrillContact(dt);
+            Enemies.Tick(Player, dt);
+
             // 시야는 이동·채굴이 끝난 뒤 마지막에 갱신한다 (원본 update 순서와 동일).
             _visionSources.Clear();
             _visionSources.Add(VisionSource.Crew(Player.Position));
             Los.Compute(Player.Position, _visionSources);
         }
+
+        /// <summary>
+        /// 드릴 접촉 피해. 원본은 이 판정이 적 갱신 루프 안에 있었다.
+        /// 드릴 끝(DRILL_TIP)이 적 반경 + 8px 안에 들어오면 매 틱 피해를 준다.
+        /// </summary>
+        void TickDrillContact(double dt)
+        {
+            if (!Player.IsDigging && !_drillHeld) return;
+            var tip = Player.Position + Vec2.FromAngle(Player.Aim) * SimTuning.DrillTip;
+            double margin = SimTuning.PxCells(8.0);
+
+            foreach (var e in Enemies.Enemies)
+            {
+                if (!e.Alive) continue;
+                if (Vec2.Distance(tip, e.Position) >= e.Radius + margin) continue;
+                double dmg = SimTuning.DrillDps * SimTuning.EnemyDrillMul
+                           * SimTuning.DrillDamageMul * MiningSystem.WarmMul(Player) * dt;
+                Enemies.HurtEnemy(e, dmg, Vec2.FromAngle(Player.Aim), Player.Position);
+            }
+        }
+
+        bool _drillHeld;
 
         /// <summary>보간용. 렌더가 틱 사이를 부드럽게 잇는 데 쓴다.</summary>
         public double InterpolationAlpha => _accumulator / SimTuning.FixedDeltaTime;

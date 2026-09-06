@@ -7,10 +7,13 @@ namespace TunnelCrew.Sim
     /// 비트 단위로 동일하게 옮긴 것. 맵 생성 패리티 테스트가 이 동일성에 의존하므로
     /// 알고리즘을 "개선"하지 말 것.
     ///
+    /// **클래스인 이유**: 여러 시스템이 같은 난수 스트림을 공유해야 한다.
+    /// 구조체였을 때 메서드 인자로 넘기면 값이 복사돼 호출한 쪽의 상태가 진행되지 않았다.
+    ///
     /// JS 의 <c>Math.imul</c> · <c>&gt;&gt;&gt;</c> · <c>|0</c> 은 전부 32비트 정수 연산이므로
     /// C# 에서는 <see cref="uint"/> + <c>unchecked</c> 로 같은 비트 결과를 얻는다.
     /// </summary>
-    public struct Rng
+    public sealed class Rng
     {
         uint _state;
 
