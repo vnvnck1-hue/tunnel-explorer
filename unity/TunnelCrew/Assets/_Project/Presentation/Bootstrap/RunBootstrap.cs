@@ -65,6 +65,7 @@ namespace TunnelCrew.Presentation
         LootView _lootView;
         EnemyView _enemyView;
         CrewView _crewView;
+        TeamOverlay _team;
         CombatView _combatView;
         Feedback _feedback;
         FxSystem _fx;
@@ -369,6 +370,23 @@ namespace TunnelCrew.Presentation
             _enemyView.Bind(_monsterSheets);
             _crewView = new GameObject("Crew").AddComponent<CrewView>();
             _crewView.Bind(_sheets);
+            _team = new GameObject("TeamOverlay").AddComponent<TeamOverlay>();
+            _team.Bind(Sim, _cam, () => RunActive && !Paused);
+            _team.Log = Log;
+            Sim.Ping.Sound += (type, at) => _feedback?.Kick(.6f, Vector2.zero);   // M7 오디오 전까지는 살짝 흔들림으로 대신
+            Sim.Craft.Toast += Log;
+            Sim.Craft.Fx += e =>
+            {
+                var col = Hex(e.Color);
+                switch (e.Kind)
+                {
+                    case CrewFxKind.Ring: _fx?.Ring(V(e.At), col, .2f, (float)e.Radius); break;
+                    case CrewFxKind.Burst: _fx?.Burst(V(e.At), e.Count, new[] { col, Hex("#C7A0FF"), Color.white }, (float)e.Size); break;
+                    case CrewFxKind.Flash: _fx?.Flash(V(e.At), (float)e.Radius, col); break;
+                    case CrewFxKind.Text: _combatView?.Text(e.At, e.Label, col, (float)e.Size); break;
+                    case CrewFxKind.Kick: _feedback?.Kick((float)e.Size, Vector2.zero); _feedback?.Hitstop(30f); break;
+                }
+            };
             _enemyView.BossFacing = e => Sim.Bosses?.Boss != null && Sim.Bosses.Boss.Body == e ? Sim.Bosses.Boss.Facing : -1;
             _combatView = new GameObject("Combat").AddComponent<CombatView>();
             _fx = new GameObject("Fx").AddComponent<FxSystem>();
@@ -594,7 +612,8 @@ namespace TunnelCrew.Presentation
         {
             if (Sim?.World == null || !RunActive) return;
             var kbEsc = Keyboard.current;
-            if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
+            if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && _team != null && _team.HandleEscape()) { }
+            else if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
             {
                 Paused = !Paused;
                 if (Paused) PauseMenuRequested?.Invoke();
@@ -602,7 +621,7 @@ namespace TunnelCrew.Presentation
             if (Paused) return;
 
             var kb = Keyboard.current;
-            if (kb != null && Sim.Traits.HasOffer)
+            if (kb != null && Sim.Traits.HasOffer && !(_team != null && (_team.ChatOpen || _team.CraftWheelOpen)))
             {
                 if (kb.digit1Key.wasPressedThisFrame) Sim.PickTrait(0);
                 else if (kb.digit2Key.wasPressedThisFrame) Sim.PickTrait(1);
@@ -662,7 +681,7 @@ namespace TunnelCrew.Presentation
                 input.SkillQPressed = kb.qKey.wasPressedThisFrame;
                 input.SkillEPressed = kb.eKey.wasPressedThisFrame;
                 input.EscapePressed = kb.xKey.wasPressedThisFrame;
-                if (kb.fKey.wasPressedThisFrame) _flashlightOn = !_flashlightOn;   // 원본 F 토글
+                if (kb.fKey.wasPressedThisFrame && !(_team != null && _team.ChatOpen)) _flashlightOn = !_flashlightOn;   // 원본 F 토글 (채팅 중엔 글자)
             }
 
             if (mouse != null && _rig != null)
@@ -676,6 +695,14 @@ namespace TunnelCrew.Presentation
             }
             else input.AimWorld = Sim.Player.Position + new Vec2(1, 0);
 
+            // 팀 오버레이 — 채팅 중엔 모든 키가 글자, 핑/크래프트 휠·배치 중엔 좌우클릭이 장비로 새지 않는다 (원본 캡처 단계 stopImmediatePropagation)
+            if (_team != null)
+            {
+                if (_team.ChatOpen) input = new SimInput { AimWorld = input.AimWorld };
+                if (_team.BlocksMouse) { input.DrillHeld = false; input.FireHeld = false; input.PrimaryPressed = false; input.SecondaryPressed = false; }
+                if (_team.BlocksSpace) input.DashPressed = false;
+                if (_team.CraftWheelOpen) { input.SkillQPressed = false; input.SkillEPressed = false; input.ReloadPressed = false; }
+            }
             return input;
         }
 
@@ -815,7 +842,7 @@ namespace TunnelCrew.Presentation
             {
                 float x = 28, y = 28;
                 Panel(R(x, y, 560, 40 + _log.Count * 26 + (Sim.Escape.Active ? 30 : 0)), .4f);
-                GUI.Label(R(x + 12, y + 6, 540, 28), "WASD 이동 · 좌클릭 드릴 · 우클릭 사격 · R 재장전 · Q/E 스킬 · Space 대시 · X 탈출 · F 손전등", new GUIStyle(_sSmall) { fontSize = Mathf.RoundToInt(14 * _k), normal = { textColor = new Color(.7f, .68f, .75f) } });
+                GUI.Label(R(x + 12, y + 6, 540, 28), "WASD 이동 · 좌클릭 드릴 · 우클릭 사격 · R 재장전 · Q/E 스킬 · Space 대시 · X 탈출 · F 손전등 · G 핑 · V 위험 · C 제작 · Enter 채팅", new GUIStyle(_sSmall) { fontSize = Mathf.RoundToInt(14 * _k), normal = { textColor = new Color(.7f, .68f, .75f) } });
                 float ly = y + 34;
                 if (Sim.Escape.Active)
                 {

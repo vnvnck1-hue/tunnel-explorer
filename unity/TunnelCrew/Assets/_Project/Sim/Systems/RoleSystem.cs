@@ -13,6 +13,8 @@ namespace TunnelCrew.Sim
         public double LightRadius;
         public int VisionRange;
         public bool IsEngineerNode;
+        /// <summary>퀵크래프트 휴대 조명탄 (원본 lamp.craft) — 스카우트 펄스·시야 보너스는 발동하지 않는다.</summary>
+        public bool IsCraft;
         /// <summary>엔지니어 노드의 빛이면 그 노드. 노드가 사라지면 함께 사라진다.</summary>
         public PowerNode Node;
     }

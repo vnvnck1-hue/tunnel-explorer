@@ -29,6 +29,12 @@ namespace TunnelCrew.Sim
         public EscapeSystem Escape { get; private set; }
         /// <summary>AI 크루 (원본 AICREW). 편성은 런 사이에도 유지된다.</summary>
         public AiCrewSystem Crew { get; }
+        /// <summary>팀 핑 (원본 TCPING).</summary>
+        public PingSystem Ping { get; }
+        /// <summary>크루 채팅 (원본 TCCHAT).</summary>
+        public CrewChat Chat { get; }
+        /// <summary>현장 퀵크래프트 (원본 TC_CRAFT).</summary>
+        public QuickCraftSystem Craft { get; }
         /// <summary>지금 벽을 깎는 주체. AI 크루면 굴착 XP 가 그 크루에게 간다 (원본 AI.breakSrc). null = 사람.</summary>
         public object BreakSource;
         bool _crewFresh; double _downT, _reviveT;
@@ -112,6 +118,9 @@ namespace TunnelCrew.Sim
         {
             Loot = new LootSystem(fxSeed);
             Crew = new AiCrewSystem(this);
+            Ping = new PingSystem(this);
+            Chat = new CrewChat(this);
+            Craft = new QuickCraftSystem(this);
             Loot.Collected += e => ResourceCollected?.Invoke(e);
 
             // Run / Xp 는 런 내내 하나다 — 구독은 여기서 한 번만
@@ -342,7 +351,7 @@ namespace TunnelCrew.Sim
                 LastSettlement = _meta.Settle(Loot.Core, escaped, Perm, relicKeepRate: RelicFx.Has("r_smuggler") ? .25 : 0);
             }
             else LastSettlement = new MetaState.Settlement { Returned = escaped ? Loot.Core : 0, Lost = escaped ? 0 : Loot.Core, Escaped = escaped };
-            Crew.OnRunEnd();
+            Crew.OnRunEnd(); Craft.Close(true);
             RunEnded?.Invoke(escaped, reason);
         }
 
@@ -364,6 +373,7 @@ namespace TunnelCrew.Sim
             Run.BossesKilled = 0;
             RunEscaped = false; RunEndReason = "";
             _crewFresh = true; _downT = _reviveT = 0;
+            Ping.Reset(); Chat.Reset(); Craft.Reset();
             Phase = GamePhase.Playing;
         }
 
@@ -474,7 +484,7 @@ namespace TunnelCrew.Sim
             FloorTime = 0;
             _accumulator = 0;
 
-            if (_crewFresh) { _crewFresh = false; Crew.OnRunStart(); } else Crew.OnFloorInit();
+            if (_crewFresh) { _crewFresh = false; Crew.OnRunStart(); } else { Crew.OnFloorInit(); Craft.OnFloorInit(); }
         }
 
         void OnTileBroken(TileBrokenEvent e)
@@ -586,10 +596,13 @@ namespace TunnelCrew.Sim
         }
 
         /// <summary>한 틱. 순서는 원본 update(dt) 를 따른다.</summary>
-        public void Tick(double dt, in PlayerInput input)
+        public void Tick(double dt, in PlayerInput inputIn)
         {
             RunTime += dt;
             FloorTime += dt;
+            var input = inputIn;
+            // 응급 주사 주입 중 — 드릴/사격/대시/스킬만 막고 이동은 45% (기획 §8.3)
+            if (Craft.Using != null) { input.DrillHeld = false; input.FireHeld = false; input.DashPressed = false; input.SkillQPressed = false; input.SkillEPressed = false; input.Move *= .45; }
 
             Player.IFrames = Math.Max(0, Player.IFrames - dt);
 
@@ -662,7 +675,9 @@ namespace TunnelCrew.Sim
             Roles.Tick(Player, Build, dt, Depth);
             if (input.ReloadPressed) Projectiles.StartReload(Build, true);
             Projectiles.Tick(Player, Build, dt);
+            Ping.Tick(dt);   // 팀 핑 — 충전·마커·AI 명령 주입 (원본은 AICREW.update 를 감쌌다)
             Crew.Tick(dt);   // AI 크루 — 판단·이동·사격·굴착·설치 (원본 AI.update)
+            Chat.Tick(dt);   // 채팅 말풍선 수명·AI 멘트
 
             // 동적 위협 — 시간·진행도로 스포너 파라미터를 매 틱 갱신 (원본 12226~12229)
             RelicFx.Tick(dt, Build, Phase == GamePhase.Playing);
@@ -674,6 +689,7 @@ namespace TunnelCrew.Sim
             Enemies.Tick(Player, dt);
             if (_spawnBossPending) { _spawnBossPending = false; Bosses.Spawn(Player, Depth); }
             if (!RelicFx.TimeStopped) Bosses.Tick(Player, dt, Depth);
+            Craft.Tick(dt);   // 퀵크래프트 설치물 — 방벽이 적을 밀어내므로 적 갱신 뒤
 
             // 전력망 유지 XP — 노드에 연결된 센트리만 인정 (원본 12448)
             int gridTurrets = 0;

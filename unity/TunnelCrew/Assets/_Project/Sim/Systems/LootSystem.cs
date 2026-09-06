@@ -173,6 +173,10 @@ namespace TunnelCrew.Sim
             return v;
         }
 
+        /// <summary>퀵크래프트 재료 차감 — 채취 목표(TotalCollected)는 줄지 않는다 (기획 §1).</summary>
+        public void Spend(int pulp, int bloom) { Pulp = Math.Max(0, Pulp - pulp); Bloom = Math.Max(0, Bloom - bloom); }
+        public void Refund(int pulp, int bloom) { Pulp += pulp; Bloom += bloom; }
+
         public void Clear()
         {
             Items.Clear();
