@@ -43,6 +43,21 @@ namespace TunnelCrew.Presentation
 
         public TunnelSim Sim { get; private set; }
 
+        /// <summary>런이 진행 중인가. 메뉴·정산 화면(MetaScreens)이 떠 있으면 false — Sim 도 HUD 도 멈춘다.</summary>
+        public bool RunActive { get; private set; } = true;
+        /// <summary>Esc 일시정지 (계획 §2.3 신설).</summary>
+        public bool Paused { get; private set; }
+        /// <summary>결과 화면에서 Enter — MetaScreens 가 정산으로 넘긴다. 구독자가 없으면 같은 직업으로 재시작.</summary>
+        public event Action ResultDismissed;
+        public event Action PauseMenuRequested;
+
+        /// <summary>메뉴에서 출격. 층을 만들고 HUD 를 켠다.</summary>
+        public void LaunchRun(RoleId role) { SwitchRole(role); RunActive = true; Paused = false; }
+        /// <summary>런을 내려놓고 메뉴로 — Sim 은 남겨 두고(배경으로 보인다) 틱과 HUD 만 멈춘다.</summary>
+        public void SuspendRun() { RunActive = false; Paused = false; Time.timeScale = 1f; }
+        public void SetPaused(bool on) { Paused = on; }
+        public RoleId CurrentRole => _role;
+
         CameraRig _rig;
         Camera _cam;
         WorldRenderer _worldRenderer;
@@ -81,6 +96,8 @@ namespace TunnelCrew.Presentation
                     "`Tunnel Crew/M1 · 아트 임포트 설정 + 타일셋 생성` 을 먼저 실행할 것.");
 
             Application.runInBackground = true;
+            // 런 바깥 화면(메뉴·정산·일시정지). 씬을 손으로 꾸미지 않는 원칙대로 코드에서 붙인다.
+            if (GetComponent<MetaScreens>() == null) gameObject.AddComponent<MetaScreens>();
             _bossIcon = Resources.Load<Texture2D>("UI/boss-icon");
             foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
             {
@@ -548,7 +565,14 @@ namespace TunnelCrew.Presentation
         // ───────────────────────────── 루프
         void Update()
         {
-            if (Sim?.World == null) return;
+            if (Sim?.World == null || !RunActive) return;
+            var kbEsc = Keyboard.current;
+            if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
+            {
+                Paused = !Paused;
+                if (Paused) PauseMenuRequested?.Invoke();
+            }
+            if (Paused) return;
 
             var kb = Keyboard.current;
             if (kb != null && Sim.Traits.HasOffer)
@@ -578,7 +602,10 @@ namespace TunnelCrew.Presentation
                 if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) { Sim.Descend(); RebindWorld(); Prespawn(); Log(Planet.DepthLabel(Sim.Depth) + " 진입"); }
                 else if (kb.escapeKey.wasPressedThisFrame && Sim.LastBossTier != BossTier.Guardian) { Sim.ReturnFromRest(); Log("이 층에 남아 탈출한다"); }
             }
-            if (Sim.Phase == GamePhase.Result && kb != null && kb.enterKey.wasPressedThisFrame) SwitchRole(_role);
+            if (Sim.Phase == GamePhase.Result && kb != null && kb.enterKey.wasPressedThisFrame)
+            {
+                if (ResultDismissed != null) ResultDismissed.Invoke(); else SwitchRole(_role);
+            }
 
             Sim.Advance(Time.deltaTime, ReadInput());
             _playerView.Render(Sim.Player, Time.deltaTime);
@@ -671,7 +698,7 @@ namespace TunnelCrew.Presentation
 
         void OnGUI()
         {
-            if (!_showHud || Sim?.World == null) return;
+            if (!_showHud || Sim?.World == null || !RunActive) return;
             // 1920×1080 기준 좌표계 — 창 크기가 달라도 비율이 유지된다. R()/Sz() 가 k 를 곱한다.
             _k = Screen.height / 1080f;
             EnsureStyles();
@@ -832,7 +859,7 @@ namespace TunnelCrew.Presentation
                         (Sim.RunEscaped ? $"확보 코어 <b>{st.Returned}</b>" : $"<color=#ff8da8>소실 코어 {st.Lost}</color>" + (st.Kept > 0 ? $"   <color=#7febd0>회수 보존 {st.Kept}</color>" : "")), mid);
                     GUILayout.Label($"기지 보관 코어 <b>{meta.bankedCores}</b>   최고 심층 {meta.bestDepth}   누적 보스 {meta.totalBosses}   생환 {meta.escapes}", mid);
                     GUILayout.Space(8);
-                    GUILayout.Label("<b>Enter</b> 같은 직업으로 다시", mid);
+                    GUILayout.Label(ResultDismissed != null ? "<b>Enter</b> 귀환 정산으로" : "<b>Enter</b> 같은 직업으로 다시", mid);
                 }
                 GUILayout.EndArea();
             }
