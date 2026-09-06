@@ -316,6 +316,26 @@ Tilemap 이 이미 청크 단위로 컬링하고 CPU 비용이 무시할 수준�
 - 무한 HUD 전체(장악도 레일·위협·보스 HP·XP 바·탄창·역할별 빌드 텍스트·스킬 슬롯·키가이드)
 - **완료 기준**: 1층 진입 → 장악도 → 수호자 → 하강 → 2층 → 탈출 성공/사망 → 결과 화면까지 한 사이클 (기획서 §19.3 스모크 기준)
 
+**진행 상황 (2026-09-06)** — 자율 진행 중
+
+| 항목 | 상태 |
+|---|---|
+| `Planet` / `RunState` — 지층 3 + 이상지대 배율, 장악도, 위협·캡·간격·버스트, spawnDebt | 완료. 수치 원본과 일치 (테스트) |
+| `XpGate` — 단일 관문, 역할 가중치 표, 층당 트리클 상한 60, xpNeed = 30+10L+2.4L², 보스 중 적립만 | 완료 |
+| `BossSystem` — 3티어(수호자/포식자/변종), 장갑 링·페이즈(66%·33%), 소환, 돌진 FSM(예고→돌진, 밀치기·기절), 예고탄 2종(산발·연속, 기 모으기), 벽 기믹 3종(융기·파동·감옥) + 협곡 돌진, 벽 뭉개기(장악도 미집계), 격파 보상·회복 | 완료 |
+| 천장 붕괴 연출(dashCeiling) | 이월 — 순수 연출. M7 |
+| `EscapeSystem` — X 지정(6칸) → 도착 대기(20+7·심층, ≤60) → 착륙 파괴 1.45칸 → 탑승 1.25칸·1.2초, 보스(수호자 제외) 처치 시 자동 요청 | 완료 |
+| 런 흐름 — `GamePhase` Playing/Rest/Result, 보스 격파 → 2.6초 → 휴식(전설 3택 필수) → 하강 / 귀환, 다운 → 결과, 탑승 → 결과 | 완료 |
+| `TraitDeck` — 카드 75장 표(역할 32·공용 27·해금 16) + 전설 6, 등급 가중치(목표 레벨 대비), 피티, 리롤(지층 +1, 상한 2), 풀 소진 예비 보급 | 완료. **원본 `a()` 를 한 줄씩 옮긴 표** |
+| 직업 튠 값 → `PlayerBuild.Roles`(런 단위) 이동 | 완료. 특성이 층을 넘어 유지되도록 `RoleSystem` 이 매 층 새로 만들어져도 값이 산다 |
+| 공용 특성 **효과 미이식** (풀에서 제외, `NotPorted`) | u_aux · u_afterimage · u_satellite · u_vortex · u_army · u_planet_breaker · u_grand_collapse · u_storm — 자동 드릴/광역 파쇄 **서브시스템 8종**. M4 후속 |
+| 공용 특성 값은 있으나 **소비처 미연결** | DrillWidth/Penetration/FocusDrill(MiningSystem) · BreakShock/ShardBurst/BreakShield/ChainCollapse/AutoDigEvery(파괴 훅) · LootMagnet/Pickup(LootSystem) · DrillMoveMul(Movement) · HeatBuildMul/EndlessOverdrive(과열). M4 후속 |
+| 시네마틱(등장·사망 레터박스, 카메라 보간, 이름 플레이트) | 이월 — M7 연출 |
+| 무한 HUD 전체 | IMGUI 임시 (장악도·위협·보스 HP·XP·탄창·스킬·탈출·카드·휴식·결과). UGUI 배치는 M5 |
+| 테스트 | RunStateTests 10 · BossTests 9 · EscapeTests 8 · TraitTests 9 |
+
+**M4 남은 것 (순서)**: ① 공용 특성 소비처 연결 ② 미이식 서브시스템 8종 ③ 한 사이클 스모크(플레이 모드 캡처) → 사장님 확인.
+
 ### M5 — 메타: 정산·영구 노드·유물·저장·메뉴
 - `SaveData`(`tc_infinite_meta_v1` 스키마) JSON → `persistentDataPath`, 설정 저장
 - 정산 3뷰(요약·성장 지도·유물 보관고), 영구 노드 80개 지도(팬·줌·발견 연출·랭크·캡 클램프·구매 실패 롤백)

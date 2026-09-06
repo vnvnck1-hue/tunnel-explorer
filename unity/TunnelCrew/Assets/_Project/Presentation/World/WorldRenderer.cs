@@ -30,6 +30,7 @@ namespace TunnelCrew.Presentation
             _world = world;
             _world.TileBroken += e => RefreshCell(e.Col, e.Row);
             _world.TileDamaged += e => RefreshCell(e.Col, e.Row);
+            _world.TileChanged += k => RefreshCell(k % _world.Cols, k / _world.Cols);
             RebuildAll();
         }
 

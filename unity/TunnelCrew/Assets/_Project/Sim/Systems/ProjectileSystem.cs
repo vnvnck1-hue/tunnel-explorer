@@ -143,7 +143,7 @@ namespace TunnelCrew.Sim
                     if (Vec2.Distance(p.Position, e.Position) >= e.Radius + SimTuning.PxCells(6.0)) continue;
 
                     double dmg = SimTuning.EnemyGunDamage * gunMul * p.Power * (p.Laser ? 1.65 : 1.0);
-                    _enemies.HurtEnemy(e, dmg, n, player.Position);
+                    _enemies.HurtEnemy(e, dmg, n, player.Position, byTurret: p.VisualId == "support");
 
                     if (p.Pierce > 0) { p.Pierce--; p.Position += n * SimTuning.PxCells(12.0); }
                     else hit = true;

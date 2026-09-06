@@ -78,17 +78,9 @@ namespace TunnelCrew.Sim
         public double BreakerCooldown;     // 거너 LMB
         public double GrappleFxTime;
 
-        // 원본 INF 기본값
-        public int EngineerMaxNodes = 2, EngineerMaxTurrets = 2;
-        public double EngineerNodeLife = 50, EngineerNodeRadius = 4.0;
-        public double EngineerTurretLife = 45, EngineerTurretRange = 5.5, EngineerTurretInterval = 0.34, EngineerTurretPower = 0.72;
-        public int EngineerTurretMag = 18;
-        public bool EngineerAutonomous = false;
-        public double BreakerFuse = 2.0, BreakerMaxCd = 12.0;
-        public int BreakerRadius = 1;
-        public double ScoutGrappleRange = 5.0;
-        public double ScoutFlareRadMul = 1.0, ScoutFlareLifeMul = 1.0;
-        public int ScoutVisionBonus = 0;
+        readonly PlayerBuild _build;
+        /// <summary>직업 튠 값 — 런 단위(PlayerBuild.Roles). 특성 카드가 바꾼다.</summary>
+        RoleTuning T => _build.Roles;
 
         public event Action<SkillEvent> SkillUsed;
         public event Action<BreakerExplodedEvent> BreakerExploded;
@@ -96,8 +88,9 @@ namespace TunnelCrew.Sim
 
         double _time;
 
-        public RoleSystem(WorldGrid world, EnemySystem enemies, ProjectileSystem projectiles)
+        public RoleSystem(WorldGrid world, EnemySystem enemies, ProjectileSystem projectiles, PlayerBuild build)
         {
+            _build = build;
             _world = world; _enemies = enemies; _projectiles = projectiles;
         }
 
@@ -123,21 +116,21 @@ namespace TunnelCrew.Sim
                 case RoleId.Scout:
                 {
                     var pos = p.Position + Vec2.FromAngle(p.Aim) * 2.6;
-                    double rad = Math.Max(SimTuning.PxCells(94.0) * 1.45, 4.2) * ScoutFlareRadMul;
+                    double rad = Math.Max(SimTuning.PxCells(94.0) * 1.45, 4.2) * T.ScoutFlareRadMul;
                     Flares.Add(new Flare
                     {
-                        Position = pos, Ttl = 22 * ScoutFlareLifeMul, MaxTtl = 22 * ScoutFlareLifeMul,
-                        LightRadius = rad, VisionRange = 5 + ScoutVisionBonus,
+                        Position = pos, Ttl = 22 * T.ScoutFlareLifeMul, MaxTtl = 22 * T.ScoutFlareLifeMul,
+                        LightRadius = rad, VisionRange = 5 + (int)Math.Round(T.ScoutVisionBonus),
                     });
                     break;
                 }
                 case RoleId.Engineer:
                 {
-                    if (Nodes.Count >= EngineerMaxNodes) Nodes.RemoveAt(0);
+                    if (Nodes.Count >= T.EngineerMaxNodes) Nodes.RemoveAt(0);
                     var pos = PlaceInFront(p, 1.6);
-                    var node = new PowerNode { Position = pos, Life = EngineerNodeLife, MaxLife = EngineerNodeLife, Radius = EngineerNodeRadius };
+                    var node = new PowerNode { Position = pos, Life = T.EngineerNodeLife, MaxLife = T.EngineerNodeLife, Radius = T.EngineerNodeRadius };
                     Nodes.Add(node);
-                    Flares.Add(new Flare { Position = pos, Ttl = EngineerNodeLife, MaxTtl = EngineerNodeLife, LightRadius = 2.15, VisionRange = 3, IsEngineerNode = true, Node = node });
+                    Flares.Add(new Flare { Position = pos, Ttl = T.EngineerNodeLife, MaxTtl = T.EngineerNodeLife, LightRadius = 2.15, VisionRange = 3, IsEngineerNode = true, Node = node });
                     break;
                 }
                 case RoleId.Gunner:
@@ -145,7 +138,7 @@ namespace TunnelCrew.Sim
                     p.IFrames = Math.Max(p.IFrames, 2.8);
                     break;
             }
-            QCooldown = QCooldownFor(b.Role);
+            QCooldown = QCooldownFor(b.Role) * (b.Role == RoleId.Driller ? T.DrillerQCdMul : 1.0);
             SkillUsed?.Invoke(new SkillEvent { Role = b.Role, IsQ = true, Position = p.Position, Angle = p.Aim });
         }
 
@@ -160,16 +153,16 @@ namespace TunnelCrew.Sim
                     break;
                 case RoleId.Scout:
                     if (!Grapple(p)) return;
-                    ECooldown = ECooldownFor(b.Role);
+                    ECooldown = ECooldownFor(b.Role) * T.ScoutGrappleCdMul;
                     break;
                 case RoleId.Engineer:
                 {
-                    if (Turrets.Count >= EngineerMaxTurrets) Turrets.RemoveAt(0);
+                    if (Turrets.Count >= T.EngineerMaxTurrets) Turrets.RemoveAt(0);
                     var pos = PlaceInFront(p, 1.6);
                     Turrets.Add(new Turret
                     {
-                        Position = pos, Life = EngineerTurretLife, MaxLife = EngineerTurretLife,
-                        Cooldown = 0.18, Ammo = EngineerTurretMag, Mag = EngineerTurretMag, Aim = p.Aim,
+                        Position = pos, Life = T.EngineerTurretLife, MaxLife = T.EngineerTurretLife,
+                        Cooldown = 0.18, Ammo = T.EngineerTurretMag, Mag = T.EngineerTurretMag, Aim = p.Aim,
                     });
                     ECooldown = ECooldownFor(b.Role);
                     break;
@@ -194,9 +187,9 @@ namespace TunnelCrew.Sim
                 {
                     Start = p.Position + dir * (SimTuning.PlayerRadius * 0.8),
                     Target = WorldGrid.CellCenter(c, r), Col = c, Row = r,
-                    Travel = 0.18, TravelMax = 0.18, Fuse = BreakerFuse, Angle = p.Aim,
+                    Travel = 0.18, TravelMax = 0.18, Fuse = T.BreakerFuse, Angle = p.Aim,
                 });
-                BreakerCooldown = BreakerMaxCd;
+                BreakerCooldown = T.BreakerMaxCd;
                 return true;
             }
             return false;
@@ -218,7 +211,7 @@ namespace TunnelCrew.Sim
         /// <summary>원본 infExplodeBreaker() — 정사각 반경, 중심 1.12 · 직교 0.72 · 대각 0.55 감쇠.</summary>
         void Explode(BreakerCharge ch, bool early, double gunMul = 1.0)
         {
-            int rad = Math.Max(1, BreakerRadius);
+            int rad = Math.Max(1, T.BreakerRadius);
             var dir = Vec2.FromAngle(ch.Angle);
             for (int dr = -rad; dr <= rad; dr++)
                 for (int dc = -rad; dc <= rad; dc++)
@@ -232,7 +225,7 @@ namespace TunnelCrew.Sim
                     double mul = baseMul * Math.Max(0.42, 1 - (ring - 1) * 0.28);
                     double full = _world.MaxHp(t);
                     var hit = new Vec2(dc != 0 ? dc : dir.X, dr != 0 ? dr : dir.Y);
-                    _world.Damage(c, r, full * mul, hit);
+                    _world.Damage(c, r, full * mul * T.BreakerDamageMul * (early ? T.BreakerEarlyMul : 1.0), hit);
                 }
 
             double enemyRad = 1.6 + (rad - 1) * 0.65;
@@ -243,7 +236,7 @@ namespace TunnelCrew.Sim
                 double dist = d.Length;
                 if (dist >= enemyRad) continue;
                 double fall = 1 - dist / enemyRad;
-                _enemies.HurtEnemy(e, SimTuning.EnemyGunDamage * (0.28 + 0.34 * fall) * gunMul, d / Math.Max(1e-6, dist), ch.Target);
+                _enemies.HurtEnemy(e, SimTuning.EnemyGunDamage * (0.28 + 0.34 * fall) * gunMul * T.BreakerEnemyMul * (early ? T.BreakerEarlyMul : 1.0), d / Math.Max(1e-6, dist), ch.Target);
             }
             BreakerExploded?.Invoke(new BreakerExplodedEvent { Position = ch.Target, Radius = rad, Early = early });
         }
@@ -253,7 +246,7 @@ namespace TunnelCrew.Sim
         {
             if (p.DashActive) return false;
             var dir = Vec2.FromAngle(p.Aim);
-            double max = ScoutGrappleRange;
+            double max = T.ScoutGrappleRange;
             Vec2 best = p.Position;
             for (double d = 0.24; d <= max; d += 0.16)
             {
@@ -281,9 +274,9 @@ namespace TunnelCrew.Sim
             int k = _world.Index(c, r);
 
             double depthScale = 1 + Math.Max(0, depth - 1) * 0.22;
-            double need = (t == TileType.Core ? 22.0 : 14.0) * depthScale;
+            double need = (t == TileType.Core ? 22.0 * T.DrillerCoreNeedMul : 14.0) * depthScale;
             double warm = 0.35 + 0.65 * MiningSystem.WarmMul(p);
-            double gain = Math.Max(0, dt) * warm * b.DrillMul * b.RoleDigMul * (boost ? 1.75 : 1) / need;
+            double gain = Math.Max(0, dt) * warm * b.DrillMul * b.RoleDigMul * T.DrillerFoundationMul * (boost ? 1.75 : 1) / need;
 
             if (!Cracks.TryGetValue(k, out var cs)) Cracks[k] = cs = new CrackState { Type = t };
             cs.Progress = Math.Min(1, cs.Progress + gain);
@@ -302,6 +295,17 @@ namespace TunnelCrew.Sim
             int k = _world.Index(c, r);
             _world.ForceClear(c, r);
             Cracks.Remove(k);
+            // 지진 공진축 — 돌파 시 주변 일반 벽에 파쇄 충격파 (원본 drillerShockRadius)
+            int shock = T.DrillerShockRadius;
+            if (shock > 0)
+                for (int dr = -shock; dr <= shock; dr++) for (int dc = -shock; dc <= shock; dc++)
+                {
+                    if (dc == 0 && dr == 0) continue;
+                    int cc = c + dc, rr = r + dr;
+                    if (!_world.InBounds(cc, rr) || _world.IsBedrock(cc, rr) || !_world.IsSolid(cc, rr)) continue;
+                    double fall = 1.0 - (Math.Max(Math.Abs(dc), Math.Abs(dr)) - 1) * 0.35;
+                    _world.Damage(cc, rr, _world.MaxHp(_world.At(cc, rr)) * 0.6 * Math.Max(0.2, fall), new Vec2(dc, dr).Normalized);
+                }
             FoundationBroken?.Invoke(new FoundationBrokenEvent { Col = c, Row = r, Type = t });
         }
 
@@ -328,7 +332,7 @@ namespace TunnelCrew.Sim
             if (BreachTime <= 0) return;
             BreachTime -= dt;
             var dir = Vec2.FromAngle(p.Aim);
-            double range = 3.0, step = 0.5;
+            double range = T.DrillerBreachRange, step = 0.5;
             var seen = new HashSet<int>();
             for (double len = step; len <= range + 0.1; len += step)
             {
@@ -338,14 +342,27 @@ namespace TunnelCrew.Sim
                 int k = _world.Index(c, r);
                 if (!seen.Add(k)) continue;
                 var t = _world.At(c, r);
-                if (TileTypes.IsBedrock(t)) ApplyDrillerPressure(p, b, c, r, dt * 2.2, depth, boost: true);
+                if (TileTypes.IsBedrock(t)) ApplyDrillerPressure(p, b, c, r, dt * 2.2 * T.DrillerQMul, depth, boost: true);
                 else _world.Damage(c, r, SimTuning.DrillDps * SimTuning.DrillDamageMul * 3.0 * dt, dir);
+                if (T.DrillerWideQ)
+                {
+                    // 광역 천공 — 좌우 1칸에도 55% (원본 drillerTraitWide)
+                    var side = new Vec2(-dir.Y, dir.X);
+                    foreach (int sg in new[] { -1, 1 })
+                    {
+                        var (sc, sr) = WorldGrid.ToCell(pt + side * sg);
+                        if (!_world.InBounds(sc, sr) || !_world.IsSolid(sc, sr) || !seen.Add(_world.Index(sc, sr))) continue;
+                        var st = _world.At(sc, sr);
+                        if (TileTypes.IsBedrock(st)) ApplyDrillerPressure(p, b, sc, sr, dt * 2.2 * T.DrillerQMul * .55, depth, boost: true);
+                        else _world.Damage(sc, sr, SimTuning.DrillDps * SimTuning.DrillDamageMul * 3.0 * dt * .55, dir);
+                    }
+                }
             }
         }
 
         void TickCracks(double dt)
         {
-            const double hold = 2.5, decay = 0.012;
+            double hold = T.DrillerCrackHold, decay = T.DrillerCrackDecay;
             var dead = new List<int>();
             foreach (var kv in Cracks)
             {
@@ -414,13 +431,13 @@ namespace TunnelCrew.Sim
                     if (d <= n.Radius && d < bd) { bd = d; source = n; }
                 }
                 bool playerPower = Vec2.Distance(p.Position, t.Position) <= 2.25;
-                bool autonomous = source == null && !playerPower && EngineerAutonomous;
+                bool autonomous = source == null && !playerPower && T.EngineerAutonomous;
                 t.NodePowered = source != null;
                 t.PlayerPowered = source == null && playerPower;
                 t.Powered = t.NodePowered || playerPower || autonomous;
                 if (!t.Powered || t.Cooldown > 0 || t.Ammo <= 0) continue;
 
-                EnemyState best = null; double bestD = EngineerTurretRange;
+                EnemyState best = null; double bestD = T.EngineerTurretRange;
                 foreach (var e in _enemies.Enemies)
                 {
                     if (!e.Alive) continue;
@@ -432,13 +449,13 @@ namespace TunnelCrew.Sim
                 var dir = (best.Position - t.Position).Normalized;
                 t.Aim = dir.Angle;
                 t.Ammo--;
-                t.Cooldown = EngineerTurretInterval;
+                t.Cooldown = T.EngineerTurretInterval;
                 _projectiles.Projectiles.Add(new Projectile
                 {
                     Position = t.Position + dir * 0.24,
                     Velocity = dir * SimTuning.TeCells(285),
                     Life = 1.05,
-                    Power = EngineerTurretPower * (autonomous ? 0.5 : 1),
+                    Power = T.EngineerTurretPower * (autonomous ? 0.5 : 1),
                     VisualId = "support",
                 });
             }

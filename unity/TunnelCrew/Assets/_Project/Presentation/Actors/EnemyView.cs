@@ -29,6 +29,9 @@ namespace TunnelCrew.Presentation
         static readonly Color ShadowColor = new Color(0, 0, 0, 0.32f);
         Sprite _dot;
 
+        /// <summary>보스 시선 방향(+1 오른쪽). RunBootstrap 이 BossSystem 에서 연결한다.</summary>
+        public System.Func<EnemyState, int> BossFacing;
+
         public void Bind(MonsterSheetAsset sheets)
         {
             _sheets = sheets;
@@ -75,9 +78,11 @@ namespace TunnelCrew.Presentation
                 it.Body.sprite = frames[Mathf.Clamp(idx, 0, frames.Length - 1)];
 
                 // 원본 크기 size = e.r*3.15 (apex 3.55) — 이 값이 스프라이트의 전체 폭·높이다 (반지름 아님)
-                float targetH = r * (e.IsApex ? 3.55f : 3.15f);
+                float targetH = r * (e.IsBoss ? 3.3f : e.IsApex ? 3.55f : 3.15f);
                 float spriteH = it.Body.sprite.bounds.size.y;
                 float s = spriteH > 0 ? targetH / spriteH : 1f;
+                // 보스만 좌우를 본다 (원본 e.facing) — 잡몹은 단일 방향
+                it.Body.flipX = e.IsBoss && BossFacing != null && BossFacing(e) > 0;
                 it.Body.transform.localScale = new Vector3(s, s, 1f);
             }
             else
@@ -88,7 +93,7 @@ namespace TunnelCrew.Presentation
             }
 
             // 피격 플래시 + 상태 색
-            Color tint = e.IsApex ? new Color(1f, 0.72f, 0.82f) : Color.white;
+            Color tint = e.IsBoss ? new Color(1f, 0.62f, 0.68f) : e.IsApex ? new Color(1f, 0.72f, 0.82f) : Color.white;
             if (e.FrozenTime > 0) tint = new Color(0.6f, 0.85f, 1f);
             if (e.Hurt > 0) tint = Color.Lerp(tint, Color.white, Mathf.Clamp01((float)e.Hurt / 0.18f) * 0.85f);
             it.Body.color = tint;

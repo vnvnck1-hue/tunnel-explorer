@@ -165,7 +165,40 @@ namespace TunnelCrew.Sim
             TileBroken?.Invoke(new TileBrokenEvent { Cell = k, Col = c, Row = r, Type = t, HadBuriedRelic = hadRelic, OpenedExit = k == ExitCell });
         }
 
+        /// <summary>
+        /// 타일을 놓는다 — 보스 장갑·소환 벽. 파괴 이벤트가 아니라 <see cref="TileChanged"/> 로 알린다.
+        /// hp 를 주면 그 체력으로 시작한다 (보스 벽 5배 경도).
+        /// </summary>
+        public void SetTile(int c, int r, TileType t, double? hp = null)
+        {
+            if (!InBounds(c, r)) return;
+            int k = Index(c, r);
+            _tiles[k] = t;
+            _dec[k] = 0;
+            if (hp.HasValue) _hp[k] = hp.Value; else _hp.Remove(k);
+            Version++;
+            TileChanged?.Invoke(k);
+        }
+
+        /// <summary>
+        /// 규칙·집계 없이 칸을 비운다 — 보스가 몸으로 벽을 뭉개는 경우. 장악도·XP 에 잡히지 않는다
+        /// (원본 bossCrushWalls 도 infOnBlockBroken 을 부르지 않았다).
+        /// </summary>
+        public void ClearSilent(int c, int r)
+        {
+            if (!InBounds(c, r)) return;
+            int k = Index(c, r);
+            if (_tiles[k] == TileType.Empty) return;
+            _tiles[k] = TileType.Empty;
+            _hp.Remove(k);
+            _dec[k] = 0;
+            Version++;
+            TileChanged?.Invoke(k);
+        }
+
         public event Action<TileBrokenEvent> TileBroken;
         public event Action<TileDamagedEvent> TileDamaged;
+        /// <summary>파괴·손상이 아닌 경로로 타일이 바뀌었다 (셀 인덱스). 렌더·그림자가 구독한다.</summary>
+        public event Action<int> TileChanged;
     }
 }

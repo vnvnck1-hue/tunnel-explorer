@@ -19,6 +19,8 @@ namespace TunnelCrew.Sim
         public Vec2 HitDir;
         public bool Killed;
         public bool WasCritical;
+        /// <summary>센트리 탄이 낸 피해인가 — XP 정산이 지원 채널로 간다.</summary>
+        public bool ByTurret;
     }
 
     public struct EnemySpawnedEvent { public EnemyState Enemy; }
@@ -47,6 +49,31 @@ namespace TunnelCrew.Sim
         public double SpawnInterval { get; set; } = SimTuning.EnemySpawnInterval;
         /// <summary>한 번에 나오는 수.</summary>
         public int SpawnBurst { get; set; } = 1;
+        /// <summary>스폰 직전에 추가 마릿수를 돌려주는 훅 — RunState.TakeSpawnDebt (원본 6958행).</summary>
+        public Func<int> ExtraSpawnCount = () => 0;
+
+        /// <summary>보스 이동 훅 — BossSystem 이 등록한다. (개체, 플레이어, dt, 기준속도, 시간배율)</summary>
+        public Action<EnemyState, PlayerState, double, double, double> BossMove;
+        /// <summary>보스 이동 직후 벽 뭉개기 — BossSystem.CrushWalls.</summary>
+        public Action BossCrush;
+
+        /// <summary>외부(보스 시스템)가 만든 개체를 목록에 넣는다. 캡을 무시한다.</summary>
+        public void AddExternal(EnemyState e) { Enemies.Add(e); Spawned?.Invoke(new EnemySpawnedEvent { Enemy = e }); }
+
+        /// <summary>경감 없이 직접 피해 — 보스 붕괴탄 (원본 infBossProjectileHit 은 G.php 를 직접 깎았다).</summary>
+        public void DamagePlayerDirect(PlayerState player, double dmg, Vec2 hitDir)
+        {
+            if (player.IFrames > 0 || player.Downed) return;
+            dmg *= IncomingDamageMul();
+            player.Hp -= dmg;
+            player.IFrames = SimTuning.PlayerIFrame;
+            bool downed = player.Hp <= 0;
+            if (downed) { player.Hp = 0; player.Downed = true; }
+            PlayerHurt?.Invoke(new PlayerHurtEvent { Damage = dmg, HitDir = hitDir, Downed = downed });
+        }
+
+        /// <summary>스폰 쿨 상한 — 블록을 부수면 다음 스폰이 당겨진다 (원본 G.enemyCd=min(...)).</summary>
+        public void ClampSpawnCooldown(double max) { if (_spawnTimer > max) _spawnTimer = max; }
 
         public event Action<EnemySpawnedEvent> Spawned;
         public event Action<EnemyAlertEvent> Alerted;
@@ -202,6 +229,12 @@ namespace TunnelCrew.Sim
                     e.Velocity = Vec2.Zero;
                     e.Attack = AttackPhase.None;
                 }
+                else if (e.IsBoss)
+                {
+                    // 보스는 일반 AI 를 타지 않는다 — BossSystem 이 이동·돌진을 정한다
+                    if (e.StunTime > 0) { e.StunTime -= dt; e.Velocity = Vec2.Zero; }
+                    else BossMove?.Invoke(e, player, dt, baseSpeed, timeSpeed);
+                }
                 else if (e.IsJumping)
                 {
                     e.Velocity = e.JumpVelocity;
@@ -217,7 +250,13 @@ namespace TunnelCrew.Sim
                 if (e.SlowTime > 0) e.Velocity *= e.SlowMul;
 
                 e.Position += (e.Velocity + e.Knock) * dt;
-                CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
+                if (e.IsBoss)
+                {
+                    // 보스는 벽에 막히지 않고 뭉개며 지나간다 (원본 7001행). 맵 가장자리에서만 멈춘다.
+                    e.Position = new Vec2(JsMath.Clamp(e.Position.X, 2, _world.Cols - 2), JsMath.Clamp(e.Position.Y, 2, _world.Rows - 2));
+                    BossCrush?.Invoke();
+                }
+                else CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
 
                 e.Velocity *= 0.86;
                 double kbDrag = Math.Exp(-SimTuning.KnockDrag * dt);
@@ -237,7 +276,8 @@ namespace TunnelCrew.Sim
             _spawnTimer -= dt;
             if (_spawnTimer > 0) return;
             _spawnTimer = SpawnInterval;
-            for (int i = 0; i < SpawnBurst; i++) Spawn(around);
+            int count = SpawnBurst + ExtraSpawnCount();
+            for (int i = 0; i < count; i++) Spawn(around);
         }
 
         void TryStartJump(EnemyState e, Vec2 delta, double dist, double dt)
@@ -317,7 +357,7 @@ namespace TunnelCrew.Sim
         /// <summary>
         /// 원본 <c>hurtEnemy()</c> (6294~6334). 넉백 공식과 즉시 각성 규칙을 그대로 옮겼다.
         /// </summary>
-        public void HurtEnemy(EnemyState e, double damage, Vec2 hitDir, Vec2 sourcePosition)
+        public void HurtEnemy(EnemyState e, double damage, Vec2 hitDir, Vec2 sourcePosition, bool byTurret = false)
         {
             if (!e.Alive) return;
 
@@ -350,7 +390,7 @@ namespace TunnelCrew.Sim
             bool killed = e.Hp <= 0;
             EnemyHurt?.Invoke(new EnemyHurtEvent
             {
-                Enemy = e, Damage = damage, HitDir = hitDir, Killed = killed,
+                Enemy = e, Damage = damage, HitDir = hitDir, Killed = killed, ByTurret = byTurret,
             });
         }
 

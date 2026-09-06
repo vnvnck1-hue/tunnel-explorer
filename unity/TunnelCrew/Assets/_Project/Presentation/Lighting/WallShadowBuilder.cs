@@ -94,6 +94,8 @@ namespace TunnelCrew.Presentation
 
             for (int i = 0; i < _chunks.Length; i++) RebuildChunk(i);
             _world.TileBroken += OnTileBroken;
+            // 보스 장갑·소환 벽·뭉개기 — 파괴 이벤트가 아니어도 그림자는 다시 만든다
+            _world.TileChanged += k => OnTileBroken(new TileBrokenEvent { Col = k % _world.Cols, Row = k / _world.Cols });
         }
 
         void OnTileBroken(TileBrokenEvent e)

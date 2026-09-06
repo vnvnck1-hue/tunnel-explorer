@@ -22,11 +22,15 @@ namespace TunnelCrew.Sim
             if (digMul <= 0) { p.IsDigging = false; p.DrillSpin = 0; return; }
             p.IsDigging = false;
 
-            bool wantDrill = input.DrillHeld && p.CanMove && p.CanDrill;
-            UpdateWarmAndHeat(p, wantDrill, dt);
+            // 무정지 과급 — 과열 잠금 중에도 멈추지 않는다 (출력 50%, HP 소모는 TunnelSim)
+            bool endless = build != null && build.EndlessOverdrive;
+            bool wantDrill = input.DrillHeld && p.CanMove && (p.CanDrill || endless);
+            UpdateWarmAndHeat(p, wantDrill, dt, build != null ? build.HeatBuildMul : 1.0);
+            if (endless && p.DrillHeatLock > 0) digMul *= 0.5;
 
             if (!wantDrill)
             {
+                p.FocusCell = -1; p.FocusTime = 0;
                 p.DrillDamageAccum = 0;
                 p.DrillTimeAccum = 0;
                 p.DrillSpin = 0;
@@ -64,7 +68,33 @@ namespace TunnelCrew.Sim
                 Vec2 normal = delta / dd;
 
                 double dv = SimTuning.DrillDps * SimTuning.DrillDamageMul * digMul * WarmMul(p) * dt;
+                // 압쇄 비트 — 같은 벽을 계속 깎으면 최대 +20% (원본 12517행)
+                if (build != null && build.FocusDrill)
+                {
+                    if (p.FocusCell != bestCell) { p.FocusCell = bestCell; p.FocusTime = 0; }
+                    else p.FocusTime = Math.Min(2.5, p.FocusTime + dt);
+                    dv *= 1 + Math.Min(.2, p.FocusTime * .08);
+                }
                 world.Damage(c, r, dv, normal);
+
+                // 굴착 확장 — 좌우 폭(대형 비트 1 · 삼중 2) 과 관통(뒤쪽 벽) (원본 12524행 miningShape)
+                if (build != null && (build.DrillWidth > 0 || build.DrillPenetration > 0))
+                {
+                    int width = build.DrillWidth;
+                    if (endless) width += (int)Math.Floor(p.DrillHeat * 1.01);
+                    var side = new Vec2(-sa, ca);
+                    for (int w = 1; w <= width; w++)
+                        foreach (int sg in new[] { -1, 1 })
+                        {
+                            var (sc, sr) = WorldGrid.ToCell(bestCenter + side * (w * sg));
+                            if (world.IsSolid(sc, sr) && !world.IsBedrock(sc, sr)) world.Damage(sc, sr, dv * (w == 1 ? .8 : .6), normal);
+                        }
+                    for (int dpen = 1; dpen <= build.DrillPenetration; dpen++)
+                    {
+                        var (pc, pr) = WorldGrid.ToCell(bestCenter + new Vec2(ca, sa) * dpen);
+                        if (world.IsSolid(pc, pr) && !world.IsBedrock(pc, pr)) world.Damage(pc, pr, dv * Math.Max(.35, 1 - dpen * .18), normal);
+                    }
+                }
 
                 p.DrillDamageAccum += dv;
                 p.DrillTimeAccum += dt;
@@ -159,7 +189,7 @@ namespace TunnelCrew.Sim
         }
 
         // ───────────────────────────── 예열 · 과열
-        static void UpdateWarmAndHeat(PlayerState p, bool drilling, double dt)
+        static void UpdateWarmAndHeat(PlayerState p, bool drilling, double dt, double heatBuildMul = 1.0)
         {
             if (SimTuning.DrillWarmOn)
             {
@@ -178,7 +208,7 @@ namespace TunnelCrew.Sim
 
             if (drilling)
             {
-                p.DrillHeat += dt * SimTuning.DrillHeatBuild;
+                p.DrillHeat += dt * SimTuning.DrillHeatBuild * heatBuildMul;
                 if (p.DrillHeat >= 1.0)
                 {
                     p.DrillHeat = 1.0;

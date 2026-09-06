@@ -216,9 +216,9 @@ namespace TunnelCrew.Tests
                 var input = Aim(sim); input.SkillQPressed = true; input.SkillEPressed = true;
                 sim.Tick(SimTuning.FixedDeltaTime, input);
             }
-            Assert.AreEqual(sim.Roles.EngineerMaxNodes, sim.Roles.Nodes.Count);
-            Assert.AreEqual(sim.Roles.EngineerMaxTurrets, sim.Roles.Turrets.Count);
-            Assert.AreEqual(sim.Roles.EngineerMaxNodes, sim.Roles.Flares.Count(f => f.IsEngineerNode), "노드마다 빛 하나");
+            Assert.AreEqual(sim.Build.Roles.EngineerMaxNodes, sim.Roles.Nodes.Count);
+            Assert.AreEqual(sim.Build.Roles.EngineerMaxTurrets, sim.Roles.Turrets.Count);
+            Assert.AreEqual(sim.Build.Roles.EngineerMaxNodes, sim.Roles.Flares.Count(f => f.IsEngineerNode), "노드마다 빛 하나");
         }
 
         [Test]
@@ -252,9 +252,9 @@ namespace TunnelCrew.Tests
             var input = Aim(sim, a); input.DrillHeld = true;   // 거너 좌클릭 = 파쇄탄
             sim.Tick(SimTuning.FixedDeltaTime, input);
             Assert.AreEqual(1, sim.Roles.Breakers.Count);
-            Assert.AreEqual(sim.Roles.BreakerMaxCd, sim.Roles.BreakerCooldown, 0.05);
+            Assert.AreEqual(sim.Build.Roles.BreakerMaxCd, sim.Roles.BreakerCooldown, 0.05);
 
-            Run(sim, Aim(sim, a), sim.Roles.BreakerFuse + 0.5);
+            Run(sim, Aim(sim, a), sim.Build.Roles.BreakerFuse + 0.5);
             Assert.IsTrue(exploded, "도화선이 끝나면 폭발한다");
             Assert.AreEqual(0, sim.Roles.Breakers.Count);
             if (!TileTypes.IsBedrock(t))

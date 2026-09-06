@@ -13,6 +13,8 @@ namespace TunnelCrew.Sim
                                 PlayerBuild build = null)
         {
             double moveMul = build != null ? build.MoveMul : 1.0;
+            // 굴진 가속 — 드릴을 쥔 동안 이동 배율 (원본 traitDrillMoveMul, 7119행)
+            if (build != null && input.DrillHeld) moveMul *= build.DrillMoveMul;
             double dashMul = build != null ? build.RoleDashMul : 1.0;
             p.DashCooldown = Math.Max(0, p.DashCooldown - dt);
             p.StunTime = Math.Max(0, p.StunTime - dt);

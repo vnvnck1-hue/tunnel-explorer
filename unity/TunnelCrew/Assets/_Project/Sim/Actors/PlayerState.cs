@@ -54,6 +54,9 @@ namespace TunnelCrew.Sim
 
         /// <summary>이번 틱에 실제로 벽을 파고 있었는가.</summary>
         public bool IsDigging;
+        /// <summary>압쇄 비트 — 같은 벽을 깎은 시간 (특성).</summary>
+        public int FocusCell = -1;
+        public double FocusTime;
 
         public bool CanMove => StunTime <= 0 && !Downed;
 
@@ -74,5 +77,11 @@ namespace TunnelCrew.Sim
         public bool ReloadPressed;
         public bool SkillQPressed;
         public bool SkillEPressed;
+        /// <summary>X — 탈출 포트 지정 시작/취소.</summary>
+        public bool EscapePressed;
+        /// <summary>좌클릭 눌린 프레임 — 탈출 지점 확정 등 단발 판정.</summary>
+        public bool PrimaryPressed;
+        /// <summary>우클릭 눌린 프레임 — 지정 취소.</summary>
+        public bool SecondaryPressed;
     }
 }

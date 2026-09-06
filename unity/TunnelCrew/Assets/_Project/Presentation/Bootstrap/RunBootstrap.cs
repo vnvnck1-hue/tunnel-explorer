@@ -59,6 +59,7 @@ namespace TunnelCrew.Presentation
         WallShadowBuilder _wallShadows;
         readonly Dictionary<RoleId, CharacterSheetAsset> _sheets = new Dictionary<RoleId, CharacterSheetAsset>();
         readonly List<string> _log = new List<string>();
+        float _outroT;
 
         void Start()
         {
@@ -122,9 +123,41 @@ namespace TunnelCrew.Presentation
             Sim.BreakerExploded += e => { _feedback?.Kick(3.0f, Vector2.zero); _feedback?.Hitstop(30f); Log(e.Early ? "파쇄탄 조기 폭발" : "파쇄탄 폭발"); };
             Sim.FoundationBroken += e => { _feedback?.Kick(4.5f, Vector2.zero); _feedback?.Hitstop(60f); Log("기반암 균열 파쇄"); };
             Sim.EnemySpawned += e => { if (e.Enemy.IsApex) Log("광란종 출현"); };
+            Sim.DominanceReached += () => Log($"장악도 {Sim.Run.DominanceTarget:P0} 도달");
+            Sim.BossSpawned += e => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(60f); Log($"{e.Boss.Def.Name} 출현"); };
+            Sim.BossPattern += e =>
+            {
+                switch (e.Pattern)
+                {
+                    case "dashCharge": _feedback?.Kick(3.2f, V(e.Boss.DashDir)); break;
+                    case "dashEnd": _feedback?.Kick(6f, V(e.Boss.DashDir)); break;
+                    case "wallField": case "wallWave": case "wallPrison": case "dashPrison": _feedback?.Kick(4f, Vector2.zero); Log(PatternName(e.Pattern)); break;
+                    case "armor": Log("암반 장갑 생성"); break;
+                    case "scatter": Log("산발 붕괴탄"); break;
+                    case "barrage": Log("연속 포격"); break;
+                    case "dashWindup": Log("돌진 예고"); break;
+                }
+            };
+            Sim.BossWallRaised += e => _feedback?.Kick(0.6f, Vector2.zero);
+            Sim.BossShotHit += e => { _feedback?.Kick(e.HitPlayer ? 5f : 2f, Vector2.zero); if (e.HitPlayer) _feedback?.Hitstop(46f); };
+            Sim.BossDefeated += e => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(90f); Log($"{e.Boss.Def.Name} 격파 · 코어 +{e.CoreReward}"); };
+            Sim.LeveledUp += e => { _feedback?.Kick(1.2f, Vector2.zero); Log($"LEVEL {e.Level}"); };
+            Sim.TraitPicked += e => Log($"특성: {e.Card.Name}{(e.Stack > 1 ? $" ×{e.Stack}" : "")}");
+            Sim.EscapeChanged += e =>
+            {
+                switch (e.Phase)
+                {
+                    case EscapePhase.Placing: Log("탈출 지점 지정 · 좌클릭 확정 · 우클릭/X 취소"); break;
+                    case EscapePhase.Incoming: Log($"탈출 포트 도착까지 {Mathf.CeilToInt((float)e.Need)}초 · 지점을 사수하세요"); break;
+                    case EscapePhase.Ready: _feedback?.Kick(6f, Vector2.zero); Log("탈출 포트 도착 · 탑승하세요"); break;
+                    case EscapePhase.None: Log("탈출 요청 취소"); break;
+                }
+            };
+            Sim.RunEnded += (escaped, reason) => { Time.timeScale = 1f; Log(escaped ? "탈출 성공" : "런 종료 — " + reason); };
         }
 
         static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+        static string PatternName(string p) => p switch { "wallField" => "암벽 융기", "wallWave" => "지각 파동", "wallPrison" => "석화 감옥!", "dashPrison" => "협곡 돌진 — 갇혔다!", _ => p };
 
         void Log(string s)
         {
@@ -199,6 +232,7 @@ namespace TunnelCrew.Presentation
             _lootView = new GameObject("Loot").AddComponent<LootView>();
             _enemyView = new GameObject("Enemies").AddComponent<EnemyView>();
             _enemyView.Bind(_monsterSheets);
+            _enemyView.BossFacing = e => Sim.Bosses?.Boss != null && Sim.Bosses.Boss.Body == e ? Sim.Bosses.Boss.Facing : -1;
             _combatView = new GameObject("Combat").AddComponent<CombatView>();
         }
 
@@ -374,16 +408,23 @@ namespace TunnelCrew.Presentation
             }
         }
 
+        /// <summary>층이 바뀌면 월드에 붙은 뷰를 새 WorldGrid 에 다시 묶는다.</summary>
+        void RebindWorld()
+        {
+            _worldRenderer.Bind(Sim.World);
+            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+            _wallShadows.Bind(Sim.World);
+            _rig.Bind(Sim.World, () => Sim.Player);
+            Time.timeScale = 1f;
+        }
+
         /// <summary>직업을 바꾸고 층을 다시 만든다 (숫자키 1~4).</summary>
         void SwitchRole(RoleId role)
         {
             _role = role;
             Sim.StartRun(role);
             Sim.EnterDepth(_depth, DungeonConfig.Runtime);
-            _worldRenderer.Bind(Sim.World);
-            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
-            _wallShadows.Bind(Sim.World);
-            _rig.Bind(Sim.World, () => Sim.Player);
+            RebindWorld();
             LoadRoleFrames(role);
             Prespawn();
             Log($"직업 → {role}");
@@ -395,7 +436,14 @@ namespace TunnelCrew.Presentation
             if (Sim?.World == null) return;
 
             var kb = Keyboard.current;
-            if (kb != null)
+            if (kb != null && Sim.Traits.HasOffer)
+            {
+                if (kb.digit1Key.wasPressedThisFrame) Sim.PickTrait(0);
+                else if (kb.digit2Key.wasPressedThisFrame) Sim.PickTrait(1);
+                else if (kb.digit3Key.wasPressedThisFrame) Sim.PickTrait(2);
+                else if (kb.tabKey.wasPressedThisFrame && Sim.RerollTraits()) Log($"다시 뽑기 (남은 {Sim.Traits.Rerolls})");
+            }
+            else if (kb != null)
             {
                 if (kb.digit1Key.wasPressedThisFrame) SwitchRole(RoleId.Driller);
                 else if (kb.digit2Key.wasPressedThisFrame) SwitchRole(RoleId.Gunner);
@@ -403,6 +451,19 @@ namespace TunnelCrew.Presentation
                 else if (kb.digit4Key.wasPressedThisFrame) SwitchRole(RoleId.Engineer);
                 else if (kb.f5Key.wasPressedThisFrame) SwitchRole(_role);
             }
+
+            // 보스 격파 연출(2.6초) 뒤 휴식 화면 — 원본 infBossOutroTick
+            if (Sim.RestPending)
+            {
+                _outroT += Time.unscaledDeltaTime;
+                if (_outroT >= 2.6f) { _outroT = 0; Sim.EnterRest(); }
+            }
+            if (Sim.Phase == GamePhase.Rest && kb != null)
+            {
+                if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) { Sim.Descend(); RebindWorld(); Prespawn(); Log(Planet.DepthLabel(Sim.Depth) + " 진입"); }
+                else if (kb.escapeKey.wasPressedThisFrame && Sim.LastBossTier != BossTier.Guardian) { Sim.ReturnFromRest(); Log("이 층에 남아 탈출한다"); }
+            }
+            if (Sim.Phase == GamePhase.Result && kb != null && kb.enterKey.wasPressedThisFrame) SwitchRole(_role);
 
             Sim.Advance(Time.deltaTime, ReadInput());
             _playerView.Render(Sim.Player, Time.deltaTime);
@@ -430,6 +491,7 @@ namespace TunnelCrew.Presentation
                 input.ReloadPressed = kb.rKey.wasPressedThisFrame;
                 input.SkillQPressed = kb.qKey.wasPressedThisFrame;
                 input.SkillEPressed = kb.eKey.wasPressedThisFrame;
+                input.EscapePressed = kb.xKey.wasPressedThisFrame;
                 if (kb.fKey.wasPressedThisFrame) _flashlightOn = !_flashlightOn;   // 원본 F 토글
             }
 
@@ -439,6 +501,8 @@ namespace TunnelCrew.Presentation
                 input.AimWorld = new Vec2(w.x, w.y);
                 input.DrillHeld = mouse.leftButton.isPressed;
                 input.FireHeld = mouse.rightButton.isPressed;
+                input.PrimaryPressed = mouse.leftButton.wasPressedThisFrame;
+                input.SecondaryPressed = mouse.rightButton.wasPressedThisFrame;
             }
             else input.AimWorld = Sim.Player.Position + new Vec2(1, 0);
 
@@ -462,12 +526,18 @@ namespace TunnelCrew.Presentation
             var roles = Sim.Roles;
             var style = new GUIStyle(GUI.skin.label) { fontSize = 14, richText = true };
 
-            GUILayout.BeginArea(new Rect(12, 12, 480, 330), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(12, 12, 560, 360), GUI.skin.box);
             GUILayout.Label($"<b>{RoleName(b.Role)}</b>  ·  심층 {Sim.Depth}  ·  {Sim.World.Cols}×{Sim.World.Rows}  " +
                             $"·  {(1f / Mathf.Max(0.0001f, Time.unscaledDeltaTime)):F0} fps", style);
             GUILayout.Label($"<b>HP {p.Hp:F0}/{p.HpMax:F0}</b>{(p.Downed ? "  <color=#ff6060>다운</color>" : p.StunTime > 0 ? "  기절" : "")}" +
                             $"   위협 {Sim.Enemies.Threat:F2}   적 {Sim.Enemies.Enemies.Count}마리", style);
-            GUILayout.Label($"부순 블록 {Sim.World.BlocksBroken}   PULP {Sim.Loot.Pulp}   BLOOM {Sim.Loot.Bloom}   출구 {(Sim.World.ExitOpen ? "열림" : "미개방")}", style);
+            GUILayout.Label($"{Planet.DepthLabel(Sim.Depth)}   장악도 <b>{Sim.Run.Dominance:P1}</b> / {Sim.Run.DominanceTarget:P0}   위협 {Sim.Run.Threat:F2}   캡 {Sim.Run.EnemyCap}   스폰 {Sim.Run.SpawnInterval:F1}s×{Sim.Run.SpawnBurst}", style);
+            GUILayout.Label($"Lv {Sim.Xp.Level}   XP {Sim.Xp.Xp}/{Sim.Xp.XpNeed}   코어 {Sim.Loot.Core}   PULP {Sim.Loot.Pulp}   BLOOM {Sim.Loot.Bloom}   부순 블록 {Sim.World.BlocksBroken}", style);
+            if (Sim.Bosses.Active)
+            {
+                var bb = Sim.Bosses.Boss;
+                GUILayout.Label($"<color=#ff557d><b>{bb.Def.Name}</b>  HP {bb.Body.Hp:F0}/{bb.Body.HpMax:F0}  장갑 {Sim.Bosses.ArmorAlive()}  {(bb.Dash != BossDashPhase.None ? bb.Dash.ToString() : bb.LastAttack)}</color>", style);
+            }
 
             string ammo = b.RoleHasGun
                 ? (b.IsReloading ? $"재장전 {b.ReloadLeft:F2}s" : $"탄 {b.Ammo}/{b.MagSize}")
@@ -484,10 +554,21 @@ namespace TunnelCrew.Presentation
                 RoleId.Gunner => $"방어막 {roles.ShieldTime:F1}s   파쇄탄 쿨 {roles.BreakerCooldown:F1}s   장착 {roles.Breakers.Count}",
                 RoleId.Driller => $"돌파 {roles.BreachTime:F1}s   균열 {roles.Cracks.Count}칸",
                 RoleId.Scout => $"플레어 {roles.Flares.Count(f => !f.IsEngineerNode)}개",
-                RoleId.Engineer => $"노드 {roles.Nodes.Count}/{roles.EngineerMaxNodes}   센트리 {roles.Turrets.Count}/{roles.EngineerMaxTurrets}",
+                RoleId.Engineer => $"노드 {roles.Nodes.Count}/{b.Roles.EngineerMaxNodes}   센트리 {roles.Turrets.Count}/{b.Roles.EngineerMaxTurrets}",
                 _ => "",
             };
             GUILayout.Label(extra, style);
+            if (Sim.Escape.Active)
+            {
+                string esc = Sim.Escape.Phase switch
+                {
+                    EscapePhase.Placing => "지점 지정 중",
+                    EscapePhase.Incoming => $"포트 도착까지 {Mathf.CeilToInt((float)(Sim.Escape.Need - Sim.Escape.Elapsed))}초",
+                    EscapePhase.Ready => $"포트 도착 — 탑승 {Sim.Escape.BoardProgress:P0}",
+                    _ => "탑승 완료",
+                };
+                GUILayout.Label($"<color=#ff8da8>탈출 포트: {esc}</color>", style);
+            }
             GUILayout.Space(4);
             GUILayout.Label($"손전등 {(_flashlightOn ? "켜짐" : "꺼짐")}   보이는 칸 {VisibleCellCount()}   timeScale {Time.timeScale:F2}", style);
             GUILayout.Label("WASD 이동 · 마우스 조준 · 좌클릭 드릴(거너: 파쇄탄) · 우클릭 사격 · R 재장전", style);
@@ -495,6 +576,64 @@ namespace TunnelCrew.Presentation
             GUILayout.Space(4);
             foreach (var line in _log) GUILayout.Label("<color=#ffd080>· " + line + "</color>", style);
             GUILayout.EndArea();
+
+            // 휴식 / 결과 오버레이 (IMGUI 임시 — M5 에서 UI Toolkit)
+            if (Sim.Phase == GamePhase.Rest || Sim.Phase == GamePhase.Result)
+            {
+                GUI.color = new Color(0, 0, 0, 0.62f);
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+                var big = new GUIStyle(GUI.skin.label) { fontSize = 26, richText = true, alignment = TextAnchor.MiddleCenter };
+                var mid = new GUIStyle(GUI.skin.label) { fontSize = 16, richText = true, alignment = TextAnchor.MiddleCenter };
+                var rect = new Rect(Screen.width * 0.5f - 320, Screen.height * 0.5f - 120, 640, 240);
+                GUILayout.BeginArea(rect, GUI.skin.box);
+                if (Sim.Phase == GamePhase.Rest)
+                {
+                    bool guardian = Sim.LastBossTier == BossTier.Guardian;
+                    GUILayout.Label(guardian ? $"{Planet.DepthLabel(Sim.Depth)} — 수호자 격퇴" : Sim.LastBossTier == BossTier.Apex ? "중심부 보스 격파" : $"{Planet.DepthLabel(Sim.Depth)} — 변종 격파", big);
+                    GUILayout.Label((guardian ? "더 깊은 곳에서 거대한 기척이 느껴진다 · " : "탈출 포트가 자동 요청되었다 · ") + $"체력 30% 회복 · 코어 {Sim.Loot.Core} 운반 중", mid);
+                    GUILayout.Space(10);
+                    if (Sim.Traits.HasOffer) GUILayout.Label("심층 보상 — 전설 카드를 하나 고르세요 (1 · 2 · 3)", mid);
+                    else GUILayout.Label(guardian ? "<b>Enter</b> 다음 지층으로" : "<b>Enter</b> 이상지대로 (엔드게임)   ·   <b>Esc</b> 이 층에 남아 탈출", mid);
+                }
+                else
+                {
+                    GUILayout.Label(Sim.RunEscaped ? "탈출 성공" : "런 종료", big);
+                    GUILayout.Label($"{Sim.RunEndReason} · 심층 {Sim.Depth}", mid);
+                    GUILayout.Label($"도달 심층 {Sim.Depth}   처치 보스 {Sim.Run.BossesKilled}   파괴 블록 {Sim.World.BlocksBroken}   " +
+                                    (Sim.RunEscaped ? $"확보 코어 {Sim.Loot.Core}" : $"<color=#ff8da8>소실 코어 {Sim.Loot.Core}</color>"), mid);
+                    GUILayout.Space(10);
+                    GUILayout.Label("<b>Enter</b> 같은 직업으로 다시", mid);
+                }
+                GUILayout.EndArea();
+            }
+
+            // 특성 카드 3택 — 원본 §9.6.4: 월드는 멈추지 않고 1·2·3 으로 고른다
+            if (Sim.Traits.HasOffer)
+            {
+                var cards = Sim.Traits.Offer;
+                float cw = 240, ch = 150, gap = 14;
+                float total = cards.Length * cw + (cards.Length - 1) * gap;
+                float x0 = Screen.width * 0.5f - total * 0.5f, y0 = Screen.height - ch - 36;
+                var title = new GUIStyle(GUI.skin.label) { fontSize = 15, richText = true, fontStyle = FontStyle.Bold, wordWrap = true };
+                var body = new GUIStyle(GUI.skin.label) { fontSize = 13, richText = true, wordWrap = true };
+                string head = Sim.Traits.OfferIsLegend ? "심층 보상 · 전설" : $"LEVEL {Sim.Xp.Level} · {RoleName(Sim.Build.Role)} 특성";
+                GUI.Label(new Rect(x0, y0 - 26, total, 22), $"<b>{head}</b>" + (Sim.Traits.OfferIsLegend ? "" : $"   <color=#aaa>Tab 다시 뽑기 ({Sim.Traits.Rerolls})</color>"), title);
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    var c = cards[i];
+                    var rc = new Rect(x0 + i * (cw + gap), y0, cw, ch);
+                    GUI.Box(rc, GUIContent.none);
+                    GUILayout.BeginArea(new Rect(rc.x + 10, rc.y + 8, rc.width - 20, rc.height - 16));
+                    string tierCol = c.Tier >= 4 ? "#ffd36e" : c.Tier == 3 ? "#c7a0ff" : c.Tier == 2 ? "#7febd0" : "#dddddd";
+                    GUILayout.Label($"<color={tierCol}>[{i + 1}] T{c.Tier} · {c.Kind}</color>", body);
+                    GUILayout.Label(c.Name, title);
+                    GUILayout.Label(c.Desc, body);
+                    int st = Sim.Traits.StackOf(c.Id);
+                    if (st > 0) GUILayout.Label($"<color=#aaa>보유 ×{st}</color>", body);
+                    GUILayout.EndArea();
+                }
+            }
 
             // 피격 비네트 — Feedback.HurtLevel
             if (_feedback != null && _feedback.HurtLevel > 0)

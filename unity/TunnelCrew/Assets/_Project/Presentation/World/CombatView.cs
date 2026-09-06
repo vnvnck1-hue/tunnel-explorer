@@ -13,6 +13,10 @@ namespace TunnelCrew.Presentation
         readonly List<SpriteRenderer> _projPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _shotPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _installPool = new List<SpriteRenderer>();
+        readonly List<SpriteRenderer> _bossShotPool = new List<SpriteRenderer>();
+        readonly List<SpriteRenderer> _bossRingPool = new List<SpriteRenderer>();
+        LineRenderer _dashLine;
+        SpriteRenderer _escRange, _escSpot, _escPod;
         readonly List<DamageText> _texts = new List<DamageText>();
         readonly Stack<DamageText> _textPool = new Stack<DamageText>();
         Sprite _dot, _square;
@@ -24,7 +28,7 @@ namespace TunnelCrew.Presentation
             ["standard"] = new Color(1f, 0.93f, 0.7f), ["multi"] = new Color(1f, 0.85f, 0.6f),
             ["pierce"] = new Color(0.7f, 0.95f, 1f), ["ricochet"] = new Color(0.9f, 0.8f, 1f),
             ["explosive"] = new Color(1f, 0.55f, 0.3f), ["rain"] = new Color(1f, 0.5f, 0.25f),
-            ["laser"] = new Color(0.6f, 1f, 0.95f), ["support"] = new Color(0.5f, 0.92f, 0.82f),
+            ["laser"] = new Color(0.6f, 1f, 0.95f), ["support"] = new Color(0.5f, 0.92f, 0.82f), ["shard"] = new Color(0.5f, 0.92f, 0.82f),
         };
 
         void Awake() { _dot = MakeCircle(16); _square = MakeSquare(); }
@@ -77,6 +81,76 @@ namespace TunnelCrew.Presentation
                 Set(sr, f.Position, _dot, new Color(1f, 0.92f, 0.5f, 0.85f), 0.28f);
             });
 
+            // 보스 예고탄 — 착탄 원(커지며 붉어짐) + 포물선으로 날아가는 점
+            var shots = sim.Bosses != null ? sim.Bosses.Shots : null;
+            int ns = shots?.Count ?? 0;
+            RenderList(_bossRingPool, ns, 26, i =>
+            {
+                var s = shots[i]; var sr = _bossRingPool[i];
+                float p = (float)s.Progress;
+                Set(sr, s.Target, _dot, new Color(1f, 0.33f, 0.49f, 0.18f + 0.42f * p), (float)s.Radius * 2f * (0.55f + 0.45f * p));
+            });
+            RenderList(_bossShotPool, ns, 41, i =>
+            {
+                var s = shots[i]; var sr = _bossShotPool[i];
+                float p = (float)s.Progress;
+                var pos = Vec2Lerp(s.Start, s.Target, p);
+                float arc = Mathf.Sin(p * Mathf.PI) * 2.2f;   // 원본 arcHeight 110px ≈ 2.2셀
+                sr.transform.position = new Vector3((float)pos.X, (float)pos.Y + arc, 0);
+                sr.transform.rotation = Quaternion.identity;
+                sr.sprite = _dot; sr.color = new Color(1f, 0.45f, 0.35f);
+                sr.transform.localScale = Vector3.one * (0.34f + 0.16f * (float)s.Power);
+            });
+
+            // 탈출 포트 — 지정 범위 · 착륙 지점 · 도착한 포트
+            var esc = sim.Escape;
+            if (_escRange == null)
+            {
+                _escRange = NewSprite("EscapeRange", 24); _escSpot = NewSprite("EscapeSpot", 25); _escPod = NewSprite("EscapePod", 34);
+            }
+            bool placing = esc != null && esc.Phase == EscapePhase.Placing;
+            _escRange.gameObject.SetActive(placing);
+            _escSpot.gameObject.SetActive(esc != null && (esc.Phase == EscapePhase.Placing || esc.Phase == EscapePhase.Incoming));
+            _escPod.gameObject.SetActive(esc != null && esc.Phase >= EscapePhase.Ready);
+            if (placing) Set(_escRange, sim.Player.Position, _dot, new Color(1f, 0.55f, 0.66f, 0.08f), (float)EscapeSystem.PlaceRange * 2f);
+            if (_escSpot.gameObject.activeSelf)
+            {
+                float pulse = 0.85f + 0.15f * Mathf.Sin(Time.time * 6f);
+                var c = esc.Phase == EscapePhase.Placing ? new Color(1f, 0.33f, 0.49f, 0.45f) : new Color(1f, 0.33f, 0.49f, 0.25f + 0.35f * (float)esc.ArrivalProgress);
+                Set(_escSpot, esc.Position, _dot, c, (float)EscapeSystem.ClearRadius * 2f * pulse);
+            }
+            if (_escPod.gameObject.activeSelf)
+            {
+                var c = Color.Lerp(new Color(1f, 0.55f, 0.66f), new Color(1f, 0.83f, 0.43f), (float)esc.BoardProgress);
+                Set(_escPod, esc.Position, _square, c, 1.6f);
+            }
+
+            // 돌진 예고선 — 선딜 동안 진로를 보여준다
+            var boss = sim.Bosses?.Boss;
+            bool dashTele = boss != null && boss.Dash == BossDashPhase.Windup;
+            if (_dashLine == null)
+            {
+                var lg = new GameObject("BossDashTelegraph"); lg.transform.SetParent(transform, false);
+                _dashLine = lg.AddComponent<LineRenderer>();
+                _dashLine.positionCount = 2; _dashLine.useWorldSpace = true;
+                _dashLine.material = new Material(Shader.Find("Sprites/Default"));
+                _dashLine.sortingOrder = 25;
+            }
+            _dashLine.enabled = dashTele;
+            if (dashTele)
+            {
+                var e = boss.Body;
+                float r = (float)e.Radius, prog = (float)boss.DashWindupProgress;
+                float len = (float)(SimTuning.EnemySpeed * e.SpeedMul * BossTune.DashSpeedMul * BossTune.DashDuration);
+                var d = new Vector2((float)boss.DashDir.X, (float)boss.DashDir.Y);
+                var a = new Vector2((float)e.Position.X, (float)e.Position.Y);
+                var col = new Color(1f, 0.83f, 0.43f, 0.18f + 0.32f * prog);
+                _dashLine.startColor = _dashLine.endColor = col;
+                _dashLine.startWidth = _dashLine.endWidth = r * 2f * 1.25f;
+                _dashLine.SetPosition(0, new Vector3(a.x, a.y, -0.05f));
+                _dashLine.SetPosition(1, new Vector3(a.x + d.x * len, a.y + d.y * len, -0.05f));
+            }
+
             // 데미지 텍스트
             for (int i = _texts.Count - 1; i >= 0; i--)
             {
@@ -90,6 +164,13 @@ namespace TunnelCrew.Presentation
         }
 
         static Vec2 Vec2Lerp(Vec2 a, Vec2 b, float t) => a + (b - a) * t;
+
+        SpriteRenderer NewSprite(string name, int order)
+        {
+            var go = new GameObject(name); go.transform.SetParent(transform, false);
+            var sr = go.AddComponent<SpriteRenderer>(); sr.sortingOrder = order;
+            return sr;
+        }
 
         void Set(SpriteRenderer sr, Vec2 pos, Sprite sp, Color c, float size)
         {
