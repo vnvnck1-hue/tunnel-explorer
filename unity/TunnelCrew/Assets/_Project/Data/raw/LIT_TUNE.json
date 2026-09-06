@@ -1,0 +1,16 @@
+{
+  "spRim": 0.31,
+  "spRimPx": 4.2,
+  "spLite": 0.67,
+  "spShade": 1,
+  "spAmb": 0.8,
+  "wRim": 0.36,
+  "wRimE": 0.038,
+  "wShade": 1.2,
+  "wShadeE": 0.038,
+  "wShadow": 1.2,
+  "wShadowE": 0.133,
+  "wSteps": 3,
+  "wRes": 0.25,
+  "wLights": 2
+}

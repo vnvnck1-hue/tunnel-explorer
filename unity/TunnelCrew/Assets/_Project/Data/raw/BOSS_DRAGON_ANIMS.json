@@ -1,0 +1,30 @@
+{
+  "idle": {
+    "count": 37,
+    "fps": 10,
+    "loop": true,
+    "folder": "idle-frames",
+    "fallback": "idle-transparent.gif"
+  },
+  "walking": {
+    "count": 37,
+    "fps": 10,
+    "loop": true,
+    "folder": "walking-frames",
+    "fallback": "walking-transparent.gif"
+  },
+  "fireBreath": {
+    "count": 26,
+    "fps": 10,
+    "loop": false,
+    "folder": "fire-breath-a-frames",
+    "fallback": "Fire_Breath_a.gif"
+  },
+  "death": {
+    "count": 24,
+    "fps": 10,
+    "loop": false,
+    "folder": "death-frames",
+    "fallback": "death-transparent.gif"
+  }
+}

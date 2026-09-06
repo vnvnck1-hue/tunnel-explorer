@@ -1,0 +1,23 @@
+{
+    "name": "TunnelCrew.Presentation",
+    "rootNamespace": "TunnelCrew.Presentation",
+    "references": [
+        "TunnelCrew.Sim",
+        "TunnelCrew.Data",
+        "Unity.InputSystem",
+        "Unity.Cinemachine",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "Unity.Timeline"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

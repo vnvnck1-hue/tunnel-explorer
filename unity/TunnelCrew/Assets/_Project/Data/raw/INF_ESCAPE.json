@@ -1,0 +1,9 @@
+{
+  "placeRange": 6,
+  "summonBase": 20,
+  "summonPerDepth": 7,
+  "summonMax": 60,
+  "clearRadius": 1.45,
+  "boardRange": 1.25,
+  "boardTime": 1.2
+}

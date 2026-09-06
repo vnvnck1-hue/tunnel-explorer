@@ -1,0 +1,13 @@
+{
+  "rmin": 2,
+  "rmax": 5,
+  "blob": 55,
+  "cw": 1,
+  "jit": 20,
+  "loop": 30,
+  "ca": 0,
+  "core": 14,
+  "ore": 8,
+  "bur": 5,
+  "cache": 13
+}

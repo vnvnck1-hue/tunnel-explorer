@@ -1,0 +1,33 @@
+{
+  "id": "purple",
+  "name": "퍼플 땅굴",
+  "targetMinutes": "15~20",
+  "strata": [
+    {
+      "name": "표층 지대",
+      "wallHp": 1,
+      "enemyHp": 1,
+      "dominance": 0.22,
+      "omen": "부드러운 흙과 첫 광맥 — 멀리서 수호자의 기척이 울린다"
+    },
+    {
+      "name": "균열 지대",
+      "wallHp": 1.35,
+      "enemyHp": 1.4,
+      "dominance": 0.26,
+      "omen": "암반이 단단해진다 — 벽 너머에서 낮은 진동이 느껴진다"
+    },
+    {
+      "name": "중심부",
+      "wallHp": 1.8,
+      "enemyHp": 1.9,
+      "dominance": 0.3,
+      "omen": "행성 중심부 — 암반 포식자의 영역이다"
+    }
+  ],
+  "abyss": {
+    "wallHpGrowth": 1.6,
+    "enemyHpGrowth": 1.55,
+    "dominance": 0.34
+  }
+}

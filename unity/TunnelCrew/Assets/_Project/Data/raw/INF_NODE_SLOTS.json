@@ -1,0 +1,119 @@
+{
+  "i": {
+    "type": "기초 강화",
+    "initial": true,
+    "maxRank": 3,
+    "costByRank": [
+      1,
+      2,
+      3
+    ],
+    "reveal": [
+      "m1",
+      "m2"
+    ]
+  },
+  "m1": {
+    "type": "전문화",
+    "maxRank": 2,
+    "costByRank": [
+      3,
+      5
+    ],
+    "requires": [
+      "i"
+    ],
+    "reveal": [
+      "m3"
+    ],
+    "ties": [
+      "m2"
+    ]
+  },
+  "m2": {
+    "type": "전문화",
+    "maxRank": 2,
+    "costByRank": [
+      3,
+      5
+    ],
+    "requires": [
+      "i"
+    ],
+    "reveal": [
+      "m4"
+    ]
+  },
+  "m3": {
+    "type": "전문화",
+    "maxRank": 2,
+    "costByRank": [
+      4,
+      7
+    ],
+    "requires": [
+      "m1"
+    ],
+    "reveal": [
+      "m5"
+    ],
+    "ties": [
+      "m4"
+    ]
+  },
+  "m4": {
+    "type": "전문화",
+    "maxRank": 2,
+    "costByRank": [
+      4,
+      7
+    ],
+    "requires": [
+      "m2"
+    ],
+    "reveal": [
+      "m6"
+    ]
+  },
+  "m5": {
+    "type": "행동 변형",
+    "maxRank": 1,
+    "costByRank": [
+      9
+    ],
+    "requires": [
+      "m3"
+    ],
+    "reveal": [
+      "cap"
+    ],
+    "ties": [
+      "m6"
+    ]
+  },
+  "m6": {
+    "type": "행동 변형",
+    "maxRank": 1,
+    "costByRank": [
+      9
+    ],
+    "requires": [
+      "m4"
+    ],
+    "reveal": [
+      "cap"
+    ]
+  },
+  "cap": {
+    "type": "캡스톤",
+    "maxRank": 1,
+    "costByRank": [
+      14
+    ],
+    "requires": [
+      "m5",
+      "m6"
+    ],
+    "requiresCount": 2
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "targetLevel": 10,
+  "need": {
+    "base": 30,
+    "linear": 10,
+    "quad": 2.4
+  },
+  "rerollStart": 1,
+  "rerollPerStratum": 1,
+  "rerollCap": 2
+}

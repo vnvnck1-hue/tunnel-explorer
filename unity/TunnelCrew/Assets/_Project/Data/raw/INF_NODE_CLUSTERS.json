@@ -1,0 +1,132 @@
+[
+  {
+    "key": "crew_haul",
+    "owner": "crew",
+    "ori": "sw",
+    "ax": 850,
+    "ay": 1200,
+    "branch": "물류·회수",
+    "label": "LOGISTICS",
+    "labelAt": [
+      620,
+      1535
+    ]
+  },
+  {
+    "key": "crew_cmd",
+    "owner": "crew",
+    "ori": "se",
+    "ax": 1050,
+    "ay": 1200,
+    "branch": "원정 지휘",
+    "label": "COMMAND",
+    "labelAt": [
+      1280,
+      1535
+    ]
+  },
+  {
+    "key": "driller_gear",
+    "owner": "driller",
+    "ori": "nw",
+    "ax": 585,
+    "ay": 855,
+    "branch": "역할 장비",
+    "label": "ROLE GEAR",
+    "labelAt": [
+      425,
+      765
+    ]
+  },
+  {
+    "key": "driller_surv",
+    "owner": "driller",
+    "ori": "sw",
+    "ax": 585,
+    "ay": 1035,
+    "branch": "생존·기동",
+    "label": "SURVIVAL",
+    "labelAt": [
+      425,
+      1115
+    ]
+  },
+  {
+    "key": "gunner_gear",
+    "owner": "gunner",
+    "ori": "nw",
+    "ax": 750,
+    "ay": 745,
+    "branch": "역할 장비",
+    "label": "ROLE GEAR",
+    "labelAt": [
+      610,
+      665
+    ]
+  },
+  {
+    "key": "gunner_surv",
+    "owner": "gunner",
+    "ori": "n",
+    "ax": 870,
+    "ay": 705,
+    "branch": "생존·기동",
+    "label": "SURVIVAL",
+    "labelAt": [
+      870,
+      605
+    ]
+  },
+  {
+    "key": "scout_gear",
+    "owner": "scout",
+    "ori": "n",
+    "ax": 1030,
+    "ay": 705,
+    "branch": "역할 장비",
+    "label": "ROLE GEAR",
+    "labelAt": [
+      1030,
+      605
+    ]
+  },
+  {
+    "key": "scout_surv",
+    "owner": "scout",
+    "ori": "ne",
+    "ax": 1150,
+    "ay": 745,
+    "branch": "생존·기동",
+    "label": "SURVIVAL",
+    "labelAt": [
+      1290,
+      665
+    ]
+  },
+  {
+    "key": "engineer_gear",
+    "owner": "engineer",
+    "ori": "ne",
+    "ax": 1315,
+    "ay": 855,
+    "branch": "역할 장비",
+    "label": "ROLE GEAR",
+    "labelAt": [
+      1475,
+      765
+    ]
+  },
+  {
+    "key": "engineer_surv",
+    "owner": "engineer",
+    "ori": "se",
+    "ax": 1315,
+    "ay": 1035,
+    "branch": "생존·기동",
+    "label": "SURVIVAL",
+    "labelAt": [
+      1475,
+      1115
+    ]
+  }
+]

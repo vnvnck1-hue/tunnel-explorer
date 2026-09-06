@@ -1,0 +1,36 @@
+{
+  "finalDepth": 3,
+  "guardian": {
+    "name": "심층 수호자",
+    "hpMul": 0.38,
+    "sizeMul": 0.62,
+    "dmgMul": 0.65,
+    "speedMul": 1.45,
+    "projMul": 0.5,
+    "summonMul": 0.5,
+    "dashBonus": 0.25,
+    "coreBase": 2
+  },
+  "apex": {
+    "name": "암반 포식자",
+    "hpMul": 1,
+    "sizeMul": 1,
+    "dmgMul": 1,
+    "speedMul": 1,
+    "projMul": 1,
+    "summonMul": 1,
+    "dashBonus": 0,
+    "coreBase": 6
+  },
+  "variant": {
+    "name": "변종 포식자",
+    "hpMul": 1.12,
+    "sizeMul": 1,
+    "dmgMul": 1.15,
+    "speedMul": 1.05,
+    "projMul": 1,
+    "summonMul": 1,
+    "dashBonus": 0.1,
+    "coreBase": 6
+  }
+}

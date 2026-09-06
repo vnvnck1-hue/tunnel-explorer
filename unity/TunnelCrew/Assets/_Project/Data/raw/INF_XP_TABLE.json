@@ -1,0 +1,13 @@
+{
+  "dirt": 1,
+  "stone": 2,
+  "rare": 4,
+  "crack": 8,
+  "crackCore": 12,
+  "kill": 4,
+  "eliteMul": 1.7,
+  "apexMul": 2.4,
+  "killBoss": 45,
+  "turretKill": 5,
+  "gridUptime": 2
+}

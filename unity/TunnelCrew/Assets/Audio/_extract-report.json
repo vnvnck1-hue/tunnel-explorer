@@ -1,0 +1,279 @@
+{
+  "source": "tunnel-crew-infinite-mode-v7.9.2.html",
+  "generated": "2026-09-06T09:03:58.233Z",
+  "bank": [
+    {
+      "id": "dig",
+      "category": "dig",
+      "gain": 0.075,
+      "pitchJitter": 0.1,
+      "files": [
+        "dig_1.ogg",
+        "dig_2.ogg",
+        "dig_3.ogg",
+        "dig_4.ogg",
+        "dig_5.ogg"
+      ]
+    },
+    {
+      "id": "brk",
+      "category": "brk",
+      "gain": 0.28,
+      "pitchJitter": 0.08,
+      "files": [
+        "brk_1.ogg",
+        "brk_2.ogg",
+        "brk_3.ogg"
+      ]
+    },
+    {
+      "id": "shot",
+      "category": "combat",
+      "gain": 0.11,
+      "pitchJitter": 0.07,
+      "files": [
+        "shot_1.ogg",
+        "shot_2.ogg",
+        "shot_3.ogg"
+      ]
+    },
+    {
+      "id": "shard",
+      "category": "loot",
+      "gain": 0.07,
+      "pitchJitter": 0.06,
+      "files": [
+        "shard.ogg"
+      ]
+    },
+    {
+      "id": "reload",
+      "category": "combat",
+      "gain": 0.14,
+      "pitchJitter": 0.04,
+      "files": [
+        "reload.ogg"
+      ]
+    },
+    {
+      "id": "reloadDone",
+      "category": "combat",
+      "gain": 0.09,
+      "pitchJitter": 0.03,
+      "files": [
+        "reloadDone.ogg"
+      ]
+    },
+    {
+      "id": "growl",
+      "category": null,
+      "gain": 0.15,
+      "pitchJitter": 0.16,
+      "files": [
+        "growl_1.ogg",
+        "growl_2.ogg",
+        "growl_3.ogg"
+      ]
+    },
+    {
+      "id": "orebrk",
+      "category": "brk",
+      "gain": 0.16,
+      "pitchJitter": 0.07,
+      "files": [
+        "orebrk_1.ogg",
+        "orebrk_2.ogg",
+        "orebrk_3.ogg"
+      ]
+    },
+    {
+      "id": "kill",
+      "category": "combat",
+      "gain": 0.11,
+      "pitchJitter": 0.1,
+      "files": [
+        "kill_1.ogg",
+        "kill_2.ogg",
+        "kill_3.ogg",
+        "kill_4.ogg"
+      ]
+    },
+    {
+      "id": "killwet",
+      "category": "combat",
+      "gain": 0.055,
+      "pitchJitter": 0.14,
+      "files": [
+        "killwet.ogg"
+      ]
+    },
+    {
+      "id": "res",
+      "category": "loot",
+      "gain": 0.06,
+      "pitchJitter": 0.09,
+      "files": [
+        "res_1.ogg",
+        "res_2.ogg"
+      ]
+    },
+    {
+      "id": "ui",
+      "category": "ui",
+      "gain": 0.09,
+      "pitchJitter": 0.05,
+      "files": [
+        "ui.ogg"
+      ]
+    },
+    {
+      "id": "hover",
+      "category": "ui",
+      "gain": 0.05,
+      "pitchJitter": 0.04,
+      "files": [
+        "hover.ogg"
+      ]
+    },
+    {
+      "id": "menuclick",
+      "category": "ui",
+      "gain": 0.09,
+      "pitchJitter": 0.03,
+      "files": [
+        "menuclick.ogg"
+      ]
+    },
+    {
+      "id": "back",
+      "category": "ui",
+      "gain": 0.075,
+      "pitchJitter": 0.04,
+      "files": [
+        "back.ogg"
+      ]
+    },
+    {
+      "id": "pick",
+      "category": "ui",
+      "gain": 0.055,
+      "pitchJitter": 0.04,
+      "files": [
+        "pick.ogg"
+      ]
+    },
+    {
+      "id": "deploy",
+      "category": "ui",
+      "gain": 0.055,
+      "pitchJitter": 0.03,
+      "files": [
+        "deploy.ogg"
+      ]
+    },
+    {
+      "id": "cardflip",
+      "category": "ui",
+      "gain": 0.16,
+      "pitchJitter": 0.05,
+      "files": [
+        "cardflip.ogg"
+      ]
+    },
+    {
+      "id": "cardpick",
+      "category": "ui",
+      "gain": 0.07,
+      "pitchJitter": 0.02,
+      "files": [
+        "cardpick.ogg"
+      ]
+    },
+    {
+      "id": "step",
+      "category": null,
+      "gain": 0.06,
+      "pitchJitter": 0.08,
+      "files": [
+        "step_1.ogg",
+        "step_2.ogg",
+        "step_3.ogg",
+        "step_4.ogg"
+      ]
+    },
+    {
+      "id": "stepcrew",
+      "category": null,
+      "gain": 0.032,
+      "pitchJitter": 0.1,
+      "files": [
+        "stepcrew_1.ogg",
+        "stepcrew_2.ogg",
+        "stepcrew_3.ogg"
+      ]
+    },
+    {
+      "id": "cloth",
+      "category": null,
+      "gain": 0.033,
+      "pitchJitter": 0.12,
+      "files": [
+        "cloth_1.ogg",
+        "cloth_2.ogg"
+      ]
+    },
+    {
+      "id": "gear",
+      "category": null,
+      "gain": 0.13,
+      "pitchJitter": 0.06,
+      "files": [
+        "gear_1.ogg",
+        "gear_2.ogg"
+      ]
+    },
+    {
+      "id": "ovl",
+      "category": "dig",
+      "gain": 0.2,
+      "pitchJitter": 0.02,
+      "files": [
+        "ovl.ogg"
+      ]
+    },
+    {
+      "id": "ovl2",
+      "category": "dig",
+      "gain": 0.24,
+      "pitchJitter": 0.02,
+      "files": [
+        "ovl2.ogg"
+      ]
+    }
+  ],
+  "drill": [
+    {
+      "file": "drill_start.wav",
+      "bytes": 189440
+    },
+    {
+      "file": "drill_loop.wav",
+      "bytes": 180980
+    },
+    {
+      "file": "drill_rel.wav",
+      "bytes": 302720
+    }
+  ],
+  "bgm": [
+    {
+      "file": "lobby.mp3",
+      "bytes": 3258554
+    },
+    {
+      "file": "purple.mp3",
+      "bytes": 5033809
+    }
+  ],
+  "skipped": []
+}

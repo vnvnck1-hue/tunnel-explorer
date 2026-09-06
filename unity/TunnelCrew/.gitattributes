@@ -1,0 +1,46 @@
+# Unity 프로젝트의 바이너리 자산은 Git LFS 로 추적한다.
+#
+# 이유: git 은 바이너리를 델타 압축하지 못해 파일을 다시 내보낼 때마다 전체 사본이
+# 히스토리에 쌓이고, 지워도 줄어들지 않는다. 아트를 반복 갱신하는 프로젝트에서
+# 저장소가 빠르게 부푼다. LFS 는 실제 내용을 별도 저장소에 두고 여기에는 포인터만 남긴다.
+#
+# 주의: 이 저장소를 클론하는 모든 환경에 git-lfs 가 설치돼 있어야 한다.
+#       설치되지 않은 곳에서는 아래 파일들이 짧은 텍스트 포인터로 보인다.
+#       설치: https://git-lfs.com  (이후 `git lfs install` 한 번)
+#
+# 적용 범위는 이 폴더(unity/TunnelCrew) 아래로 한정한다.
+# 저장소의 기존 히스토리와 루트의 assets/ 는 건드리지 않는다.
+
+# 이미지
+*.png   filter=lfs diff=lfs merge=lfs -text
+*.jpg   filter=lfs diff=lfs merge=lfs -text
+*.jpeg  filter=lfs diff=lfs merge=lfs -text
+*.gif   filter=lfs diff=lfs merge=lfs -text
+*.webp  filter=lfs diff=lfs merge=lfs -text
+*.psd   filter=lfs diff=lfs merge=lfs -text
+*.tga   filter=lfs diff=lfs merge=lfs -text
+*.exr   filter=lfs diff=lfs merge=lfs -text
+
+# 오디오
+*.mp3   filter=lfs diff=lfs merge=lfs -text
+*.ogg   filter=lfs diff=lfs merge=lfs -text
+*.wav   filter=lfs diff=lfs merge=lfs -text
+*.webm  filter=lfs diff=lfs merge=lfs -text
+*.aif   filter=lfs diff=lfs merge=lfs -text
+
+# 폰트
+*.ttf   filter=lfs diff=lfs merge=lfs -text
+*.otf   filter=lfs diff=lfs merge=lfs -text
+
+# 영상
+*.mp4   filter=lfs diff=lfs merge=lfs -text
+
+# Unity 텍스트 자산은 LFS 로 보내지 않는다 (diff·머지가 가능해야 한다)
+*.cs        text diff=csharp
+*.meta      text
+*.unity     text
+*.asset     text
+*.prefab    text
+*.mat       text
+*.asmdef    text
+*.json      text

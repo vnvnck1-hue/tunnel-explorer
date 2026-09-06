@@ -1,0 +1,16 @@
+{
+    "name": "TunnelCrew.Data",
+    "rootNamespace": "TunnelCrew.Data",
+    "references": [
+        "TunnelCrew.Sim"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

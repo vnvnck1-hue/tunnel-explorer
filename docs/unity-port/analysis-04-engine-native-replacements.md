@@ -267,7 +267,7 @@ D5는 "Physics2D 미사용, 원본 원-AABB 유지"였다. 원본 `collide()`의
 | 핑 마커·말풍선·크래프트 프리뷰 (`#uiLayer`) | **월드 스페이스 Canvas** 또는 스프라이트. 화면밖 화살표는 Screen Space 캔버스 |
 | 폰트 Pretendard → 시스템 폴백 | Pretendard **SDF 폰트 에셋**(KS X 1001 한글 2,350 + 영문·기호 정적, 나머지 동적 폴백 폰트 1개) |
 | `fitModule --fit` 스케일 | **Canvas Scaler** Scale With Screen Size (1920×1080, match 0.5) + 안전영역 |
-| HUD 좌표 `tc.uiLayout.v1` | 1회 임포트해 RectTransform 앵커·오프셋으로 굳힘. UILAB 폐기 |
+| HUD 좌표 `tc.uiLayout.v1` | **가져오지 않는다** *(2026-09-06 결정)*. UGUI 앵커 기준으로 새로 배치: 좌하단 바이탈, 우하단 스킬, 상단중앙 장악도·위협, 좌측 깊이 레일, 하단 엣지 XP. 안전영역·게임패드 포커스 순서를 처음부터 고려. UILAB 폐기 |
 | 키보드 1/2/3 카드 선택, Tab 홀드 가이드 | Input System UI 액션맵. **게임패드 내비게이션**은 `Navigation` 명시 + 첫 선택 자동 포커스 |
 
 새로 만드는 화면: 일시정지, 로딩(`assets/loading` 4장 랜덤 + 팁), 해상도·전체화면·V-Sync 옵션, 리바인딩.

@@ -1,0 +1,23 @@
+{
+    "name": "TunnelCrew.Tests.PlayMode",
+    "rootNamespace": "TunnelCrew.Tests",
+    "references": [
+        "TunnelCrew.Sim",
+        "TunnelCrew.Data",
+        "TunnelCrew.Presentation",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -149,7 +149,7 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 | `import-monster-frames` | `monster_assets_v1.5.4/frames/{crawler,spitter,brood-beast}/frame_01..16.png` | 애니 클립 4종(보행 0~5, 대기 6~7, 깜빡임 8~11, 질주 12~17) | 단일 방향, 반전 없음(보스만 facing 반전) |
 | `import-dragon-frames` | `assets/red-fire-dragon/{idle 37, walking 37, fire-breath-a 26, death 24}` | 10fps 클립 4종 | 포효 SFX 트리거 = fireBreath 15프레임(animT 1.4) |
 | `import-tiles` | `tunnel_crew_tile_resources_v1/tile_manifest.json` (536엔트리, 50×50) | SpriteAtlas 2바이옴 + `TileAtlasIndex` 룰 (`ti*48 + band*12 + surface*4 + damage`) | overlays 8종 포함 |
-| `export-ui-layout` | 실행 중 브라우저 `localStorage['tc.uiLayout.v1']` | `ui-layout.json` | **HUD 좌표의 정답지**. HTML 초기 좌표는 UILAB 오버라이드로 덮여 있을 수 있음 |
+| ~~`export-ui-layout`~~ | — | — | **폐기** *(2026-09-06 결정)*. HUD 좌표를 원본에서 가져오지 않는다. UGUI 앵커·안전영역·게임패드 내비게이션 기준으로 **새로 배치**한다. 참고용으로 원본 스크린샷만 본다 |
 | `bake-procedural-sfx.mjs` | HTML의 `SFX.*` 중 절차 합성 17종(buy, cache, dawn, descend, exit, fail, ore, ready, rescue, start, tick, timeout, voice, warn, zzz, 드릴 폴백 2) + 보스 럼블·사망음·brk 저역 | `Audio/baked/*.wav` 변형 3~5개씩 | `OfflineAudioContext`로 렌더. analysis-04 §8 |
 | `gen-tile-normals` | 타일 536장 | `_NormalMap` Secondary Texture 아틀라스 | Laigter 등 높이 추정. analysis-04 §2.1 |
 | `dump-mapgen-fixture.mjs` | `genTunnel(d)`를 시드 N개로 실행 | `fixtures/map-{seed}-{depth}.json` (cell 배열·entry·exit·lamps) | §6 패리티 테스트용. 원본의 `Math.random()` 사용 지점(진입점·출구 후보 5386·5744행)은 시드 RNG로 바꾼 사본에서 덤프 |

@@ -1,0 +1,22 @@
+{
+  "dirt": [
+    "pulp",
+    1
+  ],
+  "stone": [
+    "pulp",
+    2
+  ],
+  "ore": [
+    "bloom",
+    1
+  ],
+  "gem": [
+    "bloom",
+    3
+  ],
+  "crys": [
+    "bloom",
+    2
+  ]
+}

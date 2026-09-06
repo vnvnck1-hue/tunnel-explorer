@@ -1,0 +1,38 @@
+{
+  "dig": {
+    "driller": 1,
+    "gunner": 0.7,
+    "scout": 0.8,
+    "engineer": 0.8
+  },
+  "combat": {
+    "driller": 0.65,
+    "gunner": 1,
+    "scout": 0.85,
+    "engineer": 0.8
+  },
+  "support": {
+    "driller": 0.6,
+    "gunner": 0.75,
+    "scout": 0.75,
+    "engineer": 1
+  },
+  "recon": {
+    "driller": 0.65,
+    "gunner": 0.75,
+    "scout": 1,
+    "engineer": 0.8
+  },
+  "loot": {
+    "driller": 0.85,
+    "gunner": 0.8,
+    "scout": 0.9,
+    "engineer": 0.95
+  },
+  "objective": {
+    "driller": 1,
+    "gunner": 1,
+    "scout": 1,
+    "engineer": 1
+  }
+}
