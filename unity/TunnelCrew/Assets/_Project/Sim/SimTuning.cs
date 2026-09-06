@@ -215,7 +215,10 @@ namespace TunnelCrew.Sim
         public const double EnemyJumpMinDistance = 2.4;
 
         // 소프트 분리
-        public const double EnemySepRatio = 0.86;
+        /// <summary>원본 0.86 — 사장님 피드백(2026-09-06)으로 1.0. 반지름이 닿는 순간부터 밀어낸다.</summary>
+        public const double EnemySepRatio = 1.0;
+        /// <summary>적이 플레이어 위로 올라오지 않게 하는 여유. 반지름 합의 이 비율까지 밀어낸다.</summary>
+        public const double EnemyPlayerSepRatio = 0.92;
         public const double EnemySepRate = 5.2;
         public static readonly double EnemySepMaxPush = PxCells(240.0);
         public const double EnemySepBossRate = 24.0;

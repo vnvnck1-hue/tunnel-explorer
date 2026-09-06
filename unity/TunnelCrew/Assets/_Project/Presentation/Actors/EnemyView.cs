@@ -74,8 +74,8 @@ namespace TunnelCrew.Presentation
                 }
                 it.Body.sprite = frames[Mathf.Clamp(idx, 0, frames.Length - 1)];
 
-                // 원본 크기 e.r*3.15 (apex 3.55) — 스프라이트 원본 높이 대비 스케일
-                float targetH = r * (e.IsApex ? 3.55f : 3.15f) * 2f;
+                // 원본 크기 size = e.r*3.15 (apex 3.55) — 이 값이 스프라이트의 전체 폭·높이다 (반지름 아님)
+                float targetH = r * (e.IsApex ? 3.55f : 3.15f);
                 float spriteH = it.Body.sprite.bounds.size.y;
                 float s = spriteH > 0 ? targetH / spriteH : 1f;
                 it.Body.transform.localScale = new Vector3(s, s, 1f);

@@ -227,6 +227,7 @@ namespace TunnelCrew.Sim
             }
 
             Separate(dt);
+            SeparateFromPlayer(player, dt);
             Enemies.RemoveAll(e => !e.Alive);
             TickShots(player, dt);
         }
@@ -435,6 +436,28 @@ namespace TunnelCrew.Sim
 
             foreach (var e in Enemies)
                 if (!e.IsBoss) CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
+        }
+
+        /// <summary>
+        /// 적이 플레이어 위에 올라서지 않게 한다. 도약 착지·넉백으로 겹친 개체를 반지름 합 바깥으로
+        /// 부드럽게 밀어낸다(적만 밀린다). 원본에는 없던 규칙 — 사장님 피드백(2026-09-06).
+        /// </summary>
+        void SeparateFromPlayer(PlayerState player, double dt)
+        {
+            double step = Math.Min(0.6, Math.Max(0.03, SimTuning.EnemySepRate * 1.5 * dt));
+            double cap = SimTuning.EnemySepMaxPush * dt;
+            foreach (var e in Enemies)
+            {
+                if (!e.Alive || e.IsBoss || e.IsJumping) continue;
+                double want = (e.Radius + SimTuning.PlayerRadius) * SimTuning.EnemyPlayerSepRatio;
+                var d = e.Position - player.Position;
+                double dist = d.Length;
+                if (dist >= want) continue;
+                Vec2 n = dist < 1e-4 ? Vec2.FromAngle(e.FaceAngle + Math.PI) : d / dist;
+                double push = Math.Min((want - dist) * step, cap);
+                e.Position += n * push;
+                CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
+            }
         }
 
         public void Clear()
