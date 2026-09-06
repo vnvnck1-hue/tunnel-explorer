@@ -1,8 +1,9 @@
 # 땅굴 크루 — Unity 포팅 계획 v0.1
 
 > 작성: 2026-09-05 · 기준 빌드: `tunnel-crew-infinite-mode-v7.9.2.html` (17,371,356 B, 스크립트 블록 22개, 함수 약 1,050개)
-> 근거: v7.9.2 코드 전수 분석 3편 — [코어 시뮬레이션](unity-port/analysis-01-core-sim.md) / [엔티티·전투·AI](unity-port/analysis-02-entities-combat-ai.md) / [셸·오디오·네트·자산](unity-port/analysis-03-shell-audio-net-assets.md) — 와 `docs/tunnel-crew-main-game-structure.md` v0.3, `docs/project-history-and-direction.md`
-> 상태: **계획 초안 — §1 결정 사항 확정 후 M0 착수**
+> 근거: v7.9.2 코드 전수 분석 3편 — [코어 시뮬레이션](unity-port/analysis-01-core-sim.md) / [엔티티·전투·AI](unity-port/analysis-02-entities-combat-ai.md) / [셸·오디오·네트·자산](unity-port/analysis-03-shell-audio-net-assets.md) — 와 [엔진 네이티브 대체 분석](unity-port/analysis-04-engine-native-replacements.md)(2026-09-06), `docs/tunnel-crew-main-game-structure.md` v0.3, `docs/project-history-and-direction.md`
+> 상태: **§1 결정 D1·D2·D8 확정(2026-09-06) · 기준 빌드 동결 완료 → M0 착수 가능**
+> 기준 빌드 동결 커밋: `b55d39e` (`tunnel-crew-infinite-mode-v7.9.2.html`). 이후 원본 HTML 변경은 §9에 적재하고 포팅은 이 커밋 기준으로만 진행한다.
 
 ---
 
@@ -16,14 +17,14 @@
 
 | # | 결정 | 권장 | 이유 |
 |---|---|---|---|
-| D1 | Unity 버전 / 렌더 파이프라인 | **Unity 6 LTS (6000.x) + URP 2D Renderer** | Light2D·노멀맵·풀스크린 셰이더 패스가 표준 제공. 원본의 WebGL 라이트맵/LX 4레이어 합성을 Renderer Feature로 옮기기 가장 수월 |
-| D2 | 포팅 범위 | **본선 플레이 경로만**: 메인 메뉴 → 행성 원정(무한 모드) → 직업 선택(+AI) → 인게임 → 결과 → 정산·성장 지도 | 레거시 mine 모드(마을·수면·업그레이드 `UPG`), `#pTitle/#pUp/#pRep/#pSet/#pHow`, 솔로 미션(harvest/recover/purge)은 기획서 §14에서 "흡수·재정의"로 판정됨. 개발툴(Projectile Lab, Boss Lab, Test Hub, UILAB, LX 패널)은 Unity 에디터 인스펙터로 대체 |
+| D1 | Unity 버전 / 렌더 파이프라인 | **확정: Unity 6.3 LTS `6000.3.15f1` + URP 2D Renderer** *(2026-09-06)* | 이 PC에 이미 설치됨(6000.0.69f1도 있으나 6.3이 최신 LTS, 2027-12까지 지원). Light2D·소프트 섀도·노멀맵·Full Screen Pass가 표준 제공 |
+| D2 | 포팅 범위 | **확정: 본선 플레이 경로 + 이상지대 무한 하강** *(2026-09-06)* — 메인 메뉴 → 행성 원정 → 직업 선택(+AI) → 인게임(지층 1~3) → 중심부 보스 → **이상지대 N층 무한 하강(엔드게임)** → 탈출 → 결과 → 정산·성장 지도. `INF_PLANET.abyss`(wallHp ×1.6ⁿ, enemyHp ×1.55ⁿ, 장악도 .34)와 변종 보스 티어를 출시 기능으로 포함한다 | 레거시 mine 모드(마을·수면·업그레이드 `UPG`), `#pTitle/#pUp/#pRep/#pSet/#pHow`, 솔로 미션(harvest/recover/purge)은 기획서 §14에서 "흡수·재정의"로 판정됨. 개발툴(Projectile Lab, Boss Lab, Test Hub, UILAB, LX 패널)은 Unity 에디터 인스펙터로 대체 |
 | D3 | UI 프레임워크 | **UGUI + TextMeshPro** | 원본 UI가 DOM/CSS 오버레이 100%라 UGUI 캔버스 구조와 1:1 대응. 게임패드 내비게이션 필요(원본 미지원) |
 | D4 | 입력 | **Input System (신형)** 액션맵 5종: Gameplay / UI / Chat / Craft / Ping | 원본은 G·V·C·Enter·Tab이 캡처 단계에서 본편 키를 가로채는 구조. 액션맵 전환으로 정리하면서 게임패드를 처음부터 지원 |
-| D5 | 물리 | **Physics2D 미사용, 원본 원-AABB 충돌 유지** | 벽이 실시간으로 생기고 사라지는 게임. 원본 `collide()`의 3회 반복 해소 + 35% 보간 탈출은 이 게임 특유의 안전장치 |
-| D6 | 시뮬레이션 틱 | **고정 60Hz 누산기** (원본은 가변 dt, 상한 0.05) | 코옵 호스트 권위·AI 결정 루프·리플레이 테스트를 위해 결정론 확보. 히트스톱은 원본대로 dt 배율(×0.055)로 |
+| D5 | 물리 | **Physics2D 하이브리드** — 충돌·쿼리·분리는 엔진(Tilemap Collider + Composite, Kinematic Rigidbody2D + Cast/MovePosition, Continuous CD), 이동 적분·넉백·경로는 스크립트 | *(2026-09-06 개정)* 원본 `collide()`의 3회 반복·4px 서브스텝은 물리 엔진이 없어 만든 우회. 벽이 실시간 생성될 때의 탈출 처리는 OverlapCircle 기반으로 의도만 보존. 근거 [analysis-04 §6](unity-port/analysis-04-engine-native-replacements.md) |
+| D6 | 시뮬레이션 틱 | **고정 60Hz 누산기** (원본은 가변 dt, 상한 0.05) | 코옵 호스트 권위·AI 결정 루프·리플레이 테스트를 위해 결정론 확보. 히트스톱은 `Time.timeScale=0.055`를 실시간 N ms 유지하는 방식으로 틱과 분리 — 원본의 12ms(보스)·20ms(적) 히트스톱이 16.7ms 틱보다 짧아도 보존된다 *(2026-09-06 개정, analysis-04 §3.2)* |
 | D7 | 코옵 스택 | **마지막 마일스톤(M8)로 미룸.** 코어는 처음부터 `SimCommand` 입력 큐로 설계 | 원본은 호스트 권위 + 시드 동기화. 그대로 옮길 수 있으나 알려진 불일치(coop/README "아직인 것")가 있어 재설계 여지. 스택은 Netcode for GameObjects 또는 기존 Node 릴레이 재사용 중 M7 시점에 결정 |
-| D8 | 저장소 위치 | 같은 repo의 `unity/TunnelCrew/` 하위 폴더, `Library/` 등 gitignore | 문서·자산·원본 HTML과 한 곳. repo가 이미 자산으로 크므로 Unity 프로젝트는 원본 자산을 **복사하지 않고 임포트 스크립트로 참조·변환** |
+| D8 | 저장소 위치 | **확정: 같은 repo 유지** *(2026-09-06)*. `unity/TunnelCrew/` 하위, `Library/ Temp/ Logs/ obj/ Build/` gitignore. 신규 바이너리(png·wav·ogg·psd·ttf)는 **Git LFS**로 추적 | 문서·자산·원본 HTML과 한 곳. 현재 `.git` 392MB + Unity 임포트 자산 약 160MB → 약 550MB로 GitHub 권장 한도(1GB 경고) 안. LFS는 반복 재수출되는 아트가 히스토리를 부풀리는 것을 막기 위한 것이며, GitHub Free/Pro 무료 한도 10GB 안에서 무료 |
 | D9 | 1차 타깃 | Windows 데스크톱 단일 빌드 (기존 `.exe` 아이콘 규칙 `assets/app-icon-dragon.ico` 유지) | AGENTS.md 빌드 지침과 일치 |
 
 ---
@@ -59,6 +60,7 @@
 - 솔로 미션 모드(`CREW_MISSIONS`, 바이옴 선택 화면). 브라인 바이옴 장판 규칙은 행성 콘텐츠로 재활용 후보
 - 개발툴 스크립트 블록: Projectile Lab, Boss Lab 인스펙터(값은 데이터로 이관), Test Hub/Relic Lab, UILAB(F8), LX 패널(F10), `#pSet`, `?tcTest` 패널, 관전(OBSERVER) 모드는 보류
 - Canvas2D 폴백 어둠(`drawDarkness`), WebGL 미지원 분기, 자동 품질 강등 토글
+- HTML·브라우저 제약의 산물 전체 목록은 [analysis-04 §10](unity-port/analysis-04-engine-native-replacements.md). 렌더 트릭·런타임 래핑·주입 파이프라인·자동재생 우회·가변 dt 루프 등은 어떤 형태로도 옮기지 않는다
 
 ### 2.3 새로 만들어야 하는 것 (원본에 없음)
 
@@ -122,6 +124,9 @@ tools/unity-export/      ← 원본 HTML에서 데이터·자산을 뽑는 스�
 
 ### 3.3 조명·시야 대응
 
+> *(2026-09-06)* 아래 표는 1차 대응이다. 확정 구조는 [analysis-04 §2](unity-port/analysis-04-engine-native-replacements.md): **Light2D + 어둠 풀스크린 패스 1개(가시 폴리곤 RT + 탐색 누적 RT) + Volume 포스트프로세싱**. LX 4레이어는 어둠 패스 1개와 지층별 Volume 프로파일로 접힌다.
+
+
 | 원본 | Unity |
 |---|---|
 | `LOS` 레이캐스트 → RGBA 픽셀 버퍼 | `LosService`(Sim, byte[] visible/explored) → `Texture2D R8G8` 업로드 (Job 병렬화 선택) |
@@ -145,6 +150,8 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 | `import-dragon-frames` | `assets/red-fire-dragon/{idle 37, walking 37, fire-breath-a 26, death 24}` | 10fps 클립 4종 | 포효 SFX 트리거 = fireBreath 15프레임(animT 1.4) |
 | `import-tiles` | `tunnel_crew_tile_resources_v1/tile_manifest.json` (536엔트리, 50×50) | SpriteAtlas 2바이옴 + `TileAtlasIndex` 룰 (`ti*48 + band*12 + surface*4 + damage`) | overlays 8종 포함 |
 | `export-ui-layout` | 실행 중 브라우저 `localStorage['tc.uiLayout.v1']` | `ui-layout.json` | **HUD 좌표의 정답지**. HTML 초기 좌표는 UILAB 오버라이드로 덮여 있을 수 있음 |
+| `bake-procedural-sfx.mjs` | HTML의 `SFX.*` 중 절차 합성 17종(buy, cache, dawn, descend, exit, fail, ore, ready, rescue, start, tick, timeout, voice, warn, zzz, 드릴 폴백 2) + 보스 럼블·사망음·brk 저역 | `Audio/baked/*.wav` 변형 3~5개씩 | `OfflineAudioContext`로 렌더. analysis-04 §8 |
+| `gen-tile-normals` | 타일 536장 | `_NormalMap` Secondary Texture 아틀라스 | Laigter 등 높이 추정. analysis-04 §2.1 |
 | `dump-mapgen-fixture.mjs` | `genTunnel(d)`를 시드 N개로 실행 | `fixtures/map-{seed}-{depth}.json` (cell 배열·entry·exit·lamps) | §6 패리티 테스트용. 원본의 `Math.random()` 사용 지점(진입점·출구 후보 5386·5744행)은 시드 RNG로 바꾼 사본에서 덤프 |
 
 ---
@@ -154,7 +161,7 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 각 마일스톤은 "플레이 가능한 상태"를 끝점으로 한다. 순서는 기획서 §15 수직 슬라이스 제안을 따른다.
 
 ### M0 — 준비 (추출·골격)
-- Unity Hub + Unity 6 LTS 설치(현재 이 PC에 Unity·.NET SDK 없음), URP 2D 템플릿으로 `unity/TunnelCrew` 생성, asmdef 3개(Sim / Presentation / Tests)
+- Unity 6 LTS 선택 — 이 PC에 Unity Hub와 6000.0.69f1 · 6000.3.15f1, .NET SDK 10이 이미 설치되어 있음(2026-09-06 확인). **6000.3.15f1(Unity 6.3 LTS)** 사용. URP 2D 템플릿으로 `unity/TunnelCrew` 생성, asmdef 3개(Sim / Presentation / Tests)
 - §4 추출 스크립트 전부 실행, `data/*.json` + 자산 임포트 완료
 - `GameFlow` 빈 상태 머신, 빈 씬 3개(Boot / Menu / Run)
 - **완료 기준**: 에디터에서 타일 아틀라스·캐릭터 시트·오디오가 임포트 오류 0으로 보이고, SO 데이터가 원본 값과 일치(스팟체크 20개)
@@ -239,7 +246,7 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 | 리스크 | 대응 |
 |---|---|
 | 특성 ~60종·유물 33종·노드 80종의 효과가 `INF` 전역을 직접 변형하는 클로저라 자동 추출 불가 | M4에서 효과 표를 수작업 작성. 표 자체를 `docs/unity-port-trait-table.md`로 남겨 리뷰 가능하게 |
-| 원본이 가변 dt라 고정 60Hz로 바꾸면 손맛(드릴 타격 간격 0.06s, 대시 0.11s, 히트스톱 28~68ms)이 미세하게 달라짐 | 60Hz 틱(16.7ms)이 모든 타이머보다 짧아 체감 차이는 작을 것. M3에서 원본과 A/B |
+| 원본이 가변 dt라 고정 60Hz로 바꾸면 손맛(드릴 타격 간격 0.06s=3.6틱, 히트스톱 12~68ms)이 달라짐. 특히 보스 피격 12ms·적 피격 20ms는 16.7ms 틱보다 짧아 사라지거나 두 배가 됨 | 히트스톱은 `Time.timeScale` 실시간 유지로 틱과 분리(D6 개정). 드릴 간격은 서브틱 누산으로 보존. M3에서 원본과 A/B |
 | 렌더 순서·레이어가 원본에서 암묵적 | §8.3의 18단계 드로우 순서를 Sorting Layer 표로 먼저 고정하고 각 프리팹에 배정 |
 | 자산 227MB, 캐릭터 시트 1,476장 | 런타임 참조 파일만 임포트(sheets 원본·kenney 후보 203 ogg·concepts 제외). 임포트 스크립트가 목록을 소유 |
 | 원본이 계속 진화(v7.9.x) | 포팅 기준은 v7.9.2로 동결. 이후 원본 변경은 `docs/unity-port-plan.md` §9에 "이관 대기" 항목으로 적재 |
@@ -276,6 +283,34 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 ## 9. 이관 대기 (v7.9.2 이후 원본 변경)
 
 *(비어 있음 — 원본에 새 기능이 들어오면 여기에 적는다)*
+
+---
+
+## 10. 엔진 네이티브 대체 원칙 (2026-09-06)
+
+HTML 프로토타입은 브라우저에서 당장 되는 방법으로 만족하며 빠르게 만들었다. Unity 포팅은 프로토타이핑을 끝내고 프로덕션 게임을 만드는 일이므로, **규칙·수치·보이고 들리는 결과는 보존하되 HTML 제약 때문에 택한 구현 방법은 가져가지 않는다.** 표현 계층(조명·어둠·VFX·셰이더·포스트·애니메이션·물리·카메라·UI·오디오)은 Unity 표준 제작법으로 새로 만든다.
+
+전체 대체표·폐기 목록·추천 패키지는 [analysis-04](unity-port/analysis-04-engine-native-replacements.md). 핵심만 요약한다.
+
+| 영역 | Unity 표준 | 대체하는 원본 |
+|---|---|---|
+| 조명·어둠 | URP 2D Light2D + Shadow Caster 2D + 어둠 풀스크린 패스 1개 + Volume(Color Adjustments·Tonemapping·Bloom·Vignette·Film Grain) | FOW WebGL 라이트맵, LIT 방사 차분 그림자, LX 4레이어, LOS 픽셀 버퍼 |
+| 타일 | Tilemap 3장 + 커스텀 TileBase + 노멀맵 Secondary Texture | `_BS` 캐시 drawImage, 암반 3패스 |
+| 스프라이트 효과 | Shader Graph 프로퍼티(`_Flash/_Tint/_Dissolve/_Emissive/_Rim`) | 드로우 함수 안 색 덧칠 |
+| VFX | Particle System 프리셋 + VFX Graph(대량) + 바닥 RT 데칼 페인팅 | `J` 파티클 12종 배열, `rub/gore/fdec` 수명 배열 |
+| 피드백 | `Time.timeScale` 히트스톱 + Cinemachine Impulse + DOTween을 묶은 자체 `Feedback` 컴포넌트 + `FeedbackProfile` SO (유료 Feel 미도입) | `J.hs` dt 배율, `J.kick`, `FEEL.transform` |
+| 시네마틱·전환 | Timeline + Cinemachine 블렌드 + Signal, 풀스크린 와이프 셰이더 | DOM 오버레이 tick, `CREW.phase` 정지, 시트 3장 |
+| 애니메이션 | Animator + 2D Freeform Directional 블렌드 트리, Animation Event, 임포트 시 피벗 확정 | `animT` 수식 인덱싱, 런타임 피벗 표 |
+| 카메라 | Cinemachine 3 Position Composer + Target Group + Confiner 2D | 데드존·룩어헤드·동적 줌·클램프 수작업 |
+| 물리 | Physics2D 하이브리드 (D5 개정) | 원-AABB 3회 반복, 4px 서브스텝 |
+| UI | UGUI + TMP(한글 SDF) + 9-slice + DOTween + 테마 SO. 유리 블러는 폐기, 모달 뒤는 반투명 딤 | DOM/CSS: box-shadow 112·filter 111·backdrop-filter 12·transition 86 |
+| 오디오 | Audio Mixer 그룹·Snapshot·Limiter + SfxBank SO + 절차 합성음 WAV 베이크 | WebAudio 게인 트리, `MENU_SFX.bank`, 합성 SFX 17종 |
+| 툴링 | ScriptableObject + 인스펙터 + 디버그 메뉴 1개, Addressables, Localization | DEMO 190필드, F8/F10/Boss Lab, localStorage 12키 |
+| 코옵 | Netcode for GameObjects + Unity Transport + Relay/Lobby | Node 릴레이·HTML 서빙·START.bat |
+
+**유료 에셋 결정 (2026-09-06)**: Feel·Translucent Image·Odin 모두 **미도입**. 피드백은 자체 컴포넌트, 유리 효과는 딤 처리로 대체, SO 대량 데이터는 CSV/JSON 임포터로 관리. 무료로 쓰는 것은 DOTween(무료판, 저작권 고지 동봉)·Unity UI Extensions·Laigter. 부족이 확인되면 그 시점에 재검토한다.
+
+마일스톤 반영: M1 Cinemachine·DOTween·Physics2D, M2 Volume 프로파일·Shadow Caster 청크·타일 노멀맵, M3 Shuriken 프리셋·스프라이트 셰이더·피드백 컴포넌트, M4 Timeline 2개·텔레그래프 셰이더, M5 9-slice·테마 SO·TMP 폰트·모달 딤·Localization, M7 Mixer 스냅샷·SfxBank·베이크 WAV 검수.
 
 ---
 
