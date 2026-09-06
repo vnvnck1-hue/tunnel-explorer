@@ -43,6 +43,7 @@ namespace TunnelCrew.Presentation
         readonly List<Light2D> _lamps = new List<Light2D>();
         DarknessOverlay _darkness;
         Volume _volume;
+        WallShadowBuilder _wallShadows;
 
         void Start()
         {
@@ -196,6 +197,10 @@ namespace TunnelCrew.Presentation
             _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
 
             BuildVolume(root);
+
+            // 벽이 빛을 가리게 한다. 리플렉션이 안 되면 조용히 건너뛴다.
+            _wallShadows = root.AddComponent<WallShadowBuilder>();
+            _wallShadows.Bind(Sim.World);
         }
 
         /// <summary>
