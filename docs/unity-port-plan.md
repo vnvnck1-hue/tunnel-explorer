@@ -376,7 +376,10 @@ X 로 탈출 포트 지정 → 좌클릭 확정 → 20초 후 도착 → 포트 
 | `RelicSystem` — 효과 33종: 피해 배율(송곳니·배수진·지층의 기억·심연·용암·영구동토·뇌전 공명), 상태이상(맹독·화상·서리·감전·급속 냉동·들불·냉기 폭발), 방어(젤·암반 피부·회중시계·피뢰침·모래시계 시간 정지), 처치(흡혈·피의 계약·유폭), 월드(공명석·사태 유발자·자철석·도시락), 부활(불사조), 태엽 수호자 드론, 발굴(광맥 1.5%+·피티 260·보스 35/60%·묻힌 유물 50%·탐지기), 밀수꾼 정산 | 완료 — 원본 infRelic* 수치 그대로. 훅은 EnemySystem 의 대리자(EnemyDamageMod/KnockMul/WallSlam/PlayerDamageMod/AfterPlayerHurt/TimeStopped) |
 | `MetaScreens` — 메인 메뉴(키아트·기록 한 줄) · 행성 지도(11행성, 잠금 10 실루엣) · 직업 선택(4카드: 코드·일러스트·태그·장비·배율·영구 랭크) · 귀환 정산 3뷰(요약 / 성장 지도 팬·줌·툴팁·클릭 구매·발견 연출·랭크 핍 / 유물 보관고 소켓·자동 장착·공명) · 일시정지(Esc, 계속·포기) | 완료 (IMGUI 임시, 1080p 배율). 흐름: 메뉴→행성→직업→런→결과(Enter)→정산→메뉴 |
 | `RunBootstrap` 게이트 — `RunActive`/`Paused`, `LaunchRun`/`SuspendRun`, 결과 Enter → 정산 이벤트 | 완료 |
-| 화면 전환 와이프(260/40/340ms) · 로딩 화면(assets/loading) · 해상도 옵션 · UGUI 정식 배치 | 미착수 (M5 후반) |
+| 화면 전환 와이프 — 원본 TCFX.wipe 규칙(cover 260 · hold 40 · reveal 340 ms, 사다리꼴 시트, 뒤로 가기 반전, 감속 모드·전환 중이면 생략), 모든 화면 전환이 hold 시점에 상태를 바꿈 | 완료 (m5_wipe.png) |
+| 로딩 화면 — 출격 와이프 hold 구간에 `assets/loading/industrial-drill-electric-cyan` 회전 + "직업 출격 — 지층 생성 중" | 완료 |
+| 설정 화면(메인 메뉴 04) — 해상도(`Screen.resolutions`) · 전체 화면 · 감속 모드(Feedback.ReducedMotion 연동) · BGM/SFX 볼륨(M7 오디오가 `MetaScreens.BgmVolume/SfxVolume` 로 읽음), PlayerPrefs `tc.*` 저장 | 완료 (m5_settings.png) |
+| UGUI 정식 배치 | 보류 — IMGUI 1080p 배율로 유지, Pretendard 폰트 도착 후 M7 에서 함께 교체 |
 | 테스트 | MetaTests 8 · RelicTests 11 |
 
 ### M6 — AI 크루·핑·채팅·퀵크래프트

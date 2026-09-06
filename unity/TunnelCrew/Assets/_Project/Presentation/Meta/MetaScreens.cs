@@ -16,7 +16,7 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class MetaScreens : MonoBehaviour
     {
-        public enum Screen { MainMenu, Starmap, RoleSelect, Run, Settlement, Pause }
+        public enum Screen { MainMenu, Starmap, RoleSelect, Run, Settlement, Pause, Settings }
         public enum SettleView { Summary, Map, Relics }
 
         [SerializeField] RunBootstrap _run;
@@ -32,6 +32,13 @@ namespace TunnelCrew.Presentation
         Vector2 _mapPan; float _mapZoom = 0.62f; bool _mapDragging; Vector2 _dragLast;
         NodeDef _hoverNode; string _fxNodeId; float _fxT; readonly List<string> _discovered = new List<string>();
         string _status = "";
+
+        // 화면 전환 와이프 — 원본 TCFX.wipe: 시트가 가로로 쓸고 지나간다. cover 260 · hold 40 · reveal 340 ms, 뒤로 가기는 반대 방향
+        const float WipeCover = .26f, WipeHold = .04f, WipeReveal = .34f;
+        float _wipeT = -1f; bool _wipeBack; Action _wipeMid; bool _wipeMidDone; bool _wipeLoading;
+        Texture2D _loadingArt; float _loadingSpin;
+        // 설정 (PlayerPrefs)
+        int _resIdx; bool _fullscreen; bool _reducedMotion; float _bgm = .8f, _sfx = .9f; Resolution[] _resolutions;
 
         Texture2D _keyart, _bg, _white; readonly Dictionary<RoleId, Texture2D> _select = new Dictionary<RoleId, Texture2D>(), _badge = new Dictionary<RoleId, Texture2D>(), _portrait = new Dictionary<RoleId, Texture2D>();
         readonly Dictionary<string, Texture2D> _icons = new Dictionary<string, Texture2D>();
@@ -74,6 +81,8 @@ namespace TunnelCrew.Presentation
                 _portrait[r] = Resources.Load<Texture2D>("UI/portrait-" + n);
             }
             foreach (var t in Resources.LoadAll<Texture2D>("UI/icons")) _icons[t.name] = t;
+            _loadingArt = Resources.Load<Texture2D>("UI/loading-drill");
+            LoadSettings();
 
             if (_run != null)
             {
@@ -93,33 +102,54 @@ namespace TunnelCrew.Presentation
                 case Screen.MainMenu: GoMenu(); break;
                 case Screen.Starmap: GoStarmap(); break;
                 case Screen.RoleSelect: GoRoleSelect(); break;
-                case Screen.Settlement: OpenSettlement(fromMenu: true); _view = view; break;
+                case Screen.Settlement: OpenSettlement(fromMenu: true, view); break;
+                case Screen.Settings: GoSettings(); break;
                 case Screen.Run: Launch(); break;
                 default: Current = s; break;
             }
         }
-        void GoMenu() { _run?.SuspendRun(); Current = Screen.MainMenu; MetaStore.Save(); }
-        void GoStarmap() { Current = Screen.Starmap; _planetIdx = 0; }
-        void GoRoleSelect() { Current = Screen.RoleSelect; }
-        void Launch() { _run.LaunchRun(_selected); Current = Screen.Run; }
-        void OpenSettlement(bool fromMenu)
+        /// <summary>와이프 뒤에 화면을 바꾼다. 감속 모드·이미 전환 중이면 즉시 실행 (원본 TCFX.wipe 규칙).</summary>
+        void Wipe(Action mid, bool back = false, bool loading = false)
         {
-            _settleFromMenu = fromMenu; _view = fromMenu ? SettleView.Map : SettleView.Summary; Current = Screen.Settlement;
+            if (_reducedMotion || _wipeT >= 0) { mid(); return; }
+            _wipeT = 0; _wipeBack = back; _wipeMid = mid; _wipeMidDone = false; _wipeLoading = loading;
+        }
+        void GoMenu() => Wipe(() => { _run?.SuspendRun(); Current = Screen.MainMenu; MetaStore.Save(); }, back: true);
+        void GoStarmap() => Wipe(() => { Current = Screen.Starmap; _planetIdx = 0; });
+        void GoRoleSelect() => Wipe(() => Current = Screen.RoleSelect);
+        void GoSettings() => Wipe(() => Current = Screen.Settings);
+        void Launch() => Wipe(() => { _run.LaunchRun(_selected); Current = Screen.Run; }, loading: true);
+        void OpenSettlement(bool fromMenu, SettleView? view = null) => Wipe(() =>
+        {
+            _settleFromMenu = fromMenu; _view = view ?? (fromMenu ? SettleView.Map : SettleView.Summary); Current = Screen.Settlement;
             _run?.SuspendRun(); _status = ""; _discovered.Clear();
             CenterMap();
-        }
+        }, back: !fromMenu);
         void CenterMap() { _mapZoom = 0.62f; _mapPan = Vector2.zero; }
 
         // ───────────────────────────── 입력
         void Update()
         {
+            // 와이프 진행 — 실시간. cover 끝에 화면을 바꾸고, hold 동안 로딩을 보여주고, reveal 로 걷어낸다
+            if (_wipeT >= 0)
+            {
+                _wipeT += Time.unscaledDeltaTime;
+                if (!_wipeMidDone && _wipeT >= WipeCover) { _wipeMidDone = true; _wipeMid?.Invoke(); }
+                if (_wipeT >= WipeCover + WipeHold + WipeReveal) { _wipeT = -1; _wipeLoading = false; }
+                _loadingSpin += Time.unscaledDeltaTime * 240f;
+                return;   // 전환 중에는 입력을 받지 않는다
+            }
             var kb = Keyboard.current; if (kb == null) return;
             switch (Current)
             {
                 case Screen.MainMenu:
                     if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame) GoStarmap();
                     else if (kb.digit2Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
-                    else if (kb.digit3Key.wasPressedThisFrame) { OpenSettlement(fromMenu: true); _view = SettleView.Relics; }
+                    else if (kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
+                    else if (kb.digit4Key.wasPressedThisFrame) GoSettings();
+                    break;
+                case Screen.Settings:
+                    if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame) { SaveSettings(); GoMenu(); }
                     break;
                 case Screen.Starmap:
                     if (kb.escapeKey.wasPressedThisFrame) GoMenu();
@@ -182,7 +212,7 @@ namespace TunnelCrew.Presentation
 
         void OnGUI()
         {
-            if (Current == Screen.Run) return;
+            if (Current == Screen.Run) { DrawWipe(); return; }
             _k = UnityEngine.Screen.height / 1080f;
             float W = UnityEngine.Screen.width / _k, H = 1080f;
             switch (Current)
@@ -192,7 +222,107 @@ namespace TunnelCrew.Presentation
                 case Screen.RoleSelect: DrawRoleSelect(W, H); break;
                 case Screen.Settlement: DrawSettlement(W, H); break;
                 case Screen.Pause: DrawPause(W, H); break;
+                case Screen.Settings: DrawSettings(W, H); break;
             }
+            DrawWipe();
+        }
+
+        /// <summary>화면 전환 시트. 런 화면 위에서도 그려야 하므로 OnGUI 의 Run 조기 반환 앞에서도 호출한다.</summary>
+        void DrawWipe()
+        {
+            if (_wipeT < 0) return;
+            float sw = UnityEngine.Screen.width, sh = UnityEngine.Screen.height, k = sh / 1080f;
+            // 시트 앞머리 0→1 (cover) · 1 (hold) · 뒷머리 0→1 (reveal). 뒤로 가기는 좌우 반전
+            float head, tail;
+            if (_wipeT < WipeCover) { head = Ease(_wipeT / WipeCover); tail = 0; }
+            else if (_wipeT < WipeCover + WipeHold) { head = 1; tail = 0; }
+            else { head = 1; tail = Ease((_wipeT - WipeCover - WipeHold) / WipeReveal); }
+            float skew = sw * .12f;
+            var col = new Color(.03f, .02f, .06f, 1f);
+            const int rows = 24;
+            for (int i = 0; i < rows; i++)
+            {
+                float y0 = sh * i / rows, y1 = sh * (i + 1) / rows, f = (i + .5f) / rows;
+                float x0 = tail * (sw + skew) - skew * (1 - f), x1 = head * (sw + skew) - skew * f;
+                x0 = Mathf.Clamp(x0, 0, sw); x1 = Mathf.Clamp(x1, 0, sw);
+                if (_wipeBack) { float a = sw - x1, b = sw - x0; x0 = a; x1 = b; }
+                if (x1 > x0) Fill(new Rect(x0, y0, x1 - x0, y1 - y0 + 1), col);
+            }
+            // 로딩 — 원본 assets/loading 드릴 아이콘 회전 + 문구. 시트가 화면을 다 덮은 구간에만
+            if (_wipeLoading && _wipeT >= WipeCover * .85f && _wipeT < WipeCover + WipeHold + WipeReveal * .3f)
+            {
+                float s = 180 * k;
+                if (_loadingArt != null)
+                {
+                    var m = GUI.matrix;
+                    GUIUtility.RotateAroundPivot(_loadingSpin, new Vector2(sw * .5f, sh * .5f));
+                    GUI.DrawTexture(new Rect(sw * .5f - s * .5f, sh * .5f - s * .5f, s, s), _loadingArt, ScaleMode.ScaleToFit);
+                    GUI.matrix = m;
+                }
+                var st = new GUIStyle(GUI.skin.label) { fontSize = Mathf.RoundToInt(24 * k), fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter, richText = true };
+                st.normal.textColor = new Color(.9f, .92f, 1f);
+                GUI.Label(new Rect(0, sh * .5f + s * .62f, sw, 44 * k), $"{RoleNames[(int)_selected]} 출격 — 지층 생성 중", st);
+            }
+        }
+        static float Ease(float t) { t = Mathf.Clamp01(t); return t < .5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) * .5f; }
+
+        // ── 설정 (신설 — 계획 §2.3): 해상도 · 전체화면 · 감속 모드 · 볼륨(M7 오디오가 읽는다). PlayerPrefs 저장
+        public static bool ReducedMotionPref => PlayerPrefs.GetInt("tc.reducedMotion", 0) == 1;
+        public static float BgmVolume => PlayerPrefs.GetFloat("tc.bgm", .8f);
+        public static float SfxVolume => PlayerPrefs.GetFloat("tc.sfx", .9f);
+        void LoadSettings()
+        {
+            _resolutions = UnityEngine.Screen.resolutions;
+            if (_resolutions == null || _resolutions.Length == 0) _resolutions = new[] { new Resolution { width = UnityEngine.Screen.width, height = UnityEngine.Screen.height } };
+            _fullscreen = PlayerPrefs.GetInt("tc.fullscreen", UnityEngine.Screen.fullScreen ? 1 : 0) == 1;
+            _reducedMotion = ReducedMotionPref;
+            _bgm = BgmVolume; _sfx = SfxVolume;
+            int w = PlayerPrefs.GetInt("tc.resW", UnityEngine.Screen.width), h = PlayerPrefs.GetInt("tc.resH", UnityEngine.Screen.height);
+            _resIdx = Array.FindIndex(_resolutions, r => r.width == w && r.height == h);
+            if (_resIdx < 0) _resIdx = _resolutions.Length - 1;
+            ApplyMotion();
+        }
+        void SaveSettings()
+        {
+            PlayerPrefs.SetInt("tc.fullscreen", _fullscreen ? 1 : 0); PlayerPrefs.SetInt("tc.reducedMotion", _reducedMotion ? 1 : 0);
+            PlayerPrefs.SetFloat("tc.bgm", _bgm); PlayerPrefs.SetFloat("tc.sfx", _sfx);
+            var r = _resolutions[Mathf.Clamp(_resIdx, 0, _resolutions.Length - 1)];
+            PlayerPrefs.SetInt("tc.resW", r.width); PlayerPrefs.SetInt("tc.resH", r.height);
+            PlayerPrefs.Save();
+        }
+        void ApplyResolution()
+        {
+            var r = _resolutions[Mathf.Clamp(_resIdx, 0, _resolutions.Length - 1)];
+            UnityEngine.Screen.SetResolution(r.width, r.height, _fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed);
+        }
+        void ApplyMotion() { var fb = FindFirstObjectByType<Feedback>(); if (fb != null) fb.ReducedMotion = _reducedMotion; }
+
+        void DrawSettings(float W, float H)
+        {
+            DrawBackdrop(_bg, W, H, .6f);
+            GUI.Label(R(80, 60, 900, 60), "<b>설정</b>   <color=#aaa>Esc / Enter 저장 후 메뉴</color>", St(34, FontStyle.Bold));
+            float x = 120, y = 170, w = 900;
+            Panel(R(x - 20, y - 20, w + 40, 540), .7f);
+            var cur = _resolutions[Mathf.Clamp(_resIdx, 0, _resolutions.Length - 1)];
+            GUI.Label(R(x, y, 260, 50), "해상도", St(22));
+            if (Button(R(x + 280, y, 60, 50), "◀")) { _resIdx = Mathf.Max(0, _resIdx - 1); ApplyResolution(); }
+            GUI.Label(R(x + 350, y, 300, 50), $"<b>{cur.width} × {cur.height}</b>", St(22, FontStyle.Bold, TextAnchor.MiddleCenter));
+            if (Button(R(x + 660, y, 60, 50), "▶")) { _resIdx = Mathf.Min(_resolutions.Length - 1, _resIdx + 1); ApplyResolution(); }
+            y += 70;
+            GUI.Label(R(x, y, 260, 50), "전체 화면", St(22));
+            if (Button(R(x + 280, y, 440, 50), _fullscreen ? "<b>켬</b>   <color=#aaa>클릭: 창 모드</color>" : "<b>끔</b>   <color=#aaa>클릭: 전체 화면</color>")) { _fullscreen = !_fullscreen; ApplyResolution(); }
+            y += 70;
+            GUI.Label(R(x, y, 260, 50), "감속 모드", St(22));
+            if (Button(R(x + 280, y, 440, 50), _reducedMotion ? "<b>켬</b>   <color=#aaa>흔들림 35% · 히트스톱 26ms · 와이프 생략</color>" : "<b>끔</b>")) { _reducedMotion = !_reducedMotion; ApplyMotion(); }
+            y += 70;
+            GUI.Label(R(x, y, 260, 50), "BGM", St(22));
+            _bgm = GUI.HorizontalSlider(R(x + 280, y + 18, 380, 20), _bgm, 0f, 1f); GUI.Label(R(x + 680, y, 80, 50), $"{_bgm:P0}", St(20));
+            y += 70;
+            GUI.Label(R(x, y, 260, 50), "효과음", St(22));
+            _sfx = GUI.HorizontalSlider(R(x + 280, y + 18, 380, 20), _sfx, 0f, 1f); GUI.Label(R(x + 680, y, 80, 50), $"{_sfx:P0}", St(20));
+            y += 80;
+            GUI.Label(R(x, y, w, 60), "<color=#aaa>볼륨은 M7 오디오가 읽습니다. 설정: PlayerPrefs · 세이브: " + MetaStore.Path + "</color>", St(14, FontStyle.Normal, TextAnchor.UpperLeft));
+            if (Button(R(x, y + 70, 300, 56), "저장 · 메뉴로   <color=#aaa>Enter</color>")) { SaveSettings(); GoMenu(); }
         }
 
         void DrawBackdrop(Texture2D tex, float W, float H, float dim)
@@ -212,7 +342,8 @@ namespace TunnelCrew.Presentation
             if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">01</size>   출격 — 행성 지도   <color=#aaa>Enter</color>")) GoStarmap(); y += h + gap;
             if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">02</size>   성장 지도 · 영구 노드   <color=#aaa>2</color>")) OpenSettlement(true); y += h + gap;
             if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">03</size>   유물 보관고   <color=#aaa>3</color>")) { OpenSettlement(true); _view = SettleView.Relics; } y += h + gap;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">04</size>   종료", true, new Color(.6f, .6f, .65f))) Application.Quit(); y += h + gap;
+            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">04</size>   설정   <color=#aaa>4</color>")) GoSettings(); y += h + gap;
+            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">05</size>   종료", true, new Color(.6f, .6f, .65f))) Application.Quit(); y += h + gap;
             Panel(R(x, H - 120, 900, 70), .55f);
             int nodes = PermanentNodes.All.Count(n => meta.RankOf(n.Id) > 0);
             GUI.Label(R(x + 18, H - 116, 880, 62), $"최고 심층 <b>{(meta.bestDepth > 0 ? meta.bestDepth.ToString() : "-")}</b>   보관 코어 <b>{meta.bankedCores}</b>   영구 노드 <b>{nodes}</b>/80   유물 <b>{meta.relicOwned.Count}</b>/33   생환 {meta.escapes} · 보스 {meta.totalBosses}", St(19, FontStyle.Normal, TextAnchor.MiddleLeft, true));
