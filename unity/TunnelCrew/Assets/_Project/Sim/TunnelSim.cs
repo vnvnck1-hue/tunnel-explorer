@@ -35,6 +35,16 @@ namespace TunnelCrew.Sim
         /// <summary>런 종료 결과.</summary>
         public bool RunEscaped { get; private set; }
         public string RunEndReason { get; private set; } = "";
+        /// <summary>유물 효과 — 런 시작에 장착 목록이 고정된다.</summary>
+        public RelicSystem RelicFx { get; } = new RelicSystem();
+        public event Action<RelicFxEvent> RelicEffect;
+        public event Action<RelicGrantedEvent> RelicGranted;
+        /// <summary>이 런에 적용된 영구 노드 누산기 (원본 INF.perm). StartRun(role, meta) 가 채운다.</summary>
+        public PermState Perm { get; private set; } = new PermState();
+        /// <summary>런 종료 정산 결과 (EndRun 이 채운다).</summary>
+        public MetaState.Settlement LastSettlement { get; private set; }
+        public System.Collections.Generic.List<string> LastUnlocks { get; private set; } = new System.Collections.Generic.List<string>();
+        MetaState _meta;
         /// <summary>특성 덱 — 레벨업 카드·휴식 전설.</summary>
         public TraitDeck Traits { get; } = new TraitDeck();
         TraitContext TraitCtx => new TraitContext { Build = Build, Player = Player, Roles = Roles };
@@ -82,6 +92,8 @@ namespace TunnelCrew.Sim
         public event Action<BossDefeatedEvent> BossDefeated;
         public event Action<EscapeEvent> EscapeChanged;
         public event Action<TraitOfferEvent> TraitOffered;
+        /// <summary>특성 서브시스템 연출 — 종류: auxHit · afterBlast · vortex · planetBreaker · grandCollapse · blast · risk.</summary>
+        public event Action<TraitFxEvent> TraitFx;
         public event Action<TraitPickedEvent> TraitPicked;
         /// <summary>런 종료 — (탈출 성공 여부, 사유).</summary>
         public event Action<bool, string> RunEnded;
@@ -92,6 +104,25 @@ namespace TunnelCrew.Sim
             Loot.Collected += e => ResourceCollected?.Invoke(e);
 
             // Run / Xp 는 런 내내 하나다 — 구독은 여기서 한 번만
+            RelicFx.Fx += e => RelicEffect?.Invoke(e);
+            RelicFx.Granted += e =>
+            {
+                if (e.Relic == null) { Loot.Core += 2; }   // 도감 완성 — 코어 +2
+                else if (_meta != null) Relics.Grant(_meta, e.Relic.Id);
+                RelicGranted?.Invoke(e);
+            };
+            RelicFx.PickUnowned = tier =>
+            {
+                // 원본 infRelicPickUnowned — 등급 순서로 미보유 풀에서 뽑는다
+                int[] order = tier == 4 ? new[] { 4, 2, 1 } : tier == 2 ? new[] { 2, 1, 4 } : new[] { 1, 2, 4 };
+                foreach (int t in order)
+                {
+                    var pool = new System.Collections.Generic.List<RelicDef>();
+                    foreach (var r in Relics.All) if (r.Tier == t && (_meta == null || !_meta.relicOwned.Contains(r.Id))) pool.Add(r);
+                    if (pool.Count > 0) return pool[(int)(_relicPickRng.NextDouble() * pool.Count)];
+                }
+                return null;
+            };
             Run.DominanceReachedEvent += () =>
             {
                 // 장악도 목표 → 보스 소환 (원본 12570 → infSpawnBoss). 다음 틱에 소환해 파괴 콜백 안에서 월드를 바꾸지 않는다.
@@ -122,9 +153,75 @@ namespace TunnelCrew.Sim
         /// <summary>층을 새로 생성하고 플레이어를 진입점에 놓는다. 원본 enterDepth().</summary>
         /// <summary>런 시작 — 직업을 정하고 빌드를 초기화한다.</summary>
         bool _spawnBossPending;
+        int _startCardsPending;
+        readonly Rng _coreRng = new Rng(0xC0DE);
+        readonly Rng _relicPickRng = new Rng(0x2E1C);
         int _blockCounter;
         bool _blastLock;
         double _endlessBurnTick;
+        double _auxCd;
+        readonly List<(Vec2 at, double t)> _afterHits = new List<(Vec2, double)>();
+        double _riskTextCd;
+        /// <summary>보조 드릴 개수 (원본 max(auxDrills, drillStorm)). 연출이 궤도 드릴을 그릴 때 쓴다.</summary>
+        public int AuxDrillCount => Math.Max(Build.AuxDrills, Build.DrillStorm);
+
+        /// <summary>원본 infTraitRiskDamage — 특성 발동 대가. lethal 이 아니면 HP 1 은 남긴다.</summary>
+        void RiskDamage(double amount, string label, bool lethal)
+        {
+            double dmg = Math.Max(1, amount);
+            Player.Hp = Math.Max(lethal ? 0 : 1, Player.Hp - dmg);
+            if (_riskTextCd <= 0) { _riskTextCd = .55; TraitFx?.Invoke(new TraitFxEvent { Kind = "risk", At = Player.Position, Label = $"-{Math.Ceiling(dmg)} · {label}" }); }
+            if (Player.Hp <= 0) { Player.Downed = true; }
+        }
+
+        /// <summary>원본 infUpdateAuxDrills — 캐릭터 주변(30% 축소 범위)의 가까운 벽을 자동으로 깎는다.</summary>
+        void TickAuxDrills(double dt)
+        {
+            int count = AuxDrillCount;
+            if (count <= 0) return;
+            _auxCd = Math.Max(0, _auxCd - dt);
+            if (_auxCd > 0) return;
+            _auxCd = Math.Max(.12, .48 - count * .035);
+            double range = Math.Max(1.25, (3.2 + Math.Min(3, count * .25)) * .3);
+            var pp = Player.Position;
+            var cand = new List<(int c, int r, double d)>();
+            int c0 = Math.Max(1, (int)(pp.X - range) - 1), c1 = Math.Min(World.Cols - 2, (int)(pp.X + range) + 1);
+            int r0 = Math.Max(1, (int)(pp.Y - range) - 1), r1 = Math.Min(World.Rows - 2, (int)(pp.Y + range) + 1);
+            for (int r = r0; r <= r1; r++) for (int c = c0; c <= c1; c++)
+            {
+                if (!World.IsSolid(c, r) || World.IsBedrock(c, r)) continue;
+                double d = Vec2.Distance(WorldGrid.CellCenter(c, r), pp);
+                if (d <= range) cand.Add((c, r, d));
+            }
+            cand.Sort((a, b) => a.d.CompareTo(b.d));
+            int n = Math.Min(count, cand.Count);
+            for (int i = 0; i < n; i++)
+            {
+                var (c, r, d) = cand[i];
+                var dir = (WorldGrid.CellCenter(c, r) - pp) / Math.Max(1e-6, d);
+                World.Damage(c, r, SimTuning.DrillDps * SimTuning.DrillDamageMul * (Build.AuxDrillPower > 0 ? Build.AuxDrillPower : .102), dir);
+                if (i < 3) TraitFx?.Invoke(new TraitFxEvent { Kind = "auxHit", At = WorldGrid.CellCenter(c, r), Dir = dir });
+            }
+        }
+
+        /// <summary>원본 infPlanetBreaker — 조준 축 방향으로 10칸 × 5칸 띠를 쓸어낸다. 최대 HP 1.5% 반동.</summary>
+        void PlanetBreaker(int c, int r)
+        {
+            double a = Player.Aim;
+            int dc = Math.Abs(Math.Cos(a)) >= Math.Abs(Math.Sin(a)) ? (Math.Cos(a) >= 0 ? 1 : -1) : 0;
+            int dr = dc != 0 ? 0 : (Math.Sin(a) >= 0 ? 1 : -1);
+            int pc = -dr, pr = dc;
+            _blastLock = true;
+            for (int step = -1; step <= 8; step++) for (int side = -2; side <= 2; side++)
+            {
+                int cc = c + dc * step + pc * side, rr = r + dr * step + pr * side;
+                if (!World.InInterior(cc, rr) || !World.IsSolid(cc, rr) || World.IsBedrock(cc, rr)) continue;
+                World.Damage(cc, rr, World.MaxHp(World.At(cc, rr)) * .375, new Vec2(dc, dr));
+            }
+            _blastLock = false;
+            RiskDamage(Player.HpMax * .015, "파쇄기 반동", false);
+            TraitFx?.Invoke(new TraitFxEvent { Kind = "planetBreaker", At = WorldGrid.CellCenter(c, r), Dir = new Vec2(dc, dr), Radius = 4.8 });
+        }
 
         /// <summary>원본 infTraitBlast — 반경 안 벽에 최대 체력 × power × 감쇠 피해. 기반암 제외.</summary>
         void TraitBlast(int c0, int r0, double radius, double power)
@@ -142,6 +239,7 @@ namespace TunnelCrew.Sim
                 World.Damage(c, r, World.MaxHp(World.At(c, r)) * mul, new Vec2(cc, rr).Normalized);
             }
             _blastLock = false;
+            TraitFx?.Invoke(new TraitFxEvent { Kind = "blast", At = WorldGrid.CellCenter(c0, r0), Radius = radius });
         }
 
         /// <summary>원본 infRadialBurst — 파편 투사체 n발 (속도 teWorld 245, 수명 .7, 관통 1).</summary>
@@ -187,6 +285,7 @@ namespace TunnelCrew.Sim
             if (Phase != GamePhase.Rest && Phase != GamePhase.Playing) return;
             if (Phase == GamePhase.Rest && !RestChosen) return;   // 전설을 골라야 내려간다
             EnterDepth(Depth + 1, DungeonConfig.Runtime);
+            RelicFx.OnDescend();
         }
 
         /// <summary>휴식 → 이 층에 남아 탈출 (원본 infEscapeReturnFromRest). 포트가 없으면 자동 요청.</summary>
@@ -197,21 +296,59 @@ namespace TunnelCrew.Sim
             if (!Escape.Active) Escape.AutoSummon(Player, Player.Position, Depth);
         }
 
-        /// <summary>원본 infEndRun — 결과 화면. 솔로라 다운 = 종료 (상호 부활은 크루가 있는 M6 에서).</summary>
+        /// <summary>원본 infPermTryRevive — 원정당 한 번(영구 노드), HP 35% 로 다시 일어선다.</summary>
+        bool TryPermRevive()
+        {
+            if (Perm.Revive <= 0 || Perm.ReviveUsed >= Perm.Revive) return false;
+            Perm.ReviveUsed++;
+            Player.Downed = false;
+            Player.Hp = Math.Max(1, JsMath.Round(Player.HpMax * .35));
+            Player.IFrames = Math.Max(Player.IFrames, 2.2);
+            Roles.ShieldTime = Math.Max(Roles.ShieldTime, 2.2);
+            Revived?.Invoke(Player.Position);
+            return true;
+        }
+        public event Action<Vec2> Revived;
+
+        /// <summary>원본 infPermRemoteTick — 코어를 N개 캘 때마다 1개를 기지로 전송 (쓰러져도 남는다).</summary>
+        void RemoteTick(int gained)
+        {
+            if (Perm.RemoteEvery <= 0) return;
+            Perm.RemoteAcc += gained;
+            while (Perm.RemoteAcc >= Perm.RemoteEvery) { Perm.RemoteAcc -= Perm.RemoteEvery; Perm.RemoteSent++; TraitFx?.Invoke(new TraitFxEvent { Kind = "remote", At = Player.Position, Label = "원격 전송 +1" }); }
+        }
+
+        /// <summary>원본 infEndRun — 결과 화면 + 기록·정산. 솔로라 다운 = 종료 (상호 부활은 크루가 있는 M6 에서).</summary>
         public void EndRun(bool escaped, string reason)
         {
             if (Phase == GamePhase.Result) return;
             Phase = GamePhase.Result;
             RunEscaped = escaped;
             RunEndReason = reason;
+            if (_meta != null)
+            {
+                LastUnlocks = _meta.RecordRun(Depth, World.BlocksBroken, Run.BossesKilled);
+                LastSettlement = _meta.Settle(Loot.Core, escaped, Perm, relicKeepRate: RelicFx.Has("r_smuggler") ? .25 : 0);
+            }
+            else LastSettlement = new MetaState.Settlement { Returned = escaped ? Loot.Core : 0, Lost = escaped ? 0 : Loot.Core, Escaped = escaped };
             RunEnded?.Invoke(escaped, reason);
         }
 
-        public void StartRun(RoleId role)
+        public void StartRun(RoleId role) => StartRun(role, null);
+
+        /// <summary>런 시작 — 직업·빌드 초기화 후 영구 노드를 적용한다 (원본 infStartRun → infApplyPermanentNodes).</summary>
+        public void StartRun(RoleId role, MetaState meta)
         {
+            _meta = meta;
             Build.Reset(role);
             Xp.Reset();
             Traits.Reset();
+            Player.HpMax = SimTuning.PlayerHp; Player.Hp = Player.HpMax; Player.Downed = false;
+            Perm = meta != null ? PermanentNodes.Collect(meta, role) : new PermState();
+            PermanentNodes.Commit(Perm, Build, Player, Traits);
+            RelicFx.Apply(meta != null ? Relics.EquippedIds(meta) : new System.Collections.Generic.List<string>(), Player);
+            Xp.XpMul = Build.XpMul;
+            _startCardsPending = Perm.StartCards;
             Run.BossesKilled = 0;
             RunEscaped = false; RunEndReason = "";
             Phase = GamePhase.Playing;
@@ -231,6 +368,14 @@ namespace TunnelCrew.Sim
             Traits.OnFloorInit(depth);
             Enemies.EnemyHpMul = Run.EnemyHpMul;
             Enemies.ExtraSpawnCount = Run.TakeSpawnDebt;
+            Enemies.EnemyDamageMod = (en, d, weapon) => RelicFx.OnHit(en, d, weapon);
+            Enemies.KnockMul = () => RelicFx.KnockMul;
+            Enemies.EnemyTick = (en, d) => RelicFx.EnemyTick(en, d);
+            Enemies.WallSlam = (en, prev, kb) => RelicFx.WallSlam(en, prev, kb);
+            Enemies.EnemyKilled = en => RelicFx.OnKill(en);
+            Enemies.PlayerDamageMod = d => RelicFx.PlayerDamageMod(d);
+            Enemies.AfterPlayerHurt = () => RelicFx.AfterPlayerHurt();
+            Enemies.TimeStopped = () => RelicFx.TimeStopped;
             Enemies.EnemyHurt += e =>
             {
                 // 보스 격파 집계(BossesKilled · BossActive)는 BossSystem.OnDefeated 가 맡는다
@@ -252,6 +397,8 @@ namespace TunnelCrew.Sim
             Bosses.Defeated += e =>
             {
                 Loot.Core += e.CoreReward;
+                RemoteTick(e.CoreReward);
+                RelicFx.BossDrop(e.Boss.Tier, e.Boss.Body.Position);
                 LastBossTier = e.Boss.Tier;
                 RestPending = true;
                 // §8.4-5 자동 탈출 요청은 중심부 보스·변종 전용. 수호자는 중간 목표라 원정이 계속된다.
@@ -262,6 +409,9 @@ namespace TunnelCrew.Sim
             Escape.Changed += e => EscapeChanged?.Invoke(e);
             Escape.Boarded += () => EndRun(escaped: true, "탈출 포트 탑승");
             Roles = new RoleSystem(World, Enemies, Projectiles, Build);
+            RelicFx.Bind(World, Enemies, Player, Build,
+                (c, r, rad, pow) => TraitBlast(c, r, rad, pow),
+                (from, angle, vid, power) => Projectiles.Projectiles.Add(new Projectile { Position = from, Velocity = Vec2.FromAngle(angle) * SimTuning.TeCells(300), Life = .9, Power = power, VisualId = vid }));
             Enemies.IncomingDamageMul = () => Roles.ShieldTime > 0 ? 0.35 : 1.0;
             Roles.SkillUsed += e => SkillUsed?.Invoke(e);
             Roles.BreakerExploded += e => BreakerExploded?.Invoke(e);
@@ -292,6 +442,7 @@ namespace TunnelCrew.Sim
             Roles?.Clear();
             _spawnBossPending = false;
             _blockCounter = 0;
+            _afterHits.Clear(); _auxCd = 0;
             RestPending = false;
             Phase = GamePhase.Playing;
             Loot.DepthMul = 1.0 + 0.25 * (depth - 1);
@@ -330,6 +481,38 @@ namespace TunnelCrew.Sim
             if (Build.ShardBurst > 0 && _blockCounter % 5 == 0) RadialBurst(at, Build.ShardBurst, .35);
             // 자동 굴착탄 — N블록마다 10발 (원본 autoDigEvery)
             if (Build.AutoDigEvery > 0 && _blockCounter % Build.AutoDigEvery == 0) RadialBurst(at, 10, .35);
+            // 잔상 드릴 — 0.32초 뒤 같은 자리에 작은 폭발 (원본 afterDrill)
+            if (Build.AfterDrill && !_blastLock) _afterHits.Add((at, .32));
+            // 붕괴 소용돌이 — 3블록마다 5칸 안 전리품을 끌어당기고 2.25 반경 폭발 (원본 vortexMining)
+            if (Build.VortexMining && _blockCounter % 3 == 0 && !_blastLock)
+            {
+                Loot.Pull(at, 5.0, 75.0 / 50.0);
+                TraitBlast(e.Col, e.Row, 2.25, .36);
+                TraitFx?.Invoke(new TraitFxEvent { Kind = "vortex", At = at, Radius = 2.25 });
+            }
+            // 행성 파쇄기 · 대붕괴 — N블록마다, HP 대가
+            if (Build.PlanetBreakerEvery > 0 && _blockCounter % Build.PlanetBreakerEvery == 0 && !_blastLock) PlanetBreaker(e.Col, e.Row);
+            if (Build.GrandCollapseEvery > 0 && _blockCounter % Build.GrandCollapseEvery == 0 && !_blastLock)
+            {
+                RiskDamage(Player.HpMax * .025, "붕괴 충격", false);
+                TraitBlast(e.Col, e.Row, 3.5, .3375);
+                TraitFx?.Invoke(new TraitFxEvent { Kind = "grandCollapse", At = at, Radius = 3.5 });
+            }
+
+            // 희귀 광물 → 코어 +1 (+추가 코어 확률), 광석 회복, 원격 전송 (원본 infOnBlockBroken rare 분기)
+            bool rare = e.Type == TileType.Ore || e.Type == TileType.Gem || e.Type == TileType.Crys;
+            RelicFx.OnBlock(at);
+            if (e.HadBuriedRelic) RelicFx.BuriedFind(at);
+            if (rare)
+            {
+                int core = 1 + (_coreRng.NextDouble() < Build.CoreBonusChance ? 1 : 0);
+                core += RelicFx.OnRare(at, core, Depth);
+                Loot.Core += core;
+                RemoteTick(core);
+                if (Build.OreHeal > 0) Player.Hp = Math.Min(Player.HpMax, Player.Hp + Build.OreHeal);
+                Xp.Award(2, XpKind.Loot, Build.Role, label: "코어", at: at, checkLevel: false);
+                TraitFx?.Invoke(new TraitFxEvent { Kind = "core", At = at, Label = $"코어 +{core}" });
+            }
 
             var (kind, amount) = TileTypes.Yield(e.Type);
             if (amount > 0)
@@ -386,6 +569,23 @@ namespace TunnelCrew.Sim
             Loot.MagnetMul = Build.LootMagnetMul; Loot.PickupMul = Build.LootPickupMul;
             Loot.Tick(World, Player.Position, dt);
 
+            // 특성 서브시스템 (원본 infUpdateMiningTraits / infUpdateAuxDrills)
+            _riskTextCd = Math.Max(0, _riskTextCd - dt);
+            TickAuxDrills(dt);
+            for (int i = _afterHits.Count - 1; i >= 0; i--)
+            {
+                var (hitAt, t) = _afterHits[i];
+                t -= dt;
+                if (t <= 0)
+                {
+                    _afterHits.RemoveAt(i);
+                    var (hc, hr) = WorldGrid.ToCell(hitAt);
+                    TraitBlast(hc, hr, 1.25, .25);
+                    TraitFx?.Invoke(new TraitFxEvent { Kind = "afterBlast", At = hitAt, Radius = 1.25 });
+                }
+                else _afterHits[i] = (hitAt, t);
+            }
+
             // 무정지 과급 — 열 90% 이상이면 0.5초마다 최대 HP 0.6% 소모 (원본 12539행)
             if (Build.EndlessOverdrive && Player.DrillHeat >= .9 && _drillHeld)
             {
@@ -396,6 +596,9 @@ namespace TunnelCrew.Sim
 
             // 드릴 끝이 적에게 닿으면 피해를 준다 (원본 updateEnemies 7003~7010)
             TickDrillContact(dt);
+
+            // 출격 프리셋(영구 노드) — 원정 시작 시 카드 N장을 먼저 고른다 (원본 6.3 start preset card)
+            if (_startCardsPending > 0 && !Traits.HasOffer) { _startCardsPending--; Traits.OpenLevel(TraitCtx, Xp.Level); }
 
             // 탈출 포트 — X 지정, 좌클릭 확정, 우클릭 취소. 지정 중에는 좌클릭이 드릴로 가지 않는다.
             bool placing = Escape.Phase == EscapePhase.Placing;
@@ -422,6 +625,7 @@ namespace TunnelCrew.Sim
             Projectiles.Tick(Player, Build, dt);
 
             // 동적 위협 — 시간·진행도로 스포너 파라미터를 매 틱 갱신 (원본 12226~12229)
+            RelicFx.Tick(dt, Build, Phase == GamePhase.Playing);
             Run.Tick(dt);
             Enemies.Threat = Run.Threat;
             Enemies.Cap = Run.EnemyCap;
@@ -429,7 +633,7 @@ namespace TunnelCrew.Sim
             Enemies.SpawnBurst = Run.SpawnBurst;
             Enemies.Tick(Player, dt);
             if (_spawnBossPending) { _spawnBossPending = false; Bosses.Spawn(Player, Depth); }
-            Bosses.Tick(Player, dt, Depth);
+            if (!RelicFx.TimeStopped) Bosses.Tick(Player, dt, Depth);
 
             // 전력망 유지 XP — 노드에 연결된 센트리만 인정 (원본 12448)
             int gridTurrets = 0;
@@ -437,7 +641,12 @@ namespace TunnelCrew.Sim
             Xp.TickGrid(gridTurrets, dt, Build.Role, Player.Position);
             Xp.CheckLevel();
 
-            if (Player.Downed) EndRun(escaped: false, Bosses.Active ? "보스에게 쓰러짐" : "적에게 쓰러짐");
+            if (Player.Downed)
+            {
+                if (RelicFx.TryPhoenix(Roles)) { }
+                else if (TryPermRevive()) { }
+                else EndRun(escaped: false, Bosses.Active ? "보스에게 쓰러짐" : "적에게 쓰러짐");
+            }
 
             // 시야는 이동·채굴이 끝난 뒤 마지막에 갱신한다 (원본 update 순서와 동일).
             _visionSources.Clear();

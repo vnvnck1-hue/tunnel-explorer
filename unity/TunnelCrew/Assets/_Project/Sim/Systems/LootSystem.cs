@@ -34,6 +34,17 @@ namespace TunnelCrew.Sim
         /// <summary>수집한 재화. 원본 G.gPulp / G.gBloom.</summary>
         public int Pulp { get; private set; }
         public int Bloom { get; private set; }
+        /// <summary>반경 안 전리품에 중심 방향 속도를 더한다 — 붕괴 소용돌이 (원본 12565행, 75px/s).</summary>
+        public void Pull(Vec2 center, double radius, double impulse)
+        {
+            foreach (var q in Items)
+            {
+                if (q.Collected) continue;
+                var d = center - q.Position; double dist = Math.Max(1e-6, d.Length);
+                if (dist < radius) q.Velocity += d / dist * impulse;
+            }
+        }
+
         /// <summary>자석·습득 반경 배율 — 특성(자원 흡입기). TunnelSim 이 Build 에서 넣는다.</summary>
         public double MagnetMul = 1.0, PickupMul = 1.0;
         /// <summary>운반 전리품 코어 — 보스 처치·희귀 광물. 생환해야 보관된다 (§6.5).</summary>

@@ -70,6 +70,15 @@ namespace TunnelCrew.Sim
         public double SlowTime;
         public double SlowMul = 0.7;
 
+        // ── 유물 상태이상 (원본 e.burnT/poisT/shockT/slowHits/freezeImmuneT/slamCd/relicProcAt)
+        public double BurnT, BurnDps, BurnTick;
+        public double PoisT, PoisDps, PoisTick;
+        public double ShockT;
+        public int SlowHits;
+        public double FreezeImmuneT;
+        public double SlamCd;
+        public double RelicProcAt = -99;
+
         // ── 연출용
         /// <summary>피격 플래시 타이머.</summary>
         public double Hurt;

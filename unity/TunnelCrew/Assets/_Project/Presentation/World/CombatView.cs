@@ -17,6 +17,7 @@ namespace TunnelCrew.Presentation
         readonly List<SpriteRenderer> _bossRingPool = new List<SpriteRenderer>();
         LineRenderer _dashLine;
         SpriteRenderer _escRange, _escSpot, _escPod;
+        readonly List<SpriteRenderer> _auxPool = new List<SpriteRenderer>();
         readonly List<DamageText> _texts = new List<DamageText>();
         readonly Stack<DamageText> _textPool = new Stack<DamageText>();
         Sprite _dot, _square;
@@ -108,6 +109,20 @@ namespace TunnelCrew.Presentation
                 sr.transform.rotation = Quaternion.identity;
                 sr.sprite = _dot; sr.color = new Color(1f, 0.45f, 0.35f);
                 sr.transform.localScale = Vector3.one * (0.34f + 0.16f * (float)s.Power);
+            });
+
+            // 보조 드릴 — 플레이어 주위를 도는 작은 드릴 비트 (원본 infDrawMiningTraits, 최대 8)
+            int aux = Mathf.Min(8, sim.AuxDrillCount);
+            RenderList(_auxPool, aux, 33, i =>
+            {
+                float a = Time.time * (1.6f + (i % 2) * .28f) + Mathf.PI * 2 * i / aux;
+                float rad = .75f + (i % 2) * .24f;
+                var pos = sim.Player.Position + new Vec2(Mathf.Cos(a) * rad, Mathf.Sin(a) * rad);
+                var sr = _auxPool[i];
+                sr.transform.position = new Vector3((float)pos.X, (float)pos.Y, -0.03f);
+                sr.transform.rotation = Quaternion.Euler(0, 0, a * Mathf.Rad2Deg + 90f);
+                sr.sprite = _square; sr.color = new Color(1f, .83f, .43f);
+                sr.transform.localScale = new Vector3(.16f, .34f, 1f);
             });
 
             // 탈출 포트 — 지정 범위 · 착륙 지점 · 도착한 포트

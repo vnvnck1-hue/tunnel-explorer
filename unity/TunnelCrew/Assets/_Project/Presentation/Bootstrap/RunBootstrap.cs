@@ -90,7 +90,7 @@ namespace TunnelCrew.Presentation
             _white = Texture2D.whiteTexture;
 
             Sim = new TunnelSim();
-            Sim.StartRun(_role);
+            Sim.StartRun(_role, MetaStore.Load());
             Sim.EnterDepth(_depth, DungeonConfig.Runtime);
             SubscribeSim();
 
@@ -148,6 +148,58 @@ namespace TunnelCrew.Presentation
                 if (e.Exploded) { _feedback?.Kick(2.2f, Vector2.zero); _feedback?.Hitstop(18f); }
                 _fx?.ProjectileEnd(V(e.Position), e.Exploded);
             };
+            Sim.TraitFx += e =>
+            {
+                switch (e.Kind)
+                {
+                    case "auxHit": _fx?.Spikes(V(e.At), 3, new Color(1f, .83f, .43f, .82f), .22f, V(e.Dir)); break;
+                    case "afterBlast": _fx?.Ring(V(e.At), new Color(.78f, .63f, 1f), .3f, (float)e.Radius + .35f); _fx?.Burst(V(e.At), 12, new[] { new Color(.78f, .63f, 1f), new Color(1f, .95f, .84f) }, 190f); break;
+                    case "vortex": _fx?.Ring(V(e.At), new Color(.78f, .63f, 1f), .4f, (float)e.Radius + .35f); _feedback?.Kick(3f, Vector2.zero); break;
+                    case "blast": break;   // 파괴 자체의 연출이 붙는다
+                    case "planetBreaker":
+                        _fx?.Ring(V(e.At), new Color(1f, .55f, .45f), .6f, (float)e.Radius); _feedback?.Kick(13f, V(e.Dir)); _feedback?.Hitstop(60f);
+                        _combatView?.Text(Sim.Player.Position + new Vec2(0, .8), "행성 파쇄기", new Color(1f, .55f, .45f), 20); break;
+                    case "grandCollapse":
+                        _fx?.Ring(V(e.At), new Color(1f, .44f, .54f), .5f, (float)e.Radius + .3f); _fx?.Smoke(V(e.At), 8, new Color(.29f, .21f, .31f), 90f); _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(48f);
+                        _combatView?.Text(Sim.Player.Position + new Vec2(0, .8), "대붕괴", new Color(1f, .44f, .54f), 20); break;
+                    case "risk": _combatView?.Text(e.At + new Vec2(0, .68), e.Label, new Color(1f, .44f, .54f), 15); break;
+                    case "core": _combatView?.Text(e.At + new Vec2(0, .44), e.Label, new Color(.5f, .92f, .82f), 16); _fx?.Burst(V(e.At), 6, new[] { new Color(.5f, .92f, .82f), Color.white }, 120f); break;
+                    case "remote": _combatView?.Text(e.At + new Vec2(0, .84), e.Label, new Color(1f, .83f, .43f), 13); break;
+                }
+            };
+            Sim.RelicEffect += e =>
+            {
+                var gold = new Color(1f, .83f, .43f); var ice = new Color(.75f, .91f, 1f); var volt = new Color(1f, .91f, .36f); var earth = new Color(.85f, .63f, .36f); var fire = new Color(1f, .55f, .36f);
+                switch (e.Kind)
+                {
+                    case "crit": _combatView?.Text(e.At + new Vec2(0, e.Radius + .5), "치명!", gold, 18); _fx?.Star(V(e.At), gold, (float)e.Radius * 1.15f); _feedback?.Kick(2.2f, Vector2.zero); break;
+                    case "heal": case "label": _combatView?.Text(e.At + new Vec2(0, .6), e.Label, e.Kind == "heal" ? new Color(.56f, .91f, .63f) : new Color(.78f, .63f, 1f), 13); break;
+                    case "arcFire": _fx?.Burst(V(e.To), 8, new[] { fire, gold }, 140f); _combatView?.Text(e.To + new Vec2(0, .5), "들불", fire, 14); break;
+                    case "arcVolt": _fx?.Spikes(V(e.To), 4, volt, .4f, V(e.To - e.At)); break;
+                    case "frostBurst": _fx?.Ring(V(e.At), ice, .2f, (float)e.Radius); _fx?.Burst(V(e.At), 16, new[] { ice, Color.white }, 220f); break;
+                    case "unstable": _fx?.Ring(V(e.At), fire, .2f, (float)e.Radius + .3f); _feedback?.Kick(3f, Vector2.zero); break;
+                    case "freeze": _combatView?.Text(e.At + new Vec2(0, e.Radius + .4), e.Label, ice, 18); _fx?.Ring(V(e.At), ice, .1f, (float)e.Radius * 1.6f); break;
+                    case "shock": _fx?.Spikes(V(e.At), 4, volt, .3f, Vector2.zero); if (e.Label != null) _combatView?.Text(e.At + new Vec2(0, e.Radius + .7), e.Label, volt, 13); break;
+                    case "slam": _combatView?.Text(e.At + new Vec2(0, e.Radius + .4), e.Label, new Color(.94f, .86f, .7f), 19); _fx?.Chunks(V(e.At), 8, new[] { earth, new Color(.56f, .42f, .24f) }, 220f, Vector2.zero); _feedback?.Kick(3.4f, Vector2.zero); break;
+                    case "rod": _fx?.Ring(V(e.At), volt, .3f, (float)e.Radius); _combatView?.Text(e.At + new Vec2(0, .9), e.Label, volt, 16); break;
+                    case "timeStop": _fx?.Ring(V(e.At), new Color(.75f, .85f, 1f), .4f, (float)e.Radius); _combatView?.Text(e.At + new Vec2(0, 1.0), e.Label, new Color(.86f, .91f, 1f), 22); _feedback?.Kick(4f, Vector2.zero); _feedback?.Hitstop(150f); break;
+                    case "timeResume": _combatView?.Text(e.At + new Vec2(0, .8), e.Label, new Color(.62f, .72f, .86f), 14); break;
+                    case "phoenix": _fx?.BigRing(V(e.At), fire, 3f); _combatView?.Text(e.At + new Vec2(0, 1.0), e.Label, gold, 24); _feedback?.Kick(6f, Vector2.zero); _feedback?.Hitstop(160f); break;
+                    case "resonstone": _fx?.Ring(V(e.At), earth, .2f, (float)e.Radius); _combatView?.Text(e.At + new Vec2(0, .6), e.Label, new Color(.94f, .86f, .7f), 14); _feedback?.Kick(3f, Vector2.zero); break;
+                    case "stoneskin": _fx?.Ring(V(e.At), earth, .2f, (float)e.Radius); _combatView?.Text(e.At + new Vec2(0, .7), e.Label, new Color(.94f, .86f, .7f), 13); break;
+                    case "banner": _fx?.Ring(V(e.At), new Color(1f, .44f, .54f), .2f, (float)e.Radius); _combatView?.Text(e.At + new Vec2(0, .9), e.Label, new Color(1f, .44f, .54f), 18); break;
+                }
+            };
+            Sim.RelicGranted += e =>
+            {
+                if (e.Relic == null) { _combatView?.Text(e.At + new Vec2(0, .8), "코어 +2 (도감 완성)", new Color(.5f, .92f, .82f), 14); return; }
+                var col = e.Relic.Tier >= 4 ? new Color(1f, .83f, .43f) : e.Relic.Tier == 2 ? new Color(.78f, .63f, 1f) : new Color(.85f, .85f, .85f);
+                _fx?.BigRing(V(e.At), col, 2.4f); _fx?.Star(V(e.At), col, 1.1f);
+                _combatView?.Text(e.At + new Vec2(0, .8), "유물 발굴!", col, 21);
+                _feedback?.Kick(5f, Vector2.zero); _feedback?.Hitstop(120f);
+                MetaStore.Save();
+                Log($"[{(e.Relic.Tier >= 4 ? "전설" : e.Relic.Tier == 2 ? "희귀" : "일반")}] {e.Relic.Name} 발굴 — {e.Relic.Desc}");
+            };
             Sim.ResourceCollected += e => _combatView?.Text(e.Position + new Vec2(0, .3), $"+{e.Amount}", e.Kind == ResourceKind.Pulp ? new Color(.45f, .85f, .42f) : new Color(.5f, .92f, .82f), 14);
             Sim.ReloadChanged += e => { if (e.Started) Log(e.Manual ? "재장전 (R)" : "탄창 비어 재장전"); };
             Sim.SkillUsed += e => { Log($"{e.Role} {(e.IsQ ? "Q" : "E")} 사용"); _feedback?.Kick(0.9f, Vector2.zero); };
@@ -187,7 +239,15 @@ namespace TunnelCrew.Presentation
                     case EscapePhase.None: Log("탈출 요청 취소"); break;
                 }
             };
-            Sim.RunEnded += (escaped, reason) => { Time.timeScale = 1f; Log(escaped ? "탈출 성공" : "런 종료 — " + reason); };
+            Sim.RunEnded += (escaped, reason) =>
+            {
+                Time.timeScale = 1f;
+                bool saved = MetaStore.Save();
+                Log(escaped ? "탈출 성공" : "런 종료 — " + reason);
+                if (!saved) Log("<color=#ff6060>저장 실패 — 기록이 남지 않았다</color>");
+                foreach (var u in Sim.LastUnlocks) Log($"해금: {u}");
+            };
+            Sim.Revived += at => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(60f); _fx?.BigRing(V(at), new Color(1f, .83f, .43f), 1.8f); _combatView?.Text(at + new Vec2(0, .9), "긴급 재기동", new Color(1f, .83f, .43f), 20); Log("긴급 재기동 — 체력 35%로 다시 일어섰다"); };
         }
 
         static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
@@ -477,7 +537,7 @@ namespace TunnelCrew.Presentation
         public void SwitchRole(RoleId role)
         {
             _role = role;
-            Sim.StartRun(role);
+            Sim.StartRun(role, MetaStore.Load());
             Sim.EnterDepth(_depth, DungeonConfig.Runtime);
             RebindWorld();
             LoadRoleFrames(role);
@@ -767,7 +827,10 @@ namespace TunnelCrew.Presentation
                 {
                     GUILayout.Label(Sim.RunEscaped ? "탈출 성공" : "런 종료", _sBig);
                     GUILayout.Label($"{Sim.RunEndReason} · 심층 {Sim.Depth}", mid);
-                    GUILayout.Label($"도달 심층 {Sim.Depth}   처치 보스 {Sim.Run.BossesKilled}   파괴 블록 {Sim.World.BlocksBroken}   " + (Sim.RunEscaped ? $"확보 코어 {Sim.Loot.Core}" : $"<color=#ff8da8>소실 코어 {Sim.Loot.Core}</color>"), mid);
+                    var st = Sim.LastSettlement; var meta = MetaStore.Load();
+                    GUILayout.Label($"도달 심층 {Sim.Depth}   처치 보스 {Sim.Run.BossesKilled}   파괴 블록 {Sim.World.BlocksBroken}   " +
+                        (Sim.RunEscaped ? $"확보 코어 <b>{st.Returned}</b>" : $"<color=#ff8da8>소실 코어 {st.Lost}</color>" + (st.Kept > 0 ? $"   <color=#7febd0>회수 보존 {st.Kept}</color>" : "")), mid);
+                    GUILayout.Label($"기지 보관 코어 <b>{meta.bankedCores}</b>   최고 심층 {meta.bestDepth}   누적 보스 {meta.totalBosses}   생환 {meta.escapes}", mid);
                     GUILayout.Space(8);
                     GUILayout.Label("<b>Enter</b> 같은 직업으로 다시", mid);
                 }

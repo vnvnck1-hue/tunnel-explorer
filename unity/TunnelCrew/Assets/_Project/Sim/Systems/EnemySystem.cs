@@ -188,6 +188,7 @@ namespace TunnelCrew.Sim
         // ───────────────────────────── 갱신
         public void Tick(PlayerState player, double dt)
         {
+            if (TimeStopped()) { Enemies.RemoveAll(e => !e.Alive); return; }   // 정지된 모래시계
             TickSpawning(player.Position, dt);
 
             double baseSpeed = SimTuning.EnemySpeed;
@@ -249,6 +250,8 @@ namespace TunnelCrew.Sim
 
                 if (e.SlowTime > 0) e.Velocity *= e.SlowMul;
 
+                EnemyTick?.Invoke(e, dt);
+                var prevPos = e.Position; double kbMag = e.Knock.Length;
                 e.Position += (e.Velocity + e.Knock) * dt;
                 if (e.IsBoss)
                 {
@@ -256,7 +259,12 @@ namespace TunnelCrew.Sim
                     e.Position = new Vec2(JsMath.Clamp(e.Position.X, 2, _world.Cols - 2), JsMath.Clamp(e.Position.Y, 2, _world.Rows - 2));
                     BossCrush?.Invoke();
                 }
-                else CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
+                else
+                {
+                    var before = e.Position;
+                    CollisionSystem.Resolve(_world, ref e.Position, e.Radius);
+                    if (kbMag > 0 && WallSlam != null && Vec2.Distance(before, e.Position) > 1e-6) WallSlam(e, before, kbMag);
+                }
 
                 e.Velocity *= 0.86;
                 double kbDrag = Math.Exp(-SimTuning.KnockDrag * dt);
@@ -369,6 +377,7 @@ namespace TunnelCrew.Sim
                 e.LostTime = 0;
             }
 
+            damage = EnemyDamageMod(e, damage, !byTurret);
             e.Hp -= damage;
             e.Hurt = 0.18;
 
@@ -384,10 +393,11 @@ namespace TunnelCrew.Sim
                     SimTuning.TeCells(92.0) * hitPower * rangePower * resist,
                     SimTuning.TeCells(3.0), SimTuning.TeCells(290.0));
 
-                e.Knock += hitDir * impulse;
+                e.Knock += hitDir * (impulse * KnockMul());
             }
 
             bool killed = e.Hp <= 0;
+            if (killed) EnemyKilled?.Invoke(e);
             EnemyHurt?.Invoke(new EnemyHurtEvent
             {
                 Enemy = e, Damage = damage, HitDir = hitDir, Killed = killed, ByTurret = byTurret,
@@ -397,6 +407,22 @@ namespace TunnelCrew.Sim
         /// <summary>원본 <c>applyPlayerDamage()</c> (6535~6562).</summary>
         /// <summary>거너 방어막 등 외부 피해 배율. 원본 shieldT>0 이면 ×0.35.</summary>
         public Func<double> IncomingDamageMul = () => 1.0;
+        /// <summary>플레이어가 받는 피해의 마지막 보정 (유물: 젤·암반 피부). 원본 infRelicPlayerDamageMod.</summary>
+        public Func<double, double> PlayerDamageMod = d => d;
+        /// <summary>플레이어 피격 직후 훅 (유물: 회중시계·피뢰침·모래시계).</summary>
+        public Action AfterPlayerHurt;
+        /// <summary>적이 받는 피해 보정 + 상태이상 프록 (유물). (개체, 피해, 무기인가) → 피해.</summary>
+        public Func<EnemyState, double, bool, double> EnemyDamageMod = (e, d, w) => d;
+        /// <summary>넉백 배율 (대지 공명 ×1.5).</summary>
+        public Func<double> KnockMul = () => 1.0;
+        /// <summary>개체 틱 훅 — 유물 DoT.</summary>
+        public Action<EnemyState, double> EnemyTick;
+        /// <summary>넉백 중 벽 충돌 훅 (개체, 충돌 전 위치, 넉백 크기).</summary>
+        public Action<EnemyState, Vec2, double> WallSlam;
+        /// <summary>처치 훅 (유물).</summary>
+        public Action<EnemyState> EnemyKilled;
+        /// <summary>시간 정지 — 적·적탄이 멈춘다 (모래시계).</summary>
+        public Func<bool> TimeStopped = () => false;
 
         public void ApplyPlayerDamage(PlayerState player, double raw, Vec2 hitDir)
         {
@@ -406,8 +432,10 @@ namespace TunnelCrew.Sim
             double dmg = Math.Max(4, JsMath.Round(raw * 0.85));
             dmg *= IncomingDamageMul();
 
+            dmg = PlayerDamageMod(dmg);
             player.Hp -= dmg;
             player.IFrames = SimTuning.PlayerIFrame;
+            AfterPlayerHurt?.Invoke();
 
             // 넉백 — 원본은 위치를 직접 밀고 충돌을 푼다
             player.Position -= hitDir * (SimTuning.EnemyKnock * 0.35);

@@ -98,6 +98,17 @@ namespace TunnelCrew.Sim
         public int AutoDigEvery = 0;
         public bool EndlessOverdrive = false;
         public double XpMul = 1.0;
+        // 자동 굴착 서브시스템 (원본 auxDrills/afterDrill/vortexMining/planetBreakerEvery/grandCollapseEvery/drillStorm)
+        public int AuxDrills = 0;
+        public double AuxDrillPower = 0;
+        public bool AfterDrill = false;
+        public bool VortexMining = false;
+        public int PlanetBreakerEvery = 0;
+        public int GrandCollapseEvery = 0;
+        public int DrillStorm = 0;
+        // 영구 노드·유물이 바꾸는 값 (원본 INF.coreBonusChance / oreHeal)
+        public double CoreBonusChance = 0;
+        public double OreHeal = 0;
 
         /// <summary>원본 infSetMag — 탄창 3~40, 늘어난 만큼 즉시 채운다.</summary>
         public void SetMag(int delta)
@@ -133,6 +144,8 @@ namespace TunnelCrew.Sim
             DrillWidth = 0; DrillPenetration = 0; FocusDrill = false; BreakShockRadius = 0; BreakShockPower = 0;
             LootMagnetMul = 1.0; LootPickupMul = 1.0; DrillMoveMul = 1.0; HeatBuildMul = 1.0; ShardBurst = 0; BreakShield = 0;
             ChainCollapse = false; AutoDigEvery = 0; EndlessOverdrive = false; XpMul = 1.0;
+            AuxDrills = 0; AuxDrillPower = 0; AfterDrill = false; VortexMining = false; PlanetBreakerEvery = 0; GrandCollapseEvery = 0; DrillStorm = 0;
+            CoreBonusChance = 0; OreHeal = 0;
         }
     }
 }

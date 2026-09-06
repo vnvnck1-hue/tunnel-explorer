@@ -33,6 +33,7 @@ namespace TunnelCrew.Sim
     }
 
     public struct TraitOfferEvent { public TraitDef[] Cards; public int Level; public bool Legend; }
+    public struct TraitFxEvent { public string Kind; public Vec2 At, Dir; public double Radius; public string Label; }
     public struct TraitPickedEvent { public TraitDef Card; public int Stack; }
 
     /// <summary>
@@ -225,26 +226,26 @@ namespace TunnelCrew.Sim
 
             // ── 공용 2티어
             U("굴착 확장", "u_triple", 2, "삼중 드릴", "정면과 양옆의 벽을 동시에 깎습니다.", c => c.Build.DrillWidth = Math.Max(2, c.Build.DrillWidth), drill: true),
-            U("자동 굴착", "u_aux", 2, "보조 드릴", "작은 드릴이 가까운 벽을 자동으로 깎습니다.", c => { }, notPorted: true),
+            U("자동 굴착", "u_aux", 2, "보조 드릴", "작은 드릴이 가까운 벽을 자동으로 깎습니다.", c => { c.Build.AuxDrills = Math.Max(1, c.Build.AuxDrills); c.Build.AuxDrillPower = Math.Max(.0255, c.Build.AuxDrillPower); }),
             U("폭발 굴착", "u_explosive", 2, "폭발 드릴", "벽을 부술 때마다 작은 굴착 폭발이 발생합니다.", c => { c.Build.BreakShockRadius = Math.Max(1.55, c.Build.BreakShockRadius); c.Build.BreakShockPower = Math.Max(.31, c.Build.BreakShockPower); }),
-            U("반복 굴착", "u_afterimage", 2, "잔상 드릴", "벽을 깎은 자리를 잠시 후 한 번 더 파냅니다.", c => { }, notPorted: true),
+            U("반복 굴착", "u_afterimage", 2, "잔상 드릴", "벽을 깎은 자리를 잠시 후 한 번 더 파냅니다.", c => c.Build.AfterDrill = true),
             U("파편 굴착", "u_shards", 2, "파편 탄환", "벽을 부수면 굴착 파편이 사방으로 날아갑니다.", c => c.Build.ShardBurst = Math.Max(6, c.Build.ShardBurst)),
             U("굴착 방어", "u_guard", 2, "굴착 보호막", "벽을 부술 때마다 짧은 보호막을 얻습니다.", c => c.Build.BreakShield = Math.Max(.225, c.Build.BreakShield)),
 
             // ── 공용 3티어
             U("연쇄 파괴", "u_chain", 3, "연쇄 붕괴", "폭발로 부서진 벽에서도 새로운 폭발이 일어납니다.", c => c.Build.ChainCollapse = true),
-            U("자동 굴착", "u_satellite", 3, "드릴 위성", "두 개의 드릴이 주위를 돌며 벽을 자동으로 깎습니다.", c => { }, notPorted: true),
+            U("자동 굴착", "u_satellite", 3, "드릴 위성", "두 개의 드릴이 주위를 돌며 벽을 자동으로 깎습니다.", c => { c.Build.AuxDrills = Math.Max(2, c.Build.AuxDrills); c.Build.AuxDrillPower = Math.Max(.0345, c.Build.AuxDrillPower); }),
             U("관통 굴착", "u_laser", 3, "파쇄 레이저", "드릴이 굵은 관통 광선으로 뒤쪽 벽까지 깎습니다.", c => { c.Build.DrillPenetration = Math.Max(4, c.Build.DrillPenetration); c.Build.DrillWidth = Math.Max(1, c.Build.DrillWidth); }, drill: true),
             U("자동 포격", "u_auto_shell", 3, "자동 굴착탄", "벽을 연속으로 부수면 굴착탄이 사방으로 발사됩니다.", c => c.Build.AutoDigEvery = 8),
-            U("광역 파쇄", "u_vortex", 3, "붕괴 소용돌이", "벽을 부수면 주변 자원과 벽을 끌어당기는 폭발이 생깁니다.", c => { }, notPorted: true),
+            U("광역 파쇄", "u_vortex", 3, "붕괴 소용돌이", "벽을 부수면 주변 자원과 벽을 끌어당기는 폭발이 생깁니다.", c => c.Build.VortexMining = true),
             R(RoleId.Driller, "돌파 파기", "u_wide_q", 3, "광역 천공", "Q가 지나가는 넓은 통로를 한꺼번에 뚫습니다.", c => !c.T.DrillerWideQ, c => c.T.DrillerWideQ = true),
 
             // ── 공용 4티어 (대부분 서브시스템 — 이식 보류)
-            U("자동 굴착", "u_army", 4, "무한 굴착 군단", "여러 자동 드릴이 벽을 파괴하지만 중량 때문에 이동 속도가 10% 감소합니다.", c => c.Build.MoveMul *= .9, notPorted: true),
-            U("초대형 굴착", "u_planet_breaker", 4, "행성 파쇄기", "거대 드릴이 화면을 쓸어내지만 발동 충격으로 최대 HP의 1.5%를 잃습니다.", c => { }, notPorted: true),
-            U("대붕괴", "u_grand_collapse", 4, "대붕괴", "넓은 지역을 무너뜨리지만 발동 충격으로 최대 HP의 2.5%를 잃습니다.", c => { }, notPorted: true),
+            U("자동 굴착", "u_army", 4, "무한 굴착 군단", "여러 자동 드릴이 벽을 파괴하지만 중량 때문에 이동 속도가 10% 감소합니다.", c => { c.Build.AuxDrills = Math.Max(6, c.Build.AuxDrills); c.Build.AuxDrillPower = Math.Max(.02175, c.Build.AuxDrillPower); c.Build.MoveMul *= .9; }),
+            U("초대형 굴착", "u_planet_breaker", 4, "행성 파쇄기", "거대 드릴이 화면을 쓸어내지만 발동 충격으로 최대 HP의 1.5%를 잃습니다.", c => c.Build.PlanetBreakerEvery = 15),
+            U("대붕괴", "u_grand_collapse", 4, "대붕괴", "넓은 지역을 무너뜨리지만 발동 충격으로 최대 HP의 2.5%를 잃습니다.", c => c.Build.GrandCollapseEvery = 12),
             U("초대형 굴착", "u_giant_bit", 4, "초거대 비트", "2칸 폭·1칸 깊이로 갈아버리지만 드릴 열이 25% 빠르게 쌓입니다.", c => { c.Build.DrillWidth = Math.Max(2, c.Build.DrillWidth); c.Build.DrillPenetration = Math.Max(1, c.Build.DrillPenetration); c.Build.DrillReach = Math.Max(1.105, c.Build.DrillReach); c.Build.HeatBuildMul *= 1.25; }, drill: true),
-            U("드릴 폭풍", "u_storm", 4, "드릴 폭풍", "회전 드릴들이 벽을 깎지만 제어 부담으로 이동 속도가 12% 감소합니다.", c => c.Build.MoveMul *= .88, notPorted: true),
+            U("드릴 폭풍", "u_storm", 4, "드릴 폭풍", "회전 드릴들이 벽을 깎지만 제어 부담으로 이동 속도가 12% 감소합니다.", c => { c.Build.DrillStorm = Math.Max(4, c.Build.DrillStorm); c.Build.AuxDrills = Math.Max(4, c.Build.AuxDrills); c.Build.AuxDrillPower = Math.Max(.0195, c.Build.AuxDrillPower); c.Build.MoveMul *= .88; }),
             U("무정지 과급", "u_endless", 4, "무정지 과급", "과열 중 멈추지 않지만 출력이 50%가 되고 HP가 계속 감소합니다.", c => c.Build.EndlessOverdrive = true, drill: true),
 
             // ── 영구 노드 해금 계열 (lock)
