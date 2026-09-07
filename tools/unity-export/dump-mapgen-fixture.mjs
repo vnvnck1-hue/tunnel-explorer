@@ -29,7 +29,7 @@ const argv = process.argv.slice(2);
 const flagIdx = argv.findIndex(a => a === '--depths');
 const DEPTHS = flagIdx >= 0 ? argv[flagIdx + 1].split(',').map(Number) : [1, 2, 3];
 const positional = argv.filter((_, i) => flagIdx < 0 || (i !== flagIdx && i !== flagIdx + 1));
-const SRC = positional[0] ?? 'tunnel-crew-infinite-mode-v7.9.2.html';
+const SRC = positional[0] ?? 'prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html';
 const OUT = positional[1] ?? 'unity/TunnelCrew/Assets/Tests/EditMode/Fixtures';
 
 function need(x, what) {

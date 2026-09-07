@@ -165,7 +165,7 @@ namespace TunnelCrew.Presentation
             foreach (var m in Sim.Crew.Members) list.Add((V(m.Position), "AI " + AiCrewSystem.NameOf(m.Role) + " Lv" + m.Level));
             return list;
         }
-        static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+        static Vector2 V(Vec2 v) => IsometricProjection.ToRender(v);
 
         void CycleFocus()
         {

@@ -54,13 +54,14 @@ namespace TunnelCrew.Presentation
         static Color Hex(string hex) { if (string.IsNullOrEmpty(hex) || !ColorUtility.TryParseHtmlString(hex, out var c)) return Color.white; return c; }
         Vector2 WorldToGui(Vec2 w)
         {
-            var s = _cam.WorldToScreenPoint(new Vector3((float)w.X, (float)w.Y, 0));
+            var s = _cam.WorldToScreenPoint(IsometricProjection.ToRender3(w));
             return new Vector2(s.x, Screen.height - s.y);
         }
         Vec2 ScreenToWorld(Vector2 screen)
         {
             var w = _cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_cam.transform.position.z));
-            return new Vec2(w.x, w.y);
+            var sim = IsometricProjection.ToWorld(new Vector2(w.x, w.y));
+            return new Vec2(sim.x, sim.y);
         }
         bool Playing => _sim != null && _sim.World != null && _active() && _sim.Phase == GamePhase.Playing;
 
@@ -451,8 +452,8 @@ namespace TunnelCrew.Presentation
                 {
                     var s = WorldToGui(q.World.Value);
                     float cellPx = (float)(Screen.height / (_cam.orthographicSize * 2));
-                    float w = cellPx * q.FootW, h = cellPx * q.FootH;
-                    var m0 = GUI.matrix; GUIUtility.RotateAroundPivot(-(float)(q.Angle * Mathf.Rad2Deg), s);
+                    float w = cellPx * q.FootW * .7071f, h = cellPx * q.FootH * .3536f;
+                    var m0 = GUI.matrix; GUIUtility.RotateAroundPivot(-IsometricProjection.AngleToRender(q.Angle) * Mathf.Rad2Deg, s);
                     Fill(new Rect(s.x - w / 2, s.y - h / 2, w, h), q.Valid ? new Color(.5f, .92f, .82f, .22f) : new Color(1f, .44f, .54f, .22f));
                     GUI.matrix = m0;
                     var icon = Tex(q.Recipe.Icon);
@@ -533,7 +534,7 @@ namespace TunnelCrew.Presentation
         }
         void Set(SpriteRenderer sr, Vec2 at, Sprite s, Color c, float w, float h, float rotDeg, int order)
         {
-            sr.transform.position = new Vector3((float)at.X, (float)at.Y, 0); sr.sprite = s; sr.color = c; sr.transform.localScale = new Vector3(w, h, 1); sr.transform.rotation = Quaternion.Euler(0, 0, rotDeg); sr.sortingOrder = order;
+            sr.transform.position = IsometricProjection.ToRender3(at); sr.sprite = s; sr.color = c; sr.transform.localScale = new Vector3(w, h, 1); sr.transform.rotation = Quaternion.Euler(0, 0, rotDeg); sr.sortingOrder = order;
         }
         Sprite Icon(string n) => _icons.TryGetValue(n, out var s) ? s : null;
         public void Render(QuickCraftSystem cf, bool active)
@@ -548,7 +549,7 @@ namespace TunnelCrew.Presentation
                 }
                 foreach (var b in cf.Barricades)
                 {
-                    Set(Rent(i++), b.At, Icon("icon-folding-barricade"), new Color(1, 1, 1, .96f), 1.58f, .98f, (float)(b.A * Mathf.Rad2Deg), 28);
+                    Set(Rent(i++), b.At, Icon("icon-folding-barricade"), new Color(1, 1, 1, .96f), 1.58f, .98f, IsometricProjection.AngleToRender(b.A) * Mathf.Rad2Deg, 28);
                     Set(Rent(i++), b.At, _ring, (b.Hp < b.MaxHp * .3 ? new Color(1f, .44f, .54f) : new Color(1f, .83f, .43f)) * new Color(1, 1, 1, .3f + .7f * (float)(b.Hp / b.MaxHp)), 1.16f, 1.16f, 0, 29);
                 }
                 foreach (var f in cf.Flares) Set(Rent(i++), f.At, Icon("icon-flare-bundle"), new Color(1, 1, 1, .88f), .64f, .64f, 0, 28);

@@ -74,6 +74,7 @@ namespace TunnelCrew.Presentation
         BossIntroCinematic _cine;
         CeilingFx _ceiling;
         float _stepAcc; bool _wasDigging, _wasLocked; Vec2 _outroAt; float _outroR, _outroFxCd, _outroShakeCd;
+        float _bossShakeCd, _bossDustCd;   // 보스 이동/돌진 흔들림·먼지 주기 (원본 bossMovementShake · bossSpawnDashDust)
         readonly Dictionary<string, Texture2D> _traitIconTex = new Dictionary<string, Texture2D>();
         /// <summary>보스 등장 시네마틱 중 — 월드를 멈추고 렌더만 돌린다 (원본 CREW.phase='bossIntro').</summary>
         public bool CinematicActive => _cine != null && _cine.Active;
@@ -113,6 +114,8 @@ namespace TunnelCrew.Presentation
             Application.runInBackground = true;
             // 런 바깥 화면(메뉴·정산·일시정지). 씬을 손으로 꾸미지 않는 원칙대로 코드에서 붙인다.
             if (GetComponent<MetaScreens>() == null) gameObject.AddComponent<MetaScreens>();
+            // 투영 프리셋 비교 도구 (F9/F8). 화면 좌표만 바꾸므로 시뮬레이션에는 영향이 없다.
+            if (GetComponent<ProjectionSwitcher>() == null) gameObject.AddComponent<ProjectionSwitcher>();
             _observer = GetComponent<ObserverMode>() ?? gameObject.AddComponent<ObserverMode>();   // 관전 모드 (원본 ai/observer.js)
             if (AudioDirector.Instance == null) { var ago = new GameObject("Audio"); _audio = ago.AddComponent<AudioDirector>(); } else _audio = AudioDirector.Instance;
             // 장악도 레일 아이콘 — 원본 v7.9.2 infDomRailIcons: 게이지 끝 dom-boss-icon · 진행 끝 dom-crew-icon (구 boss-icon 1254² 은 미참조 레거시)
@@ -183,7 +186,7 @@ namespace TunnelCrew.Presentation
                 _fx?.PlayerHurt(V(Sim.Player.Position), V(e.HitDir), _feedback != null ? _feedback.HurtLevel : 1);
                 Log(e.Downed ? "다운!" : $"피격 -{e.Damage:F0}");
             };
-            Sim.ProjectileFired += e => _feedback?.Shot((float)e.Angle, e.VisualId);
+            Sim.ProjectileFired += e => _feedback?.Shot(IsometricProjection.AngleToRender(e.Angle), e.VisualId);
             Sim.ProjectileEnded += e =>
             {
                 if (e.Exploded) { _feedback?.Kick(2.2f, Vector2.zero); _feedback?.Hitstop(18f); }
@@ -254,7 +257,7 @@ namespace TunnelCrew.Presentation
                 switch (e.Pattern)
                 {
                     case "dashCharge": _feedback?.Kick(3.2f, V(e.Boss.DashDir)); break;
-                    case "dashEnd": _feedback?.Kick(6f, V(e.Boss.DashDir)); break;
+                    case "dashEnd": _feedback?.Kick(11.6f, V(e.Boss.DashDir)); break;   // 베이크 dashImpactShake 11.6
                     case "wallField": case "wallWave": case "wallPrison": case "dashPrison": _feedback?.Kick(4f, Vector2.zero); Log(PatternName(e.Pattern)); break;
                     case "armor": Log("암반 장갑 생성"); break;
                     case "scatter": Log("산발 붕괴탄"); break;
@@ -326,12 +329,13 @@ namespace TunnelCrew.Presentation
             Sim.BossDefeated += e => { _outroAt = e.Boss.Body.Position; _outroR = (float)e.Boss.Body.Radius; _outroFxCd = 0; _outroShakeCd = 0; _audio?.Cache(); _audio?.EndBoss(3.0f, 2.6f); };
             Sim.BossPattern += e =>
             {
-                // 체상돌진 착지 — 20% 확률로 화면 전체 천장이 무너진다 (원본 dashCeiling*: clusters 11 · rocks 2 · dust 4 · alpha .22 · height r×2.6 · wave .55 · shake 3.4)
-                if (e.Pattern == "dashEnd" && _ceiling != null && _cam != null && UnityEngine.Random.value < .2f)
+                // 돌진 중 천장 붕괴 — 시점·확률은 Sim(CeilingPending/CeilingAt) 이 정한다.
+                // 수치는 베이크 bossLabBakedParams: clusters 16 · rocks 7 · dust 7 · alpha .22 · height r×2.6 · wave 1.25 · shake 8.4
+                if (e.Pattern == "dashCeiling" && _ceiling != null && _cam != null)
                 {
                     float vh = _cam.orthographicSize * 2, vw = vh * _cam.aspect; var c = _cam.transform.position;
-                    _ceiling.CeilingArea(new Rect(c.x - vw / 2, c.y - vh / 2, vw, vh), 11, 2, 4, .22f, (float)e.Boss.Body.Radius * 2.6f, .55f, V(e.Boss.Body.Position));
-                    _feedback?.Kick(3.4f, Vector2.zero);
+                    _ceiling.CeilingArea(new Rect(c.x - vw / 2, c.y - vh / 2, vw, vh), 16, 7, 7, .22f, (float)e.Boss.Body.Radius * 2.6f, 1.25f, V(e.Boss.Body.Position));
+                    _feedback?.Kick(8.4f, V(e.Boss.DashDir));
                 }
             };
             Sim.RunEnded += (escaped, reason) => { if (escaped) _audio?.Dawn(); else _audio?.Fail(); _audio?.EndBoss(1.4f); _audio?.DrillKill(); };
@@ -339,7 +343,7 @@ namespace TunnelCrew.Presentation
             Sim.Revived += at => { _feedback?.Kick(9f, Vector2.zero); _feedback?.Hitstop(60f); _fx?.BigRing(V(at), new Color(1f, .83f, .43f), 1.8f); _combatView?.Text(at + new Vec2(0, .9), "긴급 재기동", new Color(1f, .83f, .43f), 20); Log("긴급 재기동 — 체력 35%로 다시 일어섰다"); };
         }
 
-        static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+        static Vector2 V(Vec2 v) => IsometricProjection.ToRender(v);
         static Color Hex(string hex) { if (string.IsNullOrEmpty(hex) || !ColorUtility.TryParseHtmlString(hex, out var c)) return Color.white; return c; }
         static string PatternName(string p) => p switch { "wallField" => "암벽 융기", "wallWave" => "지각 파동", "wallPrison" => "석화 감옥!", "dashPrison" => "협곡 돌진 — 갇혔다!", _ => p };
 
@@ -376,6 +380,7 @@ namespace TunnelCrew.Presentation
             var gridGo = new GameObject("Grid");
             var grid = gridGo.AddComponent<Grid>();
             grid.cellSize = new Vector3(1, 1, 0);   // 1셀 = 1유닛
+            IsometricProjection.ConfigureTileGrid(gridGo.transform);
 
             Tilemap Layer(string name, int order)
             {
@@ -412,6 +417,8 @@ namespace TunnelCrew.Presentation
             _worldRenderer.EditorAssign(_tileSet, floor, walls, coreTop);
 #endif
             _worldRenderer.Bind(Sim.World);
+            // 보스 소환 벽 붉은 전용 타일 (원본 INF.bossWallCells → BOSS_WALL_TILES)
+            _worldRenderer.IsBossWall = k => Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k);
         }
 
         void BuildPlayer()
@@ -546,13 +553,13 @@ namespace TunnelCrew.Presentation
         void UpdateLighting()
         {
             var p = Sim.Player;
-            var pos = new Vector3((float)p.Position.X, (float)p.Position.Y, 0f);
+            var pos = IsometricProjection.ToRender3(p.Position);
 
             _playerHalo.transform.position = pos;
             _flashlight.transform.position = pos;
             // Light2D 스팟은 위쪽(+Y)이 기준이라 90도를 뺀다
             _flashlight.transform.rotation =
-                Quaternion.Euler(0, 0, (float)(p.Aim * Mathf.Rad2Deg) - 90f);
+                Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(p.Aim) * Mathf.Rad2Deg - 90f);
             _flashlight.enabled = _flashlightOn;
 
             // AI 크루 손전등 — 멤버 수만큼 재사용. 조준 방향으로 비추고 다운되면 꺼진다
@@ -577,8 +584,8 @@ namespace TunnelCrew.Presentation
                 if (i >= members.Count) { l.enabled = false; continue; }
                 var m = members[i];
                 l.enabled = !m.Down;
-                l.transform.position = new Vector3((float)m.Position.X, (float)m.Position.Y, 0f);
-                l.transform.rotation = Quaternion.Euler(0, 0, (float)(m.Aim * Mathf.Rad2Deg) - 90f);
+                l.transform.position = IsometricProjection.ToRender3(m.Position);
+                l.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(m.Aim) * Mathf.Rad2Deg - 90f);
             }
 
             // 보스 조명 — 원본 BOSS_TUNE lightRadiusMul 2.4 · intensity .5 (맥동 4%)
@@ -597,7 +604,7 @@ namespace TunnelCrew.Presentation
             if (_bossLight.enabled)
             {
                 float r = (float)boss.Body.Radius;
-                _bossLight.transform.position = new Vector3((float)boss.Body.Position.X, (float)boss.Body.Position.Y, 0);
+                _bossLight.transform.position = IsometricProjection.ToRender3(boss.Body.Position);
                 _bossLight.pointLightOuterRadius = r * 2.4f;
                 _bossLight.intensity = 0.5f * (1f + 0.04f * Mathf.Sin(Time.time * 1.15f * Mathf.PI * 2f));
             }
@@ -622,7 +629,7 @@ namespace TunnelCrew.Presentation
                 if (!on) continue;
                 var f = flares[i];
                 float life = (float)(f.Ttl / System.Math.Max(0.01, f.MaxTtl));
-                _flareLights[i].transform.position = new Vector3((float)f.Position.X, (float)f.Position.Y, 0);
+                _flareLights[i].transform.position = IsometricProjection.ToRender3(f.Position);
                 _flareLights[i].pointLightOuterRadius = (float)f.LightRadius;
                 _flareLights[i].intensity = (f.IsEngineerNode ? 0.9f : 1.3f) * Mathf.Clamp01(life * 3f);
                 _flareLights[i].color = f.IsEngineerNode ? new Color(0.5f, 0.95f, 0.85f) : new Color(1f, 0.85f, 0.45f);
@@ -715,7 +722,7 @@ namespace TunnelCrew.Presentation
             {
                 var go = new GameObject($"Lamp_{col}_{row}");
                 go.transform.SetParent(_lightRoot, false);
-                go.transform.position = new Vector3(col + 0.5f, row + 0.5f, 0f);
+                go.transform.position = IsometricProjection.ToRender3(new Vector2(col + 0.5f, row + 0.5f));
                 var l = go.AddComponent<Light2D>();
                 l.lightType = Light2D.LightType.Point;
                 l.pointLightInnerAngle = 360f;
@@ -815,6 +822,7 @@ namespace TunnelCrew.Presentation
 
             if (!CinematicActive) Sim.Advance(Time.deltaTime, _observer != null ? _observer.Drive(ReadInput(), Time.deltaTime) : ReadInput());
             else Sim.RefreshVision();   // 월드는 멈춰도 보스 시야원은 열어야 카메라가 보스를 비춘다 (원본은 렌더 루프가 LOS 를 돌렸다)
+            TickBossShake(Time.deltaTime);
             TickAudioState();
             _playerView.Render(Sim.Player, Time.deltaTime);
             _lootView.Render(Sim.Loot);
@@ -856,8 +864,7 @@ namespace TunnelCrew.Presentation
                 float x = (kb.dKey.isPressed ? 1 : 0) - (kb.aKey.isPressed ? 1 : 0);
                 // 원본은 y 가 아래로 증가한다. Unity 는 위로 증가하므로 W 가 +y 다.
                 float y = (kb.wKey.isPressed ? 1 : 0) - (kb.sKey.isPressed ? 1 : 0);
-                var move = new Vector2(x, y);
-                if (move.sqrMagnitude > 0.0001f) move.Normalize();
+                var move = IsometricProjection.ScreenDirectionToWorld(new Vector2(x, y));
                 input.Move = new Vec2(move.x, move.y);
                 input.DashPressed = kb.spaceKey.wasPressedThisFrame;
                 input.ReloadPressed = kb.rKey.wasPressedThisFrame;
@@ -880,8 +887,18 @@ namespace TunnelCrew.Presentation
 
             if (gp != null)
             {
-                var ls = gp.leftStick.ReadValue(); if (ls.magnitude > .18f) input.Move = new Vec2(ls.x, ls.y);
-                var rs = gp.rightStick.ReadValue(); if (rs.magnitude > .25f) input.AimWorld = Sim.Player.Position + new Vec2(rs.x, rs.y).Normalized * 6;
+                var ls = gp.leftStick.ReadValue();
+                if (ls.magnitude > .18f)
+                {
+                    var move = IsometricProjection.ScreenDirectionToWorld(ls);
+                    input.Move = new Vec2(move.x, move.y);
+                }
+                var rs = gp.rightStick.ReadValue();
+                if (rs.magnitude > .25f)
+                {
+                    var aim = IsometricProjection.ScreenDirectionToWorld(rs);
+                    input.AimWorld = Sim.Player.Position + new Vec2(aim.x, aim.y) * 6;
+                }
                 // 버튼은 GamepadMap(설정 화면에서 리매핑 · PlayerPrefs) 을 거친다. 기본값은 계획 §M7 표와 같다.
                 if (GamepadMap.Held(gp, GamepadMap.Action.Fire)) input.FireHeld = true;
                 if (GamepadMap.Held(gp, GamepadMap.Action.Drill) || GamepadMap.Held(gp, GamepadMap.Action.DrillAlt)) input.DrillHeld = true;
@@ -947,6 +964,33 @@ namespace TunnelCrew.Presentation
             if (edge.HasValue) { GUI.color = edge.Value; GUI.DrawTexture(new Rect(r.x, r.y, r.width, 2 * _k), _white); GUI.DrawTexture(new Rect(r.x, r.yMax - 2 * _k, r.width, 2 * _k), _white); }
             GUI.color = Color.white;
         }
+        /// <summary>원본 bossMovementShake(6342) + bossSpawnDashDust(6349) — 보스가 움직이는 동안 주기적 화면 흔들림,
+        /// 돌진 중 뒤로 흩날리는 먼지. 수치는 베이크 bossLabBakedParams: move 1.75/0.18s · dash 3.2/0.14s · 먼지 15개/0.16s/알파 .39.</summary>
+        void TickBossShake(float dt)
+        {
+            var b = Sim?.Bosses?.Boss;
+            if (b == null || !b.Body.Alive || CinematicActive) { _bossDustCd = 0; return; }
+            bool dashing = b.Dash == BossDashPhase.Charge;
+            var v = b.Body.Velocity;
+            _bossShakeCd -= dt;
+            if (v.Length > 0.04 && _bossShakeCd <= 0)   // 원본 speed<=2px/s(0.04셀/s) 스킵
+            {
+                _bossShakeCd = dashing ? .14f : .18f;
+                _feedback?.Kick(dashing ? 3.2f : 1.75f, IsometricProjection.ToRender(v));
+            }
+            if (dashing)
+            {
+                _bossDustCd -= dt;
+                if (_bossDustCd <= 0)
+                {
+                    _bossDustCd = .16f;
+                    var back = V(b.Body.Position) - V(b.DashDir) * (float)(b.Body.Radius * .45);
+                    _fx?.Smoke(back, 15, new Color(.788f, .655f, .49f, .39f), 34f, .59f);
+                }
+            }
+            else _bossDustCd = 0;
+        }
+
         void Panel(Rect r, float alpha = .55f) { GUI.color = new Color(.05f, .04f, .09f, alpha); GUI.DrawTexture(r, _white); GUI.color = Color.white; }
 
         void OnGUI()

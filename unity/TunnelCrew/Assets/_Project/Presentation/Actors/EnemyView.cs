@@ -108,7 +108,8 @@ namespace TunnelCrew.Presentation
 
         void Draw(EnemyState e, Item it, float dt)
         {
-            float x = (float)e.Position.X, y = (float)e.Position.Y;
+            var renderPos = IsometricProjection.ToRender(e.Position);
+            float x = renderPos.x, y = renderPos.y;
             float r = (float)e.Radius;
 
             // 원본: bob 으로 위아래 살짝, 도약 중 lift
@@ -179,15 +180,14 @@ namespace TunnelCrew.Presentation
             {
                 float total = Mathf.Max(0.05f, (float)e.AttackWindupTotal);
                 float p = Mathf.Clamp01(1f - (float)e.AttackTimer / total);
-                var d = new Vector2((float)e.AttackDir.X, (float)e.AttackDir.Y);
                 float inner = r * 0.92f;
                 float outer = inner + r * (e.IsRanged ? 2.6f : 1.05f) * (0.35f + p * 0.65f);
                 var col = e.IsRanged ? new Color(0.55f, 0.89f, 0.56f) : new Color(1f, 0.6f, 0.42f);
                 col.a = 0.3f + p * 0.5f;
                 it.Windup.startColor = it.Windup.endColor = col;
                 it.Windup.startWidth = it.Windup.endWidth = e.IsRanged ? 0.06f : r * 0.9f;
-                it.Windup.SetPosition(0, new Vector3(x + d.x * inner, y + d.y * inner, -0.05f));
-                it.Windup.SetPosition(1, new Vector3(x + d.x * outer, y + d.y * outer, -0.05f));
+                it.Windup.SetPosition(0, IsometricProjection.ToRender3(e.Position + e.AttackDir * inner, -0.05f));
+                it.Windup.SetPosition(1, IsometricProjection.ToRender3(e.Position + e.AttackDir * outer, -0.05f));
             }
         }
 

@@ -3,7 +3,7 @@
  * 원본 HTML 에서 밸런스·튜닝 상수를 뽑아 JSON 으로 굳힌다.
  *
  *   node tools/unity-export/dump-tuning.mjs [원본.html] [출력폴더]
- *   기본값: tunnel-crew-infinite-mode-v7.9.2.html  →  unity/TunnelCrew/Assets/_Project/Data/raw/
+ *   기본값: prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html  →  unity/TunnelCrew/Assets/_Project/Data/raw/
  *
  * 설계 메모
  * - HTML 전체를 실행하지 않는다. 원본은 canvas·WebGL·AudioContext·DOM 에 의존해
@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 
-const SRC = process.argv[2] ?? 'tunnel-crew-infinite-mode-v7.9.2.html';
+const SRC = process.argv[2] ?? 'prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html';
 const OUT = process.argv[3] ?? 'unity/TunnelCrew/Assets/_Project/Data/raw';
 
 /**

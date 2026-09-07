@@ -295,4 +295,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f16e42b0a1802a94f8f90db42d56b09b, type: 3}
   - {fileID: 21300000, guid: 1eef13284d78858478b632a0616c0181, type: 3}
   - {fileID: 21300000, guid: 70c55844134429e4bb6465e7180e5bc0, type: 3}
+  bossWalls:
+  - {fileID: 21300000, guid: c8700115ef1a85e46beb6771d65296b4, type: 3}
+  - {fileID: 21300000, guid: 99893e89c0a1b094da9c147be5beffe3, type: 3}
   wallNormalAtlas: {fileID: 2800000, guid: 2ef224b1522e9cb498b4d8deed057aa5, type: 3}

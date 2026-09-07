@@ -1,18 +1,22 @@
 # Tunnel Explorer / 땅굴 크루
 
-탑다운 2D 땅굴 탐험·채굴 웹 프로토타입과 **땅굴 크루** 코어루프 데모, 기획서 모음입니다.
+탑다운 2D 땅굴 탐험·채굴 게임 **땅굴 크루**.
 
-## 빠른 실행
+> **현재 개발은 Unity 프로젝트에서 진행합니다 — `unity/TunnelCrew/`.**
+> HTML 프로토타입은 전부 [`prototype-html/`](prototype-html/README.md) 로 모아 동결했고,
+> 포팅 레퍼런스로만 사용합니다. 기준 빌드는 `prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html`.
 
-로컬에서 HTML을 정적 서빙한 뒤 브라우저로 엽니다.
+## 빠른 실행 (HTML 프로토타입 · 레퍼런스용)
+
+저장소 **루트**에서 정적 서빙해야 자산 경로가 맞습니다.
 
 ```bash
 # 예: Node
-npx --yes serve . -p 5188
+node coop/server.mjs   # 루트 기준 서빙 + 코옵 (5188)
 ```
 
-- 코어루프 데모: http://127.0.0.1:5188/demos/tunnel-crew-loop-demo.html  
-- 파라미터 튜닝 데모: http://127.0.0.1:5188/demos/tunnel-explorer-demo.html  
+- 코어루프 데모: http://127.0.0.1:5188/prototype-html/demos/tunnel-crew-loop-demo.html  
+- 파라미터 튜닝 데모: http://127.0.0.1:5188/prototype-html/demos/tunnel-explorer-demo.html  
 
 또는 파일을 브라우저에 직접 열어도 됩니다 (일부 환경에서는 `file://` 제약이 있을 수 있음).
 
@@ -40,15 +44,17 @@ python ai/inject-ai-crew.py
 
 | 경로 | 설명 |
 |------|------|
-| `demos/tunnel-crew-loop-demo.html` | **메인** — 역할 선택 → 채취 → 탈출 코어루프. 드릴러에 마이너 스프라이트 적용 |
-| `demos/tunnel-explorer-demo.html` | FoW / LOS / 드릴·카메라 파라미터 튜닝 데모 |
-| `demos/tunnel-explorer-demo-sprite*.html` | 캐릭터 스프라이트 시트 실험 (좌향 수정본 포함) |
-| `demos/tunnel-explorer.html` | 탐험가 본체 HTML 변형 |
+| `unity/TunnelCrew/` | **현재 개발 대상** — Unity 프로젝트 |
+| `prototype-html/` | HTML 프로토타입 아카이브(동결) — [README](prototype-html/README.md) |
+| `prototype-html/demos/tunnel-crew-loop-demo.html` | **메인** — 역할 선택 → 채취 → 탈출 코어루프. 드릴러에 마이너 스프라이트 적용 |
+| `prototype-html/demos/tunnel-explorer-demo.html` | FoW / LOS / 드릴·카메라 파라미터 튜닝 데모 |
+| `prototype-html/demos/tunnel-explorer-demo-sprite*.html` | 캐릭터 스프라이트 시트 실험 (좌향 수정본 포함) |
+| `prototype-html/demos/tunnel-explorer.html` | 탐험가 본체 HTML 변형 |
 | `docs/tunnel-crew-gdd.md` | 땅굴 크루 게임 확장 기획서 (GDD v0.1) |
 | `docs/tunnel-crew-main-game-structure.md` | **본편 누적 기준안** — 행성 원정, 런 성장, 영구 성장, 코옵 경제와 미결정 사항 |
 | `docs/unity-port-plan.md` | **Unity 포팅 계획** — 기준 빌드 v7.9.2 동결, 3층 아키텍처, 추출 파이프라인, 마일스톤 M0~M8 |
 | `docs/unity-port/` | 포팅 근거 분석 4편 — 코어 시뮬레이션 / 엔티티·전투·AI / 셸·오디오·네트·자산 / **엔진 네이티브 대체**(HTML 임시 구현 → Unity 표준 제작법) |
-| `prototypes/` | SeedLoop FoW·트리, Hole-Is-Ours 등 선행 프로토 |
+| `prototype-html/early/` | SeedLoop FoW·트리, Hole-Is-Ours 등 선행 프로토 |
 
 ## 코어루프 데모 조작
 

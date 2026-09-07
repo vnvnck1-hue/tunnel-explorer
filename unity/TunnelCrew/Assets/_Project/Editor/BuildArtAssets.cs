@@ -23,6 +23,8 @@ namespace TunnelCrew.EditorTools
         const string MonsterDir = "Assets/Art/Monsters";
         /// <summary>보스 레드 파이어 드래곤 — 원본 assets/red-fire-dragon/{idle,walking,fire-breath-a,death}-frames (BOSS_DRAGON_ANIMS, 480² · 10fps). MonsterSheets 에 "dragon_&lt;anim&gt;" 으로 들어간다.</summary>
         const string DragonDir = "Assets/Art/Dragon";
+        /// <summary>보스 소환 벽 — 원본 BOSS_WALL_TILES(2525), assets/boss-walls 2종.</summary>
+        const string BossWallDir = "Assets/Art/Tiles/boss-walls";
         const string OutDir = "Assets/_Project/Data/Resources";
 
         [Serializable] class TileEntry { public string file; public string type; public int band, surface, damage, variant, slot; }
@@ -43,6 +45,7 @@ namespace TunnelCrew.EditorTools
             int monsters = ConfigureMonsters();
             int dragon = ConfigureFrames(DragonDir);
             BuildMonsterSheets();
+            ConfigureBossWalls();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log($"[M1] 아트 설정 완료 — 타일 텍스처 {tiles}, 캐릭터 시트 {chars}, " +
@@ -157,6 +160,54 @@ namespace TunnelCrew.EditorTools
                 im.SaveAndReimport();
                 n++;
             }
+            return n;
+        }
+
+        /// <summary>
+        /// 보스 소환 벽 타일 임포트 + 타일셋 연결 (원본 BOSS_WALL_TILES).
+        /// 원본은 폭을 CELL 에 맞추고 바닥을 셀 하단에 붙여 위로 솟게 그린다(8172~8181) —
+        /// PPU = 텍스처 폭(폭 1유닛), 피벗은 바닥에서 반 셀 위(= 타일맵 앵커인 셀 중앙에 오도록).
+        /// </summary>
+        [MenuItem("Tunnel Crew/M8 · 보스 벽 타일 연결")]
+        public static void RunBossWalls()
+        {
+            int n = ConfigureBossWalls();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[M8] 보스 벽 타일 {n}/2 연결");
+        }
+
+        static int ConfigureBossWalls()
+        {
+            string[] files = { "boss-wall-block.png", "boss-wall-crystal.png" };
+            var sprites = new Sprite[2];
+            int n = 0;
+            for (int i = 0; i < files.Length; i++)
+            {
+                string path = $"{BossWallDir}/{files[i]}";
+                var im = (TextureImporter)AssetImporter.GetAtPath(path);
+                if (im == null) continue;
+                var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                float w = tex != null ? tex.width : 50f, h = tex != null ? tex.height : 50f;
+                im.textureType = TextureImporterType.Sprite;
+                im.spriteImportMode = SpriteImportMode.Single;
+                im.spritePixelsPerUnit = w;            // 폭 = 1셀
+                im.filterMode = FilterMode.Bilinear;
+                im.mipmapEnabled = false;
+                im.wrapMode = TextureWrapMode.Clamp;
+                im.alphaIsTransparency = true;
+                im.textureCompression = TextureImporterCompression.Uncompressed;
+                var ts = new TextureImporterSettings();
+                im.ReadTextureSettings(ts);
+                ts.spriteAlignment = (int)SpriteAlignment.Custom;
+                ts.spritePivot = new Vector2(.5f, .5f * w / h);
+                im.SetTextureSettings(ts);
+                im.SaveAndReimport();
+                sprites[i] = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sprites[i] != null) n++;
+            }
+            var set = AssetDatabase.LoadAssetAtPath<TileSetAsset>($"{OutDir}/TileSet_purple.asset");
+            if (set != null) { set.bossWalls = sprites; EditorUtility.SetDirty(set); }
             return n;
         }
 

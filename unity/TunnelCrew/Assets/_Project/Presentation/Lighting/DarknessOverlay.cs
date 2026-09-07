@@ -48,6 +48,7 @@ namespace TunnelCrew.Presentation
         static readonly int WorldSizeId = Shader.PropertyToID("_WorldSize");
         static readonly int MaxDarknessId = Shader.PropertyToID("_MaxDarkness");
         static readonly int EdgeSoftnessId = Shader.PropertyToID("_EdgeSoftness");
+        static readonly int InvProjId = Shader.PropertyToID("_InvProj");
 
         public void Bind(LosService los, int cols, int rows, Camera cam)
         {
@@ -115,6 +116,8 @@ namespace TunnelCrew.Presentation
             _material.SetColor(MemoryColorId, _memoryColor);
             _material.SetFloat(MaxDarknessId, _maxDarkness);
             _material.SetFloat(EdgeSoftnessId, _edgeSoftness);
+            // 프리셋마다 렌더→시뮬 역변환이 달라진다. 매 프레임 넘겨 두면 전환 시 따로 갱신할 게 없다.
+            _material.SetVector(InvProjId, IsometricProjection.InverseRow());
         }
 
         static Mesh BuildUnitQuad()

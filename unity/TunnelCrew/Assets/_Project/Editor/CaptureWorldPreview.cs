@@ -42,6 +42,7 @@ namespace TunnelCrew.EditorTools
                 gridGo.transform.SetParent(root.transform);
                 var grid = gridGo.AddComponent<Grid>();
                 grid.cellSize = new Vector3(1, 1, 0);
+                IsometricProjection.ConfigureTileGrid(gridGo.transform);
 
                 Tilemap Layer(string n, int order)
                 {
@@ -65,8 +66,7 @@ namespace TunnelCrew.EditorTools
                 var marker = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 marker.name = "PlayerMarker";
                 marker.transform.SetParent(root.transform);
-                marker.transform.position = new Vector3(
-                    (float)sim.Player.Position.X, (float)sim.Player.Position.Y, -0.1f);
+                marker.transform.position = IsometricProjection.ToRender3(sim.Player.Position, -0.1f);
                 marker.transform.localScale = Vector3.one * 1.0f;
                 var mr = marker.GetComponent<MeshRenderer>();
                 mr.sharedMaterial = new Material(Shader.Find("Sprites/Default")) { color = Color.white };
@@ -87,16 +87,19 @@ namespace TunnelCrew.EditorTools
 
                 if (wholeMap)
                 {
-                    cam.orthographicSize = sim.World.Rows * 0.5f;
-                    cam.transform.position = new Vector3(sim.World.Cols * 0.5f, sim.World.Rows * 0.5f, -10f);
+                    IsometricProjection.Bounds(sim.World.Cols, sim.World.Rows, out var min, out var max);
+                    float fitY = (max.y - min.y) * .5f;
+                    float fitX = (max.x - min.x) * .5f / ((float)width / height);
+                    cam.orthographicSize = Mathf.Max(fitX, fitY) + 1f;
+                    var center = (min + max) * .5f;
+                    cam.transform.position = new Vector3(center.x, center.y, -10f);
                 }
                 else
                 {
                     // 원본 기본 줌과 같은 세로 셀 수
                     float cells = (float)(1080.0 / (SimTuning.BaseZoom * SimTuning.PxPerCell) / SimTuning.ZoomInMul);
                     cam.orthographicSize = cells * 0.5f;
-                    cam.transform.position = new Vector3(
-                        (float)sim.Player.Position.X, (float)sim.Player.Position.Y, -10f);
+                    cam.transform.position = IsometricProjection.ToRender3(sim.Player.Position, -10f);
                 }
 
                 var rt = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 1 };

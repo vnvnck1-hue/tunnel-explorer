@@ -7,7 +7,7 @@
   등을 가로채서 자산 맵에서 찾아준다. 본문 게임 코드는 수정하지 않는다.
 
   사용:  node tools/build-single-html.mjs [원본.html] [출력.html]
-  기본:  원본 = 프로젝트 루트의 최신 tunnel-crew-infinite-mode-v*.html
+  기본:  원본 = prototype-html/latest 의 최신 tunnel-crew-infinite-mode-v*.html
          출력 = build/<원본 이름>-single.html
   자산은 원본 HTML 이 있는 폴더 기준(assets/ · monster_assets_v1.5.4/ · tunnel_crew_tile_resources_v1/)으로 찾는다.
 
@@ -23,16 +23,16 @@ const PROJECT = path.resolve(__dirname, '..');
 
 /* 루트에서 가장 높은 버전의 본선 HTML 을 고른다 (v7.9.0 > v7.8.1) */
 function newestMainHtml() {
-  const cands = fs.readdirSync(PROJECT)
+  const cands = fs.readdirSync(path.join(PROJECT, 'prototype-html', 'latest'))
     .map(f => ({ f, m: f.match(/^tunnel-crew-infinite-mode-v(\d+)\.(\d+)\.(\d+)\.html$/) }))
     .filter(x => x.m)
     .sort((a, b) => (+b.m[1] - +a.m[1]) || (+b.m[2] - +a.m[2]) || (+b.m[3] - +a.m[3]));
-  if (!cands.length) throw new Error('루트에 tunnel-crew-infinite-mode-vX.Y.Z.html 이 없습니다 — 원본 경로를 인자로 주세요');
-  return path.join(PROJECT, cands[0].f);
+  if (!cands.length) throw new Error('prototype-html/latest 에 tunnel-crew-infinite-mode-vX.Y.Z.html 이 없습니다 — 원본 경로를 인자로 주세요');
+  return path.join(PROJECT, 'prototype-html', 'latest', cands[0].f);
 }
 const SRC = path.resolve(process.argv[2] || newestMainHtml());
 const OUT = path.resolve(process.argv[3] || path.join(PROJECT, 'build', path.basename(SRC, '.html') + '-single.html'));
-const ROOT = path.dirname(SRC);
+const ROOT = PROJECT; // 자산 루트는 항상 저장소 루트 (HTML 은 prototype-html/ 아래)
 
 const ASSET_ROOTS = ['assets', 'monster_assets_v1.5.4', 'tunnel_crew_tile_resources_v1'];
 const EXT_RE = /\.(png|gif|webp|jpe?g|svg|ogg|mp3|wav|webm|css|json|woff2?|ttf)$/i;

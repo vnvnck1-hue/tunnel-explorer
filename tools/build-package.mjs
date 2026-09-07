@@ -7,7 +7,7 @@
   폴더만 복사하면 어느 Windows PC 에서든 START.bat 으로 실행된다.
 
   사용:  node tools/build-package.mjs [원본.html] [--force] [--no-zip]
-  기본:  원본 = 프로젝트 루트의 최신 tunnel-crew-infinite-mode-v*.html
+  기본:  원본 = prototype-html/latest 의 최신 tunnel-crew-infinite-mode-v*.html
          --force  : 같은 버전 폴더가 이미 있으면 지우고 다시 만든다
          --no-zip : 폴더만 만들고 zip 은 생략
 
@@ -28,16 +28,16 @@ const ZIP_ONLY = args.includes('--zip-only'); // 이미 만든 패키지 폴더�
 const srcArg = args.find(a => !a.startsWith('--'));
 
 function newestMainHtml() {
-  const cands = fs.readdirSync(PROJECT)
+  const cands = fs.readdirSync(path.join(PROJECT, 'prototype-html', 'latest'))
     .map(f => ({ f, m: f.match(/^tunnel-crew-infinite-mode-v(\d+)\.(\d+)\.(\d+)\.html$/) }))
     .filter(x => x.m)
     .sort((a, b) => (+b.m[1] - +a.m[1]) || (+b.m[2] - +a.m[2]) || (+b.m[3] - +a.m[3]));
-  if (!cands.length) throw new Error('루트에 tunnel-crew-infinite-mode-vX.Y.Z.html 이 없습니다 — 원본 경로를 인자로 주세요');
-  return path.join(PROJECT, cands[0].f);
+  if (!cands.length) throw new Error('prototype-html/latest 에 tunnel-crew-infinite-mode-vX.Y.Z.html 이 없습니다 — 원본 경로를 인자로 주세요');
+  return path.join(PROJECT, 'prototype-html', 'latest', cands[0].f);
 }
 
 const SRC = path.resolve(srcArg || newestMainHtml());
-const SRC_DIR = path.dirname(SRC);
+const SRC_DIR = PROJECT; // 자산 루트는 항상 저장소 루트 (HTML 은 prototype-html/ 아래)
 const HTML_NAME = path.basename(SRC);
 const verM = HTML_NAME.match(/v(\d+\.\d+\.\d+)/);
 if (!verM) throw new Error('원본 파일명에서 버전(vX.Y.Z)을 읽지 못했습니다: ' + HTML_NAME);

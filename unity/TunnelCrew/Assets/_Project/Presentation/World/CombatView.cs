@@ -48,11 +48,11 @@ namespace TunnelCrew.Presentation
             {
                 var p = sim.Projectiles.Projectiles[i];
                 var sr = _projPool[i];
-                sr.transform.position = new Vector3((float)p.Position.X, (float)p.Position.Y, 0);
+                sr.transform.position = IsometricProjection.ToRender3(p.Position);
                 sr.color = ProjColor.TryGetValue(p.VisualId, out var c) ? c : Color.white;
                 float len = p.Laser ? 0.55f : 0.22f, wid = p.Laser ? 0.08f : 0.12f;
                 sr.transform.localScale = new Vector3(len, wid, 1);
-                sr.transform.rotation = Quaternion.Euler(0, 0, (float)p.Velocity.Angle * Mathf.Rad2Deg);
+                sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(p.Velocity.Angle) * Mathf.Rad2Deg);
                 sr.sprite = _square;
             });
 
@@ -60,7 +60,7 @@ namespace TunnelCrew.Presentation
             {
                 var s = sim.Enemies.Shots[i];
                 var sr = _shotPool[i];
-                sr.transform.position = new Vector3((float)s.Position.X, (float)s.Position.Y, 0);
+                sr.transform.position = IsometricProjection.ToRender3(s.Position);
                 sr.color = new Color(0.55f, 0.95f, 0.5f);
                 sr.transform.localScale = Vector3.one * (float)(s.Radius * 2.2);
                 sr.sprite = _dot;
@@ -75,7 +75,7 @@ namespace TunnelCrew.Presentation
                 int k = i;
                 if (k < roles.Nodes.Count) { var o = roles.Nodes[k]; Set(sr, o.Position, _dot, new Color(0.45f, 0.92f, 0.85f), 0.7f); return; }
                 k -= roles.Nodes.Count;
-                if (k < roles.Turrets.Count) { var o = roles.Turrets[k]; Set(sr, o.Position, _square, o.Powered ? new Color(0.78f, 0.63f, 1f) : new Color(0.4f, 0.35f, 0.5f), 0.55f); sr.transform.rotation = Quaternion.Euler(0, 0, (float)o.Aim * Mathf.Rad2Deg); return; }
+                if (k < roles.Turrets.Count) { var o = roles.Turrets[k]; Set(sr, o.Position, _square, o.Powered ? new Color(0.78f, 0.63f, 1f) : new Color(0.4f, 0.35f, 0.5f), 0.55f); sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(o.Aim) * Mathf.Rad2Deg); return; }
                 k -= roles.Turrets.Count;
                 if (k < roles.Breakers.Count)
                 {
@@ -105,7 +105,8 @@ namespace TunnelCrew.Presentation
                 float p = (float)s.Progress;
                 var pos = Vec2Lerp(s.Start, s.Target, p);
                 float arc = Mathf.Sin(p * Mathf.PI) * 2.2f;   // 원본 arcHeight 110px ≈ 2.2셀
-                sr.transform.position = new Vector3((float)pos.X, (float)pos.Y + arc, 0);
+                var renderPos = IsometricProjection.ToRender(pos);
+                sr.transform.position = new Vector3(renderPos.x, renderPos.y + arc, 0);
                 sr.transform.rotation = Quaternion.identity;
                 sr.sprite = _dot; sr.color = new Color(1f, 0.45f, 0.35f);
                 sr.transform.localScale = Vector3.one * (0.34f + 0.16f * (float)s.Power);
@@ -119,8 +120,8 @@ namespace TunnelCrew.Presentation
                 float rad = .75f + (i % 2) * .24f;
                 var pos = sim.Player.Position + new Vec2(Mathf.Cos(a) * rad, Mathf.Sin(a) * rad);
                 var sr = _auxPool[i];
-                sr.transform.position = new Vector3((float)pos.X, (float)pos.Y, -0.03f);
-                sr.transform.rotation = Quaternion.Euler(0, 0, a * Mathf.Rad2Deg + 90f);
+                sr.transform.position = IsometricProjection.ToRender3(pos, -0.03f);
+                sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(a) * Mathf.Rad2Deg + 90f);
                 sr.sprite = _square; sr.color = new Color(1f, .83f, .43f);
                 sr.transform.localScale = new Vector3(.16f, .34f, 1f);
             });
@@ -162,16 +163,19 @@ namespace TunnelCrew.Presentation
             _dashLine.enabled = dashTele;
             if (dashTele)
             {
+                // 원본 7036~7038 — 붉은 예고 쐐기: 시작 r*.2, 길이 max(r*1.8, 속도*지속시간), 폭 r*2*1.25, 끝쪽이 5Hz 로 점멸
                 var e = boss.Body;
-                float r = (float)e.Radius, prog = (float)boss.DashWindupProgress;
-                float len = (float)(SimTuning.EnemySpeed * e.SpeedMul * BossTune.DashSpeedMul * BossTune.DashDuration);
-                var d = new Vector2((float)boss.DashDir.X, (float)boss.DashDir.Y);
-                var a = new Vector2((float)e.Position.X, (float)e.Position.Y);
-                var col = new Color(1f, 0.83f, 0.43f, 0.18f + 0.32f * prog);
-                _dashLine.startColor = _dashLine.endColor = col;
+                float r = (float)e.Radius;
+                float len = Mathf.Max(r * 1.8f, (float)(SimTuning.EnemySpeed * System.Math.Max(.1, e.SpeedMul) * BossTune.DashSpeedMul * BossTune.DashDuration));
+                var a = IsometricProjection.ToRender(e.Position + boss.DashDir * (r * .2f));
+                var b = IsometricProjection.ToRender(e.Position + boss.DashDir * (r * .2f + len));
+                const float alpha = .3f;   // bossTune dashTelegraphAlpha
+                float pulse = .72f + .28f * Mathf.Sin(Time.time * 5f * 6.283f);
+                _dashLine.startColor = new Color(1f, 38f / 255f, 62f / 255f, alpha * .36f);
+                _dashLine.endColor = new Color(1f, 90f / 255f, 58f / 255f, alpha * pulse);
                 _dashLine.startWidth = _dashLine.endWidth = r * 2f * 1.25f;
                 _dashLine.SetPosition(0, new Vector3(a.x, a.y, -0.05f));
-                _dashLine.SetPosition(1, new Vector3(a.x + d.x * len, a.y + d.y * len, -0.05f));
+                _dashLine.SetPosition(1, new Vector3(b.x, b.y, -0.05f));
             }
 
             // 데미지 숫자 — 원본 J.step(dm) + 그리기: 중력·감속·회전, 팝·스쿼시·페이드
@@ -223,7 +227,7 @@ namespace TunnelCrew.Presentation
 
         void Set(SpriteRenderer sr, Vec2 pos, Sprite sp, Color c, float size)
         {
-            sr.transform.position = new Vector3((float)pos.X, (float)pos.Y, 0);
+            sr.transform.position = IsometricProjection.ToRender3(pos);
             sr.transform.rotation = Quaternion.identity;
             sr.sprite = sp; sr.color = c; sr.transform.localScale = Vector3.one * size;
         }
@@ -247,7 +251,7 @@ namespace TunnelCrew.Presentation
             var hot = new Color(1f, .16f, .16f); var hotB = new Color(1f, .35f, .23f);
             var t = Rent();
             t.Label = false; t.Big = big;
-            t.Pos = new Vector2((float)at.X + (Random.value - .5f) * jx * Px, (float)at.Y + (Random.value - .5f) * jy * Px);
+            t.Pos = IsometricProjection.ToRender(at) + new Vector2((Random.value - .5f) * jx * Px, (Random.value - .5f) * jy * Px);
             t.Vel = vel; t.Life = 1;
             t.Rot = big ? (Random.value - .5f) * 18f * (1 + hfx) * Mathf.Deg2Rad : (Random.value - .5f) * .2f;
             t.VRot = (Random.value - .5f) * 1.2f * (1 + hfx * 1.35f) * (big ? 1.6f : 1);
@@ -265,7 +269,7 @@ namespace TunnelCrew.Presentation
         {
             var t = Rent();
             t.Label = true; t.Big = false;
-            t.Pos = new Vector2((float)at.X, (float)at.Y);
+            t.Pos = IsometricProjection.ToRender(at);
             t.Vel = new Vector2(0, 38f * Px); t.Life = 1; t.Rot = 0; t.VRot = 0;
             t.SzMul = sizePx / DmgBase; t.PopMul = 1;
             t.Col = color;

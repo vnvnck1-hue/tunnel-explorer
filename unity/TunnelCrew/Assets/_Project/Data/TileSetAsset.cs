@@ -26,6 +26,19 @@ namespace TunnelCrew.Data
         [Header("밴드 경계 시임")]
         public Sprite[] seams = new Sprite[3];
 
+        [Header("보스 소환 벽")]
+        [Tooltip("원본 BOSS_WALL_TILES(2525) — 붉은 전용 타일 2종(block·crystal). 셀 고정 해시로 하나를 골라 좌우 플립해 그린다.")]
+        public Sprite[] bossWalls = new Sprite[2];
+
+        /// <summary>원본 8175 — 셀 고정 해시로 보스 벽 타일을 고른다. flip 은 (해시&gt;&gt;1)&amp;1.</summary>
+        public Sprite BossWall(int cellIndex, out bool flip)
+        {
+            uint hsh = unchecked((uint)cellIndex * 2654435761u);
+            flip = ((hsh >> 1) & 1) == 1;
+            if (bossWalls == null || bossWalls.Length < 2) return null;
+            return bossWalls[hsh & 1];
+        }
+
         [Header("벽 아틀라스 노멀맵")]
         [Tooltip("slots 의 스프라이트가 전부 한 아틀라스(purple_walls_atlas)에서 잘린 경우, 같은 배치의 노멀 아틀라스. 런타임이 벽 타일맵 머티리얼의 _NormalMap 에 넣는다 (세컨더리 텍스처 바인딩은 URP 17 타일맵/스프라이트에서 조명에 반영되지 않았음).")]
         public Texture2D wallNormalAtlas;

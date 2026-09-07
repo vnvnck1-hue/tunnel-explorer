@@ -105,6 +105,16 @@ namespace TunnelCrew.Presentation
 
         public int CasterCount { get; private set; }
 
+        void OnEnable() => IsometricProjection.Changed += RebuildAll;
+        void OnDisable() => IsometricProjection.Changed -= RebuildAll;
+
+        /// <summary>벽 캐스터를 전부 다시 만든다. 투영이 바뀌면 사각형 좌표가 통째로 달라진다.</summary>
+        public void RebuildAll()
+        {
+            if (_chunks == null || !Available) return;
+            for (int i = 0; i < _chunks.Length; i++) RebuildChunk(i);
+        }
+
         public void Bind(WorldGrid world)
         {
             // 층이 바뀌면 이전 층의 캐스터를 전부 지운다. 이걸 빼먹으면 옛 층의 벽 사각형이 남아
@@ -237,7 +247,7 @@ namespace TunnelCrew.Presentation
 
             var go = new GameObject($"ShadowRect_{r.X0}_{r.Y0}");
             go.transform.SetParent(_root, false);
-            go.transform.position = new Vector3(cxw, cyw, 0f);
+            go.transform.position = IsometricProjection.ToRender3(new Vector2(cxw, cyw));
 
             var caster = go.AddComponent<ShadowCaster2D>();
             // selfShadows 를 켜면 벽 타일 자체가 자기 그림자에 잠겨 빛이 타일 앞면에 닿기 전에 잘린다(타일 경계의 검은 직선).
@@ -245,13 +255,8 @@ namespace TunnelCrew.Presentation
             caster.selfShadows = false;
             caster.castsShadows = true;
 
-            ApplyShape(caster, new[]
-            {
-                new Vector3(-hw, -hh, 0f),
-                new Vector3( hw, -hh, 0f),
-                new Vector3( hw,  hh, 0f),
-                new Vector3(-hw,  hh, 0f),
-            });
+            Vector3 P(float x, float y) => IsometricProjection.ToRender3(new Vector2(x, y));
+            ApplyShape(caster, new[] { P(-hw, -hh), P(hw, -hh), P(hw, hh), P(-hw, hh) });
 
             return go;
         }

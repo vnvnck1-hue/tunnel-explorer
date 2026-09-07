@@ -44,7 +44,7 @@ namespace TunnelCrew.Presentation
         {
             // 발(피벗)이 transform 원점이므로 그림자 캐스터는 발 둘레에. 고정 접지 그림자는 두지 않는다 — 조명 각도에 따라 변하는 그림자만 (사용자 결정 2026-09-07)
             // 캐스터는 몸 폭에 맞춘다(반지름 0.9배 · 세로 0.55) — 손전등을 받으면 몸 폭만큼의 그림자 줄기가 뒤로 뻗는다
-            WallShadowBuilder.AttachActorCaster(transform, (float)SimTuning.PlayerRadius * .9f, .55f);
+            WallShadowBuilder.AttachActorCaster(transform, (float)SimTuning.PlayerRadius * .9f, IsometricProjection.ShadowSquash * 1.1f);
         }
 
         /// <summary>에디터/부트스트랩이 방향별 걷기 프레임을 넣어 준다.</summary>
@@ -59,10 +59,12 @@ namespace TunnelCrew.Presentation
 
             // 원본: 걷는 동안 sin(t*16)*r*.035 만큼 위아래로 들썩임 (화면 y 는 아래가 +, Unity 는 위가 + 라 부호 반전)
             float bob = moving ? -Mathf.Sin(_walkT * 16f) * FootDrop * .035f : 0f;
-            transform.position = new Vector3((float)p.Position.X, (float)p.Position.Y - FootDrop + bob, 0f);
+            var renderPos = IsometricProjection.ToRender(p.Position);
+            transform.position = new Vector3(renderPos.x, renderPos.y - FootDrop + bob, 0f);
             if (_renderer == null) return;
             // 방향은 이동 중이면 이동 방향, 아니면 조준 방향
-            double angle = moving && p.Velocity.Length > 0.05 ? p.Velocity.Angle : p.Aim;
+            double worldAngle = moving && p.Velocity.Length > 0.05 ? p.Velocity.Angle : p.Aim;
+            double angle = IsometricProjection.AngleToRender(worldAngle);
 
             int idx = Dir8Index(angle);
             var (key, flip) = Dir8[idx];
@@ -79,7 +81,7 @@ namespace TunnelCrew.Presentation
             // 손맛 변형 — 원본 FEEL.transform(). 피벗이 발밑이라 스케일은 발을 기준으로 먹는다.
             if (Feedback.Instance != null)
             {
-                var sq = Feedback.Instance.PlayerSquash(new Vector2((float)p.Velocity.X, (float)p.Velocity.Y));
+                var sq = Feedback.Instance.PlayerSquash(IsometricProjection.ToRender(p.Velocity));
                 // dt=0(정지 프레임)에서 스쿼시 타이머가 0/0 이 될 수 있다 — NaN 이면 그 프레임은 건드리지 않는다
                 if (!float.IsNaN(sq.ScaleX) && !float.IsNaN(sq.ScaleY))
                 {

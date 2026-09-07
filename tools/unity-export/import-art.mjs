@@ -75,6 +75,12 @@ function importTiles(report) {
   const floor = copy(`tunnel_crew_tile_resources_v1/${biome}/${biome}_floor_sheet_150x50.png`,
                      `${ART}/Tiles/${biome}`);
 
+  // 보스 소환 벽 (원본 BOSS_WALL_TILES — v7.7.2c 전용 타일 2종, 바이옴 공통)
+  let bossWalls = 0;
+  for (const f of ['boss-wall-block.png', 'boss-wall-crystal.png']) {
+    if (copy(`assets/boss-walls/${f}`, `${ART}/Tiles/boss-walls`)) bossWalls++;
+  }
+
   fs.writeFileSync(`${dstDir}/tile-index.json`, JSON.stringify({
     biome, cellPixels: 50, count: index.length,
     note: 'slot 은 원본 tileAtlasIndex() 와 같은 번호다. 런타임 조회는 이 번호로 한다.',
@@ -83,7 +89,7 @@ function importTiles(report) {
     tiles: index,
   }, null, 2) + '\n');
 
-  report.tiles = { copied: n, overlays: ov, floorSheet: !!floor };
+  report.tiles = { copied: n, overlays: ov, floorSheet: !!floor, bossWalls };
 }
 
 /** 원본 tileAtlasIndex(type,damage,band,surface) (2531행) 와 동일한 슬롯 번호. */

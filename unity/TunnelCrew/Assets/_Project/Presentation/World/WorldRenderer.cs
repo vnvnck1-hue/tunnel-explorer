@@ -21,9 +21,13 @@ namespace TunnelCrew.Presentation
 
         WorldGrid _world;
 
+        /// <summary>이 칸이 보스 소환 벽인가 — RunBootstrap 이 BossSystem.WallCells 로 연결한다 (원본 INF.bossWallCells).</summary>
+        public System.Func<int, bool> IsBossWall;
+
         /// <summary>슬롯 번호 → 런타임 Tile. 268개를 에셋으로 굽지 않고 한 번만 만든다.</summary>
         readonly Dictionary<int, Tile> _tileCache = new Dictionary<int, Tile>();
         readonly Dictionary<Sprite, Tile> _spriteTiles = new Dictionary<Sprite, Tile>();
+        static readonly Matrix4x4 FlipX = Matrix4x4.Scale(new Vector3(-1, 1, 1));
 
         public void Bind(WorldGrid world)
         {
@@ -64,17 +68,33 @@ namespace TunnelCrew.Presentation
             if (type == TileType.Empty)
             {
                 _walls.SetTile(pos, null);
+                _walls.SetTransformMatrix(pos, Matrix4x4.identity);
                 if (_coreTop != null) _coreTop.SetTile(pos, null);
                 return;
             }
 
             int k = _world.Index(c, r);
+
+            // 보스 소환 벽 — 전용 타일 2종을 셀 고정 해시로 선택·좌우 플립 (원본 8172~8184, 피격 단계 없이 그대로 유지)
+            if (IsBossWall != null && IsBossWall(k))
+            {
+                var bw = _tileSet.BossWall(k, out bool flip);
+                if (bw != null)
+                {
+                    _walls.SetTile(pos, TileFor(bw));
+                    _walls.SetTransformMatrix(pos, flip ? FlipX : Matrix4x4.identity);
+                    if (_coreTop != null) _coreTop.SetTile(pos, null);
+                    return;
+                }
+            }
+
             int band = _world.BandAt(k);
             int surface = _world.DecAt(k);
             int damage = _world.DamageStage(k);
 
             var sprite = _tileSet.Get(type, damage, band, surface);
             _walls.SetTile(pos, sprite != null ? TileFor(sprite) : null);
+            _walls.SetTransformMatrix(pos, Matrix4x4.identity);
         }
 
         Tile TileFor(Sprite sprite)

@@ -27,7 +27,7 @@ const MAX_SEATS = 4;
    오래 열어둔 어제 탭이 새 서버에 붙어 조용히 어긋나는 것을 막는다. */
 const PROTO_VER = 4;
 /* '/' 로 접속하면 여는 본편 파일. 새 버전이 나오면 여기만 바꾼다. */
-const GAME_HTML = process.env.GAME || '/tunnel-crew-infinite-mode-v7.8.1.html';
+const GAME_HTML = process.env.GAME || '/prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -146,14 +146,22 @@ const server = http.createServer((req, res) => {
       res.end('forbidden');
       return;
     }
-    fs.stat(filePath, (err, st) => {
-      if (err || !st.isFile()) {
+    /* 프로토타입 HTML 은 prototype-html/<하위>/ 로 모았지만 자산은 저장소 루트
+       기준(assets/… )으로 참조한다. 하위 경로에서 못 찾으면 루트에서 한 번 더 찾는다. */
+    const sub = p.match(/^\/prototype-html\/[^/]+\/(.+)$/);
+    const cands = [filePath];
+    if (sub) cands.push(path.join(ROOT, sub[1]));
+    (function tryNext(i) {
+      if (i >= cands.length) {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('Not found: ' + p);
         return;
       }
-      sendFile(res, filePath);
-    });
+      fs.stat(cands[i], (err, st) => {
+        if (err || !st.isFile()) { tryNext(i + 1); return; }
+        sendFile(res, cands[i]);
+      });
+    })(0);
   } catch (e) {
     res.writeHead(500);
     res.end(String(e));

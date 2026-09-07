@@ -26,15 +26,20 @@ namespace TunnelCrew.Sim
             => depth < Planet.StratumCount ? BossTier.Guardian : depth == Planet.StratumCount ? BossTier.Apex : BossTier.Variant;
     }
 
-    /// <summary>원본 BOSS_TUNE_FALLBACK(2114) 중 규칙에 쓰이는 값.</summary>
+    /// <summary>
+    /// 원본 bossTune() 의 실전 값. 주의 — BOSS_TUNE_FALLBACK(2114) 이 아니라
+    /// 파일에 구운 <c>bossLabBakedParams</c> JSON(11613) 이 정답이다: BOSS_LAB.values 는 로드 시
+    /// 베이크와 무조건 병합되고(11852), bossTune() 은 랩 비활성 상태에서도 그 값을 읽는다(2130).
+    /// 폴백은 베이크가 비어 있을 때만 쓰이는 죽은 값.
+    /// </summary>
     public static class BossTune
     {
-        public const double AttackIntervalMin = 4.2, AttackIntervalMax = 6.2;
-        public const double AttackLeadMin = 1.1, AttackLeadMax = 1.8;
-        public const double DashChance = .22, DashSpeedMul = 4.4, DashDuration = .55, DashDamageMul = 1.6;
-        public const double DashCeilingChance = .2;
-        public const double DashAnimSpeed = 1.8;  // bossTune 기본값 dashAnimSpeed
-        public const double MuzzleOffsetX = .92, MuzzleOffsetY = .27;
+        public const double AttackIntervalMin = 1.2, AttackIntervalMax = 9.8;
+        public const double AttackLeadMin = .35, AttackLeadMax = 2.25;
+        public const double DashChance = .6, DashSpeedMul = 5.2, DashDuration = 1.25, DashDamageMul = 1.6;
+        public const double DashCeilingChance = .93;
+        public const double DashAnimSpeed = 3.2;
+        public const double MuzzleOffsetX = .83, MuzzleOffsetY = .27;
         public const double DashKnockMinTiles = 2, DashKnockMaxTiles = 4, DashStunChance = .3, DashStunTime = .5;
         public const double Power = 10;           // INF_BOSS_POWER
         public const double SizeMul = 2.5;        // INF_BOSS_SIZE_MUL
@@ -142,6 +147,8 @@ namespace TunnelCrew.Sim
             _world = world; _enemies = enemies; _run = run;
             _rng = new Rng(seed);
             _enemies.BossMove = MoveBoss;
+            // 원본 8194 — 보스 벽이 부서지면 붉은 강조 대상에서 지운다 (남겨 두면 나중에 같은 칸의 일반 벽이 붉게 그려진다)
+            _world.TileBroken += e => WallCells.Remove(_world.Index(e.Col, e.Row));
         }
 
         // ───────────────────────────── 소환 (원본 infSpawnBoss)
@@ -213,6 +220,7 @@ namespace TunnelCrew.Sim
 
             bool wasBreathing = b.FireBreathT > 0;
             b.FireBreathT = Math.Max(0, b.FireBreathT - dt);
+            if (wasBreathing && b.FireBreathT <= 0) b.AnimRate = 1;   // 원본 13469 — 예고 사격이 끝나면 배속 복귀
 
             b.PatternCd -= dt;
             b.AttackCd -= dt;
@@ -415,6 +423,7 @@ namespace TunnelCrew.Sim
         {
             var b = Boss;
             b.FireBreathT = dur;
+            b.AnimRate = 2.6 / Math.Max(.4, dur);   // 원본 infBossWallCastAnim — 짧은 시전은 빠르게 재생
             b.AttackCd = Math.Max(b.AttackCd, dur + .12);
         }
 
@@ -568,9 +577,10 @@ namespace TunnelCrew.Sim
             bool hard = false;
             if (w.Budget != null && w.Budget.Left > 0 && _rng.NextDouble() < HardChance()) { hard = true; w.Budget.Left--; }
 
+            // SetTile 이 렌더 갱신을 부르므로 붉은 강조 대상 등록이 먼저다
+            WallCells.Add(k);
             if (hard) _world.SetTile(w.C, w.R, TileType.Rock);
             else _world.SetTile(w.C, w.R, TileType.Stone, TileTypes.BaseHp(TileType.Stone) * _run.WallHpMul * BossTune.WallHpMul);
-            WallCells.Add(k);
             WallRaised?.Invoke(new BossWallEvent { Col = w.C, Row = w.R, Hard = hard });
         }
 
@@ -619,6 +629,13 @@ namespace TunnelCrew.Sim
                 b.DashT -= dt;
                 double mul = Math.Max(.1, e.SpeedMul) * BossTune.DashSpeedMul;
                 e.Velocity = b.DashDir * (baseSpeed * mul);
+                // 원본 bossDashVfxTick(6369) — 천장 붕괴는 돌진 진행 CeilingAt(18~68%) 시점에 터진다
+                double progress = 1 - Math.Max(0, b.DashT) / Math.Max(.08, b.DashDurationTotal);
+                if (b.CeilingPending && !b.CeilingTriggered && progress >= b.CeilingAt)
+                {
+                    b.CeilingTriggered = true;
+                    Pattern?.Invoke(new BossPatternEvent { Boss = b, Pattern = "dashCeiling", At = e.Position });
+                }
                 DashImpact(player);
                 if (b.DashT <= 0)
                 {
@@ -739,8 +756,8 @@ namespace TunnelCrew.Sim
                 int k = _world.Index(c, r);
                 if (_world.AtIndex(k) == TileType.Empty || b.ArmorCells.Contains(k)) continue;
                 if (Vec2.Distance(WorldGrid.CellCenter(c, r), e.Position) > radius + .55) continue;
-                _world.ClearSilent(c, r);
                 WallCells.Remove(k);
+                _world.ClearSilent(c, r);
             }
         }
 

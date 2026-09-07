@@ -118,7 +118,7 @@ namespace TunnelCrew.Presentation
         }
         static void Set(SpriteRenderer sr, Vec2 at, Sprite s, Color c, float scale, int order, float z = 0)
         {
-            sr.transform.position = new Vector3((float)at.X, (float)at.Y, z); sr.sprite = s; sr.color = c; sr.transform.localScale = Vector3.one * scale; sr.sortingOrder = order;
+            sr.transform.position = IsometricProjection.ToRender3(at, z); sr.sprite = s; sr.color = c; sr.transform.localScale = Vector3.one * scale; sr.sortingOrder = order;
         }
 
         void DrawInstallations(AiCrewSystem crew)
@@ -138,13 +138,13 @@ namespace TunnelCrew.Presentation
                 if (src != null)
                 {
                     var l = RentLine(li++);
-                    l.SetPosition(0, new Vector3((float)src.Position.X, (float)src.Position.Y, 0)); l.SetPosition(1, new Vector3((float)t.Position.X, (float)t.Position.Y, 0));
+                    l.SetPosition(0, IsometricProjection.ToRender3(src.Position)); l.SetPosition(1, IsometricProjection.ToRender3(t.Position));
                     var c = new Color(.5f, .92f, .82f, .3f + .15f * Mathf.Sin(Time.time * 8f)); l.startColor = l.endColor = c;
                 }
                 Set(Rent(i++), t.Position, _dot, new Color(.13f, .08f, .18f), .5f, 28);
                 Set(Rent(i++), t.Position, _ring, col, .52f, 29);
                 var barrel = Rent(i++); Set(barrel, t.Position + Vec2.FromAngle(t.Aim) * .18, _square, col, 1, 30);
-                barrel.transform.localScale = new Vector3(.36f, .15f, 1); barrel.transform.rotation = Quaternion.Euler(0, 0, (float)t.Aim * Mathf.Rad2Deg);
+                barrel.transform.localScale = new Vector3(.36f, .15f, 1); barrel.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(t.Aim) * Mathf.Rad2Deg);
                 Set(Rent(i++), t.Position, _dot, new Color(.95f, .91f, 1f), .16f, 31);
                 float ammo = t.Mag > 0 ? (float)t.Ammo / t.Mag : 0;
                 Set(Rent(i++), t.Position, _ring, t.Powered ? new Color(.5f, .92f, .82f, .5f + .5f * ammo) : new Color(1f, .44f, .54f, .8f), .66f, 29);

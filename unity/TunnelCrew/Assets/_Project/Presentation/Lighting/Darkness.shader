@@ -16,6 +16,8 @@ Shader "TunnelCrew/Darkness"
         _WorldSize     ("월드 크기(셀)", Vector) = (80, 72, 0, 0)
         _MaxDarkness   ("최대 어둠", Range(0,1)) = 1.0
         _EdgeSoftness  ("경계 부드러움", Range(0.001,1)) = 0.35
+        // 렌더→시뮬 역변환 (a,b,c,d): sim = (a·rx + b·ry, c·rx + d·ry). 기본값은 2:1 마름모.
+        _InvProj       ("역투영 행", Vector) = (1, 2, -1, 2)
     }
 
     SubShader
@@ -61,6 +63,7 @@ Shader "TunnelCrew/Darkness"
                 float4 _WorldSize;
                 float  _MaxDarkness;
                 float  _EdgeSoftness;
+                float4 _InvProj;
             CBUFFER_END
 
             Varyings vert (Attributes input)
@@ -74,8 +77,11 @@ Shader "TunnelCrew/Darkness"
 
             half4 frag (Varyings input) : SV_Target
             {
-                // 월드 좌표 → LOS 텍스처 UV. 셀 (c,r) 의 중심이 텍셀 중심에 오도록 맞춘다.
-                float2 uv = input.worldXY / _WorldSize.xy;
+                // 렌더 좌표를 시뮬레이션 XY 로 되돌린 뒤 LOS 텍스처를 읽는다.
+                // 역변환은 투영 프리셋마다 달라서 IsometricProjection.InverseRow() 가 넘겨준다.
+                float2 simXY = float2(dot(_InvProj.xy, input.worldXY),
+                                      dot(_InvProj.zw, input.worldXY));
+                float2 uv = simXY / _WorldSize.xy;
 
                 // 맵 밖은 완전한 어둠
                 if (uv.x < 0 || uv.y < 0 || uv.x > 1 || uv.y > 1)

@@ -3,7 +3,7 @@
  * HTML 에 base64 로 박혀 있는 오디오를 파일로 꺼낸다.
  *
  *   node tools/unity-export/extract-embedded-audio.mjs [원본.html] [출력폴더]
- *   기본: tunnel-crew-infinite-mode-v7.9.2.html → unity/TunnelCrew/Assets/Audio/
+ *   기본: prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html → unity/TunnelCrew/Assets/Audio/
  *
  * 계획 §4·analysis-03 §10.1: 런타임 외부 오디오 파일은 5개뿐이고 나머지 SFX·BGM 은
  * 전부 HTML 내부 data URI 다. Unity 로 옮기려면 먼저 파일로 굳혀야 한다.
@@ -19,7 +19,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { extractDeclaration, extractProperty, decodeDataUri } from './lib/js-scan.mjs';
 
-const SRC = process.argv[2] ?? 'tunnel-crew-infinite-mode-v7.9.2.html';
+const SRC = process.argv[2] ?? 'prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html';
 const OUT = process.argv[3] ?? 'unity/TunnelCrew/Assets/Audio';
 
 function write(dir, name, buffer) {

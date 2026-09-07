@@ -1,10 +1,23 @@
 # 땅굴 크루 프로젝트 작업 지침
 
+## 작업 대상 (2026-09-07 이후 · 최우선)
+
+- **본편 개발은 Unity 프로젝트(`unity/TunnelCrew/`)에서만 한다.** HTML 본선 개발은 종료됐다.
+- HTML 프로토타입은 전부 **`prototype-html/`** 로 모아 **동결**했다. 기준 빌드는
+  `prototype-html/latest/tunnel-crew-infinite-mode-v7.9.2.html`.
+- HTML 은 **레퍼런스 전용**이다 — 수치·연출·UI 배치 확인, 자산/튜닝 추출에만 연다.
+  기능 추가·버그 수정을 HTML 에 하지 않는다. 사용자가 명시적으로 "HTML 에 해줘" 라고
+  지시한 경우에만 예외로 손댄다.
+- 포팅 기준: 재미 재검증이 아니라 **프로토타입 재현도**(손맛 · UI · 연출)를 맞춘다.
+  근거 문서는 `docs/unity-port-plan.md` 와 `docs/unity-port/analysis-01~04`.
+
 - 사용자가 지정한 파일을 기준으로 작업하고, 별도 버전 파일을 만들지 않고 해당 단일 파일을 계속 수정한다.
 - 백업 파일은 사용자가 명시적으로 요청한 경우에만 만든다.
 - 기능을 추가하거나 수정한 뒤에는 가능하면 로컬 브라우저에서 핵심 흐름을 확인하고, 변경 파일과 검증 결과를 작업 인계에 남긴다.
 
-## 빌드 지침
+## 빌드 지침 (HTML — 레거시)
+
+> HTML 빌드는 과거 배포본 재현용으로만 남겨 둔다. 새 배포는 Unity 빌드로 만든다.
 
 ### 용어 — 사용자가 어떤 빌드를 말하는지
 
@@ -13,7 +26,7 @@
 | "빌드해줘" (수식어 없음) | **스탠드얼론 배포 패키지** — 모든 컨텐츠 포함 | `node tools/build-package.mjs` | `build/TunnelCrew-vX.Y.Z/` + 동명 `.zip` |
 | "단일 빌드" · "단일 파일로" · "html 하나로" | **HTML 단일 파일** — 자산 전부 인라인 | `node tools/build-single-html.mjs` | `build/tunnel-crew-infinite-mode-vX.Y.Z-single.html` |
 
-- 원본은 사용자가 지정한 HTML. 지정이 없으면 두 빌더 모두 프로젝트 루트의 **가장 높은 버전** `tunnel-crew-infinite-mode-vX.Y.Z.html` 을 자동으로 고른다. 다른 파일을 원본으로 쓰려면 첫 인자로 경로를 준다.
+- 원본은 사용자가 지정한 HTML. 지정이 없으면 두 빌더 모두 `prototype-html/latest/` 의 **가장 높은 버전** `tunnel-crew-infinite-mode-vX.Y.Z.html` 을 자동으로 고른다. 다른 파일을 원본으로 쓰려면 첫 인자로 경로를 준다.
 - 두 빌드는 본선 HTML 을 수정하지 않는다. 결과물만 `build/` 에 생긴다.
 
 ### 스탠드얼론 패키지 ("빌드")

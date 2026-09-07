@@ -35,15 +35,16 @@ namespace TunnelCrew.Presentation
 
                 var q = items[i];
                 float x = (float)q.Position.X, y = (float)q.Position.Y, z = (float)q.Z;
+                var ground = IsometricProjection.ToRender(new Vector2(x, y));
 
-                _pool[i].transform.position = new Vector3(x, y + z, 0f);
+                _pool[i].transform.position = new Vector3(ground.x, ground.y + z, 0f);
                 _pool[i].color = q.Kind == ResourceKind.Pulp ? PulpColor : BloomColor;
                 float s = q.Kind == ResourceKind.Pulp ? 0.22f : 0.26f;
                 _pool[i].transform.localScale = Vector3.one * s;
 
                 // 높이에 따라 그림자가 작아지고 옅어진다
                 float t = Mathf.Clamp01(1f - z * 1.6f);
-                _shadowPool[i].transform.position = new Vector3(x, y, 0f);
+                _shadowPool[i].transform.position = new Vector3(ground.x, ground.y, 0f);
                 _shadowPool[i].transform.localScale = Vector3.one * (s * 0.8f * Mathf.Lerp(0.5f, 1f, t));
                 _shadowPool[i].color = new Color(0f, 0f, 0f, 0.35f * t);
             }

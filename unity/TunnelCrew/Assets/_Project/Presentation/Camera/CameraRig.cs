@@ -33,6 +33,11 @@ namespace TunnelCrew.Presentation
 
         void Awake() => _cam = GetComponent<Camera>();
 
+        // 투영이 바뀌면 _camOrigin 이 옛 좌표계 값이라 한 프레임 튄다. 추종을 처음부터 다시 잡는다.
+        void OnEnable() => IsometricProjection.Changed += ResnapFollow;
+        void OnDisable() => IsometricProjection.Changed -= ResnapFollow;
+        void ResnapFollow() => _initialized = false;
+
         public void Bind(WorldGrid world, Func<PlayerState> player)
         {
             _world = world;
@@ -68,8 +73,8 @@ namespace TunnelCrew.Presentation
             float vw = vh * _cam.aspect;
 
             // ── 룩어헤드: 조준 방향으로 앞서 본다
-            var pos = new Vector2((float)p.Position.X, (float)p.Position.Y);
-            var look = new Vector2(Mathf.Cos((float)p.Aim), Mathf.Sin((float)p.Aim)) * (float)SimTuning.LookAhead;
+            var pos = IsometricProjection.ToRender(p.Position);
+            var look = IsometricProjection.DirectionToRender(p.Aim).normalized * (float)SimTuning.LookAhead;
             Vector2 target = pos + look;
 
             // ── 데드존 + 추종. 카메라 중심은 화면 세로 42% 지점(상하 비대칭).
@@ -99,8 +104,9 @@ namespace TunnelCrew.Presentation
             Vector2 origin = center - new Vector2(vw * 0.5f, vh * anchorFromBottom);
             float padX = Mathf.Min(vw * (float)SimTuning.CameraPadRatio, (float)SimTuning.CameraPadMax);
             float padY = Mathf.Min(vh * (float)SimTuning.CameraPadRatio, (float)SimTuning.CameraPadMax);
-            origin.x = Mathf.Clamp(origin.x, -padX, Mathf.Max(-padX, _world.Cols - vw + padX));
-            origin.y = Mathf.Clamp(origin.y, -padY, Mathf.Max(-padY, _world.Rows - vh + padY));
+            IsometricProjection.Bounds(_world.Cols, _world.Rows, out var worldMin, out var worldMax);
+            origin.x = Mathf.Clamp(origin.x, worldMin.x - padX, Mathf.Max(worldMin.x - padX, worldMax.x - vw + padX));
+            origin.y = Mathf.Clamp(origin.y, worldMin.y - padY, Mathf.Max(worldMin.y - padY, worldMax.y - vh + padY));
 
             _camOrigin = origin;
             _initialized = true;
@@ -117,7 +123,7 @@ namespace TunnelCrew.Presentation
         {
             if (_cam == null) _cam = GetComponent<Camera>();
             var w = _cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_cam.transform.position.z));
-            return new Vector2(w.x, w.y);
+            return IsometricProjection.ToWorld(new Vector2(w.x, w.y));
         }
     }
 }

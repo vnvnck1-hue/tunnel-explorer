@@ -33,6 +33,8 @@ namespace TunnelCrew.Presentation
             if (_feedback != null && _feedback.ReducedMotion) return;   // 모션 줄이기 — 연출 없이 진행
             if (_sim.Phase != GamePhase.Playing) return;
             _boss = boss; _t = 0; _roared = false; _roarPlayed = false; _dustAcc = 0;
+            // 원본 15914 — 시네마틱 시작 시 보스는 idle 로 대기
+            _boss.FireBreathT = 0; _boss.AnimRate = 1;
             Active = true;
             _rig.CineOverride = CineCam;
             AudioDirector.Instance?.Rumble();
@@ -40,6 +42,8 @@ namespace TunnelCrew.Presentation
         public void Stop()
         {
             if (!Active) return;
+            // 원본 16030 — 연출이 끝나면 포효(fireBreath) 강제 재생을 풀고 idle 로 복귀
+            if (_boss != null) { _boss.FireBreathT = 0; _boss.AnimRate = 1; }
             Active = false; _rig.CineOverride = null; _boss = null;
         }
 
@@ -52,8 +56,8 @@ namespace TunnelCrew.Presentation
             if (!Active || _boss == null) return null;
             float panP = Ease(Seg(T1, T2)), backP = Ease(Seg(T4, T5));
             float k = panP * (1 - backP);
-            var pc = new Vector2((float)_sim.Player.Position.X, (float)_sim.Player.Position.Y);
-            var bc = new Vector2((float)_boss.Body.Position.X, (float)_boss.Body.Position.Y);
+            var pc = IsometricProjection.ToRender(_sim.Player.Position);
+            var bc = IsometricProjection.ToRender(_boss.Body.Position);
             float outP = Seg(T4 + .15f, T5);
             // 저주파 흔들림 — 지속 진동은 카메라로 직접 만든다 (J.kick 은 순간 충격용)
             float amp = 2.4f * EaseOut(Seg(0, T1)) * (1 - EaseOut(outP)) + (_roared ? 5.5f * Mathf.Exp(-(_t - T3) * 2.6f) : 0);
@@ -76,6 +80,8 @@ namespace TunnelCrew.Presentation
             if (!_roared && _t >= T3)
             {
                 _roared = true;
+                // 원본 15991 — 포효는 fireBreath 애니메이션 1.15 배속으로 재생한다 (월드가 멈춰 있어 Stop 까지 유지된다)
+                _boss.FireBreathT = 99; _boss.AnimRate = 1.15;
                 _feedback?.Kick(13f, Vector2.zero);
                 _fx?.Ring(V(bp), new Color(1f, .33f, .49f), .3f, 4.6f, 7f);
                 _fx?.Ring(V(bp), new Color(1f, .83f, .43f), .2f, 2.8f, 4f);
@@ -94,7 +100,7 @@ namespace TunnelCrew.Presentation
             }
             if (_t >= T5) Stop();
         }
-        static Vector2 V(Vec2 v) => new Vector2((float)v.X, (float)v.Y);
+        static Vector2 V(Vec2 v) => IsometricProjection.ToRender(v);
 
         void OnGUI()
         {
