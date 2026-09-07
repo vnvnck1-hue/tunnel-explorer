@@ -57,6 +57,10 @@ namespace TunnelCrew.Presentation
         public void SuspendRun() { RunActive = false; Paused = false; Time.timeScale = 1f; _audio?.UseLobby(); _audio?.DrillKill(); _cine?.Stop(); }
         public void SetPaused(bool on) { Paused = on; }
         public RoleId CurrentRole => _role;
+        public CameraRig Rig => _rig;
+        public TeamOverlay Team => _team;
+        public ObserverMode Observer => _observer;
+        ObserverMode _observer;
 
         CameraRig _rig;
         Camera _cam;
@@ -76,11 +80,13 @@ namespace TunnelCrew.Presentation
         CombatView _combatView;
         Feedback _feedback;
         FxSystem _fx;
-        Texture2D _bossIcon; readonly Dictionary<RoleId, Texture2D> _portraits = new Dictionary<RoleId, Texture2D>();
+        Texture2D _bossIcon, _crewRailIcon; readonly Dictionary<RoleId, Texture2D> _portraits = new Dictionary<RoleId, Texture2D>(), _badges = new Dictionary<RoleId, Texture2D>();
         Texture2D _white;
         Light2D _globalLight, _flashlight, _playerHalo;
         readonly List<Light2D> _lamps = new List<Light2D>();
         readonly List<Light2D> _flareLights = new List<Light2D>();
+        /// <summary>AI 크루 손전등 — 사람 손전등과 같은 스팟. 크루가 서로를·플레이어를 비추면 발밑 캐스터가 벽처럼 그림자를 드리운다 (사용자 요청, 원본에는 없음).</summary>
+        readonly List<Light2D> _crewLights = new List<Light2D>();
         Light2D _bossLight;
         Transform _lightRoot;
         DarknessOverlay _darkness;
@@ -107,8 +113,16 @@ namespace TunnelCrew.Presentation
             Application.runInBackground = true;
             // 런 바깥 화면(메뉴·정산·일시정지). 씬을 손으로 꾸미지 않는 원칙대로 코드에서 붙인다.
             if (GetComponent<MetaScreens>() == null) gameObject.AddComponent<MetaScreens>();
+            _observer = GetComponent<ObserverMode>() ?? gameObject.AddComponent<ObserverMode>();   // 관전 모드 (원본 ai/observer.js)
             if (AudioDirector.Instance == null) { var ago = new GameObject("Audio"); _audio = ago.AddComponent<AudioDirector>(); } else _audio = AudioDirector.Instance;
-            _bossIcon = Resources.Load<Texture2D>("UI/boss-icon");
+            // 장악도 레일 아이콘 — 원본 v7.9.2 infDomRailIcons: 게이지 끝 dom-boss-icon · 진행 끝 dom-crew-icon (구 boss-icon 1254² 은 미참조 레거시)
+            _bossIcon = Resources.Load<Texture2D>("UI/dom-boss-icon");
+            _crewRailIcon = Resources.Load<Texture2D>("UI/dom-crew-icon");
+            foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
+            {
+                var badge = Resources.Load<Texture2D>("UI/badge-" + r.ToString().ToLowerInvariant());
+                if (badge != null) _badges[r] = badge;
+            }
             foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
             {
                 var tex = Resources.Load<Texture2D>("UI/portrait-" + r.ToString().ToLowerInvariant());
@@ -329,7 +343,7 @@ namespace TunnelCrew.Presentation
         static Color Hex(string hex) { if (string.IsNullOrEmpty(hex) || !ColorUtility.TryParseHtmlString(hex, out var c)) return Color.white; return c; }
         static string PatternName(string p) => p switch { "wallField" => "암벽 융기", "wallWave" => "지각 파동", "wallPrison" => "석화 감옥!", "dashPrison" => "협곡 돌진 — 갇혔다!", _ => p };
 
-        void Log(string s)
+        public void Log(string s)
         {
             _log.Add(s);
             if (_log.Count > 6) _log.RemoveAt(0);
@@ -376,6 +390,21 @@ namespace TunnelCrew.Presentation
             var floor = Layer("Floor", 0);
             var walls = Layer("Walls", 10);
             var coreTop = Layer("CoreTop", 20);
+            // 벽 노멀맵 — 벽 타일은 전부 한 아틀라스에서 잘리므로(BuildArtAssets.RunWallAtlas) 머티리얼 하나의 _NormalMap 으로 덮는다.
+            // 임포트 세컨더리 텍스처 방식은 URP 17 타일맵·스프라이트 조명에 반영되지 않는 것을 확인했다(2026-09-07). Chunk 모드 유지 = 벽 전체 1배치.
+            // 타일맵 청크 메시에는 NORMAL/TANGENT 가 없어 URP 의 Sprite-Lit-Default 노멀 패스가 TBN=0 을 만든다 → 노멀맵 조명을 켜면
+            // 타일이 전부 어두워지고 노멀맵은 무시된다. 탄젠트를 셰이더 안에서 강제하는 사본(Tunnel Crew/Tilemap-Lit-Normal)을 세 타일맵 모두에 쓴다.
+            var tilemapShader = Shader.Find("Tunnel Crew/Tilemap-Lit-Normal");
+            if (tilemapShader != null)
+            {
+                var fr = floor.GetComponent<TilemapRenderer>(); var wr = walls.GetComponent<TilemapRenderer>(); var cr = coreTop.GetComponent<TilemapRenderer>();
+                var floorLit = new Material(tilemapShader) { name = "Floor-Lit-Flat" };
+                fr.sharedMaterial = floorLit;
+                var wallLit = new Material(tilemapShader) { name = "Walls-Lit-Normal" };
+                if (_tileSet != null && _tileSet.wallNormalAtlas != null) wallLit.SetTexture("_NormalMap", _tileSet.wallNormalAtlas);
+                wr.sharedMaterial = wallLit; cr.sharedMaterial = wallLit;
+            }
+            else Debug.LogWarning("[M7] Tunnel Crew/Tilemap-Lit-Normal 셰이더를 찾지 못했다 — 타일 노멀맵 조명을 건너뛴다.");
 
             var wrGo = new GameObject("WorldRenderer");
             _worldRenderer = wrGo.AddComponent<WorldRenderer>();
@@ -427,6 +456,8 @@ namespace TunnelCrew.Presentation
                 }
             };
             _enemyView.BossFacing = e => Sim.Bosses?.Boss != null && Sim.Bosses.Boss.Body == e ? Sim.Bosses.Boss.Facing : -1;
+            // 드래곤 애니 선택 재료 — 원본 bossDragonAnimation: fireBreath(예고 중) > walking/idle, 배속 e.bossAnimRate
+            _enemyView.BossAnimInfo = e => { var b = Sim.Bosses?.Boss; return b != null && b.Body == e ? (b.FireBreathT > 0, b.AnimRate) : (false, 1.0); };
             _combatView = new GameObject("Combat").AddComponent<CombatView>();
             _fx = new GameObject("Fx").AddComponent<FxSystem>();
         }
@@ -453,8 +484,12 @@ namespace TunnelCrew.Presentation
             _flashlight.pointLightOuterAngle = 56f;
             _flashlight.pointLightInnerRadius = 0.6f;
             _flashlight.pointLightOuterRadius = 9.36f;
-            _flashlight.intensity = 1.35f;
+            // 노멀맵 조명 모드에서는 평평한 면의 N·L 이 0.3 안팎으로 떨어져 같은 세기면 어둡다 → 1.35 → 2.6. 빛을 마주보는 벽 베벨은 N·L≈1 로 4배 가까이 밝아 림이 선다.
+            _flashlight.intensity = 2.6f;
             _flashlight.color = new Color(1f, 0.94f, 0.80f);
+            // 손전등 그림자는 완전 차단 — 캐릭터 발밑 캐스터(PlayerView)가 벽처럼 또렷한 그림자를 드리운다 (기본 .75 는 앰비언트에 묻혀 거의 안 보였다)
+            _flashlight.shadowIntensity = 0.9f; _flashlight.shadowSoftness = 0.35f;   // 1.0 은 경계가 완전 검정 직선이 된다
+            UseNormalMaps(_flashlight);
 
             // 플레이어를 감싸는 약한 원 — 손전등을 꺼도 발밑은 보인다
             var haloGo = new GameObject("Player Halo");
@@ -465,29 +500,13 @@ namespace TunnelCrew.Presentation
             _playerHalo.pointLightOuterAngle = 360f;
             _playerHalo.pointLightInnerRadius = 0.2f;
             _playerHalo.pointLightOuterRadius = 2.6f;
-            _playerHalo.intensity = 0.9f;
+            _playerHalo.intensity = 1.4f;   // 노멀맵 모드 보정 (0.9 →)
             _playerHalo.color = new Color(0.95f, 0.88f, 0.78f);
+            // 헤일로는 그림자를 만들지 않는다 — 캐릭터 중심(발 위 0.5칸)에서 발밑 캐스터를 늘 위에서 비춰 "아래로 고정된 마름모 그림자"가 생기던 원인
+            _playerHalo.shadowIntensity = 0f;
+            UseNormalMaps(_playerHalo);
 
-            // 던전 랜턴 — 생성기가 배치한 자리 그대로
-            var lamps = Sim.Generation?.Lamps;
-            if (lamps != null)
-            {
-                foreach (var (col, row) in lamps)
-                {
-                    var go = new GameObject($"Lamp_{col}_{row}");
-                    go.transform.SetParent(root.transform, false);
-                    go.transform.position = new Vector3(col + 0.5f, row + 0.5f, 0f);
-                    var l = go.AddComponent<Light2D>();
-                    l.lightType = Light2D.LightType.Point;
-                    l.pointLightInnerAngle = 360f;
-                    l.pointLightOuterAngle = 360f;
-                    l.pointLightInnerRadius = 0.4f;
-                    l.pointLightOuterRadius = 5.2f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 더 넓게 퍼진다.
-                    l.intensity = 1.1f;
-                    l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
-                    _lamps.Add(l);
-                }
-            }
+            RebuildLamps();
 
             // 시야 밖 어둠 — 조명 위에 덮인다
             var darkGo = new GameObject("Darkness");
@@ -536,6 +555,32 @@ namespace TunnelCrew.Presentation
                 Quaternion.Euler(0, 0, (float)(p.Aim * Mathf.Rad2Deg) - 90f);
             _flashlight.enabled = _flashlightOn;
 
+            // AI 크루 손전등 — 멤버 수만큼 재사용. 조준 방향으로 비추고 다운되면 꺼진다
+            var members = Sim.Crew.Members;
+            while (_crewLights.Count < members.Count)
+            {
+                var go = new GameObject("Crew Flashlight");
+                go.transform.SetParent(_lightRoot, false);
+                var l = go.AddComponent<Light2D>();
+                l.lightType = Light2D.LightType.Point;
+                l.pointLightInnerAngle = 40f; l.pointLightOuterAngle = 56f;
+                l.pointLightInnerRadius = 0.6f; l.pointLightOuterRadius = 8.4f;
+                l.intensity = 2.0f;   // 노멀맵 모드 보정 (1.1 →)
+                l.color = new Color(1f, 0.94f, 0.80f);
+                l.shadowIntensity = 0.9f; l.shadowSoftness = 0.35f;   // 서로의 손전등이 캐릭터 그림자를 만든다
+                UseNormalMaps(l);
+                _crewLights.Add(l);
+            }
+            for (int i = 0; i < _crewLights.Count; i++)
+            {
+                var l = _crewLights[i];
+                if (i >= members.Count) { l.enabled = false; continue; }
+                var m = members[i];
+                l.enabled = !m.Down;
+                l.transform.position = new Vector3((float)m.Position.X, (float)m.Position.Y, 0f);
+                l.transform.rotation = Quaternion.Euler(0, 0, (float)(m.Aim * Mathf.Rad2Deg) - 90f);
+            }
+
             // 보스 조명 — 원본 BOSS_TUNE lightRadiusMul 2.4 · intensity .5 (맥동 4%)
             var boss = Sim.Bosses?.Boss;
             if (_bossLight == null)
@@ -546,6 +591,7 @@ namespace TunnelCrew.Presentation
                 _bossLight.pointLightInnerAngle = 360f; _bossLight.pointLightOuterAngle = 360f;
                 _bossLight.pointLightInnerRadius = 0.5f;
                 _bossLight.color = new Color(1f, 0.45f, 0.55f);
+                UseNormalMaps(_bossLight);
             }
             _bossLight.enabled = boss != null && boss.Body.Alive;
             if (_bossLight.enabled)
@@ -566,6 +612,7 @@ namespace TunnelCrew.Presentation
                 l.lightType = Light2D.LightType.Point;
                 l.pointLightInnerAngle = 360f; l.pointLightOuterAngle = 360f;
                 l.pointLightInnerRadius = 0.3f;
+                UseNormalMaps(l);
                 _flareLights.Add(l);
             }
             for (int i = 0; i < _flareLights.Count; i++)
@@ -580,6 +627,22 @@ namespace TunnelCrew.Presentation
                 _flareLights[i].intensity = (f.IsEngineerNode ? 0.9f : 1.3f) * Mathf.Clamp01(life * 3f);
                 _flareLights[i].color = f.IsEngineerNode ? new Color(0.5f, 0.95f, 0.85f) : new Color(1f, 0.85f, 0.45f);
             }
+        }
+
+        /// <summary>휴식 → 다음 지층 (Enter · 관전 자동 하강 공용).</summary>
+        public void DoDescend()
+        {
+            Sim.Descend(); RebindWorld(); Prespawn();
+            Log(Planet.DepthLabel(Sim.Depth) + " 진입");
+            _audio?.Descend(); _audio?.EndBoss(1.0f); _audio?.UseTunnel();
+        }
+
+        /// <summary>관전 Esc 교대 뒤 — 시뮬은 이미 직업을 바꿨고, 여기서는 표현(스프라이트·기록)만 따라간다.</summary>
+        public void ApplyRoleSwap(RoleId role)
+        {
+            _role = role;
+            LoadRoleFrames(role);
+            Log($"교대 → {role}");
         }
 
         void LoadRoleFrames(RoleId role)
@@ -624,11 +687,55 @@ namespace TunnelCrew.Presentation
         }
 
         /// <summary>층이 바뀌면 월드에 붙은 뷰를 새 WorldGrid 에 다시 묶는다.</summary>
+        /// <summary>던전 랜턴 — 생성기가 배치한 자리 그대로. 층마다 다시 만든다(이전 층 랜턴이 남아 새 층의 엉뚱한 자리를 비추던 누락 수정, 2026-09-07).</summary>
+        /// <summary>벽 타일 노멀맵을 읽게 한다 — 광원 쪽 벽 가장자리가 밝고 반대쪽이 어두워진다(원본 wRim .36 / wShade 1.2 의 대체). 광원 높이 3칸 기준.</summary>
+        static System.Reflection.FieldInfo _fNmQuality, _fNmDistance; static bool _nmProbed;
+        static void UseNormalMaps(Light2D l)
+        {
+            // URP 17 은 normalMapQuality/Distance 가 읽기 전용 프로퍼티다 — 직렬화 필드에 직접 쓴다 (WallShadowBuilder 와 같은 방식)
+            if (!_nmProbed)
+            {
+                _nmProbed = true;
+                const System.Reflection.BindingFlags F = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                _fNmQuality = typeof(Light2D).GetField("m_NormalMapQuality", F);
+                _fNmDistance = typeof(Light2D).GetField("m_NormalMapDistance", F);
+                if (_fNmQuality == null) Debug.LogWarning("[M7] Light2D.m_NormalMapQuality 필드를 찾지 못했다 — 타일 노멀맵 조명을 건너뛴다.");
+            }
+            _fNmQuality?.SetValue(l, Light2D.NormalMapQuality.Accurate);
+            _fNmDistance?.SetValue(l, 0.8f);   // 광원 높이(칸). 낮을수록 벽 가장자리 기울기가 강하게 반응한다 — 3 은 13/255, 1.5 는 "티가 안 난다"(사용자) → 0.8 + 베벨 ×12
+        }
+
+        void RebuildLamps()
+        {
+            foreach (var old in _lamps) if (old != null) Destroy(old.gameObject);
+            _lamps.Clear();
+            var lamps = Sim.Generation?.Lamps;
+            if (lamps == null || _lightRoot == null) return;
+            foreach (var (col, row) in lamps)
+            {
+                var go = new GameObject($"Lamp_{col}_{row}");
+                go.transform.SetParent(_lightRoot, false);
+                go.transform.position = new Vector3(col + 0.5f, row + 0.5f, 0f);
+                var l = go.AddComponent<Light2D>();
+                l.lightType = Light2D.LightType.Point;
+                l.pointLightInnerAngle = 360f;
+                l.pointLightOuterAngle = 360f;
+                l.pointLightInnerRadius = 0.4f;
+                l.pointLightOuterRadius = 5.2f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 더 넓게 퍼진다.
+                l.intensity = 1.1f;
+                l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
+                UseNormalMaps(l);
+                _lamps.Add(l);
+            }
+        }
+
         void RebindWorld()
         {
             _worldRenderer.Bind(Sim.World);
             _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
             _wallShadows.Bind(Sim.World);
+            RebuildLamps();
+            _enemyView?.ClearDying();
             _rig.Bind(Sim.World, () => Sim.Player);
             if (_crewView != null) _crewView.crewWorld = Sim.World;
             Sim.Enemies.Alerted += e => { float d = (float)Vec2.Distance(e.Enemy.Position, Sim.Player.Position); _audio?.Growl(Mathf.Clamp(.18f * (1 - d / 14f), .02f, .18f)); };
@@ -652,7 +759,9 @@ namespace TunnelCrew.Presentation
         {
             if (Sim?.World == null || !RunActive) return;
             var kbEsc = Keyboard.current;
+            bool obs = _observer != null && _observer.Active;
             if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && _team != null && _team.HandleEscape()) { }
+            else if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && obs && _observer.HandleEscape()) { }   // 관전 중 Esc = 이 캐릭터 조종
             else if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
             {
                 Paused = !Paused;
@@ -661,14 +770,15 @@ namespace TunnelCrew.Presentation
             if (Paused) return;
 
             var kb = Keyboard.current;
-            if (kb != null && Sim.Traits.HasOffer && !(_team != null && (_team.ChatOpen || _team.CraftWheelOpen)))
+            // 관전 중에는 게임이 듣는 키(카드·직업 단축키)를 막는다 — Tab 은 시점 전환으로 간다 (원본 BLOCK_KEYS)
+            if (kb != null && !obs && Sim.Traits.HasOffer && !(_team != null && (_team.ChatOpen || _team.CraftWheelOpen)))
             {
                 if (kb.digit1Key.wasPressedThisFrame) Sim.PickTrait(0);
                 else if (kb.digit2Key.wasPressedThisFrame) Sim.PickTrait(1);
                 else if (kb.digit3Key.wasPressedThisFrame) Sim.PickTrait(2);
                 else if (kb.tabKey.wasPressedThisFrame && Sim.RerollTraits()) Log($"다시 뽑기 (남은 {Sim.Traits.Rerolls})");
             }
-            else if (kb != null)
+            else if (kb != null && !obs && !Sim.Traits.HasOffer)
             {
                 if (kb.digit1Key.wasPressedThisFrame) SwitchRole(RoleId.Driller);
                 else if (kb.digit2Key.wasPressedThisFrame) SwitchRole(RoleId.Gunner);
@@ -695,7 +805,7 @@ namespace TunnelCrew.Presentation
             }
             if (Sim.Phase == GamePhase.Rest && kb != null)
             {
-                if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) { Sim.Descend(); RebindWorld(); Prespawn(); Log(Planet.DepthLabel(Sim.Depth) + " 진입"); _audio?.Descend(); _audio?.EndBoss(1.0f); _audio?.UseTunnel(); }
+                if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) DoDescend();
                 else if (kb.escapeKey.wasPressedThisFrame && Sim.LastBossTier != BossTier.Guardian) { Sim.ReturnFromRest(); Log("이 층에 남아 탈출한다"); }
             }
             if (Sim.Phase == GamePhase.Result && kb != null && kb.enterKey.wasPressedThisFrame)
@@ -703,7 +813,7 @@ namespace TunnelCrew.Presentation
                 if (ResultDismissed != null) ResultDismissed.Invoke(); else SwitchRole(_role);
             }
 
-            if (!CinematicActive) Sim.Advance(Time.deltaTime, ReadInput());
+            if (!CinematicActive) Sim.Advance(Time.deltaTime, _observer != null ? _observer.Drive(ReadInput(), Time.deltaTime) : ReadInput());
             else Sim.RefreshVision();   // 월드는 멈춰도 보스 시야원은 열어야 카메라가 보스를 비춘다 (원본은 렌더 루프가 LOS 를 돌렸다)
             TickAudioState();
             _playerView.Render(Sim.Player, Time.deltaTime);
@@ -772,14 +882,15 @@ namespace TunnelCrew.Presentation
             {
                 var ls = gp.leftStick.ReadValue(); if (ls.magnitude > .18f) input.Move = new Vec2(ls.x, ls.y);
                 var rs = gp.rightStick.ReadValue(); if (rs.magnitude > .25f) input.AimWorld = Sim.Player.Position + new Vec2(rs.x, rs.y).Normalized * 6;
-                if (gp.rightTrigger.ReadValue() > .4f) input.FireHeld = true;
-                if (gp.leftTrigger.ReadValue() > .4f || gp.rightShoulder.isPressed) input.DrillHeld = true;
-                if (gp.buttonSouth.wasPressedThisFrame) input.DashPressed = true;
-                if (gp.buttonWest.wasPressedThisFrame) input.ReloadPressed = true;
-                if (gp.leftShoulder.wasPressedThisFrame) input.SkillQPressed = true;
-                if (gp.buttonNorth.wasPressedThisFrame) input.SkillEPressed = true;
-                if (gp.dpad.down.wasPressedThisFrame) input.EscapePressed = true;
-                if (gp.dpad.up.wasPressedThisFrame) _flashlightOn = !_flashlightOn;
+                // 버튼은 GamepadMap(설정 화면에서 리매핑 · PlayerPrefs) 을 거친다. 기본값은 계획 §M7 표와 같다.
+                if (GamepadMap.Held(gp, GamepadMap.Action.Fire)) input.FireHeld = true;
+                if (GamepadMap.Held(gp, GamepadMap.Action.Drill) || GamepadMap.Held(gp, GamepadMap.Action.DrillAlt)) input.DrillHeld = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.Dash)) input.DashPressed = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.Reload)) input.ReloadPressed = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.SkillQ)) input.SkillQPressed = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.SkillE)) input.SkillEPressed = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.Escape)) input.EscapePressed = true;
+                if (GamepadMap.Pressed(gp, GamepadMap.Action.Flashlight)) _flashlightOn = !_flashlightOn;
             }
 
             // 팀 오버레이 — 채팅 중엔 모든 키가 글자, 핑/크래프트 휠·배치 중엔 좌우클릭이 장비로 새지 않는다 (원본 캡처 단계 stopImmediatePropagation)
@@ -841,6 +952,7 @@ namespace TunnelCrew.Presentation
         void OnGUI()
         {
             if (!_showHud || Sim?.World == null || !RunActive || CinematicActive) return;
+            Fonts.ApplySkin();
             // 1920×1080 기준 좌표계 — 창 크기가 달라도 비율이 유지된다. R()/Sz() 가 k 를 곱한다.
             _k = Screen.height / 1080f;
             EnsureStyles();
@@ -854,11 +966,11 @@ namespace TunnelCrew.Presentation
                 Panel(R(x - 70, y - 22, railW + 140, 80), .5f);
                 float frac = (float)(Sim.Run.Dominance / Sim.Run.DominanceTarget);
                 Bar(R(x, y, railW, railH), Mathf.Clamp01(frac), new Color(.2f, .16f, .28f), new Color(.78f, .63f, 1f), new Color(.35f, .3f, .5f));
-                // 크루 아이콘 — 직업 초상화
-                if (_portraits.TryGetValue(b.Role, out var por))
+                // 크루 아이콘 — 원본 dom-crew-icon (비어 있으면 역할 배지로 대체)
                 {
+                    var ico = _crewRailIcon != null ? _crewRailIcon : (_badges.TryGetValue(b.Role, out var bd) ? bd : null);
                     float px = x + railW * Mathf.Clamp01(frac);
-                    GUI.DrawTexture(R(px - 26, y - 20, 52, 52), por, ScaleMode.ScaleToFit);
+                    if (ico != null) GUI.DrawTexture(R(px - 26, y - 20, 52, 52), ico, ScaleMode.ScaleToFit);
                 }
                 if (_bossIcon != null)
                 {
@@ -879,7 +991,9 @@ namespace TunnelCrew.Presentation
             {
                 float x = 28, y = H - 200, w = 520, h = 170;
                 Panel(R(x, y, w, h));
-                if (_portraits.TryGetValue(b.Role, out var por)) GUI.DrawTexture(R(x + 12, y + 12, 146, 146), por, ScaleMode.ScaleToFit);
+                // 원본 #infVitalsBadge 는 역할 배지(role-badge-*)를 쓴다 — 없을 때만 초상화
+                if (_badges.TryGetValue(b.Role, out var vb)) GUI.DrawTexture(R(x + 12, y + 12, 146, 146), vb, ScaleMode.ScaleToFit);
+                else if (_portraits.TryGetValue(b.Role, out var por)) GUI.DrawTexture(R(x + 12, y + 12, 146, 146), por, ScaleMode.ScaleToFit);
                 float cx = x + 172, cw = w - 190;
                 GUI.Label(R(cx, y + 10, cw, 30), $"<b>{RoleName(b.Role)}</b>  <color=#aaa>Lv {Sim.Xp.Level}</color>{(p.Downed ? "  <color=#ff6060>다운</color>" : p.StunTime > 0 ? "  <color=#ffd36e>기절</color>" : "")}", _sMid);
                 Bar(R(cx, y + 46, cw, 22), (float)(p.Hp / p.HpMax), new Color(.25f, .08f, .1f), p.Hp / p.HpMax < .22 ? new Color(1f, .3f, .3f) : new Color(.95f, .45f, .45f));

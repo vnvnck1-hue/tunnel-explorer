@@ -39,8 +39,10 @@ namespace TunnelCrew.Presentation
         Texture2D _loadingArt; float _loadingSpin;
         // 설정 (PlayerPrefs)
         int _resIdx; bool _fullscreen; bool _reducedMotion; float _bgm = .8f, _sfx = .9f; Resolution[] _resolutions;
+        // 게임패드 리매핑 — 캡처 중인 액션(-1 이면 없음). 캡처 중엔 다음에 눌리는 배정 가능 버튼을 그 액션에 묶는다
+        int _gpCapture = -1; float _gpCaptureT;
 
-        Texture2D _keyart, _bg, _white; readonly Dictionary<RoleId, Texture2D> _select = new Dictionary<RoleId, Texture2D>(), _badge = new Dictionary<RoleId, Texture2D>(), _portrait = new Dictionary<RoleId, Texture2D>();
+        Texture2D _keyart, _title, _bg, _white; readonly Dictionary<RoleId, Texture2D> _select = new Dictionary<RoleId, Texture2D>(), _badge = new Dictionary<RoleId, Texture2D>(), _portrait = new Dictionary<RoleId, Texture2D>();
         readonly Dictionary<string, Texture2D> _icons = new Dictionary<string, Texture2D>();
         float _k = 1f;
 
@@ -71,8 +73,11 @@ namespace TunnelCrew.Presentation
         {
             if (_run == null) _run = FindFirstObjectByType<RunBootstrap>();
             _white = Texture2D.whiteTexture;
+            // 원본 v7.9.2 메인 메뉴가 쓰는 최신 리소스: 키아트 hero-tunnel-crew-keyart-v5(.webp → png 2048) · 로고 title-tunnel-crew-v2.
+            // 런 밖 다른 화면(직업 선택·행성 지도·정산·설정)은 원본이 메뉴 위에 반투명 모달을 얹는 구조라 같은 키아트를 더 어둡게 깐다 (레거시 bg-tunnel-cavern 은 폐기).
             _keyart = Resources.Load<Texture2D>("UI/keyart-main");
-            _bg = Resources.Load<Texture2D>("UI/bg-cavern");
+            _title = Resources.Load<Texture2D>("UI/title-logo");
+            _bg = _keyart;
             foreach (RoleId r in Enum.GetValues(typeof(RoleId)))
             {
                 string n = r.ToString().ToLowerInvariant();
@@ -119,6 +124,17 @@ namespace TunnelCrew.Presentation
         void GoRoleSelect() => Wipe(() => Current = Screen.RoleSelect);
         void GoSettings() => Wipe(() => Current = Screen.Settings);
         void Launch() => Wipe(() => { AudioDirector.Instance?.Deploy(); _run.LaunchRun(_selected); Current = Screen.Run; }, loading: true);
+        /// <summary>관전 출격 — 선택 직업이 AI 리더, 나머지 3직업이 AI 크루 (원본 OBS.enter → infLaunchFromRoleSelect).</summary>
+        void LaunchObserver() => LaunchObserver(_selected);
+        /// <summary>리더 직업을 지정해 관전 출격 (스모크·외부 진입용). 출격은 항상 이 직업으로 나가야 편성(나머지 3직업)과 어긋나지 않는다.</summary>
+        public void LaunchObserver(RoleId leader)
+        {
+            var obs = _run != null ? _run.Observer : null;
+            if (obs == null) { _run?.Log("관전 모드를 시작할 수 없습니다"); return; }
+            _selected = leader;
+            obs.Arm(leader);
+            Launch();
+        }
         void OpenSettlement(bool fromMenu, SettleView? view = null) => Wipe(() =>
         {
             _settleFromMenu = fromMenu; _view = view ?? (fromMenu ? SettleView.Map : SettleView.Summary); Current = Screen.Settlement;
@@ -150,9 +166,10 @@ namespace TunnelCrew.Presentation
             {
                 case Screen.MainMenu:
                     if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA) GoStarmap();
-                    else if (kb.digit2Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
-                    else if (kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
-                    else if (kb.digit4Key.wasPressedThisFrame) GoSettings();
+                    else if (kb.digit2Key.wasPressedThisFrame) GoRoleSelect();   // 무한 모드 직행
+                    else if (kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
+                    else if (kb.digit4Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
+                    else if (kb.digit5Key.wasPressedThisFrame) GoSettings();
                     break;
                 case Screen.Settings:
                     if (kb.escapeKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame || gA || gB) { SaveSettings(); GoMenu(); }
@@ -193,7 +210,7 @@ namespace TunnelCrew.Presentation
                     break;
                 case Screen.Run:
                     if (_run != null && _run.Paused) Current = Screen.Pause;
-                    else if (gp != null && gp.startButton.wasPressedThisFrame && _run != null && _run.Sim.Phase == GamePhase.Playing) { _run.SetPaused(true); Current = Screen.Pause; }
+                    else if (gp != null && GamepadMap.Pressed(gp, GamepadMap.Action.Pause) && _run != null && _run.Sim.Phase == GamePhase.Playing) { _run.SetPaused(true); Current = Screen.Pause; }
                     break;
             }
         }
@@ -224,6 +241,7 @@ namespace TunnelCrew.Presentation
 
         void OnGUI()
         {
+            Fonts.ApplySkin();   // Pretendard — 스킨 폰트를 바꾸면 라벨·버튼·텍스트필드 전부 따라온다
             if (Current == Screen.Run) { DrawWipe(); return; }
             _k = UnityEngine.Screen.height / 1080f;
             float W = UnityEngine.Screen.width / _k, H = 1080f;
@@ -335,6 +353,54 @@ namespace TunnelCrew.Presentation
             y += 80;
             GUI.Label(R(x, y, w, 60), "<color=#aaa>볼륨은 M7 오디오가 읽습니다. 설정: PlayerPrefs · 세이브: " + MetaStore.Path + "</color>", St(14, FontStyle.Normal, TextAnchor.UpperLeft));
             if (Button(R(x, y + 70, 300, 56), "저장 · 메뉴로   <color=#aaa>Enter</color>")) { SaveSettings(); GoMenu(); }
+
+            DrawGamepadRemap(1120, 170, 700);
+        }
+
+        /// <summary>게임패드 버튼 리매핑 (M7 잔여). 액션 줄을 클릭하면 캡처 모드 → 패드 버튼 하나를 누르면 배정. 같은 버튼을 다른 액션이 쓰고 있으면 그쪽을 기본값으로 되돌린다.</summary>
+        void DrawGamepadRemap(float x, float y, float w)
+        {
+            var gp = Gamepad.current;
+            var actions = GamepadMap.All;
+            Panel(R(x - 20, y - 20, w + 40, 60 + actions.Length * 46 + 140), .7f);
+            GUI.Label(R(x, y, w, 50), $"<b>게임패드</b>   <color=#aaa>{(gp != null ? gp.displayName : "연결 안 됨 · 연결하면 바로 인식")}</color>", St(22, FontStyle.Bold));
+            y += 56;
+
+            // 캡처 — 배정 가능 버튼이 눌리면 묶고, 6초 지나면 취소. B 는 취소로 쓰지 않는다(B 도 배정 대상).
+            if (_gpCapture >= 0)
+            {
+                _gpCaptureT -= Time.unscaledDeltaTime;
+                var hit = GamepadMap.AnyPressed(gp);
+                if (hit.HasValue)
+                {
+                    var target = actions[_gpCapture];
+                    foreach (var other in actions) if (other != target && GamepadMap.Get(other) == hit.Value) GamepadMap.Set(other, GamepadMap.Default(other));
+                    GamepadMap.Set(target, hit.Value); GamepadMap.Save();
+                    AudioDirector.Instance?.Ui();
+                    _gpCapture = -1;
+                }
+                else if (_gpCaptureT <= 0) _gpCapture = -1;
+            }
+
+            for (int i = 0; i < actions.Length; i++)
+            {
+                var a = actions[i];
+                bool capturing = _gpCapture == i;
+                GUI.Label(R(x, y, 260, 40), GamepadMap.Label(a), St(19));
+                string cur = capturing
+                    ? "<color=#ffd56b>버튼을 누르세요…</color>"
+                    : $"<b>{GamepadMap.Label(GamepadMap.Get(a))}</b>" + (GamepadMap.IsDefault(a) ? "" : $"   <color=#aaa>기본 {GamepadMap.Label(GamepadMap.Default(a))}</color>");
+                if (Button(R(x + 270, y, w - 270, 40), cur, accent: capturing ? new Color(.55f, .42f, .12f) : (Color?)null))
+                {
+                    if (capturing) _gpCapture = -1;
+                    else { _gpCapture = i; _gpCaptureT = 6f; }
+                }
+                y += 46;
+            }
+            y += 10;
+            GUI.Label(R(x, y, w, 44), "<color=#aaa>스틱(이동·조준)과 메뉴의 A 확인 · B 뒤로는 고정입니다. 트리거는 40% 이상 당기면 눌림.</color>", St(14, FontStyle.Normal, TextAnchor.UpperLeft, wrap: true));
+            y += 50;
+            if (Button(R(x, y, 260, 48), "기본값 복원")) { GamepadMap.ResetAll(); GamepadMap.Save(); _gpCapture = -1; }
         }
 
         void DrawBackdrop(Texture2D tex, float W, float H, float dim)
@@ -348,14 +414,21 @@ namespace TunnelCrew.Presentation
         {
             DrawBackdrop(_keyart, W, H, .35f);
             var meta = MetaStore.Load();
-            GUI.Label(R(80, 90, 900, 90), "<b>땅굴 크루</b>", St(72, FontStyle.Bold));
-            GUI.Label(R(84, 176, 900, 36), "TUNNEL CREW · 무한 모드 · Unity 포팅 (M5 그레이박스)", St(20, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(.8f, .78f, .85f)));
-            float x = 80, y = 300, w = 560, h = 78, gap = 18;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">01</size>   출격 — 행성 지도   <color=#aaa>Enter</color>")) GoStarmap(); y += h + gap;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">02</size>   성장 지도 · 영구 노드   <color=#aaa>2</color>")) OpenSettlement(true); y += h + gap;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">03</size>   유물 보관고   <color=#aaa>3</color>")) { OpenSettlement(true); _view = SettleView.Relics; } y += h + gap;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">04</size>   설정   <color=#aaa>4</color>")) GoSettings(); y += h + gap;
-            if (Button(R(x, y, w, h), "<size=" + Mathf.RoundToInt(15 * _k) + ">05</size>   종료", true, new Color(.6f, .6f, .65f))) Application.Quit(); y += h + gap;
+            // 로고 (원본 .menuLogo title-tunnel-crew-v2 672×364) · 키커 "Dig · Descend · Return". 로고가 없으면 텍스트 타이틀
+            if (_title != null) GUI.DrawTexture(R(72, 56, 440, 238), _title, ScaleMode.ScaleToFit);
+            else GUI.Label(R(80, 90, 900, 90), "<b>땅굴 크루</b>", St(72, FontStyle.Bold));
+            GUI.Label(R(84, 296, 900, 36), "DIG · DESCEND · RETURN   <color=#aaa>4직업 크루 · 지층 돌파 · 이상지대 무한 하강</color>", St(18, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(.8f, .78f, .85f)));
+            float x = 80, y = 346, w = 560, h = 64, gap = 12;   // 7개 버튼이 하단 기록 패널(H-120) 위에서 끝나도록
+            string N(int n) => "<size=" + Mathf.RoundToInt(15 * _k) + ">" + n.ToString("00") + "</size>   ";
+            if (Button(R(x, y, w, h), N(1) + "출격 — 행성 지도   <color=#aaa>Enter</color>")) GoStarmap(); y += h + gap;
+            // 무한 모드 직행 — 원본 #menuInfinite (tcLaunchInfScene → 직업 선택 → 바로 런). 행성 지도를 건너뛴다는 점만 다르고 규칙은 같다
+            if (Button(R(x, y, w, h), N(2) + "무한 모드 — 바로 출격   <color=#aaa>2</color>")) GoRoleSelect(); y += h + gap;
+            if (Button(R(x, y, w, h), N(3) + "성장 지도 · 영구 노드   <color=#aaa>3</color>")) OpenSettlement(true); y += h + gap;
+            if (Button(R(x, y, w, h), N(4) + "유물 보관고   <color=#aaa>4</color>")) { OpenSettlement(true); _view = SettleView.Relics; } y += h + gap;
+            if (Button(R(x, y, w, h), N(5) + "설정   <color=#aaa>5</color>")) GoSettings(); y += h + gap;
+            // 관전 모드 — 원본 #menuObserver (observer.js 가 .modeGrid 에 주입, 원클릭 출격). 리더는 마지막으로 고른 직업(기본 드릴러)
+            if (Button(R(x, y, w, h), N(6) + "관전 모드   <color=#7febd0>4직업 완전 자동</color>", true, new Color(.22f, .45f, .4f))) LaunchObserver(); y += h + gap;
+            if (Button(R(x, y, w, h), N(7) + "종료", true, new Color(.6f, .6f, .65f))) Application.Quit(); y += h + gap;
             Panel(R(x, H - 120, 900, 70), .55f);
             int nodes = PermanentNodes.All.Count(n => meta.RankOf(n.Id) > 0);
             GUI.Label(R(x + 18, H - 116, 880, 62), $"최고 심층 <b>{(meta.bestDepth > 0 ? meta.bestDepth.ToString() : "-")}</b>   보관 코어 <b>{meta.bankedCores}</b>   영구 노드 <b>{nodes}</b>/80   유물 <b>{meta.relicOwned.Count}</b>/33   생환 {meta.escapes} · 보스 {meta.totalBosses}", St(19, FontStyle.Normal, TextAnchor.MiddleLeft, true));
@@ -436,6 +509,8 @@ namespace TunnelCrew.Presentation
                 sb.Append("   <color=#7b6f8f>카드 우측 상단 + AI 로 동료를 넣는다 · 같은 세계·같은 적을 공유하는 로컬 동료</color>");
                 GUI.Label(R(bx + 16, by, bw - 220, 46), sb.ToString(), St(15));
                 if (crew.Roster.Count > 0 && Button(R(bx + bw - 190, by + 6, 176, 34), "모두 비우기", true, new Color(.6f, .6f, .65f))) crew.Clear();
+                // 관전 모드 진입 (원본 #obsStartBtn — 직업 선택 화면 하단) — 선택한 직업이 AI 리더
+                if (Button(R(bx, by + 60, bw, 52), "👁  관전 모드 — 4직업 완전 자동 진행   <color=#7ea99f>선택한 직업이 AI 리더 · 나머지 3직업 AI 크루 · Tab 시점 전환 · Esc 해제</color>", true, new Color(.22f, .45f, .4f))) LaunchObserver();
             }
             GUI.Label(R(80, H - 60, 1200, 40), "<color=#aaa>Esc 행성 지도로</color>", St(16));
         }

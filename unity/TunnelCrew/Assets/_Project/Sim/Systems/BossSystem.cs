@@ -33,6 +33,7 @@ namespace TunnelCrew.Sim
         public const double AttackLeadMin = 1.1, AttackLeadMax = 1.8;
         public const double DashChance = .22, DashSpeedMul = 4.4, DashDuration = .55, DashDamageMul = 1.6;
         public const double DashCeilingChance = .2;
+        public const double DashAnimSpeed = 1.8;  // bossTune 기본값 dashAnimSpeed
         public const double MuzzleOffsetX = .92, MuzzleOffsetY = .27;
         public const double DashKnockMinTiles = 2, DashKnockMaxTiles = 4, DashStunChance = .3, DashStunTime = .5;
         public const double Power = 10;           // INF_BOSS_POWER
@@ -63,6 +64,8 @@ namespace TunnelCrew.Sim
         public double PatternCd, AttackCd, WallGimmickCd = double.NaN;
         public int ForcedRanged;
         public double FireBreathT;
+        /// <summary>드래곤 애니메이션 배속 — 원본 e.bossAnimRate (예고 사격은 baseLead/lead, 돌진 중 dashAnimSpeed 1.8, 그 외 1).</summary>
+        public double AnimRate = 1;
         public string LastAttack = "";
         public double LastLead;
 
@@ -267,7 +270,7 @@ namespace TunnelCrew.Sim
             double lead = Math.Max(.05, Range(BossTune.AttackLeadMin, BossTune.AttackLeadMax));
             bool dash = forced == "dash" || (forced != "ranged" && _rng.NextDouble() < BossTune.DashChance + b.Def.DashBonus);
             b.LastLead = lead; b.LastAttack = dash ? "dash" : "ranged";
-            b.FireBreathT = 0; b.Dash = BossDashPhase.None; e.Velocity = Vec2.Zero;
+            b.FireBreathT = 0; b.Dash = BossDashPhase.None; e.Velocity = Vec2.Zero; b.AnimRate = 1;
 
             if (dash) { BeginDash(player, lead); return; }
 
@@ -278,6 +281,7 @@ namespace TunnelCrew.Sim
             const double baseLead = 1.45, baseDuration = 2.6;
             double animRate = baseLead / lead;
             b.FireBreathT = baseDuration / animRate;
+            b.AnimRate = animRate;
 
             // 기 모으기 — 예고가 길수록 크고 세다 (최대 1.25)
             double chargePow = Math.Max(.6, Math.Min(1.25, lead / BossTune.AttackLeadMin));
@@ -603,6 +607,7 @@ namespace TunnelCrew.Sim
                 if (b.DashT <= 0)
                 {
                     b.Dash = BossDashPhase.Charge;
+                    b.AnimRate = BossTune.DashAnimSpeed;   // 원본 bossTune('dashAnimSpeed') — 돌진 중 walking 애니 배속
                     b.DashT = Math.Max(.08, BossTune.DashDuration);
                     b.DashDurationTotal = b.DashT;
                     Pattern?.Invoke(new BossPatternEvent { Boss = b, Pattern = "dashCharge", At = e.Position });
@@ -617,7 +622,7 @@ namespace TunnelCrew.Sim
                 DashImpact(player);
                 if (b.DashT <= 0)
                 {
-                    b.Dash = BossDashPhase.None;
+                    b.Dash = BossDashPhase.None; b.AnimRate = 1;
                     Pattern?.Invoke(new BossPatternEvent { Boss = b, Pattern = "dashEnd", At = e.Position });
                     BeginWanderIdle();
                 }

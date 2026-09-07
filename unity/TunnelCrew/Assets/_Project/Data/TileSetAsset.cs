@@ -26,6 +26,10 @@ namespace TunnelCrew.Data
         [Header("밴드 경계 시임")]
         public Sprite[] seams = new Sprite[3];
 
+        [Header("벽 아틀라스 노멀맵")]
+        [Tooltip("slots 의 스프라이트가 전부 한 아틀라스(purple_walls_atlas)에서 잘린 경우, 같은 배치의 노멀 아틀라스. 런타임이 벽 타일맵 머티리얼의 _NormalMap 에 넣는다 (세컨더리 텍스처 바인딩은 URP 17 타일맵/스프라이트에서 조명에 반영되지 않았음).")]
+        public Texture2D wallNormalAtlas;
+
         /// <summary>원본 tileAtlasIndex() 와 동일한 슬롯 계산.</summary>
         public static int SlotOf(TileType type, int damage, int band, int surface)
         {

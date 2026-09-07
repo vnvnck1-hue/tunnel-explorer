@@ -401,6 +401,20 @@ namespace TunnelCrew.Sim
         }
         public void Clear() { Roster.Clear(); Members.Clear(); Turrets.Clear(); Nodes.Clear(); }
 
+        /// <summary>런 도중 직업 교체 (관전 Esc 교대 — 원본 AICREW.setRole). 키트·탄창·체력 비율을 새 직업으로, 성향·레벨·위치는 유지.</summary>
+        public void SetRole(CrewMember m, RoleId role)
+        {
+            int ri = Roster.IndexOf(m.Role); if (ri >= 0) Roster[ri] = role;
+            var kit = CrewKit.For(role);
+            double hpRatio = m.HpMax > 0 ? m.Hp / m.HpMax : 1;
+            m.Role = role; m.Kit = kit;
+            m.HpMax = kit.Hp; m.Hp = Math.Max(1, kit.Hp * hpRatio);
+            m.Ammo = kit.Mag; m.Mag = kit.Mag; m.ReloadTime = kit.Reload; m.ReloadLeft = 0;
+            m.Goal = null; m.Path.Clear(); m.PathKey = ""; m.PathAge = 0; m.Digging = false; m.Drill = 0;
+            m.QCd = m.ECd = 0;
+            Geo.ProgressReset(m);
+        }
+
         // ───────────────────────────── 런 시작 / 종료 / 층
         public void OnRunStart()
         {

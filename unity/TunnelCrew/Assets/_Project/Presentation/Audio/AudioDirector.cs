@@ -268,8 +268,10 @@ namespace TunnelCrew.Presentation
                 var s = go.AddComponent<AudioSource>(); s.clip = clip; s.loop = true; s.playOnAwake = false; s.spatialBlend = 0; s.volume = 0;
                 return new Track { Src = s, Gain = gain, FadeIn = fi, FadeOut = fo };
             }
-            // 로비: 원본 lobby-cave.webm 은 Unity 가 못 읽는다(webm 오디오 미지원) — 땅굴 던전 레이어 한 겹으로 대신한다
-            _lobby = Mk("bgmLobby", "tunnel-dungeon", .8f, AmbFadeIn, AmbFadeOut);
+            // 로비: 원본 lobby-cave.webm(g 1.00) 을 Vorbis 로 변환한 lobby-cave.ogg (PyAV, 2026-09-07). 파일이 없으면 이전 대체(땅굴 던전 한 겹 .8) 로 돌아간다
+            _lobby = Resources.Load<AudioClip>("Audio/music/lobby-cave") != null
+                ? Mk("bgmLobby", "lobby-cave", 1f, AmbFadeIn, AmbFadeOut)
+                : Mk("bgmLobby", "tunnel-dungeon", .8f, AmbFadeIn, AmbFadeOut);
             _tun1 = Mk("ambTunnelDungeon", "tunnel-dungeon", 1.19f, AmbFadeIn, AmbFadeOut);
             _tun2 = Mk("ambTunnelCave", "tunnel-cave-stereo", 1f, AmbFadeIn, AmbFadeOut, 4.48f);   // 원본 녹음 레벨이 매우 낮아 4.48 배 — 클립에 미리 굽는다
             _boss = Mk("bgmBoss", "boss-blood-ascendant", .78f, BossFadeIn, BossFadeOut);

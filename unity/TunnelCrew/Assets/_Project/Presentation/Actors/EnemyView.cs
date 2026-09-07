@@ -24,7 +24,16 @@ namespace TunnelCrew.Presentation
             public GameObject Go;
             public SpriteRenderer Body, Shadow, HpBg, HpBar;
             public LineRenderer Windup;
+            /// <summary>보스 드래곤 애니 상태 (원본 e.bossAnimKey / bossAnimT).</summary>
+            public string AnimKey; public float AnimT;
         }
+        /// <summary>격파된 보스 — 원본 bossDying: 몸을 남겨 death 24프레임(2.4s)을 끝까지 보여준다.</summary>
+        sealed class Dying { public Item It; public float T, R; public bool Flip; }
+        readonly List<Dying> _dying = new List<Dying>();
+
+        /// <summary>보스 드래곤 애니 선택 재료 (fireBreath 중인가, 배속). RunBootstrap 이 BossSystem 에서 연결한다.</summary>
+        public System.Func<EnemyState, (bool fire, double rate)> BossAnimInfo;
+        const float DragonFps = 10f;   // BOSS_DRAGON_ANIMS 공통
 
         static readonly Color ShadowColor = new Color(0, 0, 0, 0.32f);
         Sprite _dot;
@@ -43,15 +52,61 @@ namespace TunnelCrew.Presentation
             foreach (var e in enemies)
             {
                 if (!_items.TryGetValue(e, out var it)) _items[e] = it = Rent();
-                Draw(e, it);
+                Draw(e, it, dt);
             }
 
             _gone.Clear();
             foreach (var kv in _items) if (!kv.Key.Alive) _gone.Add(kv.Key);
-            foreach (var e in _gone) { Return(_items[e]); _items.Remove(e); }
+            foreach (var e in _gone)
+            {
+                var it = _items[e]; _items.Remove(e);
+                var death = _sheets?.FramesFor("dragon_death");
+                if (e.IsBoss && death != null && death.Length > 0)
+                {   // 보스는 바로 지우지 않고 death 애니를 끝까지 (원본 bossDying · bossFade)
+                    it.HpBg.enabled = it.HpBar.enabled = it.Windup.enabled = false;
+                    _dying.Add(new Dying { It = it, T = 0, R = (float)e.Radius, Flip = it.Body.flipX });
+                }
+                else Return(it);
+            }
+
+            for (int i = _dying.Count - 1; i >= 0; i--)
+            {
+                var d = _dying[i]; d.T += dt;
+                var death = _sheets.FramesFor("dragon_death");
+                int f = Mathf.Min(death.Length - 1, (int)(d.T * DragonFps));
+                d.It.Body.sprite = death[f];
+                float targetH = d.R * 3.3f, sh = d.It.Body.sprite.bounds.size.y;
+                d.It.Body.transform.localScale = Vector3.one * (sh > 0 ? targetH / sh : 1f);
+                d.It.Body.color = new Color(1f, .62f, .68f, Mathf.Clamp01(1.4f - d.T * .45f));
+                d.It.Shadow.color = new Color(0, 0, 0, .32f * Mathf.Clamp01(1f - d.T / 2.4f));
+                if (d.T >= death.Length / DragonFps) { Return(d.It); _dying.RemoveAt(i); }
+            }
         }
 
-        void Draw(EnemyState e, Item it)
+        /// <summary>층 전환·런 재시작 때 남아 있던 시체를 정리한다.</summary>
+        public void ClearDying() { foreach (var d in _dying) Return(d.It); _dying.Clear(); }
+
+        /// <summary>보스 드래곤 — 원본 bossDragonAnimation: fireBreath(예고 중) > moving ? walking : idle. 키가 바뀌면 t=0, 배속 e.bossAnimRate.</summary>
+        bool DrawDragon(EnemyState e, Item it, float dt, bool moving, float r)
+        {
+            var idle = _sheets?.FramesFor("dragon_idle");
+            if (idle == null || idle.Length == 0) return false;
+            var info = BossAnimInfo != null ? BossAnimInfo(e) : (false, 1.0);
+            string key = info.Item1 ? "dragon_fireBreath" : moving ? "dragon_walking" : "dragon_idle";
+            var frames = _sheets.FramesFor(key) ?? idle;
+            if (it.AnimKey != key) { it.AnimKey = key; it.AnimT = 0; }
+            it.AnimT += dt * (float)info.Item2;
+            bool loop = key != "dragon_fireBreath";
+            int raw = (int)(it.AnimT * DragonFps);
+            int f = loop ? raw % frames.Length : Mathf.Min(frames.Length - 1, raw);
+            it.Body.sprite = frames[f];
+            float targetH = r * 3.3f, sh = it.Body.sprite.bounds.size.y;
+            it.Body.transform.localScale = Vector3.one * (sh > 0 ? targetH / sh : 1f);
+            it.Body.flipX = BossFacing != null && BossFacing(e) > 0;
+            return true;
+        }
+
+        void Draw(EnemyState e, Item it, float dt)
         {
             float x = (float)e.Position.X, y = (float)e.Position.Y;
             float r = (float)e.Radius;
@@ -64,9 +119,11 @@ namespace TunnelCrew.Presentation
             it.Body.transform.localPosition = new Vector3(0, bob + lift, 0);
 
             var frames = _sheets != null ? _sheets.FramesFor(KindId(e.Kind)) : null;
-            if (frames != null && frames.Length >= 12)
+            bool movingNow = e.Velocity.Length > 0.15 || e.IsJumping;
+            if (e.IsBoss && DrawDragon(e, it, dt, movingNow, r)) { }
+            else if (frames != null && frames.Length >= 12)
             {
-                bool moving = e.Velocity.Length > 0.15 || e.IsJumping;
+                bool moving = movingNow;
                 int idx;
                 if (e.BlinkTime > 0) idx = 8 + Mathf.Clamp((int)((0.24 - e.BlinkTime) / 0.06), 0, 3);
                 else if (!moving) idx = 6 + (((int)(e.AnimTime * 2)) & 1);
@@ -93,7 +150,8 @@ namespace TunnelCrew.Presentation
             }
 
             // 피격 플래시 + 상태 색
-            Color tint = e.IsBoss ? new Color(1f, 0.62f, 0.68f) : e.IsApex ? new Color(1f, 0.72f, 0.82f) : Color.white;
+            // 드래곤 프레임이 있으면 원색(원본은 드래곤 시트에 틴트를 주지 않는다), 몬스터 대체 시에만 붉은 틴트
+            Color tint = e.IsBoss ? (it.AnimKey != null ? Color.white : new Color(1f, 0.62f, 0.68f)) : e.IsApex ? new Color(1f, 0.72f, 0.82f) : Color.white;
             if (e.FrozenTime > 0) tint = new Color(0.6f, 0.85f, 1f);
             if (e.Hurt > 0) tint = Color.Lerp(tint, Color.white, Mathf.Clamp01((float)e.Hurt / 0.18f) * 0.85f);
             it.Body.color = tint;
@@ -163,7 +221,7 @@ namespace TunnelCrew.Presentation
             it.Windup.sortingOrder = 28;
             return it;
         }
-        void Return(Item it) { it.Go.SetActive(false); _pool.Push(it); }
+        void Return(Item it) { it.Go.SetActive(false); it.AnimKey = null; it.AnimT = 0; it.Body.flipX = false; it.Body.color = Color.white; _pool.Push(it); }
 
         static Sprite _square;
         static Sprite MakeSquare()

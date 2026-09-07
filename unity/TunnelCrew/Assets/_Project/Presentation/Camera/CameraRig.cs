@@ -28,6 +28,8 @@ namespace TunnelCrew.Presentation
         bool _initialized;
         /// <summary>시네마틱이 잡고 있으면 (중심, 줌 배율) — 추종 상태는 건드리지 않고 최종 위치만 바꾼다 (원본 tcBossFx 의 G.camX/camY/G.Z 직접 제어).</summary>
         public Func<(Vector2 center, float zoomMul)?> CineOverride;
+        /// <summary>관전 모드 크루 시점 — 값이 있으면 그 점을 중심으로 추종한다(데드존·룩어헤드 없이). 원본 OBS.camera 는 k=dt·5 로 미리 보간해 넘긴다.</summary>
+        public Func<Vector2?> FollowOverride;
 
         void Awake() => _cam = GetComponent<Camera>();
 
@@ -77,7 +79,9 @@ namespace TunnelCrew.Presentation
                 ? _camOrigin + new Vector2(vw * 0.5f, vh * anchorFromBottom)
                 : target;
 
-            if (_initialized)
+            var follow = FollowOverride?.Invoke();
+            if (follow.HasValue) center = _initialized ? follow.Value : follow.Value;
+            else if (_initialized)
             {
                 Vector2 d = target - center;
                 float dist = d.magnitude;

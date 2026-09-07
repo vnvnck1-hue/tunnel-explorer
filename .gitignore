@@ -3,3 +3,5 @@
 build/*-single.html
 build/.single-cache/
 unity/Build/
+unity/TunnelCrew/Captures/
+unity/TunnelCrew/*.png

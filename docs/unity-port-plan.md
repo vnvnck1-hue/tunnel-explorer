@@ -58,7 +58,7 @@
 
 - 레거시 mine 모드 전체: `genDepth`, 마을·수면·인트로 씬, `UPG`(bond/pen/mine/hole), `hio_save_v1`, 세션 타이머, `G.mins/car/buried`(이미 데드 코드)
 - 솔로 미션 모드(`CREW_MISSIONS`, 바이옴 선택 화면). 브라인 바이옴 장판 규칙은 행성 콘텐츠로 재활용 후보
-- 개발툴 스크립트 블록: Projectile Lab, Boss Lab 인스펙터(값은 데이터로 이관), Test Hub/Relic Lab, UILAB(F8), LX 패널(F10), `#pSet`, `?tcTest` 패널, 관전(OBSERVER) 모드는 보류
+- 개발툴 스크립트 블록: Projectile Lab, Boss Lab 인스펙터(값은 데이터로 이관), Test Hub/Relic Lab, UILAB(F8), LX 패널(F10), `#pSet`, `?tcTest` 패널. 관전(OBSERVER) 모드는 2026-09-07 포팅 완료(보류 해제)
 - Canvas2D 폴백 어둠(`drawDarkness`), WebGL 미지원 분기, 자동 품질 강등 토글
 - HTML·브라우저 제약의 산물 전체 목록은 [analysis-04 §10](unity-port/analysis-04-engine-native-replacements.md). 렌더 트릭·런타임 래핑·주입 파이프라인·자동재생 우회·가변 dt 루프 등은 어떤 형태로도 옮기지 않는다
 
@@ -166,7 +166,7 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 |---|---|---|
 | M0 준비 · M1 코어 루프 · M2 시야/조명 · M3 전투/4직업 · M4 런 구조 | 완료 | M3·M4 사용자 체크포인트 통과. 어둠 톤은 사용자가 직접 조정(고치지 않음) |
 | M5 메타 — 정산·영구 노드 80·유물 33·저장·메뉴·와이프·로딩·설정 | 완료 | UGUI 정식 배치는 보류(IMGUI 1080p 배율 유지, Pretendard 도착 후 M7 잔여로) |
-| M6 AI 크루·핑·채팅·퀵크래프트 | 완료 | 관전 모드(OBSERVER)는 계획 범위 밖으로 미포팅 |
+| M6 AI 크루·핑·채팅·퀵크래프트 | 완료 | 관전 모드(OBSERVER)는 2026-09-07 사용자 요청으로 포팅 완료(ObserverPilot · ObserverMode) |
 | M7 오디오·연출·게임패드·빌드 | 구현 완료 · **체크포인트 대기** | 완료 기준 "원본 v7.9.2 와 나란히 10분 비교 리뷰"는 사용자 확인 필요 |
 | M8 코옵 (선택) | 미착수 | 착수 여부 결정 대기 |
 
@@ -174,15 +174,39 @@ HTML을 Unity에서 파싱하지 않는다. 원본에서 한 번 뽑아 파일�
 - 빌드: `unity/Build/Windows/TunnelCrew.exe` (Windows 64, 392MB, 에러 0, 메인 메뉴 진입 확인). 빌드 산출물은 git 제외.
 - 검증 캡처: `unity/TunnelCrew/m3_*.png · m4_*.png · m5_*.png · m6_*.png · m7_*.png` (git 제외, 로컬 참고용).
 
+**2026-09-07 오후 처리분**
+
+- **캐릭터 발 위치 수정** (사용자 피드백: 드릴러가 중심보다 떠 보임) — 원본 `drawDrillerSprite` 는 `translate(x,y)` 뒤 `LIT.spr(…, r - pivot*scale, …)` 로 그려 발(피벗)이 충돌원 바닥 y+r 에 놓인다. Unity 는 피벗을 시뮬 위치에 두고 있어 정확히 r=0.5 셀 떠 있었다. `PlayerView.FootDrop`(=SimTuning.PlayerRadius) 만큼 내리고 원본 걷기 들썩임 `sin(t·16)·r·.035` 도 함께 이식. 크루의 라벨·HP바·실드 자식 오프셋은 FootDrop 을 더해 세계 좌표 유지. 시트 피벗 자체(원본 `*_PIVOTS` → `1 - pivot/224`)는 이미 정확했음.
+- **로비 BGM 원본 복원 완료** — ffmpeg 없이 PyAV(`pip install av`, ffmpeg 내장 `vorbis` 인코더, `strict experimental`) 로 `lobby-cave.webm` → `Resources/Audio/music/lobby-cave.ogg`(76.8s, 48kHz 스테레오, 128kbps). 주의: 프레임 pts 를 직접 채워야 Ogg 헤더 길이가 맞다(pts=None 이면 4.8s 로 기록돼 Unity 가 4.8s 클립으로 읽음). `AudioDirector.BuildMusic` 로비 트랙 = lobby-cave g 1.00(원본 BGM_ROUTE 값), 파일 없으면 이전 대체로 폴백.
+- **게임패드 리매핑 UI 완료** — `Presentation/Input/GamepadMap.cs`(액션 10종 → GamepadButton, PlayerPrefs `tc.gp.<action>`, 기본값 = M7 표). 설정 화면 우측 패널: 줄 클릭 → 캡처(6초) → 패드 버튼 누르면 배정, 중복 버튼은 상대 액션을 기본값으로 되돌림, "기본값 복원". RunBootstrap 런 입력과 MetaScreens 일시정지가 GamepadMap 을 읽는다. 스틱·메뉴 A/B 는 고정.
+- **UI 리소스를 원본 최신본으로 교체** (사용자 지적: 로비·직업 선택이 레거시 이미지) — 원본 v7.9.2 참조 기준으로 키아트 `hero-tunnel-crew-keyart-v5.webp`(→ `UI/keyart-main.png` 2048×1147, Pillow 변환), 로고 `title-tunnel-crew-v2.png`(→ `UI/title-logo.png`, 메인 메뉴 텍스트 타이틀 대체), 직업 카드·초상화 `assets/characters/*-playable.png`(작업 트리 최신본 → `UI/select-*` 원본 크기 · `UI/portrait-*` 500²). 레거시 `hero-main-v1`·`char-*-select-v4`·`bg-tunnel-cavern-casual-v3-dark`(`UI/bg-cavern`) 폐기, 런 밖 화면 배경은 키아트 공용. 규칙: `assets/menu/` 파일명 버전이 아니라 최신 HTML 의 실제 참조를 기준으로 고른다.
+- **"무한 모드" 범위 확인** — 원본 메뉴의 02 무한 모드(`tcLaunchInfScene` → 직업 선택 → 바로 런)와 03 행성 원정(행성 지도 → 직업 선택 → 런)은 같은 INF 엔진·같은 `INF_PLANET`(지층 3 + 이상지대)을 쓴다. 코드상 차이는 `INF.planetRun` 플래그 하나로, 행성별 기록(`INF_META.planets` runs/clears/escapes/bestDepth)을 남기는지만 다르다. D2 가 행성 원정 경로로 통합했으므로 게임플레이는 이미 포팅되어 있고, **"행성 지도 없이 바로 출격" 진입 버튼만 없다.** 필요하면 메인 메뉴에 02 버튼(기본 행성 즉시 출격, planetRun=false) 추가로 끝난다 — 사용자 결정 대기.
+- **관전 모드 포팅** (사용자 요청 — 계획 §2.2 "보류" 를 해제) — 원본 `ai/observer.js` v7.8.1 규약 그대로. `Sim/Crew/ObserverPilot.cs`: 리더 오토파일럿(순수 C#, 가상 `PlayerInput`) — 판단 우선순위 탈출 포트 → 다운 크루 구조 → 전투(보스 18칸·위협 13칸, 교전 거리 LEADER_KIT) → 재장전 → 채굴(6/11/17칸·경계벽, AI 크루 목표 주변 1칸 회피, 16초 유지) → 대기, 보스탄 예고 회피 최우선, 경로는 `AiCrewSystem.FindPath`(digCost 5/14/12/10), 지형 게이트 `CrewGeo`(진척 없으면 14초 봉인, 거너 6s·그 외 2s), WASD 8방향 양자화(.38)·1.2초 스턱 지터. `Presentation/Observer/ObserverMode.cs`: Tab 시점 순환 · Esc = 리더면 해제 / 크루면 위치·직업 교대 후 해제(`TunnelSim.SwitchRoleMidRun` + `AiCrewSystem.SetRole` + `RunBootstrap.ApplyRoleSwap`) · F9/Tab 관전 복귀(EverUsed 런만) · F8 토글 · 진행 자동화 0.3s 틱(카드 1.5s·전설 2.1s 뒤 무작위 선택, 휴식 3.9s 뒤 `RunBootstrap.DoDescend`, 결과 4.5s 뒤 같은 편성 재출격, 메뉴 복귀 1.5s 뒤 자동 해제) · 상단 배지 · 관전 중 카드/직업 단축키 차단. 카메라는 `CameraRig.FollowOverride`(k=dt·5). 진입: 메인 메뉴 05 관전 모드(리더 = 마지막 선택 직업), 직업 선택 하단 버튼. 미이식: OBS_MANUAL 수동 빙의(원본에서도 데드 코드), `[ ]` 줌 통과(포팅본에 줌 키 없음).
+- **리소스 전수조사 (2026-09-07, 사용자 요청)** — 포팅본 479개 파일을 md5 로 원본 `assets/`·`monster_assets_v1.5.4`·`tunnel_crew_tile_resources_v1` 와 대조하고, v7.9.2 HTML 이 실제 참조하는 30개 경로 + 동적 루트(시트 4종·몬스터·타일·특성 아이콘·크래프트 아이콘·red-fire-dragon)와 비교. 결과: 캐릭터 시트 40·몬스터 48·타일 278·특성 아이콘 20·크래프트 14·SFX 49·배지 4·BGM 3·로고 — 전부 원본 참조본과 바이트 동일. **레거시로 판명·교체**: ① 장악도 레일 보스 아이콘 `boss-icon.png`(1254², 미참조) → 원본 `infDomRailIcons` 의 `dom-boss-icon.png`, 크루 아이콘(초상화 사용 중) → `dom-crew-icon.png`(없으면 배지 폴백) ② 좌하단 바이탈 초상화 → 원본 `#infVitalsBadge` 와 같은 역할 배지 ③ 앞서 교체한 키아트·로고·직업 카드. **누락 발견·이식**: 보스 드래곤 스프라이트 — 원본은 `assets/red-fire-dragon/{idle 37, walking 37, fire-breath-a 26, death 24}` 를 10fps 로 재생하는데 포팅본은 몬스터 시트에 붉은 틴트만 얹고 있었다(M0 표 "자산 임포트 드래곤 미완"). `Art/Dragon/` 로 복사, `BuildArtAssets.RunDragon`(메뉴 "M7 · 보스 드래곤 시트 생성") 이 MonsterSheets 에 `dragon_*` 로 넣고, `EnemyView.DrawDragon` 이 원본 `bossDragonAnimation` 규칙(fireBreath > walking/idle · 키 변경 시 t=0 · 배속 `BossState.AnimRate` = 예고 baseLead/lead, 돌진 1.8) 으로 재생, 격파 시 몸을 남겨 death 24프레임(2.4s)·페이드. 틴트는 드래곤 프레임일 때 원색. **남은 참고**: 로딩 화면 아트 `loading-drill`(industrial-drill-electric-cyan) 은 원본 미참조지만 §2.3 신설 화면용으로 고른 것이라 유지. 드릴 WAV 3종·lobby-cave.ogg·keyart(webp→png)·portrait(축소) 는 변환본이라 md5 불일치가 정상.
+- **폰트 적용 완료** — Pretendard 1.3.9(`Downloads/Pretendard-1.3.9/public/static` Regular·Bold OTF, OFL 라이선스 동봉) 와 ARCO(**`ARCO for OSX.otf` → `Fonts/ARCO.otf`**. 같은 zip 의 `ARCO.ttf` 는 손상 파일이라 Unity 가 대체 글꼴로 조용히 그린다 — 이름만 보면 ARCO 로 나와 속기 쉽다. 폰트 검증은 두 글꼴을 나란히 띄운 스크린샷으로) 를 `Data/Resources/Fonts/` 에 넣고 `Presentation/UI/Fonts.cs` 로 통일. IMGUI 는 각 OnGUI 첫 줄 `Fonts.ApplySkin()`(GUI.skin.font 교체 → 라벨·버튼·텍스트필드 전부, GUIStyle.font 가 비어 있으면 스킨 폰트를 쓰는 규칙) — RunBootstrap·MetaScreens·TeamOverlay·BossIntroCinematic·ObserverMode. TextMesh 는 크루 라벨·채팅 말풍선 = Pretendard Bold, **피해 숫자 = ARCO**(사용자 지정 · 원본 `@font-face 'ARCO'`) — 벽 피해·적 피해(`Damage`)뿐 아니라 `Text` 로 나가는 숫자 팝업(피격 -N · 재화 +N · 크루 +N, `CombatView.IsNumeric`)도 ARCO. 한글·문장 라벨만 Pretendard(ARCO 에 한글 없음). TextMesh 는 폰트를 바꾸면 MeshRenderer 머티리얼도 그 폰트의 것으로 바꿔야 한다(`CombatView.SetFont`).
+- **메인 메뉴 02 무한 모드 직행** 추가(사용자 결정) — 행성 지도를 건너뛰고 직업 선택 → 출격(원본 `#menuInfinite` 흐름). 메뉴 번호 01 출격(행성 지도) · 02 무한 모드 · 03 성장 지도 · 04 유물 · 05 설정 · 06 관전 · 07 종료, 숫자키 1~5.
+- **캐릭터 그림자** (사용자 요청) — 플레이어·AI 크루 발밑에 Light2D 캐스터만. (처음 함께 넣었던 고정 접지 타원 `DropShadow` 는 "조명에 따라 각도가 변하는 그림자만 필요" 라는 사용자 결정으로 삭제.) `WallShadowBuilder.AttachActorCaster`(발 둘레 12각형 ShadowCaster2D, selfShadows 끔) — 강한 점광원 앞에서 벽처럼 빛을 가린다. 둘 다 `PlayerView.Awake` 에서 붙어 크루도 자동 적용. **2차 조정(사용자: 서로의 손전등에 반응하는 그림자)** — ② 가 안 보이던 원인은 손전등 `shadowIntensity` 기본 .75 가 앰비언트에 묻힌 것(ON/OFF 픽셀 차 ≈10/255). 손전등·헤일로·크루 손전등 `shadowIntensity=1, softness .2`, 캐스터를 몸 폭(r×.9, 세로 .55, selfShadows on)으로 키움. **AI 크루 손전등 신설**(`_crewLights`, 사람 손전등과 같은 스팟 · 조준 방향 · 다운 시 소등) — 원본에는 없음. 결과: 크루가 플레이어를 비추면 플레이어 발에서 반대편으로 벽과 같은 그림자 줄기가 뻗는다(Captures/crew-flash-shadow-7-final.png). 검증 요령: 캐스터 ON/OFF 스크린샷의 픽셀 차 이미지(×6 증폭)로 그림자 형상을 확인.
+- **조명·타일 버그 수정** (사용자 보고: 빛이 타일 경계에서 직선으로 잘림) — 원인 2가지, 전수 점검 결과 포함.
+  ① **층 전환 시 벽 그림자 캐스터 누적**: `WallShadowBuilder.Bind` 가 층마다 새 `WallShadows` 루트를 만들면서 이전 층 것을 지우지 않아, 지층 3 에서 루트 5개·캐스터 2,145개(정상 ~365)가 겹쳐 있었고 그중 4,575칸분이 **새 층의 바닥 위**를 덮어 빛을 잘랐다. Bind 첫머리에서 이전 루트 파괴·더티 큐 초기화·옛 월드 이벤트 해제. 검증: 3층 하강 후 다음 프레임 루트 1 · 바닥 오덮음 0 · 벽 미덮음 0.
+  ② **던전 랜턴도 첫 층 것만 생성**되어 층이 바뀌어도 옛 자리를 비추던 누락 — `RebuildLamps()` 로 층마다 재생성(랜턴 GO 30 → 6).
+  ③ 벽 캐스터 `selfShadows=true` → 벽 타일 앞면이 자기 그림자에 잠겨 빛이 타일 앞에서 끊김. false 로(원본 wRim 처럼 광원 쪽 벽면이 밝다). 손전등 그림자 세기 1.0 → .9(할로 .85), 부드러움 .35 — 1.0 은 경계가 완전 검정 직선.
+  점검했으나 문제 없던 것: 캐스터 사각형 좌표(셀 [c,c+1) 정확), 타일맵 3층 모두 Sprite-Lit, 광원 sorting layer, 어둠 오버레이 재바인드, 플레어 라이트 재사용, 보스 라이트. 남은 참고: 타일 노멀맵이 없어 원본의 벽 림(wRim)·음영(wShade)은 아직 없음(계획 §2.2 의 "노멀맵 + Sprite-Lit" 미착수).
+- **타일 노멀맵 + 벽 림 조명** (사용자 요청 · 계획 §2.2 착수) — 최종 구성과 그 과정에서 확인한 URP 17 제약:
+  - 노멀 생성: `Art/Tiles/purple/normals/<tile>_n.png` (Pillow · 둥근 베벨 폭 14px · 기울기 ×12 · 밝기 요철 .25, OpenGL +Y). 1차(×2.2, 광원 높이 3)·2차(×5.5, 1.5)는 "티가 안 난다".
+  - **제약 1: 타일맵 청크 메시에는 NORMAL/TANGENT 가 없다.** URP `Sprite-Lit-Default` 의 NormalsRendering 패스가 TBN=0 을 만들어, 노멀맵 조명을 켜면 바닥·벽 전부 어두워지고 노멀맵은 무시된다. → `Assets/_Project/Shaders/Tilemap-Lit-Normal.shader`(Sprite-Lit-Default 사본, 노멀 패스에서 normal=(0,0,-1)·tangent=(1,0,0,-1) 강제). 세 타일맵(Floor/Walls/CoreTop) 모두 이 셰이더의 머티리얼(`RunBootstrap.BuildWorld`).
+  - **제약 2: 렌더러가 `_NormalMap` 을 스프라이트 세컨더리 텍스처로 프레임마다 덮어쓴다.** 세컨더리가 없으면 평면 노멀이 들어가 머티리얼의 `_NormalMap` 은 무시된다(타일맵). → 벽 268타일을 **한 아틀라스**(`Art/Tiles/purple/atlas/purple_walls_atlas.png`, 54px 셀·2px 가장자리 복제, 918×864)로 묶고, 같은 배치의 노멀 아틀라스를 그 텍스처의 세컨더리 `_NormalMap` 으로 등록(`BuildArtAssets.RunWallAtlas`, 메뉴 "M7 · 벽 아틀라스 + 노멀맵"). TileSetAsset 슬롯은 아틀라스 서브 스프라이트를 우선 사용(`wallNormalAtlas` 필드 추가). Chunk 모드 유지 = 벽 전체 1배치. 타일별 세컨더리(`RunTileNormals`)는 남겨두되 효과 없음.
+  - Light2D: `normalMapQuality=Accurate · normalMapDistance=0.8`(URP 17 은 읽기 전용 → `m_NormalMapQuality/m_NormalMapDistance` 리플렉션, `RunBootstrap.UseNormalMaps`). 노멀맵 모드는 평면의 N·L 을 ~0.3 으로 떨어뜨려 전체가 어두워지므로 손전등 1.35→2.6, 크루 손전등 1.1→2.0, 헤일로 0.9→1.4 로 보정.
+  - 검증 요령(중요): 스크린샷 파일은 **선형** 값이라 미리보기(sRGB)보다 훨씬 어둡게 읽힌다 — 절대값이 아니라 A/B 차이로만 판단. A/B 는 `RunBootstrap.enabled=false` 로 루프를 멈춰야 한다(마우스가 조준을 계속 바꿔 손전등이 움직임 → 프레임이 어긋남). 합성 노멀(왼쪽 절반 광원 쪽/오른쪽 반대)을 씌운 흰 사각 스프라이트로 파이프라인 자체를 먼저 확인할 것.
+  - 남은 튠: 림의 세기는 베벨 기울기·`normalMapDistance`·손전등 세기 세 값으로 조절. 바닥 시트·오버레이는 평면.
+- **고정 마름모 그림자 최종 제거** — 접지 타원을 지운 뒤에도 남아 있던 것은 플레이어 헤일로(발 위 0.5칸 중심 광원)가 발밑 캐스터를 늘 위에서 비춰 아래로만 드리운 그림자였다. 헤일로 `shadowIntensity=0`. 이제 캐릭터 그림자는 손전등·랜턴·크루 손전등 방향에만 반응한다.
+- 정리 — `.gitignore` 에 `unity/TunnelCrew/Captures/`·`unity/TunnelCrew/*.png`, ProjectSettings 의 `2D_URP` 흔적(metroPackageName/Description) 제거. MCP for Unity 패키지를 개발용으로 매니페스트에 추가(10.1.2 커밋 고정, 배포 전 제거 가능). 이 PC 환경 메모: 에디터 6000.3.15f1 · MCP 조작은 정션 `C:\Users\Loadcomplete\TunnelCrew` 로 열어야 함(서버가 한글 경로 상태 파일을 cp949 로 읽어 실패).
+
 **남은 작업**
 
-1. **M7 체크포인트** — 사용자가 원본과 나란히 10분 플레이: 드릴 루프/벽 파괴/사격/보스 BGM 전환 소리, AI 크루 동행감, 핑(G/V)·채팅(Enter)·제작(C) 조작감, 보스 등장·격파 연출 타이밍.
-2. **로비 BGM 원본 복원** — `assets/audio/ambience/lobby-cave.webm` 은 Unity 가 못 읽어 땅굴 던전 레이어 한 겹으로 대체 중. ffmpeg 으로 ogg 변환 후 `Resources/Audio/music` 에 넣고 `AudioDirector.BuildMusic` 의 로비 트랙만 바꾼다.
-3. **Pretendard 폰트** — 파일이 프로젝트에 없다. 도착하면 IMGUI 스타일(RunBootstrap.EnsureStyles · MetaScreens.St · TeamOverlay)에 일괄 적용.
-4. **UGUI 정식 배치** — 현재 IMGUI(1080p 배율)로 전 화면이 동작한다. 폰트와 함께 옮길지, IMGUI 로 확정할지 결정.
-5. **게임패드 리매핑 UI** — 기본 매핑만 있음(설정 화면에 키 재지정 없음).
-6. **M8 코옵** — SimCommand 큐를 네트워크 입력으로 확장, 호스트 권위·시드 동기화. 착수 시 원본 알려진 불일치(게스트 유물 미적용, 보스탄 경감 이중 적용) 재설계.
-7. 소소한 정리 — 게임 뷰 라벨(CrewView TextMesh) 크기 튠, `.gitignore` 의 캡처 png 정책, 프로젝트 이름 `2D_URP` 흔적(persistentDataPath 는 `Tunnel Crew Team/Tunnel Crew` 로 바뀌어 M5 이전 세이브 파일 위치가 달라짐 — 필요하면 마이그레이션).
+1. **M7 체크포인트** — 사용자가 원본과 나란히 10분 플레이: 드릴 루프/벽 파괴/사격/보스 BGM 전환 소리, AI 크루 동행감, 핑(G/V)·채팅(Enter)·제작(C) 조작감, 보스 등장·격파 연출 타이밍. 게임패드 리매핑은 실기 패드로 캡처 흐름 확인 필요(이 PC 에 패드 미연결).
+2. **UGUI 정식 배치** — 현재 IMGUI(1080p 배율)로 전 화면이 동작한다. IMGUI 확정 vs UGUI 이전은 사용자 결정 대기(2026-09-07 차이 설명 전달).
+3. **M8 코옵** — SimCommand 큐를 네트워크 입력으로 확장, 호스트 권위·시드 동기화. 착수 시 원본 알려진 불일치(게스트 유물 미적용, 보스탄 경감 이중 적용) 재설계. **착수 여부는 사용자 결정 대기.**
+4. 소소한 정리 — 게임 뷰 라벨(CrewView TextMesh) 크기 튠(주관 항목, 체크포인트에서 함께 판단), persistentDataPath 변경(`Tunnel Crew Team/Tunnel Crew`)에 따른 M5 이전 세이브 마이그레이션은 필요 시.
 
 
 ### M0 — 준비 (추출·골격)

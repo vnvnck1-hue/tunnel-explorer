@@ -21,6 +21,8 @@ namespace TunnelCrew.EditorTools
         const string TileDir = "Assets/Art/Tiles/purple";
         const string CharDir = "Assets/Art/Characters";
         const string MonsterDir = "Assets/Art/Monsters";
+        /// <summary>보스 레드 파이어 드래곤 — 원본 assets/red-fire-dragon/{idle,walking,fire-breath-a,death}-frames (BOSS_DRAGON_ANIMS, 480² · 10fps). MonsterSheets 에 "dragon_&lt;anim&gt;" 으로 들어간다.</summary>
+        const string DragonDir = "Assets/Art/Dragon";
         const string OutDir = "Assets/_Project/Data/Resources";
 
         [Serializable] class TileEntry { public string file; public string type; public int band, surface, damage, variant, slot; }
@@ -39,11 +41,134 @@ namespace TunnelCrew.EditorTools
             var set = BuildTileSet();
             int sheets = BuildCharacterSheets();
             int monsters = ConfigureMonsters();
+            int dragon = ConfigureFrames(DragonDir);
             BuildMonsterSheets();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log($"[M1] 아트 설정 완료 — 타일 텍스처 {tiles}, 캐릭터 시트 {chars}, " +
-                      $"타일셋 슬롯 {set.slots.Count(s => s != null)}/268, 바닥 {set.floorVariants.Count(s => s != null)}/3, 직업 시트 SO {sheets}, 몬스터 프레임 {monsters}");
+                      $"타일셋 슬롯 {set.slots.Count(s => s != null)}/268, 바닥 {set.floorVariants.Count(s => s != null)}/3, 직업 시트 SO {sheets}, 몬스터 프레임 {monsters}, 드래곤 프레임 {dragon}");
+        }
+
+        /// <summary>
+        /// 벽 타일 노멀맵 연결 (원본 wRim/wShade 대체 — 계획 §2.2 "타일 노멀맵 + Sprite-Lit").
+        /// `Tiles/purple/normals/&lt;tile&gt;_n.png`(tools 로 생성한 베벨+요철 노멀)을 각 타일 텍스처의 세컨더리 텍스처 `_NormalMap` 으로 붙인다.
+        /// 노멀 텍스처는 선형(sRGB 끔)·비압축·밉맵 끔. Light2D 는 normalMapQuality 가 켜져 있어야 읽는다(RunBootstrap).
+        /// </summary>
+        [MenuItem("Tunnel Crew/M7 · 타일 노멀맵 연결")]
+        public static void RunTileNormals()
+        {
+            int n = LinkTileNormals();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[M7] 타일 노멀맵 {n}장 연결");
+        }
+
+        [Serializable] class AtlasRect { public int x, y, w, h; }
+        [Serializable] class AtlasEntry { public string name; public AtlasRect r; }
+
+        /// <summary>
+        /// 벽 아틀라스 임포트 — tools(Pillow)가 만든 `atlas/purple_walls_atlas(.png|_n.png|.json)`.
+        /// 268 타일을 한 텍스처(54px 셀, 2px 가장자리 복제)로 묶고 같은 배치의 노멀 아틀라스를 둔다.
+        /// 왜: 임포트 세컨더리 텍스처(_NormalMap)는 URP 17 의 타일맵·스프라이트 렌더에서 조명에 반영되지 않았고(합성 노멀로 확인),
+        /// 머티리얼 레벨 _NormalMap 은 확실히 동작했다. 벽이 한 텍스처면 머티리얼 하나의 _NormalMap 으로 전 타일을 덮을 수 있다.
+        /// </summary>
+        [MenuItem("Tunnel Crew/M7 · 벽 아틀라스 + 노멀맵")]
+        public static void RunWallAtlas()
+        {
+            int n = BuildWallAtlas();
+            var set = BuildTileSet();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[M7] 벽 아틀라스 서브 스프라이트 {n} · 타일셋 슬롯 {set.slots.Count(s => s != null)}/268 · 노멀 아틀라스 {(set.wallNormalAtlas != null ? "연결" : "없음")}");
+        }
+
+        static int BuildWallAtlas()
+        {
+            string dir = $"{TileDir}/atlas";
+            string png = $"{dir}/purple_walls_atlas.png", npng = $"{dir}/purple_walls_atlas_n.png", json = $"{dir}/purple_walls_atlas.json";
+            if (!File.Exists(png) || !File.Exists(json)) return 0;
+
+            // JSON: {"cell":54,"pad":2,"cols":17,"rows":16,"width":918,"height":864,"sprites":{"name":{"x":..,"y":..,"w":50,"h":50},...}}
+            // JsonUtility 는 사전을 못 읽으므로 간단히 직접 파싱한다.
+            string text = File.ReadAllText(json);
+            int height = int.Parse(System.Text.RegularExpressions.Regex.Match(text, "\"height\":\\s*(\\d+)").Groups[1].Value);
+            var metas = new List<SpriteMetaData>();
+            foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(text, "\"([A-Za-z0-9_]+)\":\\s*\\{\\s*\"x\":\\s*(\\d+),\\s*\"y\":\\s*(\\d+),\\s*\"w\":\\s*(\\d+),\\s*\"h\":\\s*(\\d+)\\s*\\}"))
+            {
+                int x = int.Parse(m.Groups[2].Value), y = int.Parse(m.Groups[3].Value), w = int.Parse(m.Groups[4].Value), h = int.Parse(m.Groups[5].Value);
+                // 이미지 좌표(위→아래) → Unity Rect(아래→위)
+                metas.Add(new SpriteMetaData { name = m.Groups[1].Value, rect = new Rect(x, height - y - h, w, h), alignment = (int)SpriteAlignment.Center, pivot = new Vector2(.5f, .5f) });
+            }
+
+            var im = (TextureImporter)AssetImporter.GetAtPath(png);
+            im.textureType = TextureImporterType.Sprite;
+            im.spriteImportMode = SpriteImportMode.Multiple;
+            im.spritePixelsPerUnit = 50f;
+            im.filterMode = FilterMode.Bilinear;
+            im.mipmapEnabled = false;
+            im.alphaIsTransparency = true;
+            im.textureCompression = TextureImporterCompression.Uncompressed;
+            im.maxTextureSize = 2048;
+#pragma warning disable CS0618
+            im.spritesheet = metas.ToArray();
+#pragma warning restore CS0618
+            im.SaveAndReimport();
+
+            if (File.Exists(npng))
+            {
+                var nim = (TextureImporter)AssetImporter.GetAtPath(npng);
+                nim.textureType = TextureImporterType.Default;
+                nim.sRGBTexture = false;
+                nim.mipmapEnabled = false;
+                nim.filterMode = FilterMode.Bilinear;
+                nim.textureCompression = TextureImporterCompression.Uncompressed;
+                nim.maxTextureSize = 2048;
+                nim.SaveAndReimport();
+            }
+            return metas.Count;
+        }
+
+        static int LinkTileNormals()
+        {
+            string normalDir = TileDir + "/normals";
+            if (!Directory.Exists(normalDir)) return 0;
+            int n = 0;
+            foreach (string path in AssetDatabase.FindAssets("t:Texture2D", new[] { TileDir }).Select(AssetDatabase.GUIDToAssetPath))
+            {
+                if (path.Contains("/normals/") || path.Contains("/overlays/") || path.EndsWith("_floor_sheet_150x50.png", StringComparison.Ordinal)) continue;
+                string nPath = $"{normalDir}/{Path.GetFileNameWithoutExtension(path)}_n.png";
+                if (!File.Exists(nPath)) continue;
+                var nim = (TextureImporter)AssetImporter.GetAtPath(nPath);
+                if (nim != null && (nim.sRGBTexture || nim.textureType != TextureImporterType.Default || nim.mipmapEnabled || nim.textureCompression != TextureImporterCompression.Uncompressed))
+                {
+                    nim.textureType = TextureImporterType.Default;
+                    nim.sRGBTexture = false;
+                    nim.mipmapEnabled = false;
+                    nim.filterMode = FilterMode.Bilinear;
+                    nim.textureCompression = TextureImporterCompression.Uncompressed;
+                    nim.SaveAndReimport();
+                }
+                var ntex = AssetDatabase.LoadAssetAtPath<Texture2D>(nPath);
+                var im = (TextureImporter)AssetImporter.GetAtPath(path);
+                if (im == null || ntex == null) continue;
+                var cur = im.secondarySpriteTextures;
+                if (cur != null && cur.Length == 1 && cur[0].name == "_NormalMap" && cur[0].texture == ntex) { n++; continue; }
+                im.secondarySpriteTextures = new[] { new SecondarySpriteTexture { name = "_NormalMap", texture = ntex } };
+                im.SaveAndReimport();
+                n++;
+            }
+            return n;
+        }
+
+        /// <summary>드래곤 프레임만 다시 임포트하고 MonsterSheets 를 갱신한다 (타일·캐릭터는 건드리지 않는다).</summary>
+        [MenuItem("Tunnel Crew/M7 · 보스 드래곤 시트 생성")]
+        public static void RunDragon()
+        {
+            int dragon = ConfigureFrames(DragonDir);
+            BuildMonsterSheets();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[M7] 드래곤 프레임 {dragon} 임포트 · MonsterSheets 갱신");
         }
 
         // ───────────────────────────── 타일: 1장 = 1 스프라이트, PPU 50
@@ -159,11 +284,12 @@ namespace TunnelCrew.EditorTools
 
         // ───────────────────────────── 몬스터: 256x256 단일 프레임 16장 × 3종
         // 실제 화면 크기는 EnemyView 가 반지름(e.r*3.15)에 맞춰 스케일하므로 PPU 는 기준값만 준다.
-        static int ConfigureMonsters()
+        static int ConfigureMonsters() => ConfigureFrames(MonsterDir);
+        static int ConfigureFrames(string dir)
         {
-            if (!Directory.Exists(MonsterDir)) return 0;
+            if (!Directory.Exists(dir)) return 0;
             int n = 0;
-            foreach (string path in AssetDatabase.FindAssets("t:Texture2D", new[] { MonsterDir })
+            foreach (string path in AssetDatabase.FindAssets("t:Texture2D", new[] { dir })
                                                  .Select(AssetDatabase.GUIDToAssetPath))
             {
                 var im = (TextureImporter)AssetImporter.GetAtPath(path);
@@ -193,9 +319,10 @@ namespace TunnelCrew.EditorTools
                 AssetDatabase.CreateAsset(so, assetPath);
             }
             var kinds = new List<MonsterSheetAsset.Kind>();
-            foreach (string dir in Directory.GetDirectories(MonsterDir))
+            var dirs = Directory.GetDirectories(MonsterDir).Select(d => (d, id: Path.GetFileName(d))).ToList();
+            if (Directory.Exists(DragonDir)) dirs.AddRange(Directory.GetDirectories(DragonDir).Select(d => (d, id: "dragon_" + Path.GetFileName(d))));
+            foreach (var (dir, id) in dirs)
             {
-                string id = Path.GetFileName(dir);
                 var frames = Directory.GetFiles(dir, "frame_*.png")
                     .OrderBy(f => f, StringComparer.Ordinal)
                     .Select(f => AssetDatabase.LoadAssetAtPath<Sprite>(f.Replace('\\', '/')))
@@ -257,10 +384,19 @@ namespace TunnelCrew.EditorTools
             }
             set.slots = new Sprite[268];
 
+            // 벽 아틀라스가 있으면 아틀라스 서브 스프라이트를 우선 — 벽 전체가 한 텍스처가 되어 Chunk 배칭 + 머티리얼 레벨 노멀맵이 가능하다
+            var atlasSprites = new Dictionary<string, Sprite>();
+            string atlasPath = $"{TileDir}/atlas/purple_walls_atlas.png";
+            if (File.Exists(atlasPath))
+                foreach (var s in AssetDatabase.LoadAllAssetsAtPath(atlasPath).OfType<Sprite>()) atlasSprites[s.name] = s;
+            set.wallNormalAtlas = AssetDatabase.LoadAssetAtPath<Texture2D>($"{TileDir}/atlas/purple_walls_atlas_n.png");
+
             foreach (var t in index.tiles)
             {
                 if (t.slot < 0 || t.slot >= 268) continue;
-                var sp = AssetDatabase.LoadAssetAtPath<Sprite>($"{TileDir}/{t.file}");
+                Sprite sp;
+                if (!atlasSprites.TryGetValue(Path.GetFileNameWithoutExtension(t.file), out sp) || sp == null)
+                    sp = AssetDatabase.LoadAssetAtPath<Sprite>($"{TileDir}/{t.file}");
                 if (sp != null) set.slots[t.slot] = sp;
             }
 

@@ -67,6 +67,34 @@ namespace TunnelCrew.Presentation
             _fForceRebuild?.SetValue(caster, true);
         }
 
+        /// <summary>
+        /// 캐릭터(플레이어·AI 크루) 발밑 그림자 캐스터 — 벽과 같은 Light2D 그림자를 받는다.
+        /// 발 위치(부모 원점)에 납작한 12각형을 두고 광원마다 그림자를 드리운다. 자기 그림자는 끄고
+        /// (몸통이 자기 발 그림자에 어두워지지 않게), 벽과 달리 매 프레임 부모를 따라 움직인다.
+        /// 리플렉션이 안 서면 null 을 돌려주고 조용히 빠진다.
+        /// </summary>
+        public static ShadowCaster2D AttachActorCaster(Transform parent, float radius, float squashY = .5f)
+        {
+            if (!Available) return null;
+            var go = new GameObject("FootShadow");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = Vector3.zero;
+            var caster = go.AddComponent<ShadowCaster2D>();
+            // selfShadows 는 반드시 끈다. 켜면 캐스터 다각형 안쪽이 그대로 어두워져 발밑에 "아래로 향한 고정 마름모"가 항상 찍힌다
+            // (광원 방향과 무관, 사용자 2회 지적). 끄면 다각형 가장자리에서 광원 반대편으로 뻗는 그림자만 남는다.
+            caster.selfShadows = false;
+            caster.castsShadows = true;
+            const int N = 12;
+            var path = new Vector3[N];
+            for (int i = 0; i < N; i++)
+            {
+                float a = i / (float)N * Mathf.PI * 2f;
+                path[i] = new Vector3(Mathf.Cos(a) * radius, Mathf.Sin(a) * radius * squashY, 0f);
+            }
+            ApplyShape(caster, path);
+            return caster;
+        }
+
         // ───────────────────────────── 상태
         WorldGrid _world;
         Transform _root;
@@ -79,6 +107,12 @@ namespace TunnelCrew.Presentation
 
         public void Bind(WorldGrid world)
         {
+            // 층이 바뀌면 이전 층의 캐스터를 전부 지운다. 이걸 빼먹으면 옛 층의 벽 사각형이 남아
+            // 새 층의 바닥 위에서 빛을 가린다 — "빛이 타일 경계에서 직선으로 잘리는" 버그(2026-09-07, 지층 3 에서 3겹 확인).
+            if (_root != null) { Destroy(_root.gameObject); _root = null; }
+            _dirty.Clear(); _dirtySet.Clear();
+            if (_world != null) { _world.TileBroken -= OnTileBroken; _world.TileChanged -= OnTileChangedFwd; }
+
             _world = world;
             _chunksX = Mathf.CeilToInt(world.Cols / (float)ChunkSize);
             _chunksY = Mathf.CeilToInt(world.Rows / (float)ChunkSize);
@@ -95,8 +129,9 @@ namespace TunnelCrew.Presentation
             for (int i = 0; i < _chunks.Length; i++) RebuildChunk(i);
             _world.TileBroken += OnTileBroken;
             // 보스 장갑·소환 벽·뭉개기 — 파괴 이벤트가 아니어도 그림자는 다시 만든다
-            _world.TileChanged += k => OnTileBroken(new TileBrokenEvent { Col = k % _world.Cols, Row = k / _world.Cols });
+            _world.TileChanged += OnTileChangedFwd;
         }
+        void OnTileChangedFwd(int k) => OnTileBroken(new TileBrokenEvent { Col = k % _world.Cols, Row = k / _world.Cols });
 
         void OnTileBroken(TileBrokenEvent e)
         {
@@ -205,7 +240,9 @@ namespace TunnelCrew.Presentation
             go.transform.position = new Vector3(cxw, cyw, 0f);
 
             var caster = go.AddComponent<ShadowCaster2D>();
-            caster.selfShadows = true;
+            // selfShadows 를 켜면 벽 타일 자체가 자기 그림자에 잠겨 빛이 타일 앞면에 닿기 전에 잘린다(타일 경계의 검은 직선).
+            // 원본은 광원 쪽 벽면이 밝다(wRim) — 벽면은 빛을 받고, 그림자는 벽 너머 바닥에만 떨어지게 한다.
+            caster.selfShadows = false;
             caster.castsShadows = true;
 
             ApplyShape(caster, new[]

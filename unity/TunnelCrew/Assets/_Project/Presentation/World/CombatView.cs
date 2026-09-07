@@ -254,6 +254,7 @@ namespace TunnelCrew.Presentation
             t.SzMul = 1 + hfx * .95f; t.PopMul = 1 + hfx * .75f;
             t.Col = Color.Lerp(big ? colB0 : col0, big ? hotB : hot, hfx);
             t.Mesh.text = t.Shadow.text = Mathf.RoundToInt((float)value).ToString();
+            SetFont(t, Fonts.Damage);   // 피해 숫자 — ARCO (원본 @font-face 'ARCO')
             t.Mesh.fontStyle = t.Shadow.fontStyle = FontStyle.Bold;
             _texts.Add(t);
             if (_texts.Count > 44) { var old = _texts[0]; old.Go.SetActive(false); _textPool.Push(old); _texts.RemoveAt(0); }
@@ -269,8 +270,33 @@ namespace TunnelCrew.Presentation
             t.SzMul = sizePx / DmgBase; t.PopMul = 1;
             t.Col = color;
             t.Mesh.text = t.Shadow.text = text;
+            // 숫자만 있는 팝업(피격 -N · 재화 +N · 크루 +N)도 피해 숫자와 같은 ARCO. 한글·문장 라벨은 Pretendard(ARCO 에 한글 없음)
+            SetFont(t, IsNumeric(text) ? Fonts.Damage : Fonts.UIBold);
             t.Mesh.fontStyle = t.Shadow.fontStyle = FontStyle.Bold;
             _texts.Add(t);
+        }
+
+        /// <summary>"+12" · "-5" · "37" · "x2" 처럼 숫자·부호·x·%·소수점만으로 된 문자열인가.</summary>
+        static bool IsNumeric(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return false;
+            bool digit = false;
+            foreach (char c in s)
+            {
+                if (char.IsDigit(c)) { digit = true; continue; }
+                if (c == '+' || c == '-' || c == '.' || c == 'x' || c == '×' || c == '%' || c == ' ') continue;
+                return false;
+            }
+            return digit;
+        }
+
+        /// <summary>TextMesh 는 폰트를 바꾸면 머티리얼도 그 폰트 아틀라스로 바꿔야 글자가 나온다. 풀에서 재사용하므로 매번 맞춘다.</summary>
+        static void SetFont(DamageText t, Font f)
+        {
+            if (f == null || t.Mesh.font == f) return;
+            t.Mesh.font = f; t.Shadow.font = f;
+            t.Mesh.GetComponent<MeshRenderer>().sharedMaterial = f.material;
+            t.Shadow.GetComponent<MeshRenderer>().sharedMaterial = f.material;
         }
 
         DamageText Rent()

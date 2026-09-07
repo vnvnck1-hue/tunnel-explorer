@@ -99,6 +99,7 @@ namespace TunnelCrew.Presentation
         void OnGUI()
         {
             if (!Active || _boss == null) return;
+            Fonts.ApplySkin();
             float H = Screen.height, W = Screen.width, k = H / 1080f;
             if (_tier == null)
             {

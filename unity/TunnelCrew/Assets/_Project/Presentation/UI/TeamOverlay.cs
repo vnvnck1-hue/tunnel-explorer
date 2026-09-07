@@ -42,7 +42,7 @@ namespace TunnelCrew.Presentation
         {
             _sim = sim; _cam = cam; _active = active;
             _white = Texture2D.whiteTexture;
-            _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _font = Fonts.UIBold;   // Pretendard (원본 CSS 와 동일)
             foreach (var t in Resources.LoadAll<Texture2D>("UI/crafting")) _tex[t.name] = t;
             _craftView = new GameObject("CraftObjects").AddComponent<CraftView>();
             _craftView.transform.SetParent(transform, false);
@@ -207,6 +207,7 @@ namespace TunnelCrew.Presentation
         void OnGUI()
         {
             if (_sim == null || _sim.World == null || !_active()) return;
+            Fonts.ApplySkin();
             _k = Screen.height / 1080f;
             EnsureStyles(); EnsureShapes();
             DrawPingMarkers(); DrawPingLog(); DrawPingWheel();

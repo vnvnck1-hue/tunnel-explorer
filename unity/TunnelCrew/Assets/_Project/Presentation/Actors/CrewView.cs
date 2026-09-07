@@ -31,7 +31,7 @@ namespace TunnelCrew.Presentation
         {
             _sheets.Clear(); foreach (var kv in sheets) _sheets[kv.Key] = kv.Value;
             _dot = ProcSprites.Circle(24, .7f); _square = ProcSprites.Square(); _ring = ProcSprites.Ring(64, .11f);
-            _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _font = Fonts.UIBold;   // Pretendard (원본 CSS 와 동일)
         }
 
         public void Render(AiCrewSystem crew, float dt)
@@ -56,11 +56,13 @@ namespace TunnelCrew.Presentation
             if (_sheets.TryGetValue(m.Role, out var sheet) || _sheets.TryGetValue(RoleId.Driller, out sheet))
                 foreach (var d in sheet.directions) if (d.walk != null && d.walk.Length > 0) view.SetWalkFrames(d.direction, d.walk);
             var it = new Item { Go = go, View = view };
-            it.Label = MakeText(go.transform, 1.62f, 0.24f, 44);
-            it.State = MakeText(go.transform, 1.98f, 0.20f, 36);
-            it.HpBg = MakeSprite(go.transform, _square, new Color(0, 0, 0, .55f), 1.42f, .68f, .08f, 45);
-            it.HpBar = MakeSprite(go.transform, _square, RoleCol[2], 1.42f, .68f, .08f, 46);
-            it.Shield = MakeSprite(go.transform, _ring, new Color(.5f, .92f, .82f, .6f), 0f, 1.35f, 1.35f, 31);
+            // 부모(PlayerView)가 발을 시뮬 위치보다 FootDrop 만큼 아래에 두므로, 자식들은 그만큼 올려 몸 중심 기준 오프셋을 유지한다
+            const float fd = PlayerView.FootDrop;
+            it.Label = MakeText(go.transform, 1.62f + fd, 0.24f, 44);
+            it.State = MakeText(go.transform, 1.98f + fd, 0.20f, 36);
+            it.HpBg = MakeSprite(go.transform, _square, new Color(0, 0, 0, .55f), 1.42f + fd, .68f, .08f, 45);
+            it.HpBar = MakeSprite(go.transform, _square, RoleCol[2], 1.42f + fd, .68f, .08f, 46);
+            it.Shield = MakeSprite(go.transform, _ring, new Color(.5f, .92f, .82f, .6f), fd, 1.35f, 1.35f, 31);
             return it;
         }
         TextMesh MakeText(Transform parent, float y, float size, int order)
@@ -88,7 +90,7 @@ namespace TunnelCrew.Presentation
             it.State.color = m.Down ? new Color(1f, .55f, .66f) : new Color(.9f, .84f, 1f, .78f);
             float hp = Mathf.Clamp01((float)(m.Hp / m.HpMax));
             it.HpBar.transform.localScale = new Vector3(.68f * hp, .08f, 1);
-            it.HpBar.transform.localPosition = new Vector3(-.34f * (1 - hp), 1.42f, 0);
+            it.HpBar.transform.localPosition = new Vector3(-.34f * (1 - hp), 1.42f + PlayerView.FootDrop, 0);
             it.HpBar.color = m.Down ? new Color(1f, .33f, .49f) : hp > .5f ? new Color(.5f, .92f, .82f) : hp > .25f ? new Color(1f, .83f, .43f) : new Color(1f, .55f, .66f);
             it.Shield.enabled = m.ShieldT > 0;
             if (it.Shield.enabled) it.Shield.color = new Color(.5f, .92f, .82f, .5f + .3f * Mathf.Sin(Time.time * 9f));

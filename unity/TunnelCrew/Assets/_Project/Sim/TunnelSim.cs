@@ -295,6 +295,17 @@ namespace TunnelCrew.Sim
         /// <summary>휴식 화면에서 전설을 골랐는가 — 하강/귀환 조건.</summary>
         public bool RestChosen => Phase == GamePhase.Rest && !Traits.HasOffer && !_legendPending;
 
+        /// <summary>런 도중 직업 교체 — 원본 infSwitchRoleMidRun (관전 Esc 교대). 직업 배율·무기만 바꾸고 특성·XP·층은 유지. 새 무기는 탄창을 채워 시작.</summary>
+        public bool SwitchRoleMidRun(RoleId role)
+        {
+            if (Phase != GamePhase.Playing) return false;
+            Build.ApplyRole(role);
+            Build.Ammo = Build.MagSize; Build.ReloadLeft = 0;
+            Player.DrillHeat = 0; Player.DrillHeatLock = 0; Player.IsDigging = false;
+            Los?.MarkDirty();
+            return true;
+        }
+
         /// <summary>카드 선택 (레벨업·전설 공통). 1/2/3.</summary>
         public bool PickTrait(int index) => Traits.Pick(index, TraitCtx);
         public bool RerollTraits() => Traits.Reroll(TraitCtx, Xp.Level);
