@@ -19,6 +19,15 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>바닥 매크로 변형 주기(셀). §8.5 의 2×2·3×3·4×4 반복 끊기.</summary>
         public int FloorMacroCells;
 
+        /// <summary>
+        /// 벽 상단·정면 변형의 구역 크기(셀). 인계서 §4-3 —
+        /// "벽 상단 A–F는 구역별 매크로 변형으로 배치해 한 화면에서 모든 패턴을
+        /// 균등 반복하지 않는다". 셀별 해시로 뽑으면 6종이 화면 전체에 고르게 흩어져
+        /// 특정 패턴이 구역을 이루지 못한다.
+        /// 바닥보다 작게 두어 벽이 통째로 한 변형이 되는 것을 막는다.
+        /// </summary>
+        public int WallMacroCells;
+
         /// <summary>모듈 변형 수. 0 이면 그 표면의 모듈 번호는 항상 0 이다.</summary>
         public byte FloorVariants;
         public byte TopVariants;
@@ -33,6 +42,7 @@ namespace TunnelCrew.Presentation.Visual
         {
             WallLiftCells = 1.0f,
             FloorMacroCells = 4,
+            WallMacroCells = 3,
             FloorVariants = 6,
             TopVariants = 6,
             FrontVariants = 6,

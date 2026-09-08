@@ -81,6 +81,12 @@ namespace TunnelCrew.EditorTools.ArtPipeline
         public string EmissionMode;
 
         /// <summary>
+        /// 선형 자산의 연결 포트(인계서 §3). 레일·배관이 이어지는 변과 위치다.
+        /// 고정 방에는 필요 없고 절차 맵 배치에서 쓴다 — 지금은 계약 검증만 한다.
+        /// </summary>
+        public readonly List<ConnectionPort> ConnectionPorts = new List<ConnectionPort>();
+
+        /// <summary>
         /// 이 자산에 오류가 있어 임포트에서 제외되는가. 나머지 자산은 그대로 임포트한다 —
         /// 소품 하나가 깨졌다고 패키지 전체를 막으면 검증이 진행되지 않는다.
         /// </summary>
@@ -94,6 +100,19 @@ namespace TunnelCrew.EditorTools.ArtPipeline
 
         /// <summary>Albedo 캔버스 크기. 다른 채널은 이것과 같아야 한다.</summary>
         public int Width, Height;
+    }
+
+    /// <summary>선형 자산의 연결 포트 하나(인계서 §3 <c>connectionPorts</c>).</summary>
+    public struct ConnectionPort
+    {
+        /// <summary>north · south · east · west.</summary>
+        public string Edge;
+        /// <summary>캔버스 픽셀 좌표(좌상단 원점).</summary>
+        public int X, Y;
+        /// <summary>연결 종류. 같은 종류끼리만 이어진다(예: rail_pair).</summary>
+        public string Type;
+
+        public override string ToString() => $"{Edge}[{X},{Y}]:{Type}";
     }
 
     /// <summary>패키지 전체 검사 결과.</summary>
@@ -254,6 +273,15 @@ namespace TunnelCrew.EditorTools.ArtPipeline
     /// </summary>
     public static class ApprovedArtValidator
     {
+        /// <summary>
+        /// <c>pivotNormalized</c> 와 <c>pivotPixels</c> 가 같다고 볼 허용 오차.
+        /// 128px 셀에서 1/8 픽셀 — 아트가 소수 다섯째 자리에서 반올림해 적어도 통과한다.
+        /// </summary>
+        public const float PivotAgreement = 1f / 1024f;
+
+        /// <summary>연결 포트가 캔버스 변에 있다고 볼 허용 오차(픽셀).</summary>
+        public const int PortEdgeSlack = 2;
+
         /// <summary>저장소 루트 기준 패키지 경로.</summary>
         public const string DefaultPackageRoot = "art-production/test-room-v01";
 
@@ -337,6 +365,81 @@ namespace TunnelCrew.EditorTools.ArtPipeline
         /// 소켓 픽셀은 <c>pivotPixels</c> 와 같은 좌표계(좌상단 원점, Y 아래로 증가)라
         /// 피벗을 먼저 확정한 뒤에 불러야 한다.
         /// </summary>
+        /// <summary>
+        /// <c>connectionPorts</c> 를 읽고 계약을 확인한다(인계서 §3).
+        ///
+        /// 런타임에서 아직 쓰지 않지만 <b>지금 검증해 두는 것</b>이 맞다 — 절차 맵 배치에서
+        /// 쓰기 시작할 때 값이 틀려 있으면 레일이 어긋나고, 그때는 원인이 아트인지
+        /// 배치 코드인지 가리기 어렵다.
+        ///
+        /// 확인 항목: 변 이름이 네 방향 중 하나인가 · 좌표가 그 변에 실제로 붙어 있는가 ·
+        /// 종류 문자열이 있는가.
+        /// </summary>
+        static void ParseConnectionPorts(Dictionary<string, object> map, ApprovedAsset asset,
+            ArtValidationReport report)
+        {
+            if (!map.TryGetValue("connectionPorts", out var raw)) return;
+            var list = MiniJson.AsList(raw);
+            if (list == null || list.Count == 0) return;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var entry = MiniJson.AsMap(list[i]);
+                if (entry == null)
+                {
+                    report.Add(ArtIssueLevel.Warning, asset.AssetId, null,
+                        $"connectionPorts[{i}] 가 객체가 아니다");
+                    continue;
+                }
+
+                string edge = MiniJson.GetString(entry, "edge");
+                string type = MiniJson.GetString(entry, "type");
+                bool havePixel = MiniJson.TryGetInt2(entry, "pixel", out int px, out int py);
+
+                if (!IsKnownEdge(edge))
+                {
+                    report.Add(ArtIssueLevel.Warning, asset.AssetId, null,
+                        $"connectionPorts[{i}].edge '{edge}' 를 모른다 — north/south/east/west 만 쓴다");
+                    continue;
+                }
+                if (!havePixel)
+                {
+                    report.Add(ArtIssueLevel.Warning, asset.AssetId, null,
+                        $"connectionPorts[{i}] 에 pixel 이 없다");
+                    continue;
+                }
+                if (string.IsNullOrEmpty(type))
+                    report.Add(ArtIssueLevel.Warning, asset.AssetId, null,
+                        $"connectionPorts[{i}] 에 type 이 없다 — 같은 종류끼리만 이어야 한다");
+
+                if (asset.Width > 0 && asset.Height > 0 && !PortSitsOnEdge(edge, px, py, asset.Width, asset.Height))
+                    report.Add(ArtIssueLevel.Warning, asset.AssetId, null,
+                        $"connectionPorts[{i}] '{edge}' 인데 좌표 [{px},{py}] 가 그 변에 붙어 있지 않다 " +
+                        $"(캔버스 {asset.Width}×{asset.Height}) — 이어붙일 때 어긋난다");
+
+                asset.ConnectionPorts.Add(new ConnectionPort { Edge = edge, X = px, Y = py, Type = type });
+            }
+        }
+
+        public static bool IsKnownEdge(string edge)
+            => edge == "north" || edge == "south" || edge == "east" || edge == "west";
+
+        /// <summary>
+        /// 좌표가 그 변에 붙어 있는가. 피벗과 같은 좌상단 원점·Y 아래로 증가 좌표계다.
+        /// 그래서 north 는 y=0, south 는 y=height 쪽이다.
+        /// </summary>
+        public static bool PortSitsOnEdge(string edge, int x, int y, int w, int h)
+        {
+            switch (edge)
+            {
+                case "north": return y <= PortEdgeSlack;
+                case "south": return y >= h - PortEdgeSlack;
+                case "west": return x <= PortEdgeSlack;
+                case "east": return x >= w - PortEdgeSlack;
+                default: return true;
+            }
+        }
+
         static void ParseLightSockets(Dictionary<string, object> map, ApprovedAsset asset,
             ArtValidationReport report)
         {
@@ -692,6 +795,27 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             ParseLightSockets(map, asset, report);
 
             asset.ReplacementAssetId = MiniJson.GetString(map, "replacementAssetId");
+
+            // ── 피벗 교차 확인 (인계서 §2)
+            //
+            // 인계서는 "manifest 의 pivotNormalized 를 사용하고 pivotPixels 와 대조한다" 고
+            // 정했다. 둘이 어긋나면 발점이 밀려 정렬(§6.5)과 접촉 AO(§7.4)가 전부 틀어지는데
+            // 화면에서는 "조금 이상한데" 로만 보인다. 그래서 숫자로 잡는다.
+            // 임포트에는 pivotPixels 를 쓴다 — 정수라 반올림 오차가 없다.
+            if (havePivot && asset.Width > 0 && asset.Height > 0 &&
+                MiniJson.TryGetFloat2(map, "pivotNormalized", out float pnU, out float pnV))
+            {
+                ApprovedArtContract.PivotToUnity(asset.PivotX, asset.PivotY,
+                    asset.Width, asset.Height, out float wantU, out float wantV);
+                if (Mathf.Abs(pnU - wantU) > PivotAgreement || Mathf.Abs(pnV - wantV) > PivotAgreement)
+                    report.Add(ArtIssueLevel.Error, assetId, null,
+                        $"pivotNormalized ({pnU:0.#####}, {pnV:0.#####}) 가 " +
+                        $"pivotPixels [{asset.PivotX}, {asset.PivotY}] → ({wantU:0.#####}, {wantV:0.#####}) 와 다르다 " +
+                        "— 두 값 중 어느 쪽이 맞는지 아트 트랙이 확정해야 한다");
+            }
+
+            // ── 연결 포트 (인계서 §3)
+            ParseConnectionPorts(map, asset, report);
 
             // ── 그림자 캐스터 윤곽
             //

@@ -127,9 +127,13 @@ namespace TunnelCrew.Presentation.Visual
             if (n && w && !nw) s.Corners |= CornerMask.InnerNW;
             if (n && e && !ne) s.Corners |= CornerMask.InnerNE;
 
-            uint h = Hash(c, r, rules.Salt);
+            // 벽 상단·정면도 구역 단위로 뽑는다(인계서 §4-3). 셀별 해시로 뽑으면
+            // 변형 6종이 화면 전체에 고르게 흩어져 매크로 패턴이 생기지 않는다.
+            // 상단과 정면은 서로 다른 소금을 써서 같은 구역에서 같은 인덱스가 겹치지 않게 한다.
+            uint h = MacroHash(c, r, rules.WallMacroCells, rules.Salt);
             s.TopModule = Pick(rules.TopVariants, h, seed);
-            s.FrontModule = Pick(rules.FrontVariants, h ^ 0x9E3779B9u, seed);
+            s.FrontModule = Pick(rules.FrontVariants,
+                MacroHash(c, r, rules.WallMacroCells, rules.Salt ^ 0x5F35) ^ 0x9E3779B9u, seed);
             s.CornerModule = Pick(rules.CornerVariants, h ^ 0x85EBCA6Bu, seed);
             return s;
         }

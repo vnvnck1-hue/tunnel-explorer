@@ -25,6 +25,15 @@ namespace TunnelCrew.EditorTools.ArtPipeline
         public TextureImporterCompression Compression;
         public int PixelsPerUnit;
 
+        /// <summary>
+        /// 스프라이트 메시 종류. 인계서 §2 — "스프라이트 메시: Full Rect.
+        /// 알파 트리밍으로 피벗·채널 정렬을 바꾸지 않는다".
+        ///
+        /// Unity 기본값은 <c>Tight</c> 라서 알파를 따라 메시를 깎는다. 그러면 채널 맵과
+        /// 알베도의 UV 범위가 어긋날 수 있고, 아틀라스 조각의 여백 계산도 달라진다.
+        /// </summary>
+        public SpriteMeshType MeshType;
+
         /// <summary>스프라이트로 임포트되는 채널인가. Albedo 만 참이다.</summary>
         public bool IsSprite => TextureType == TextureImporterType.Sprite;
 
@@ -43,6 +52,7 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                 Filter = FilterMode.Bilinear,
                 Compression = TextureImporterCompression.Uncompressed,
                 PixelsPerUnit = ApprovedArtContract.DeliveryPixelsPerCell,
+                MeshType = SpriteMeshType.FullRect,
             };
 
             switch (channel)
@@ -84,6 +94,15 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             ti.spritePixelsPerUnit = PixelsPerUnit;
             if (TextureType == TextureImporterType.NormalMap)
                 ti.convertToNormalmap = false;   // 이미 탄젠트 공간 노멀이다
+
+            if (IsSprite)
+            {
+                // 메시 종류는 TextureImporter 프로퍼티가 아니라 설정 구조체에만 있다.
+                var settings = new TextureImporterSettings();
+                ti.ReadTextureSettings(settings);
+                settings.spriteMeshType = MeshType;
+                ti.SetTextureSettings(settings);
+            }
         }
 
         /// <summary>
@@ -116,6 +135,13 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             }
             if (TextureType == TextureImporterType.NormalMap)
                 Diff("convertToNormalmap", false, ti.convertToNormalmap);
+
+            if (IsSprite)
+            {
+                var settings = new TextureImporterSettings();
+                ti.ReadTextureSettings(settings);
+                Diff("spriteMeshType", MeshType, settings.spriteMeshType);
+            }
 
             return sb.Length == 0 ? null : sb.ToString();
         }

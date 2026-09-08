@@ -89,10 +89,17 @@ foreach ($asset in $manifest.assets) {
         }
     }
 
+    # 정규화 피벗을 픽셀로 되돌린 값이 정수여야 한다.
+    #
+    # 부동소수 오차를 허용해야 한다. TR01-HERO-DRILL-A 는 pivotNormalized[1] 이
+    # 0.020833333333333332 이고 높이가 384 라서 곱이 7.999999999999999 가 된다.
+    # -ne 로 직접 비교하면 데이터가 정확한데도 실패한다(실제로 그렇게 실패했다).
+    $pivotEpsilon = 0.001
     $pivotX = $asset.pivotNormalized[0] * $asset.dimensionsPixels[0]
     $pivotY = $asset.pivotNormalized[1] * $asset.dimensionsPixels[1]
-    if ($pivotX -ne [Math]::Round($pivotX) -or $pivotY -ne [Math]::Round($pivotY)) {
-        $errors.Add("$($asset.assetId): pivot is not on integer pixels")
+    if ([Math]::Abs($pivotX - [Math]::Round($pivotX)) -gt $pivotEpsilon -or
+        [Math]::Abs($pivotY - [Math]::Round($pivotY)) -gt $pivotEpsilon) {
+        $errors.Add("$($asset.assetId): pivot is not on integer pixels ($pivotX, $pivotY)")
     }
     if (-not $asset.pivotPixels -or $asset.pivotPixels.Count -ne 2) {
         $errors.Add("$($asset.assetId): missing pivotPixels [x,y] in image-top-left coordinates")
@@ -103,9 +110,13 @@ foreach ($asset in $manifest.assets) {
         if ($explicitX -ne [Math]::Round($explicitX) -or $explicitY -ne [Math]::Round($explicitY)) {
             $errors.Add("$($asset.assetId): pivotPixels must use integer coordinates")
         }
+        # pivotNormalized 는 하단 원점, pivotPixels 는 좌상단 원점이라
+        # Y 를 뒤집어 비교한다. 여기도 부동소수 오차를 허용해야 한다 —
+        # 드릴은 기대값이 376.000000000000000512 로 나와 376 과 -ne 였다.
         $expectedX = $pivotX
         $expectedY = $asset.dimensionsPixels[1] - $pivotY
-        if ($explicitX -ne $expectedX -or $explicitY -ne $expectedY) {
+        if ([Math]::Abs($explicitX - $expectedX) -gt $pivotEpsilon -or
+            [Math]::Abs($explicitY - $expectedY) -gt $pivotEpsilon) {
             $errors.Add("$($asset.assetId): pivotPixels [$explicitX,$explicitY] disagrees with pivotNormalized; expected [$expectedX,$expectedY]")
         }
     }

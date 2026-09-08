@@ -13,6 +13,9 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("바닥 매크로 변형 주기(셀). §8.5 의 2×2·3×3·4×4 반복 끊기.")]
         [Range(1, 8)] public int floorMacroCells = 4;
 
+        [Tooltip("벽 상단·정면 변형의 구역 크기(셀). 인계서 §4-3 의 매크로 변형 배치.")]
+        [Range(1, 8)] public int wallMacroCells = 3;
+
         [Header("모듈 변형 수 (§8.4)")]
         [Tooltip("바닥 큰 면 기본 종수. 최소 6.")]
         [Range(0, 32)] public int floorVariants = 6;
@@ -30,6 +33,7 @@ namespace TunnelCrew.Presentation.Visual
         {
             WallLiftCells = 1f,   // 프로파일이 덮어쓴다 — WorldVisualProfile.BuildSurfaceRules()
             FloorMacroCells = Mathf.Max(1, floorMacroCells),
+            WallMacroCells = Mathf.Max(1, wallMacroCells),
             FloorVariants = (byte)Mathf.Clamp(floorVariants, 0, 255),
             TopVariants = (byte)Mathf.Clamp(topVariants, 0, 255),
             FrontVariants = (byte)Mathf.Clamp(frontVariants, 0, 255),

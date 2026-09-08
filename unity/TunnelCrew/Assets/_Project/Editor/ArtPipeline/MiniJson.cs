@@ -202,6 +202,19 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             return true;
         }
 
+        /// <summary>실수 2개 배열을 읽는다(pivotNormalized).</summary>
+        public static bool TryGetFloat2(Dictionary<string, object> map, string key, out float a, out float b)
+        {
+            a = b = 0f;
+            if (map == null || !map.TryGetValue(key, out var v)) return false;
+            var list = AsList(v);
+            if (list == null || list.Count < 2) return false;
+            if (!(list[0] is double x) || !(list[1] is double y)) return false;
+            a = (float)x;
+            b = (float)y;
+            return true;
+        }
+
         /// <summary>불리언을 읽는다(foregroundOccluder). 값이 없으면 <paramref name="fallback"/>.</summary>
         public static bool GetBool(Dictionary<string, object> map, string key, bool fallback = false)
             => map != null && map.TryGetValue(key, out var v) && v is bool b ? b : fallback;
