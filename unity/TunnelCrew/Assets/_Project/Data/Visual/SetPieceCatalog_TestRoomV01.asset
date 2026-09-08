@@ -25,14 +25,16 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -2.5
+    - -2.1640625
     - 0
-    - 2.5
-    - 0
-    - 2.5
-    - 1
-    - -2.5
-    - 1
+    - 2.3203125
+    - 0.03125
+    - 2.21875
+    - 0.9375
+    - -2.21875
+    - 0.9375
+    - -2.34375
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-DEC-BARREL-A
     sprite: {fileID: 21300000, guid: f0a328731499df140a2e14a9ab3904ab, type: 3}
@@ -45,7 +47,31 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.0234375
+    - 0
+    - 0.85
+    - 0.2109375
+    - 0.421875
+    - 0.3046875
+    - 0.4296875
+    - 0.484375
+    - 0.6171875
+    - 0.5703125
+    - 0.4375
+    - 0.6640625
+    - 0.4375
+    - 0.7578125
+    - 0.85
+    - 0.84375
+    - 0.85
+    - 0.9375
+    - -0.4140625
+    - 0.9375
+    - -0.46875
+    - 0.6640625
+    - -0.3359375
+    - 0.2109375
     replacementAssetId: 
   - assetId: TR01-DEC-BEAMS-A
     sprite: {fileID: 21300000, guid: 2356ebb2e17b6874ea3f0958a9e0fc0f, type: 3}
@@ -58,7 +84,27 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.5546875
+    - 0
+    - 0.6484375
+    - 0.03125
+    - 0.7890625
+    - 0.390625
+    - 0.59375
+    - 0.7578125
+    - 0.71875
+    - 0.9375
+    - -0.5390625
+    - 0.9375
+    - -0.4375
+    - 0.7578125
+    - -0.7578125
+    - 0.484375
+    - -0.8125
+    - 0.1171875
+    - -0.6640625
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-DEC-BUCKET-A
     sprite: {fileID: 21300000, guid: 783911fb2a400db429142c2a53078fbc, type: 3}
@@ -71,7 +117,39 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.625
+    - 0
+    - 0.140625
+    - 0
+    - 0.34375
+    - 0.2109375
+    - 0.7578125
+    - 0.3046875
+    - 0.5
+    - 0.390625
+    - 0.7265625
+    - 0.484375
+    - 0.625
+    - 0.6640625
+    - 0.85
+    - 0.7578125
+    - 0.671875
+    - 0.9375
+    - -0.6015625
+    - 0.9375
+    - -0.828125
+    - 0.84375
+    - -0.85
+    - 0.7578125
+    - -0.65625
+    - 0.6640625
+    - -0.7265625
+    - 0.484375
+    - 0
+    - 0.2109375
+    - -0.40625
+    - 0.1171875
     replacementAssetId: 
   - assetId: TR01-DEC-CABLE-SPOOL-A
     sprite: {fileID: 21300000, guid: b80bbcc4fd0783947948ea32e0ee6ce0, type: 3}
@@ -84,7 +162,25 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.234375
+    - 0
+    - 0.234375
+    - 0
+    - 0.6171875
+    - 0.390625
+    - 0.5234375
+    - 0.84375
+    - 0.609375
+    - 0.9375
+    - -0.5703125
+    - 0.9375
+    - -0.4765625
+    - 0.7578125
+    - -0.609375
+    - 0.390625
+    - -0.453125
+    - 0.2109375
     replacementAssetId: 
   - assetId: TR01-DEC-CRATE-A
     sprite: {fileID: 21300000, guid: 864224d4dccb580478356e838a2ab22f, type: 3}
@@ -97,7 +193,19 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.328125
+    - 0
+    - 0.515625
+    - 0.03125
+    - 0.85
+    - 0.9375
+    - -0.85
+    - 0.9375
+    - -0.85
+    - 0.390625
+    - 0.046875
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-DEC-HARDWARE-A
     sprite: {fileID: 21300000, guid: 7e9b20f592827354a8415666b887ae04, type: 3}
@@ -110,7 +218,19 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.5703125
+    - 0
+    - 0.59375
+    - 0.3046875
+    - 0.703125
+    - 0.9375
+    - -0.640625
+    - 0.9375
+    - -0.578125
+    - 0.5703125
+    - -0.171875
+    - 0.2109375
     replacementAssetId: 
   - assetId: TR01-DEC-MINERAL-A
     sprite: {fileID: 21300000, guid: 6709b3158dcf4a145af5a37021710897, type: 3}
@@ -123,7 +243,21 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.0625
+    - 0
+    - 0.5546875
+    - 0.3046875
+    - 0.6328125
+    - 0.7578125
+    - 0.5625
+    - 0.9375
+    - -0.6328125
+    - 0.9375
+    - -0.4921875
+    - 0.2109375
+    - -0.1875
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-DEC-PAPERS-A
     sprite: {fileID: 21300000, guid: 23db560133d698143849d38fda8558d5, type: 3}
@@ -136,7 +270,31 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.1640625
+    - 0
+    - 0.28125
+    - 0
+    - 0.3515625
+    - 0.2109375
+    - 0.8046875
+    - 0.3046875
+    - 0.765625
+    - 0.84375
+    - 0.5703125
+    - 0.9375
+    - -0.59375
+    - 0.9375
+    - -0.8046875
+    - 0.84375
+    - -0.71875
+    - 0.6640625
+    - -0.85
+    - 0.5703125
+    - -0.53125
+    - 0.484375
+    - -0.453125
+    - 0.2109375
     replacementAssetId: 
   - assetId: TR01-DEC-ROCK-A
     sprite: {fileID: 21300000, guid: 2f815375e13e0b546b14775de584282a, type: 3}
@@ -149,7 +307,21 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.3984375
+    - 0
+    - 0.7421875
+    - 0.03125
+    - 0.828125
+    - 0.5703125
+    - 0.6640625
+    - 0.9375
+    - -0.59375
+    - 0.9375
+    - -0.85
+    - 0.2109375
+    - -0.6171875
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-DEC-TOOLBOX-A
     sprite: {fileID: 21300000, guid: 16585fb8c2ce1a14abe9a511fefc994d, type: 3}
@@ -162,7 +334,19 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.390625
+    - 0
+    - 0.5703125
+    - 0
+    - 0.8359375
+    - 0.9375
+    - -0.8046875
+    - 0.9375
+    - -0.78125
+    - 0.484375
+    - 0.2265625
+    - 0.1171875
     replacementAssetId: 
   - assetId: TR01-FGV-HANGING-CABLE-A
     sprite: {fileID: 21300000, guid: 7dfde222b4585d64fa3a400a3b11a651, type: 3}
@@ -176,14 +360,16 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -1
+    - -0.4453125
     - 0
-    - 1
+    - 0.453125
     - 0
-    - 1
-    - 1
-    - -1
-    - 1
+    - 1.28125
+    - 0.9375
+    - -1.28125
+    - 0.9375
+    - -0.65625
+    - 0.3046875
     replacementAssetId: 
   - assetId: TR01-FGV-PIPE-FRAME-A
     sprite: {fileID: 21300000, guid: 8276805b07c6f894a98a6559dd9ec0e4, type: 3}
@@ -197,14 +383,16 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -1
+    - -1.35
     - 0
-    - 1
+    - 1.35
     - 0
-    - 1
-    - 1
-    - -1
-    - 1
+    - 1.35
+    - 0.9375
+    - -1.35
+    - 0.9375
+    - -1.35
+    - 0.484375
     replacementAssetId: 
   - assetId: TR01-FGV-RAILING-A
     sprite: {fileID: 21300000, guid: 43237740d6a3b68488e507f905587ff4, type: 3}
@@ -218,14 +406,18 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -1
+    - 1.35
     - 0
-    - 1
-    - 0
-    - 1
-    - 1
-    - -1
-    - 1
+    - 1.35
+    - 0.9375
+    - -1.35
+    - 0.9375
+    - -1.35
+    - 0.5703125
+    - 0.6328125
+    - 0.484375
+    - 1.265625
+    - 0.390625
     replacementAssetId: 
   - assetId: TR01-FGV-ROCK-LIP-A
     sprite: {fileID: 21300000, guid: 03d5665c97d303c4f9713676f823ec2b, type: 3}
@@ -239,14 +431,16 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -1
+    - 0.7734375
     - 0
-    - 1
-    - 0
-    - 1
-    - 1
-    - -1
-    - 1
+    - 1.35
+    - 0.2109375
+    - 1.35
+    - 0.9375
+    - -1.35
+    - 0.9375
+    - -1.35
+    - 0.2109375
     replacementAssetId: 
   - assetId: TR01-HERO-DRILL-A
     sprite: {fileID: 21300000, guid: 7f67e4027e120d942a196dbf2baef3eb, type: 3}
@@ -272,14 +466,32 @@ MonoBehaviour:
       lightClass: 4
     contactShadowRadius: 0
     shadowContourCells:
-    - -1.5
+    - -0.46875
     - 0
-    - 1.5
+    - -0.015625
     - 0
-    - 1.5
-    - 2
-    - -1.5
-    - 2
+    - 0.09375
+    - 0.1171875
+    - 1.3046875
+    - 0.484375
+    - 1.85
+    - 0.84375
+    - 1.8125
+    - 1.9375
+    - -0.859375
+    - 1.9375
+    - -1.1875
+    - 1.5703125
+    - -1.234375
+    - 1.390625
+    - -1.5234375
+    - 1.2109375
+    - -1.85
+    - 0.484375
+    - -1.85
+    - 0.3046875
+    - -0.6796875
+    - 0.1171875
     replacementAssetId: 
   - assetId: TR01-LGT-CRYSTAL-A
     sprite: {fileID: 21300000, guid: 3b408dabfc13bff4da67a3cbc7753978, type: 3}
@@ -298,7 +510,31 @@ MonoBehaviour:
       intensity: 0.8
       lightClass: 2
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.078125
+    - 0
+    - 0.1484375
+    - 0.03125
+    - 0.140625
+    - 0.1171875
+    - 0.5625
+    - 0.390625
+    - 0.5234375
+    - 0.5703125
+    - 0.40625
+    - 0.9375
+    - -0.375
+    - 0.9375
+    - -0.3828125
+    - 0.6640625
+    - -0.5625
+    - 0.390625
+    - -0.5234375
+    - 0.3046875
+    - -0.0859375
+    - 0.1171875
+    - -0.109375
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-LGT-WARNING-A
     sprite: {fileID: 21300000, guid: c99d8904a2019b147b287cd336aaba8c, type: 3}
@@ -317,7 +553,25 @@ MonoBehaviour:
       intensity: 0.6
       lightClass: 1
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.484375
+    - 0
+    - 0.7890625
+    - 0.03125
+    - 0.71875
+    - 0.3046875
+    - 0.5546875
+    - 0.3984375
+    - 0.453125
+    - 0.8515625
+    - -0.40625
+    - 0.8515625
+    - -0.5390625
+    - 0.3984375
+    - -0.78125
+    - 0.21875
+    - -0.7578125
+    - 0
     replacementAssetId: 
   - assetId: TR01-LGT-WORKLAMP-A
     sprite: {fileID: 21300000, guid: 33ea0187e1e981b46b231cb42ad92745, type: 3}
@@ -336,7 +590,23 @@ MonoBehaviour:
       intensity: 0.75
       lightClass: 1
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - 0.2734375
+    - 0
+    - 0.453125
+    - 0.03125
+    - 0.25
+    - 0.84375
+    - 0.3671875
+    - 0.9375
+    - -0.296875
+    - 0.9375
+    - -0.25
+    - 0.5703125
+    - -0.484375
+    - 0.2109375
+    - -0.390625
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-LIN-CABLE-JUNCTION-A
     sprite: {fileID: 21300000, guid: bc827c987716fb345af11aaddd68548e, type: 3}
@@ -349,7 +619,21 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.85
+    - 0
+    - 0.546875
+    - 0.03125
+    - 0.85
+    - 0.21875
+    - 0.85
+    - 0.8515625
+    - -0.85
+    - 0.8515625
+    - -0.85
+    - 0.21875
+    - -0.4921875
+    - 0
     replacementAssetId: 
   - assetId: TR01-LIN-PIPE-ELBOW-A
     sprite: {fileID: 21300000, guid: 2ea27477e0032f441b315876f8598682, type: 3}
@@ -362,7 +646,29 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.85
+    - 0
+    - 0.85
+    - 0.03125
+    - 0.85
+    - 0.8515625
+    - -0.85
+    - 0.8515625
+    - -0.5625
+    - 0.7578125
+    - -0.85
+    - 0.671875
+    - -0.85
+    - 0.3046875
+    - -0.53125
+    - 0.21875
+    - -0.85
+    - 0.125
+    - -0.7890625
+    - 0.03125
+    - -0.625
+    - 0
     replacementAssetId: 
   - assetId: TR01-LIN-RAIL-BROKEN-A
     sprite: {fileID: 21300000, guid: d265d3499c37d7c43871dc1acf7693af, type: 3}
@@ -375,7 +681,25 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.2265625
+    - 0
+    - 0.3203125
+    - 0.03125
+    - 0.234375
+    - 0.21875
+    - 0.3125
+    - 0.8515625
+    - -0.3125
+    - 0.8515625
+    - -0.328125
+    - 0.3046875
+    - -0.203125
+    - 0.21875
+    - -0.1875
+    - 0.03125
+    - -0.0703125
+    - 0
     replacementAssetId: 
   - assetId: TR01-LIN-RAIL-CURVE-A
     sprite: {fileID: 21300000, guid: 3374bfdbbce1ca541962ad932a3e9080, type: 3}
@@ -388,7 +712,29 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.6328125
+    - 0
+    - -0.046875
+    - 0.03125
+    - -0.3046875
+    - 0.3046875
+    - -0.15625
+    - 0.3984375
+    - -0.15625
+    - 0.578125
+    - -0.3359375
+    - 0.671875
+    - -0.3359375
+    - 0.8515625
+    - -0.7578125
+    - 0.8515625
+    - -0.7578125
+    - 0.671875
+    - -0.85
+    - 0.3984375
+    - -0.6796875
+    - 0
     replacementAssetId: 
   - assetId: TR01-LIN-RAIL-JUNCTION-A
     sprite: {fileID: 21300000, guid: 22434d1e09e775e4dad3d1478433e953, type: 3}
@@ -401,7 +747,45 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.3125
+    - 0
+    - 0.4140625
+    - 0.125
+    - 0.4140625
+    - 0.21875
+    - 0.85
+    - 0.3046875
+    - 0.85
+    - 0.3984375
+    - 0.4140625
+    - 0.484375
+    - 0.85
+    - 0.671875
+    - 0.85
+    - 0.7578125
+    - 0.4140625
+    - 0.8515625
+    - -0.40625
+    - 0.8515625
+    - -0.85
+    - 0.7578125
+    - -0.85
+    - 0.671875
+    - -0.40625
+    - 0.484375
+    - -0.85
+    - 0.3984375
+    - -0.85
+    - 0.3046875
+    - -0.40625
+    - 0.21875
+    - -0.40625
+    - 0.125
+    - -0.1484375
+    - 0.03125
+    - -0.3125
+    - 0
     replacementAssetId: 
   - assetId: TR01-LIN-RAIL-STRAIGHT-A
     sprite: {fileID: 21300000, guid: 96aa935551a77fc42b6e45c4fb2dc8db, type: 3}
@@ -414,7 +798,33 @@ MonoBehaviour:
     fadeTargetAlpha: 0
     lightSockets: []
     contactShadowRadius: 0
-    shadowContourCells: []
+    shadowContourCells:
+    - -0.3984375
+    - 0
+    - 0.40625
+    - 0.03125
+    - 0.40625
+    - 0.125
+    - 0.2421875
+    - 0.21875
+    - 0.2421875
+    - 0.578125
+    - 0.40625
+    - 0.671875
+    - 0.40625
+    - 0.8515625
+    - -0.3984375
+    - 0.8515625
+    - -0.3984375
+    - 0.671875
+    - -0.234375
+    - 0.578125
+    - -0.234375
+    - 0.21875
+    - -0.3984375
+    - 0.125
+    - -0.3984375
+    - 0
     replacementAssetId: 
   - assetId: TR01-PIL-BROKEN-A
     sprite: {fileID: 21300000, guid: cefa1a93beecaa148a02943d92d1862f, type: 3}
@@ -428,14 +838,24 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -0.5
+    - -0.015625
     - 0
-    - 0.5
-    - 0
-    - 0.5
-    - 1
-    - -0.5
-    - 1
+    - 0.265625
+    - 0.03125
+    - 0.7265625
+    - 0.3046875
+    - 0.71875
+    - 0.7578125
+    - 0.625
+    - 0.9375
+    - -0.625
+    - 0.9375
+    - -0.734375
+    - 0.3046875
+    - -0.6640625
+    - 0.2109375
+    - -0.140625
+    - 0.03125
     replacementAssetId: 
   - assetId: TR01-PIL-INTACT-A
     sprite: {fileID: 21300000, guid: c5afc5307d695d24e9ae5704fd72cb3a, type: 3}
@@ -449,12 +869,18 @@ MonoBehaviour:
     lightSockets: []
     contactShadowRadius: 0
     shadowContourCells:
-    - -0.5
+    - 0.0390625
     - 0
-    - 0.5
-    - 0
-    - 0.5
-    - 1
-    - -0.5
-    - 1
+    - 0.7265625
+    - 0.390625
+    - 0.7265625
+    - 0.5703125
+    - 0.5234375
+    - 0.9375
+    - -0.5078125
+    - 0.9375
+    - -0.7265625
+    - 0.3046875
+    - -0.1171875
+    - 0.03125
     replacementAssetId: 

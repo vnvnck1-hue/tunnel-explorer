@@ -136,7 +136,15 @@ namespace TunnelCrew.Presentation.Visual
             switch (c)
             {
                 case LightClass.Scout: q = LightNormalQuality.Accurate; break;
-                case LightClass.Worklamp: q = LightNormalQuality.Fast; break;
+                // 2026-09-09 — 작업등·수정광·전투광까지 노멀을 읽게 올렸다.
+                // 그 전에는 수정광이 Disabled 라서, 방을 실제로 물들이는 마젠타·시안 광원이
+                // 요철을 전혀 세우지 않았다("노멀맵이 조명에 더 강하게 반응해야 한다" 피드백).
+                // §7.3 의 "저비용 비그림자" 는 그림자 예산에 대한 조항이고 노멀과 별개다 —
+                // 노멀은 광원당 추가 드로우가 아니라 노멀 버퍼 샘플이라 비용 성격이 다르다.
+                case LightClass.Worklamp: q = LightNormalQuality.Accurate; break;
+                case LightClass.MineralGlow: q = LightNormalQuality.Fast; break;
+                case LightClass.Combat: q = LightNormalQuality.Fast; break;
+                // 표시등은 계기판 크기(반지름 1칸 내외)라 요철이 읽히지 않는다 — 그대로 끈다.
                 default: return LightNormalQuality.Disabled;
             }
 

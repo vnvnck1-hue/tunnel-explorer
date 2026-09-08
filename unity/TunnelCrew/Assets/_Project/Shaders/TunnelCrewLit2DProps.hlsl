@@ -32,6 +32,11 @@ CBUFFER_START(UnityPerMaterial)
     half _NormalStrength;
     half _AOStrength;
     half _MinLight;
+    // 조명 거리 어둠(§7.5 대기 원근의 "저층 안개" 와 다른 축이다 — 이건 광원 거리다).
+    half4 _DarkTint;
+    half _DarkStrength;
+    half _DarkKnee;
+    half _DarkCurve;
 CBUFFER_END
 
 #endif // TUNNEL_CREW_LIT_2D_PROPS_INCLUDED

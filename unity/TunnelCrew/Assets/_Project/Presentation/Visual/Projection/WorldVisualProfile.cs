@@ -73,7 +73,7 @@ namespace TunnelCrew.Presentation.Visual
 
         [Header("환경광 (§7.2)")]
         public Color ambientColor = new Color(0.42f, 0.46f, 0.62f);
-        [Range(0f, 2f)] public float ambientIntensity = 0.34f;
+        [Range(0f, 2f)] public float ambientIntensity = 0.26f;
         [Tooltip("벽 상단·벽 정면·바닥·캐릭터의 서로 다른 최소광 계수.")]
         public Vector4 minLightBySurface = new Vector4(0.22f, 0.16f, 0.12f, 0.30f);
 

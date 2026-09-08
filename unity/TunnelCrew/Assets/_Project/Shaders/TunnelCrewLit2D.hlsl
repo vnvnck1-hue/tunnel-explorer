@@ -129,6 +129,28 @@ half4 TCLitFragment(Varyings input, half4 vertexColor)
     // 조명 결과와 max 를 취하므로 밝은 곳을 더 밝게 만들지는 않는다.
     lit.rgb = max(lit.rgb, occluded * _MinLight);
 
+    // ── 조명 거리 어둠 (2026-09-09)
+    //
+    // "조명과 먼 곳이 전장의 안개처럼 더 짙게 어두워야 한다" 는 요청을 여기서 처리한다.
+    // Atmosphere 패스의 안개는 화면 세로 위치(uv.y)로만 작동해서 광원과의 거리를 모른다.
+    // 그래서 광원 거리를 아는 유일한 자리인 이 프래그먼트에서 만든다.
+    //
+    // 받은 빛의 양은 알베도를 곱하기 전의 값이어야 한다 — 그래야 검은 암석이
+    // "빛이 없는 곳" 으로 오해받지 않는다. 그 값이 블렌드 스타일 0 의 광원 텍스처다
+    // (우리 광원 전부가 Multiply = 블렌드 스타일 0 을 쓴다).
+    #if USE_SHAPE_LIGHT_TYPE_0
+    {
+        half3 lightAmt = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0,
+                                          inputData.lightingUV).rgb;
+        half amt = max(lightAmt.r, max(lightAmt.g, lightAmt.b));
+        // knee 위는 손대지 않고, 그 아래만 곡선으로 끌어내린다.
+        half t = saturate(amt / max(1e-4h, _DarkKnee));
+        half darkness = pow(saturate(1.0h - t), max(1.0h, _DarkCurve)) * saturate(_DarkStrength);
+        lit.rgb = lerp(lit.rgb, lit.rgb * _DarkTint.rgb, darkness);
+    }
+    #endif
+
+    // 발광은 어둠 뒤에 더한다 — 수정·표시등은 빛이 닿지 않는 곳에서도 스스로 보여야 한다.
     if (mode != 6) lit.rgb += ch.emission;
 
     lit.a = ch.albedo.a;

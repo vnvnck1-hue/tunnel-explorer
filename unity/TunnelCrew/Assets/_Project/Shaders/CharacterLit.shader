@@ -19,11 +19,18 @@ Shader "Tunnel Crew/CharacterLit"
         _AOMap("AO (white = no occlusion)", 2D) = "white" {}
 
         [Header(Response)]
-        _NormalStrength("Normal Strength", Range(0, 3)) = 1
+        _NormalStrength("Normal Strength", Range(0, 3)) = 1.4
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _EmissionColor("Emission Tint", Color) = (1,1,1,1)
         _EmissionIntensity("Emission Intensity", Range(0, 8)) = 1
-        _MinLight("Min Light", Range(0, 1)) = 0.30
+        _MinLight("Min Light", Range(0, 1)) = 0.14
+
+        [Header(Distance Darkness)]
+        // 캐릭터는 환경보다 약하게 묻힌다 — 어두운 곳에서도 실루엣이 읽혀야 한다(§15.1).
+        _DarkTint("어둠 색(곱)", Color) = (0.24, 0.26, 0.36, 1)
+        _DarkStrength("어둠 강도", Range(0, 1)) = 0.42
+        _DarkKnee("어둠이 시작되는 조명량", Range(0.01, 1)) = 0.45
+        _DarkCurve("어둠 곡선", Range(1, 6)) = 2
 
         [MaterialToggle] _ZWrite("ZWrite", Float) = 0
 

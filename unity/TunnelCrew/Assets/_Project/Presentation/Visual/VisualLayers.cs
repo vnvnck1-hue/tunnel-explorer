@@ -64,6 +64,46 @@ namespace TunnelCrew.Presentation.Visual
         };
 
         /// <summary>
+        /// 2D 광원이 비춰야 하는 레이어(§7.1 "통합 월드 재질" — 바닥·벽·오브젝트가 같은
+        /// 재질과 같은 빛을 받는다).
+        ///
+        /// <b>이 목록이 있는 이유</b> — <c>Light2D</c> 의 대상 레이어를 씬에 손으로 적어 두면
+        /// 레이어를 새로 만들 때 조용히 빠진다. 실제로 <c>WorldEntity</c>·<c>FrontStructure</c>
+        /// 가 빠져 있어서 수정·상자·드릴·난간이 빛을 한 줄기도 받지 못했다(2026-09-09).
+        /// 바닥만 밝고 오브젝트는 평평한 화면이 그 결과였다.
+        ///
+        /// 빠진 것: <see cref="WorldVoid"/>(빛이 닿을 표면이 아니다), <see cref="WorldFX"/>·
+        /// <see cref="VisionAndGrade"/>·<see cref="WorldOverlay"/>·<see cref="UI"/>
+        /// (자체 발광·후처리·UI 라 2D 조명을 곱하면 안 된다).
+        /// </summary>
+        public static readonly string[] Lit =
+        {
+            GroundBase,
+            GroundDetail,
+            GroundDecal,
+            BackStructure,
+            WallTop,
+            WorldEntity,
+            FrontStructure,
+        };
+
+        /// <summary>
+        /// <see cref="Lit"/> 의 Sorting Layer ID. <c>Light2D.targetSortingLayers</c> 가 ID 를 받는다.
+        /// 레이어가 추가·삭제되면 <see cref="SortingLayer.layers"/> 가 바뀌므로 매번 다시 만든다
+        /// (호출 지점이 프레임마다 도는 곳이 아니다).
+        /// </summary>
+        public static int[] LitLayerIds()
+        {
+            var ids = new System.Collections.Generic.List<int>(Lit.Length);
+            for (int i = 0; i < Lit.Length; i++)
+            {
+                if (!Exists(Lit[i])) continue;
+                ids.Add(UnityEngine.SortingLayer.NameToID(Lit[i]));
+            }
+            return ids.ToArray();
+        }
+
+        /// <summary>
         /// 이 이름의 Sorting Layer 가 프로젝트에 있는가.
         ///
         /// <c>SortingLayer.NameToID</c> 로 판정하지 않는다 — 그 함수는 인덱스가 아니라

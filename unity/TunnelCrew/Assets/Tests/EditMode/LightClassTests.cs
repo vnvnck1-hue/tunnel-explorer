@@ -167,19 +167,31 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
-        public void 작업등은_저렴한_노멀을_읽는다()
+        public void 작업등도_노멀을_정확히_읽는다()
         {
-            Assert.AreEqual(LightNormalQuality.Fast,
+            // 2026-09-09 — Fast 에서 Accurate 로 올렸다. 랜턴이 방을 실제로 밝히는 광원이라
+            // 요철이 여기서 가장 잘 보인다("노멀맵이 조명에 더 강하게 반응해야 한다" 피드백).
+            Assert.AreEqual(LightNormalQuality.Accurate,
                 LightClassRules.NormalQuality(LightClass.Worklamp, VisualQualityTier.High));
         }
 
         [Test]
-        public void 광물광과_표시등은_노멀을_읽지_않는다()
+        public void 광물광과_전투광도_노멀을_읽는다()
         {
-            // §7.3 — 생체·광물광은 "저비용 비그림자 Light2D". 표시등은 너무 작다.
-            foreach (var c in new[] { LightClass.MineralGlow, LightClass.Indicator, LightClass.Combat })
-                Assert.AreEqual(LightNormalQuality.Disabled,
+            // 2026-09-09 — 수정광이 Disabled 라서 방을 물들이는 마젠타·시안 광원이 요철을
+            // 전혀 세우지 않았다. §7.3 의 "저비용 비그림자" 는 그림자 예산 조항이고
+            // 노멀은 광원당 드로우가 아니라 노멀 버퍼 샘플이라 비용 성격이 다르다.
+            foreach (var c in new[] { LightClass.MineralGlow, LightClass.Combat })
+                Assert.AreEqual(LightNormalQuality.Fast,
                     LightClassRules.NormalQuality(c, VisualQualityTier.Ultra), c.ToString());
+        }
+
+        [Test]
+        public void 표시등은_노멀을_읽지_않는다()
+        {
+            // 계기판 크기(반지름 1칸 내외)라 요철이 읽히지 않는다.
+            Assert.AreEqual(LightNormalQuality.Disabled,
+                LightClassRules.NormalQuality(LightClass.Indicator, VisualQualityTier.Ultra));
         }
 
         [Test]
@@ -190,6 +202,9 @@ namespace TunnelCrew.Tests
                 LightClassRules.NormalQuality(LightClass.Scout, VisualQualityTier.Low));
             Assert.AreEqual(LightNormalQuality.Fast,
                 LightClassRules.NormalQuality(LightClass.Worklamp, VisualQualityTier.Low));
+            // Fast 인 분류는 더 내려가지 않는다 — 끄면 형태가 사라진다.
+            Assert.AreEqual(LightNormalQuality.Fast,
+                LightClassRules.NormalQuality(LightClass.MineralGlow, VisualQualityTier.Low));
         }
 
         [Test]

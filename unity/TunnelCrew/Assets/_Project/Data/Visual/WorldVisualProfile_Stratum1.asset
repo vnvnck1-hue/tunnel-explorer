@@ -34,7 +34,7 @@ MonoBehaviour:
   contactShadowRadius: 0.34
   contactShadowOpacity: 0.45
   ambientColor: {r: 0.42, g: 0.46, b: 0.62, a: 1}
-  ambientIntensity: 0.34
+  ambientIntensity: 0.26
   minLightBySurface: {x: 0.22, y: 0.16, z: 0.12, w: 0.3}
   activeLightBudget: {x: 16, y: 24}
   shadowLightBudget: {x: 4, y: 8}

@@ -370,9 +370,16 @@ namespace TunnelCrew.Presentation.Visual
             _globalLight = go.AddComponent<Light2D>();
             _globalLight.lightType = Light2D.LightType.Global;
             _globalLight.color = _profile != null ? _profile.ambientColor : new Color(0.42f, 0.46f, 0.62f);
-            // Lab 은 구조 검증이 먼저다. §15.1 "광원이 꺼져도 알베도와 AO 만으로 주요 형태가
-            // 읽힌다" 를 확인할 수 있도록 환경광을 넉넉히 준다. 본선 수치는 여기서 정하지 않는다.
-            _globalLight.intensity = 0.85f;
+            // 환경광은 프로파일이 정한다(2026-09-09).
+            //
+            // 전에는 0.85 를 하드코딩했다. 그 값이 화면을 균일하게 채워서 두 가지를 망쳤다 —
+            // 광원에서 먼 곳이 어두워지지 않았고(전역광은 거리 개념이 없다), 방향이 없는 빛이
+            // 지배하니 노멀 요철도 씻겨 나갔다. 셰이더의 조명 거리 어둠(_DarkKnee)도
+            // 환경광이 knee 위에 있으면 아예 발동하지 않는다.
+            //
+            // §15.1 "광원이 꺼져도 형태가 읽힌다" 는 이제 환경광이 아니라 셰이더의
+            // 최저 조도(_MinLight)가 담보한다.
+            _globalLight.intensity = _profile != null ? _profile.ambientIntensity : 0.26f;
 
             // 탐색광 — 노멀 반응과 그림자 윤곽을 보는 광원(§7.3 탐색광).
             var torchGo = new GameObject("Torch (Point)");
@@ -699,7 +706,14 @@ namespace TunnelCrew.Presentation.Visual
         void PokeLights()
         {
             var lights = GetComponentsInChildren<Light2D>(includeInactive: false);
-            for (int i = 0; i < lights.Length; i++) LightMeshPoker.Poke(lights[i]);
+            for (int i = 0; i < lights.Length; i++)
+            {
+                // 씬에 직렬화된 광원(전역광·탐색광 포함)도 §7.1 의 레이어 전부를 비추게 한다.
+                // 소켓 광원은 LightSocketRenderer.Apply 가 이미 맞춰 두지만, 씬에 손으로 놓인
+                // 광원은 여기가 유일한 통로다.
+                LightSocketRenderer.ApplyLitLayers(lights[i]);
+                LightMeshPoker.Poke(lights[i]);
+            }
         }
 
         static class LightMeshPoker

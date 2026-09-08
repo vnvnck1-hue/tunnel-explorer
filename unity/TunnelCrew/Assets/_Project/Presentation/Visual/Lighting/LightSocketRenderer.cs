@@ -68,6 +68,7 @@ namespace TunnelCrew.Presentation.Visual
         // 경고하고 노멀 없이 계속 그린다.
         static System.Reflection.FieldInfo _useNormalField;
         static System.Reflection.FieldInfo _normalQualityField;
+        static System.Reflection.FieldInfo _normalDistanceField;
         static bool _normalReflectionResolved;
         static bool _warnedNormalReflection;
 
@@ -119,6 +120,39 @@ namespace TunnelCrew.Presentation.Visual
             var t = typeof(Light2D);
             _useNormalField = t.GetField("m_UseNormalMap", flags);
             _normalQualityField = t.GetField("m_NormalMapQuality", flags);
+            _normalDistanceField = t.GetField("m_NormalMapDistance", flags);
+        }
+
+        /// <summary>
+        /// 광원이 §7.1 의 월드 레이어 전부를 비추게 한다.
+        ///
+        /// URP 는 대상 레이어를 광원에 직렬화한다. 그래서 씬을 만든 뒤에 Sorting Layer 를
+        /// 추가하면 그 레이어는 어느 광원에도 들어가지 않는다 — 실제로 <c>WorldEntity</c> 와
+        /// <c>FrontStructure</c> 가 빠져 있어 오브젝트·전경이 빛을 받지 못했다(2026-09-09).
+        /// 씬 데이터에 의존하지 않도록 코드에서 매번 채운다.
+        ///
+        /// 전역광은 URP 가 레이어별로 따로 관리하므로(주석: "If we need to update this at
+        /// runtime make sure we add code to update global lights") 값이 실제로 달라질 때만 쓴다.
+        /// </summary>
+        internal static void ApplyLitLayers(Light2D light)
+        {
+            if (light == null) return;
+            var want = VisualLayers.LitLayerIds();
+            if (want.Length == 0) return;
+
+            var have = light.targetSortingLayers;
+            if (have != null && have.Length == want.Length)
+            {
+                bool same = true;
+                for (int i = 0; i < want.Length; i++)
+                {
+                    bool found = false;
+                    for (int j = 0; j < have.Length; j++) if (have[j] == want[i]) { found = true; break; }
+                    if (!found) { same = false; break; }
+                }
+                if (same) return;
+            }
+            light.targetSortingLayers = want;
         }
 
         /// <summary>
@@ -152,7 +186,17 @@ namespace TunnelCrew.Presentation.Visual
             if (!Equals(_useNormalField.GetValue(light), use)) _useNormalField.SetValue(light, use);
             if (!Equals(_normalQualityField.GetValue(light), quality))
                 _normalQualityField.SetValue(light, quality);
+
+            // 광원 높이(칸). 이 값이 노멀 반응의 세기를 정한다 — 크면 빛이 거의 정면에서
+            // 오는 것이 되어 요철이 사라진다. 씬 직렬화 기본값 3 이 "노멀이 안 보인다" 의
+            // 원인이었다. 본선(RunBootstrap.UseNormalMaps)이 쓰는 0.8 과 같게 맞춘다.
+            if (use && _normalDistanceField != null &&
+                !Equals(_normalDistanceField.GetValue(light), NormalMapHeightCells))
+                _normalDistanceField.SetValue(light, NormalMapHeightCells);
         }
+
+        /// <summary>노멀 조명이 보는 광원 높이(칸). 낮을수록 요철이 강하게 선다.</summary>
+        internal const float NormalMapHeightCells = 0.8f;
 
         void LateUpdate() => Apply(_freezeFlicker ? 0f : Time.unscaledTime);
 
@@ -175,6 +219,7 @@ namespace TunnelCrew.Presentation.Visual
                     VisualQualityRules.FlashScale(_reducePhotosensitivity));
                 light.intensity = Mathf.Max(0f, s.baseIntensity * k);
                 ApplyNormalQuality(light, s.lightClass);
+                ApplyLitLayers(light);
 
                 s.ShadowOn = false;
                 _ordered.Add(s);
