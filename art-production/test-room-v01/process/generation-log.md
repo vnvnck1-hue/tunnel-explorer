@@ -459,3 +459,62 @@ Style invariants: keep the same high-end pixel-painted 2D treatment, chunky step
 
 Constraints: no HUD, interface, text, letters, numbers, labels, logos, watermark, border, caption, grid overlay, checkerboard, perspective camera, vanishing point, fisheye, camera roll, diamond tiles, 2:1 dimetric projection, true isometric projection, diagonal room footprint, converging architecture, miniature-diorama presentation, centered poster composition, smooth digital painting, 3D render, photorealism, depth of field, motion blur, or excessive bloom.
 ```
+
+## TR01-REFERENCE-CALIBRATION-V1
+
+- 날짜: 2026-09-08
+- 생성 방식: built-in `image_gen`
+- 최상위 입력: `reference/tr01_primary_style_target.png` — 스타일·비율·재질·가독성 레퍼런스
+- 보조 입력: `concept/tr01_reference_asset_calibration_board_v1.png` — 네 후보의 디자인 일관성 기준
+- 상태: `working`; 기존 승인 패키지와 manifest는 변경하지 않음
+- 결과:
+  - 캘리브레이션 보드 `concept/tr01_reference_asset_calibration_board_v1.png`
+  - 바닥 v1 `source/reference_calibration_v1/tr01_reference_floor_a_source.png` — 반복 밀도 과다로 rejected
+  - 바닥 v2 `source/reference_calibration_v1/tr01_reference_floor_a_v2_source.png` — working
+  - 벽 최초 RGB 체크무늬본 — rejected, 저장하지 않음
+  - 벽 알파 추출본 `source/reference_calibration_v1/tr01_reference_wall_a_source.png` — working
+  - 수정 `source/reference_calibration_v1/tr01_reference_crystal_a_source.png` — working
+  - 드릴러 `source/reference_calibration_v1/tr01_reference_driller_a_source.png` — working
+- 공통 프롬프트 계약: 레퍼런스의 굵은 계단형 픽셀 클러스터, 넓은 제한 명암 면, 짧고 굵은
+  비율, 검보라·남청 기반과 제한된 마젠타·시안·앰버를 따른다. 특정 캐릭터나 프랍은 복제하지
+  않고 땅굴 크루 고유 디자인으로 만든다. 중립 baked form light만 포함하고 방 조명·긴 그림자·
+  넓은 글로우는 제외한다. UI·문자·로고·워터마크·미니어처·PBR 광택을 금지한다.
+- 바닥 v2 추가 프롬프트: 한 셀 전체를 1~3개의 큰 석판 면으로 제한하고 자갈밭, 조약돌 무늬,
+  고빈도 균열, 반복되는 마젠타 점을 제거한다. 네 변은 seamless, 중앙은 조용하게 유지한다.
+- 벽 추가 프롬프트: 굵은 상단 cap, 높은 정면, 청록 철제 보강/배관, 소량의 마젠타 광물로
+  3~7개의 큰 형태를 구성하고 하단 발점을 명확히 한다. 최초 결과의 체크무늬 배경만 정밀 추출해
+  실제 투명 알파로 교체하며 디자인과 픽셀 경계는 보존한다.
+- 수정 추가 프롬프트: 3~5개의 지배적인 결정 덩어리와 넓은 암석 받침, 작은 내부 발광 코어만
+  사용하고 과도한 미세 면과 주변 글로우를 금지한다.
+- 드릴러 추가 프롬프트: 큰 얼굴과 갈색 수염, 주황 작업복, 남청 장갑·부츠, 양손으로 든 거대한
+  시안·남청 드릴을 사용한다. 3/4 우향, 전신과 발점·드릴 끝을 보존하고 투명 배경으로 만든다.
+- Unity 검증: `qa/reference-calibration-v1-unity.png`, 상세 판정은
+  `process/reference-calibration-v1.md` 참조.
+
+### 바닥 매크로 변형 B~F 확장
+
+- 날짜: 2026-09-08
+- 생성 방식: built-in `image_gen`, 자산별 1회 호출
+- 입력 1: `reference/tr01_primary_style_target.png` — 최상위 픽셀 표현·재질·팔레트 기준
+- 입력 2: `source/reference_calibration_v1/tr01_reference_floor_a_v2_source.png` — 스케일·명도 기준
+- 생성 원본:
+  - B: `source/reference_calibration_v1/tr01_reference_floor_b_source.png`
+  - C: `source/reference_calibration_v1/tr01_reference_floor_c_source.png`
+  - D: `source/reference_calibration_v1/tr01_reference_floor_d_source.png`
+  - E: `source/reference_calibration_v1/tr01_reference_floor_e_source.png`
+  - F: `source/reference_calibration_v1/tr01_reference_floor_f_source.png`
+- 공통 최종 프롬프트: 정사각형 1셀, 정확한 탑다운 직교, A와 같은 굵은 수제 픽셀 덩어리·
+  스케일·검보라 명도·재질. 네 변 seamless, 캐릭터 아래 중앙은 조용하게 유지한다. 큰 석판과
+  소수의 굵은 이음만 사용한다. 자갈 노이즈, 잦은 미세 균열, 넓은 글로우, 방향성 조명,
+  그림자, 비네트, 오브젝트, 캐릭터, 글자, UI, 로고, 워터마크, 프레임, 투명 배경,
+  체크무늬를 금지한다.
+- 변형별 최종 지시:
+  - B: 넓은 대각 이음 하나가 큰 슬레이트 면 두 개를 분리하고 짧은 보조 균열만 둔다.
+  - C: 중앙 대형 슬레이트를 넓은 세 조각으로 나누고 작은 파편은 거의 두지 않는다.
+  - D: 두 덩어리를 긴 계단형 수평 지층 이음으로 나누고 짧은 오프셋 이음 하나만 둔다.
+  - E: 거의 온전한 거대 석판 하나, 모서리 파손 하나, 가장자리의 짧은 얕은 균열 하나만 둔다.
+  - F: 불규칙한 대형 판석 세 덩어리와 드문 분기 이음, 이음 옆 마젠타 흔적 하나만 둔다.
+- 후처리: `tools/art/finalize-reference-calibration-v1.py`로 각 128×128 축소, 반대편 4px
+  경계 동일화, working·Unity 경로 동시 저장, A 단독 및 A~F 혼합 6×6 반복판 생성.
+- 검증: 6파일 픽셀 고유성, 네 변 4px 일치, Unity 128 PPU 120셀 참조 합계 120,
+  `qa/reference-calibration-floor-variants-unity.png` 캡처 완료.
