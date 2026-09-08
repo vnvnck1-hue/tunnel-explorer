@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: 4052175b9d3b75d46b2fc702a59edce4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7629491977870765526
+    second: tr01_rail_broken_a_emission_0
+  - first:
+      213: 2914368578802165250
+    second: tr01_rail_broken_a_emission_1
+  - first:
+      213: -2273204072391584389
+    second: tr01_rail_broken_a_emission_2
+  - first:
+      213: 3185470546876284406
+    second: tr01_rail_broken_a_emission_3
+  - first:
+      213: -4617751011068360670
+    second: tr01_rail_broken_a_emission_4
+  - first:
+      213: -5067258773011121704
+    second: tr01_rail_broken_a_emission_5
+  - first:
+      213: -6893937931655467793
+    second: tr01_rail_broken_a_emission_6
+  - first:
+      213: 7881634191878403774
+    second: tr01_rail_broken_a_emission_7
+  - first:
+      213: 4661186301579070022
+    second: tr01_rail_broken_a_emission_8
+  - first:
+      213: -315136415961136973
+    second: tr01_rail_broken_a_emission_9
+  - first:
+      213: 9108434900517104474
+    second: tr01_rail_broken_a_emission_10
+  - first:
+      213: 8722252292725345876
+    second: tr01_rail_broken_a_emission_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 237
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ddeda5f78661e960800000000000000
+      internalID: 7629491977870765526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 61
+        width: 33
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 206201c08cae17820800000000000000
+      internalID: 2914368578802165250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 0
+        width: 245
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b75d02ba0f4f370e0800000000000000
+      internalID: -2273204072391584389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 234
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fdb705c590153c20800000000000000
+      internalID: 3185470546876284406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 204
+        width: 7
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 228c11cdbe37aefb0800000000000000
+      internalID: -4617751011068360670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 225
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d9b0b15efa7da9b0800000000000000
+      internalID: -5067258773011121704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 61
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: feca5101affc350a0800000000000000
+      internalID: -6893937931655467793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 13
+        width: 64
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb63c70f980316d60800000000000000
+      internalID: 7881634191878403774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 58
+        width: 66
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64a8989ce3cdfa040800000000000000
+      internalID: 4661186301579070022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 24
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b0c8de691960abf0800000000000000
+      internalID: -315136415961136973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5ba7119849a76e70800000000000000
+      internalID: 9108434900517104474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_rail_broken_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 0
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45e0b3d6f3aab0970800000000000000
+      internalID: 8722252292725345876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_rail_broken_a_emission_0: 7629491977870765526
+      tr01_rail_broken_a_emission_1: 2914368578802165250
+      tr01_rail_broken_a_emission_10: 9108434900517104474
+      tr01_rail_broken_a_emission_11: 8722252292725345876
+      tr01_rail_broken_a_emission_2: -2273204072391584389
+      tr01_rail_broken_a_emission_3: 3185470546876284406
+      tr01_rail_broken_a_emission_4: -4617751011068360670
+      tr01_rail_broken_a_emission_5: -5067258773011121704
+      tr01_rail_broken_a_emission_6: -6893937931655467793
+      tr01_rail_broken_a_emission_7: 7881634191878403774
+      tr01_rail_broken_a_emission_8: 4661186301579070022
+      tr01_rail_broken_a_emission_9: -315136415961136973
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

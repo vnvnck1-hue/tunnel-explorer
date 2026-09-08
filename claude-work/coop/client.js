@@ -359,6 +359,34 @@
       case 'break':
         applyDig(msg);
         break;
+      case 'skill': {
+        /* 설치물 스냅샷 — 렌더 전용 고스트 데이터 */
+        if (msg.kind === 'deploy') {
+          const p = peerOf(msg.from);
+          p.deploy = { tur: msg.tur || [], nodes: msg.nodes || [], ctur: msg.ctur || [], bar: msg.bar || [], chg: msg.chg || [], at: performance.now() };
+        } else if (msg.kind === 'shot' && Array.isArray(msg.sh)) {
+          /* 피어 사격 — 코스메틱 트레이서 (판정 없음, 벽에 닿으면 스파크) */
+          COOP._ghostShots = COOP._ghostShots || [];
+          const nowR = performance.now();
+          let first = true;
+          for (const [x, y, a, ls] of msg.sh.slice(0, 24)) {
+            COOP._ghostShots.push({ x, y, a, ls: ls | 0, t0: nowR });
+            if (first && window.TUNNEL_PROJECTILE_FX) { first = false; try { TUNNEL_PROJECTILE_FX.muzzle(x, y, a, ls ? 'laser' : 'standard'); } catch (e) {} }
+          }
+          if (COOP._ghostShots.length > 90) COOP._ghostShots.splice(0, COOP._ghostShots.length - 90);
+        } else if (msg.kind === 'boom') {
+          /* 피어 폭발물(브레이커 차지·성형 작약) 폭발 연출 — 지형 변화는 hp/break 로 이미 온다 */
+          if (typeof J !== 'undefined') {
+            J.burst && J.burst(msg.x, msg.y, 18, ['#FFD36E', '#FF8D72', '#FFF'], 260);
+            J.ring && J.ring(msg.x, msg.y, '#FFD36E', 7, (typeof CELL !== 'undefined' ? CELL : 50) * 1.6, 3);
+            J.smoke && J.smoke(msg.x, msg.y, 4, '#4A3550', 90);
+          }
+        } else if (msg.kind === 'pulse') {
+          /* 피어 스카우트 펄스 링 */
+          if (typeof J !== 'undefined' && J.ring) J.ring(msg.x, msg.y, '#7FEBD0', 6, (typeof CELL !== 'undefined' ? CELL : 50) * 6, 4);
+        }
+        break;
+      }
       case 'lamp':
         applyLamp(msg);
         break;
@@ -863,6 +891,23 @@
         if (!cbtGuest()) return true;
         const e = CBT.puppets.get(msg.i);
         const x = e ? e.x : msg.x, y = e ? e.y : msg.y;
+        /* 보스 — 게스트도 호스트와 같은 죽음 시네마틱(인월드 death 애니)을 퍼펫으로 재생한다.
+           제거는 시네마틱 finish 가 하고, 3.5s 뒤 도착하는 boss/down 은 플래그로 무시한다. */
+        if (e && msg.boss && window.TCBOSSDEATHFX && typeof window.infBossDefeated === 'function' && CREW.phase === 'play') {
+          CBT.puppets.delete(msg.i);
+          COOP._bossCineDone = true;
+          e.hp = 0;
+          INF.bossActive = true; // infBossDefeated 관문 통과용 (원본이 false 로 되돌린다)
+          COOP._applying = true; // 자동 탈출 요청 중복 브로드캐스트 억제
+          try { window.infBossDefeated(e); } finally { COOP._applying = false; }
+          if (msg.by === COOP.seat && CBT.orig.infAwardEnemyKillXp) {
+            CBT.orig.infAwardEnemyKillXp(
+              { x, y, apex: !!msg.apex, elite: msg.el || 0, boss: true },
+              msg.src === 'turret' ? 'turret' : undefined
+            );
+          }
+          return true;
+        }
         if (e) {
           e.hp = 0;
           try {
@@ -992,6 +1037,8 @@
           toast && toast(msg.tier === 'guardian' ? '심층 수호자 출현 — 중심부의 전조' : msg.tier === 'apex' ? '중심부 보스 · 암반 포식자 침공' : '변종 포식자 침공');
           J.kick && J.kick(9);
         } else if (msg.ev === 'down') {
+          /* ekill 에서 이미 퍼펫으로 죽음 시네마틱을 재생했다면 중복 정산 방지 */
+          if (COOP._bossCineDone) { COOP._bossCineDone = false; return true; }
           const b = INF.boss;
           if (b && b._puppet) {
             G.enemies = G.enemies.filter((o) => o !== b);
@@ -1202,11 +1249,25 @@
           G.compDirty = true;
           if (typeof LOS !== 'undefined') LOS.markDirty();
           if (typeof J !== 'undefined' && J.burst && typeof cxw === 'function') {
-            J.burst(cxw(c), cyw(r), 6, ['#C8B8E8', '#FFF'], 120);
+            J.burst(cxw(c), cyw(r), 10, ['#C8B8E8', '#FFF', '#8E7FB8'], 150);
+            if (J.ring) J.ring(cxw(c), cyw(r), '#C8B8E8', 5, (typeof CELL !== 'undefined' ? CELL : 50) * .9, 2);
           }
         }
       } else if (msg.t === 'hp' || msg.t === 'dig') {
-        if (G.cell[k]) G.hp.set(k, msg.hp);
+        if (G.cell[k]) {
+          G.hp.set(k, msg.hp);
+          /* 원격 채굴 타격감 — 로컬 damage() 의 칩 파편을 가볍게 재현 (셀당 80ms 스로틀) */
+          if (typeof J !== 'undefined' && J.spikes && typeof cxw === 'function') {
+            COOP._digFx = COOP._digFx || new Map();
+            const nowT = performance.now(), last = COOP._digFx.get(k) || 0;
+            if (nowT - last > 80) {
+              if (COOP._digFx.size > 600) COOP._digFx.clear();
+              COOP._digFx.set(k, nowT);
+              J.spikes(cxw(c), cyw(r), 3, 'rgba(200,184,232,.9)', (typeof CELL !== 'undefined' ? CELL : 50) * .32);
+              if (J.burst && Math.random() < .5) J.burst(cxw(c), cyw(r), 2, ['#C8B8E8', '#8E7FB8'], 90);
+            }
+          }
+        }
       }
     } finally {
       COOP._applying = false;
@@ -1228,6 +1289,13 @@
     COOP.active = true;
     COOP.sharedRes = 0;
     COOP.peers.clear();
+    /* 동기화 보조 상태 초기화 */
+    COOP._bossCineDone = false;
+    COOP._shotBuf = []; COOP._ghostShots = [];
+    COOP._chgTrack = []; COOP._chgDepth = null;
+    COOP._pulsePrev = 0;
+    if (COOP._digTx) COOP._digTx.clear();
+    if (COOP._digFx) COOP._digFx.clear();
     COOP.mode = msg.mode || 'harvest';
     COOP._localStatus = 'play';
     showLobby(false);
@@ -1279,8 +1347,15 @@
 
   window.COOP_onDamage = function (c, r, hpOrBreak) {
     if (!COOP.active || COOP._applying) return;
-    if (hpOrBreak === 0 || hpOrBreak === 'break') send({ t: 'break', c, r, hp: 0 });
-    else send({ t: 'hp', c, r, hp: hpOrBreak });
+    if (hpOrBreak === 0 || hpOrBreak === 'break') { send({ t: 'break', c, r, hp: 0 }); return; }
+    /* 드릴 틱마다 불리므로 셀당 40ms 스로틀 — 중간 hp 는 다음 틱이 갱신하고
+       최종 상태는 break 가 보장한다. 4인 동시 채굴 시 트래픽 절반 이하로 준다. */
+    COOP._digTx = COOP._digTx || new Map();
+    const k = c * 4096 + r, nowT = performance.now();
+    if (nowT - (COOP._digTx.get(k) || 0) < 40) return;
+    if (COOP._digTx.size > 600) COOP._digTx.clear();
+    COOP._digTx.set(k, nowT);
+    send({ t: 'hp', c, r, hp: hpOrBreak });
   };
 
   window.COOP_onLoot = function () {
@@ -1374,6 +1449,75 @@
       }
     }
     if (cbtHost()) cbtHostTick(dt); // 전투 스냅샷·지형 diff·피어 피격 판정
+    /* 설치물 스냅샷 — 센트리(CREW.turrets)·전력 노드(INF.engineerNodes)·
+       크래프트 터렛/배리케이드(TC_CRAFT.active)를 0.6s 마다 공유한다.
+       수신자는 렌더 전용 고스트로만 쓴다(판정은 각자 로컬 — ehit 위임 그대로).
+       빈 스냅샷은 마지막 1회만 보내 잔상을 지운다. */
+    COOP._depAcc = (COOP._depAcc || 0) + dt;
+    if (COOP._depAcc >= 0.6) {
+      COOP._depAcc = 0;
+      const tur = [], nodes = [], ctur = [], bar = [], chg = [];
+      try {
+        if (typeof CREW !== 'undefined' && CREW.turrets) for (const t of CREW.turrets) tur.push([t.x | 0, t.y | 0, +(t.aim || 0).toFixed(2), t.powered ? 1 : 0]);
+        if (typeof INF !== 'undefined' && INF.active && INF.engineerNodes) for (const n of INF.engineerNodes) nodes.push([n.x | 0, n.y | 0, n.rad | 0]);
+        if (typeof INF !== 'undefined' && INF.active && INF.breakerCharges) for (const o of INF.breakerCharges) chg.push([o.x | 0, o.y | 0]);
+        const C = typeof window !== 'undefined' && window.TC_CRAFT;
+        if (C && C.active) {
+          for (const t of C.active.turrets) ctur.push([t.x | 0, t.y | 0, +(t.a || 0).toFixed(2)]);
+          for (const b of C.active.barricades) bar.push([b.x | 0, b.y | 0, +(b.a || 0).toFixed(2)]);
+          for (const o of C.active.charges) chg.push([o.x | 0, o.y | 0]);
+        }
+      } catch (e) {}
+      const nDep = tur.length + nodes.length + ctur.length + bar.length + chg.length;
+      if (nDep || COOP._depHadAny) send({ t: 'skill', kind: 'deploy', tur, nodes, ctur, bar, chg });
+      COOP._depHadAny = nDep > 0;
+    }
+    /* ── 사격 동기화 — 내 총알(플레이어·내 센트리·내 드론)을 코스메틱 트레이서로 방송.
+       판정은 기존 구조(각자 로컬 + ehit 위임) 그대로 — 수신측은 연출만 그린다.
+       40ms 배치(최대 24발/메시지)로 연사 특성이 있어도 초당 25 메시지를 넘지 않는다. */
+    if (G && G.projectiles) {
+      for (const pr of G.projectiles) {
+        if (pr._coopSent) continue; pr._coopSent = 1;
+        (COOP._shotBuf = COOP._shotBuf || []).push([pr.x | 0, pr.y | 0, +Math.atan2(pr.vy || 0, pr.vx || 1).toFixed(2), pr.laser ? 1 : 0]);
+      }
+      if (COOP._shotBuf && COOP._shotBuf.length) {
+        const nowS = performance.now();
+        if (nowS - (COOP._shotT || 0) >= 40) {
+          COOP._shotT = nowS;
+          send({ t: 'skill', kind: 'shot', sh: COOP._shotBuf.splice(0, 24) });
+        }
+      }
+    }
+    /* ── 폭발물 감시 — 설치는 위 deploy 스냅샷(chg)이 보여주고, 소멸(폭발) 순간은
+       boom 이벤트로 즉시 방송한다. 층 이동으로 배열이 리셋될 땐 폭발이 아니므로 무시. */
+    {
+      COOP._chgTrack = COOP._chgTrack || [];
+      const depth = (typeof G !== 'undefined' && G.depth) | 0;
+      if (COOP._chgDepth !== depth) { COOP._chgDepth = depth; COOP._chgTrack.length = 0; }
+      const live = [];
+      try {
+        if (typeof INF !== 'undefined' && INF.active && INF.breakerCharges) for (const o of INF.breakerCharges) live.push(o);
+        const C = typeof window !== 'undefined' && window.TC_CRAFT;
+        if (C && C.active) for (const o of C.active.charges) live.push(o);
+      } catch (e) {}
+      for (let i = COOP._chgTrack.length - 1; i >= 0; i--) {
+        const tr = COOP._chgTrack[i];
+        if (live.indexOf(tr.o) < 0) { COOP._chgTrack.splice(i, 1); send({ t: 'skill', kind: 'boom', x: tr.x | 0, y: tr.y | 0 }); }
+        else { tr.x = tr.o.x; tr.y = tr.o.y; }
+      }
+      for (const o of live) { let seen = false; for (const tr of COOP._chgTrack) if (tr.o === o) { seen = true; break; } if (!seen) COOP._chgTrack.push({ o, x: o.x, y: o.y }); }
+    }
+    /* ── 스카우트 펄스 — 발동 프레임(타이머 리필) 감지 → 링 연출 방송 */
+    if (typeof INF !== 'undefined' && INF.active) {
+      const pt = INF.scoutPulseT || 0;
+      if (pt > (COOP._pulsePrev || 0) + 0.5 && G && G.sh) send({ t: 'skill', kind: 'pulse', x: G.sh.x | 0, y: G.sh.y | 0 });
+      COOP._pulsePrev = pt;
+    }
+    /* 크래프트 플레어 — 생성 훅이 없어 램프 목록을 감시해 새 것만 1회 방송한다.
+       (수신측 applyLamp 가 만든 램프는 craft 플래그가 없어 재방송 루프가 없다) */
+    if (G && G.lamps) for (const l of G.lamps) {
+      if (l.craft && l.flare && !l._coopSent) { l._coopSent = true; send({ t: 'lamp', x: l.x, y: l.y, rad: l.rad, ttl: l.ttl }); }
+    }
     /* 채취 미션의 공유 목표 (v1 유지) — 무한 모드는 개인 성장·개인 가방 */
     if (!isInfinite() && typeof CREW !== 'undefined' && CREW.phase === 'play') {
       const local = G.nRes | 0;
@@ -1385,10 +1529,87 @@
 
   /* ── 피어 렌더 ── */
 
+  /* 피어 설치물 고스트 — 센트리·전력 노드·크래프트 터렛/배리케이드 (렌더 전용, 판정 없음).
+     스냅샷(0.6s 주기)이 끊기면 2.6s 뒤 자연 소멸. 안개·조명 필름은 월드 위에 덮이므로
+     로컬 설치물과 같은 톤으로 보인다. */
+  function drawPeerDeploy(p) {
+    const d = p.deploy;
+    const C = typeof CELL !== 'undefined' ? CELL : 50;
+    cx.save();
+    for (const [x, y, rad] of d.nodes) {
+      cx.globalAlpha = .2; cx.strokeStyle = '#7FEBD0'; cx.lineWidth = 1.5; cx.setLineDash([7, 7]);
+      cx.beginPath(); cx.arc(x, y, rad || C * 4, 0, Math.PI * 2); cx.stroke(); cx.setLineDash([]);
+      cx.globalAlpha = .95; cx.fillStyle = '#21152F'; cx.strokeStyle = '#7FEBD0'; cx.lineWidth = 2;
+      cx.beginPath(); cx.arc(x, y, 10, 0, Math.PI * 2); cx.fill(); cx.stroke();
+      cx.fillStyle = '#BFFFEF'; cx.beginPath(); cx.arc(x, y, 3.5, 0, Math.PI * 2); cx.fill();
+    }
+    for (const [x, y, aim, powered] of d.tur) {
+      const col = powered ? '#C7A0FF' : '#685674';
+      cx.globalAlpha = .95; cx.translate(x, y);
+      cx.fillStyle = '#21152F'; cx.strokeStyle = col; cx.lineWidth = 2.3;
+      cx.beginPath(); cx.arc(0, 0, 13, 0, Math.PI * 2); cx.fill(); cx.stroke();
+      cx.rotate(aim || 0); cx.fillStyle = col;
+      if (cx.roundRect) { cx.beginPath(); cx.roundRect(0, -4, 19, 8, 3); cx.fill(); } else cx.fillRect(0, -4, 19, 8);
+      cx.rotate(-(aim || 0));
+      cx.fillStyle = '#F3E9FF'; cx.beginPath(); cx.arc(0, 0, 4.5, 0, Math.PI * 2); cx.fill();
+      cx.translate(-x, -y);
+    }
+    const imgs = typeof window !== 'undefined' && window.TC_CRAFT && window.TC_CRAFT.images;
+    const icon = (name) => { const im = imgs && imgs[name]; return im && im.complete && im.naturalWidth ? im : null; };
+    for (const [x, y, a] of d.ctur) {
+      const im = icon('icon-auto-turret.png');
+      cx.globalAlpha = .95;
+      if (im) { cx.translate(x, y); cx.rotate(a || 0); cx.drawImage(im, -C * .62, -C * .62, C * 1.24, C * 1.24); cx.rotate(-(a || 0)); cx.translate(-x, -y); }
+      else { cx.fillStyle = '#2A2340'; cx.strokeStyle = '#FFD36E'; cx.lineWidth = 2; cx.beginPath(); cx.arc(x, y, 12, 0, Math.PI * 2); cx.fill(); cx.stroke(); }
+    }
+    for (const [x, y, a] of d.bar) {
+      const im = icon('icon-folding-barricade.png');
+      cx.globalAlpha = .95;
+      if (im) { cx.translate(x, y); cx.rotate(a || 0); cx.drawImage(im, -C * .79, -C * .49, C * 1.58, C * .98); cx.rotate(-(a || 0)); cx.translate(-x, -y); }
+      else { cx.translate(x, y); cx.rotate(a || 0); cx.fillStyle = '#4A3A2A'; cx.fillRect(-C * .75, -C * .18, C * 1.5, C * .36); cx.rotate(-(a || 0)); cx.translate(-x, -y); }
+    }
+    /* 설치된 폭발물 — 점멸 도트 (폭발 연출은 boom 이벤트가 담당) */
+    if (d.chg) for (const [x, y] of d.chg) {
+      const blink = .5 + .5 * Math.sin((typeof G !== 'undefined' ? G.t : 0) * 10);
+      cx.globalAlpha = .5 + .45 * blink;
+      cx.fillStyle = '#2A2340'; cx.strokeStyle = '#FF8D5A'; cx.lineWidth = 2;
+      cx.beginPath(); cx.arc(x, y, 7, 0, Math.PI * 2); cx.fill(); cx.stroke();
+      cx.fillStyle = '#FFD36E'; cx.beginPath(); cx.arc(x, y, 2.5 + blink * 1.5, 0, Math.PI * 2); cx.fill();
+    }
+    cx.restore();
+  }
+
+  /* 피어 사격 트레이서 — 수신 각도로 날아가는 짧은 광선. 벽에 닿으면 스파크와 함께 소멸. */
+  function drawGhostShots(nowMs) {
+    const gs = COOP._ghostShots;
+    if (!gs || !gs.length) return;
+    const spdOf = (ls) => (typeof teWorld === 'function' ? teWorld(ls ? 480 : 280) : (ls ? 480 : 280));
+    cx.save();
+    cx.lineCap = 'round';
+    for (let i = gs.length - 1; i >= 0; i--) {
+      const s = gs[i], age = (nowMs - s.t0) / 1000;
+      if (age > 0.6) { gs.splice(i, 1); continue; }
+      const spd = spdOf(s.ls), ca = Math.cos(s.a), sa = Math.sin(s.a);
+      const px = s.x + ca * spd * age, py = s.y + sa * spd * age;
+      if (typeof solidAt === 'function' && solidAt(px, py)) {
+        if (typeof J !== 'undefined' && J.spikes) J.spikes(px, py, 2, 'rgba(255,220,150,.9)', 12);
+        gs.splice(i, 1); continue;
+      }
+      const trail = Math.min(26, spd * age);
+      cx.globalAlpha = Math.max(0, .85 - age * 1.1);
+      cx.strokeStyle = s.ls ? '#8FE8FF' : '#FFE9B8';
+      cx.lineWidth = s.ls ? 2.6 : 2;
+      cx.beginPath(); cx.moveTo(px - ca * trail, py - sa * trail); cx.lineTo(px, py); cx.stroke();
+    }
+    cx.restore();
+  }
+
   window.COOP_drawPeer = function () {
-    if (!COOP.active || !COOP.peers.size) return;
+    if (!COOP.active) return;
     /* 프레임 dt — 외삽용 (rAF 재개 직후 폭주 방지 위해 50ms 상한) */
     const nowMs = performance.now();
+    drawGhostShots(nowMs);
+    if (!COOP.peers.size) { COOP._drawT = nowMs; return; }
     const fdt = Math.min(.05, Math.max(0, (nowMs - (COOP._drawT || nowMs)) / 1000));
     COOP._drawT = nowMs;
     for (const [seat, p] of COOP.peers) {
@@ -1407,8 +1628,10 @@
           p.y += (p.ty - p.y) * 0.38;
         }
       }
-      if (!isFinite(p.x) || !isFinite(p.y)) continue;
       if (p.status === 'escaped') continue; // 생환한 크루는 현장에 없다
+      /* 설치물 고스트 — 위치 수신 전이라도 스냅샷이 신선하면 그린다 */
+      if (p.deploy && nowMs - p.deploy.at < 2600) drawPeerDeploy(p);
+      if (!isFinite(p.x) || !isFinite(p.y)) continue;
       const drilling = p.weapon === 'drill' && !!p.drill;
       const aim = typeof p.aim === 'number' ? p.aim : p.face < 0 ? Math.PI : 0;
       const face = p.face || 1;
@@ -1437,8 +1660,17 @@
       cx.fillStyle = down ? '#ffc9d6' : '#e8d6ff';
       cx.fillText(label, p.x, by + 12);
 
+      /* v7.9.2 — 피어도 본인과 같은 역할별 시트 애니메이션으로 그린다.
+         drawShelly 의 역할 분기는 "내" INF.roleId 를 보므로 피어에게 못 쓰고,
+         역할별 시트 함수(x,y,r,t,aim,moving,downedOverride,downTime)를 직접 부른다.
+         downTime 은 동기화하지 않으므로 다운 상태 지속시간을 로컬에서 누적한다(fall 프레임용). */
+      if (down) p._downT = (p._downT || 0) + fdt; else p._downT = 0;
       let drawn = false;
-      if (p.roleId === 'driller' && typeof drawMinerSprite === 'function') {
+      const sheetFn = { gunner: 'drawGunnerSprite', engineer: 'drawEngineerSprite', scout: 'drawScoutSprite', driller: 'drawDrillerSprite' }[p.roleId];
+      if (sheetFn && typeof window[sheetFn] === 'function') {
+        drawn = !!window[sheetFn](p.x, p.y, R_SHELLY, G.t, aim, moving, down, p._downT);
+      }
+      if (!drawn && p.roleId === 'driller' && typeof drawMinerSprite === 'function') {
         drawn = !!drawMinerSprite(p.x, p.y, R_SHELLY, G.t, aim, drilling, moving);
       }
       if (!drawn) {
@@ -1566,10 +1798,10 @@
             <button data-mode="infinite">무한 모드 (본편)</button>
           </div>
           <div id="coopRoles" class="tcRoleSelectGrid" aria-label="코옵 직업 선택">
-            <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="/assets/menu/char-driller-select-v4.png" alt="드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">채굴 · 돌파</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-            <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="/assets/menu/char-gunner-select-v4.png" alt="거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">사격 · 발파</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-            <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="/assets/menu/char-scout-select-v4.png" alt="스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">시야 · 기동</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
-            <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="/assets/menu/char-engineer-select-v4.png" alt="엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">전력망 · 센트리</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+            <button class="roleBtn tcRoleChoice" data-role="driller" style="--role:#ffd36e"><span class="tcRoleCode">EXCAVATION</span><img class="tcRoleArt" src="/assets/characters/driller-playable.png" alt="드릴러"><span class="tcRoleCopy"><b class="tcRoleName">드릴러</b><span class="tcRoleTag">채굴 · 돌파</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+            <button class="roleBtn tcRoleChoice" data-role="gunner" style="--role:#ff8d72"><span class="tcRoleCode">FIRE SUPPORT</span><img class="tcRoleArt" src="/assets/characters/gunner-playable.png" alt="거너"><span class="tcRoleCopy"><b class="tcRoleName">거너</b><span class="tcRoleTag">사격 · 발파</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+            <button class="roleBtn tcRoleChoice" data-role="scout" style="--role:#7febd0"><span class="tcRoleCode">RECON</span><img class="tcRoleArt" src="/assets/characters/scout-playable.png" alt="스카우트"><span class="tcRoleCopy"><b class="tcRoleName">스카우트</b><span class="tcRoleTag">시야 · 기동</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
+            <button class="roleBtn tcRoleChoice" data-role="engineer" style="--role:#c7a0ff"><span class="tcRoleCode">FORTIFICATION</span><img class="tcRoleArt" src="/assets/characters/engineer-playable.png" alt="엔지니어"><span class="tcRoleCopy"><b class="tcRoleName">엔지니어</b><span class="tcRoleTag">전력망 · 센트리</span></span><i class="tcRoleCheck" aria-hidden="true">✓</i></button>
           </div>
           <div class="row" style="margin-top:14px">
             <button class="pri" id="coopStart" disabled>미션 시작 (호스트)</button>

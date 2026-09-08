@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: cd2b2d21874890a4b9be838935b58727
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3417717998252905479
+    second: tr01_vfx_rays_a_albedo_0
+  - first:
+      213: -8572311957567053617
+    second: tr01_vfx_rays_a_albedo_1
+  - first:
+      213: -407619644631161227
+    second: tr01_vfx_rays_a_albedo_2
+  - first:
+      213: 2660853080544162354
+    second: tr01_vfx_rays_a_albedo_3
+  - first:
+      213: 2085899132488986358
+    second: tr01_vfx_rays_a_albedo_4
+  - first:
+      213: 9005638777199393631
+    second: tr01_vfx_rays_a_albedo_5
+  - first:
+      213: 3576459241097481074
+    second: tr01_vfx_rays_a_albedo_6
+  - first:
+      213: 1647532330863587322
+    second: tr01_vfx_rays_a_albedo_7
+  - first:
+      213: -2048056940042296822
+    second: tr01_vfx_rays_a_albedo_8
+  - first:
+      213: 2812814136489399934
+    second: tr01_vfx_rays_a_albedo_9
+  - first:
+      213: 8088154202596113276
+    second: tr01_vfx_rays_a_albedo_10
+  - first:
+      213: 7347990529082109702
+    second: tr01_vfx_rays_a_albedo_11
+  - first:
+      213: -7577262534610919841
+    second: tr01_vfx_rays_a_albedo_12
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6
+        width: 512
+        height: 499
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 704d25c596c2e6f20800000000000000
+      internalID: 3417717998252905479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_1
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 487
+        width: 10
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc0e16151b7090980800000000000000
+      internalID: -8572311957567053617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_2
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 502
+        width: 46
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 576e946c718d75af0800000000000000
+      internalID: -407619644631161227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_3
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 491
+        width: 41
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 232b65967cf3de420800000000000000
+      internalID: 2660853080544162354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_4
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 501
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fe2d4d953a92fc10800000000000000
+      internalID: 2085899132488986358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_5
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 490
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5bf37201c47afc70800000000000000
+      internalID: 9005638777199393631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_6
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 484
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27b474b1bb222a130800000000000000
+      internalID: 3576459241097481074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_7
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 487
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aff68190de53dd610800000000000000
+      internalID: 1647532330863587322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_8
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 487
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0261096017d393e0800000000000000
+      internalID: -2048056940042296822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 242
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e76d5a0ed8f190720800000000000000
+      internalID: 2812814136489399934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_10
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 237
+        width: 41
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7bf256f465ee3070800000000000000
+      internalID: 8088154202596113276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_11
+      rect:
+        serializedVersion: 2
+        x: 497
+        y: 208
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60fafd2747e49f560800000000000000
+      internalID: 7347990529082109702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_rays_a_albedo_12
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 203
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5ed3aeeed728d690800000000000000
+      internalID: -7577262534610919841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_vfx_rays_a_albedo_0: 3417717998252905479
+      tr01_vfx_rays_a_albedo_1: -8572311957567053617
+      tr01_vfx_rays_a_albedo_10: 8088154202596113276
+      tr01_vfx_rays_a_albedo_11: 7347990529082109702
+      tr01_vfx_rays_a_albedo_12: -7577262534610919841
+      tr01_vfx_rays_a_albedo_2: -407619644631161227
+      tr01_vfx_rays_a_albedo_3: 2660853080544162354
+      tr01_vfx_rays_a_albedo_4: 2085899132488986358
+      tr01_vfx_rays_a_albedo_5: 9005638777199393631
+      tr01_vfx_rays_a_albedo_6: 3576459241097481074
+      tr01_vfx_rays_a_albedo_7: 1647532330863587322
+      tr01_vfx_rays_a_albedo_8: -2048056940042296822
+      tr01_vfx_rays_a_albedo_9: 2812814136489399934
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

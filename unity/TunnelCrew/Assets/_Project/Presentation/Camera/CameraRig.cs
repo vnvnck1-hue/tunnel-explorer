@@ -1,4 +1,5 @@
 using System;
+using TunnelCrew.Presentation.Visual;
 using TunnelCrew.Sim;
 using UnityEngine;
 
@@ -17,6 +18,17 @@ namespace TunnelCrew.Presentation
     {
         [SerializeField] float _zoomLerpRate = (float)SimTuning.ZoomLerpRate;
 
+        /// <summary>
+        /// 비주얼 오버홀 카메라 프로파일(§10). <b>비워 두면 기존 동작과 완전히 같다.</b>
+        ///
+        /// 본선 씬을 이번 배치에서 바꾸지 않기 위해 옵션으로 두었다. Visual Lab 에서
+        /// 기준 줌·근접 줌·협동 줌을 비교한 뒤에 RunBootstrap 에서 꽂는다.
+        /// </summary>
+        [SerializeField] WorldVisualProfile _profile;
+
+        /// <summary>프로파일이 있을 때 쓸 줌 모드. 없으면 무시된다.</summary>
+        [SerializeField] CameraViewMode _viewMode = CameraViewMode.Base;
+
         Camera _cam;
         WorldGrid _world;
         Func<PlayerState> _player;
@@ -30,6 +42,23 @@ namespace TunnelCrew.Presentation
         public Func<(Vector2 center, float zoomMul)?> CineOverride;
         /// <summary>관전 모드 크루 시점 — 값이 있으면 그 점을 중심으로 추종한다(데드존·룩어헤드 없이). 원본 OBS.camera 는 k=dt·5 로 미리 보간해 넘긴다.</summary>
         public Func<Vector2?> FollowOverride;
+
+        /// <summary>비주얼 프로파일. null 이면 원본 공식(SimTuning)을 쓴다.</summary>
+        public WorldVisualProfile Profile
+        {
+            get => _profile;
+            set { _profile = value; _initialized = false; }
+        }
+
+        /// <summary>줌 모드. 프로파일이 있을 때만 뜻이 있다.</summary>
+        public CameraViewMode ViewMode
+        {
+            get => _viewMode;
+            set => _viewMode = value;
+        }
+
+        /// <summary>이번 프레임의 목표 가시 세로 셀 수. 디버그 오버레이가 읽는다.</summary>
+        public float TargetViewCells { get; private set; }
 
         void Awake() => _cam = GetComponent<Camera>();
 
@@ -54,8 +83,18 @@ namespace TunnelCrew.Presentation
             // ── 줌. 원본은 화면 픽셀 배율이지만, 여기서는 직교 카메라 높이(셀)로 다룬다.
             // 원본 G.Z 는 "1 월드픽셀 → 몇 화면픽셀" 이라 셀 단위로는 화면 높이 = LH / (Z*CELL).
             // 기준 줌(baseZoom)에서 세로로 보이는 셀 수를 화면 비율과 무관하게 고정한다.
-            float baseCells = (float)(1080.0 / (SimTuning.BaseZoom * SimTuning.PxPerCell));
-            float targetCells = baseCells / (float)SimTuning.ZoomInMul;
+            // 프로파일이 있으면 §10 의 가시 셀 수를 그대로 쓴다. 없으면 원본 공식.
+            float targetCells;
+            if (_profile != null)
+            {
+                targetCells = _profile.ViewCellsFor(_viewMode);
+            }
+            else
+            {
+                float baseCells = (float)(1080.0 / (SimTuning.BaseZoom * SimTuning.PxPerCell));
+                targetCells = baseCells / (float)SimTuning.ZoomInMul;
+            }
+            TargetViewCells = targetCells;
 
             if (!_initialized) _zoom = targetCells;
             else _zoom = Mathf.Lerp(_zoom, targetCells, Mathf.Min(1f, Time.deltaTime * _zoomLerpRate));
@@ -79,7 +118,9 @@ namespace TunnelCrew.Presentation
 
             // ── 데드존 + 추종. 카메라 중심은 화면 세로 42% 지점(상하 비대칭).
             // 원본은 y 가 아래로 증가하므로 위에서 42%, Unity 는 위로 증가하므로 아래에서 58%.
-            float anchorFromBottom = 1f - (float)SimTuning.VerticalAnchor;
+            float anchorFromBottom = _profile != null
+                ? _profile.AnchorFromBottom
+                : 1f - (float)SimTuning.VerticalAnchor;
             Vector2 center = _initialized
                 ? _camOrigin + new Vector2(vw * 0.5f, vh * anchorFromBottom)
                 : target;

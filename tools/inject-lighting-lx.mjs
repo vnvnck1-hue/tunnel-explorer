@@ -3,8 +3,10 @@
    바이트 단위 패치(latin1 왕복)로 CRLF/LF 혼용을 보존한다. 앵커는 정확히 1회 매치해야 한다. */
 import fs from 'node:fs';
 
-const [,, SRC, DST] = process.argv;
-if (!SRC || !DST) { console.error('usage: node inject-lighting-lx.mjs <src> <dst>'); process.exit(1); }
+const [,, SRC, DST, LABEL_ARG] = process.argv;
+if (!SRC || !DST) { console.error('usage: node inject-lighting-lx.mjs <src> <dst> [menuBuild 라벨]'); process.exit(1); }
+/* 메뉴 우상단 빌드 라벨. 개발 분기는 기본값, 본선 머지 시 예: "PROTOTYPE / 7.9.1" */
+const LABEL = LABEL_ARG || 'PROTOTYPE / 7.9.1 LIGHTING DEVELOP (LX)';
 const L1 = s => Buffer.from(s, 'utf8').toString('latin1');
 let html = fs.readFileSync(SRC).toString('latin1');
 let patches = 0;
@@ -31,7 +33,13 @@ function before(anchor, text) { rep(anchor, text + anchor); }
 const NL = html.indexOf('\r\n') >= 0 ? '\r\n' : '\n';
 
 /* ── 0. 빌드 라벨 ─────────────────────────────────────────────── */
-rep('menuBuild">PROTOTYPE / 7.9.0<', 'menuBuild">PROTOTYPE / 7.9.1 LIGHTING DEVELOP (LX)<');
+rep('menuBuild">PROTOTYPE / 7.9.0<', 'menuBuild">' + LABEL + '<');
+
+/* ── 0b. TE 조명 기본값 — 사용자 확정 JSON(2026-09-03)의 te 블록 ─────── */
+rep("  ambient:195, flashRange:320, halfAngle:35, heightRatio:0.23, nStrength:0.02," + NL +
+    "  fogDensity:0.67, lightSteps:8, softMask:true, breathe:true, flashlight:true",
+    "  ambient:298, flashRange:468, halfAngle:28, heightRatio:0.25, nStrength:0.04,   /* LX 기본값(2026-09-03 사용자 확정) */" + NL +
+    "  fogDensity:0.65, lightSteps:16, softMask:true, breathe:true, flashlight:true");
 
 /* ── 1. LX 튠 오브젝트 + 헬퍼 (FOW 직전) ─────────────────────────── */
 const LX_BLOCK = `
@@ -44,14 +52,16 @@ const LX_CANVAS_MODES=['source-over','multiply','screen','overlay','soft-light',
 const LX_LIGHT_KINDS=['hero','flash','torch','cold','bio','boss','fx','exit'];
 const LX_DEFAULT={
  on:true, showMask:false,
- lights:{ hero:{rgb:'#FFC46A',mul:1}, flash:{rgb:'#FFE2A8',mul:1}, torch:{rgb:'#FF8A2A',mul:1.1}, cold:{rgb:'#4FB4FF',mul:1.1},
-          bio:{rgb:'#4CF0B0',mul:1}, boss:{rgb:'#FF4A2A',mul:1.2}, fx:{rgb:'#FFD24A',mul:1}, exit:{rgb:'#3AE6FF',mul:1} },
- lightmap:{on:true, mode:'multiply', opacity:1, dark:'#1A1030', bright:1.25, saturation:1.2, litColor:1, litClear:0},
- contrast:{on:true, mode:'overlay', opacity:.6, darkLevel:.34, litLevel:.62, colorize:.7},
- core:{on:true, mode:'color-dodge', opacity:.7, threshold:.72, softness:.2, strength:.9, tintMix:1},
- zone:{on:true, mode:'color', opacity:.22, litFade:.6, blendSec:1.2, colors:['#7A4A9A','#3A8A9A','#3A6A9A','#9A5A3A']},
- sprite:{shadeMode:'multiply', shadeRgb:'#3A2A6A', liteMode:'screen', rimMode:'lighter', shade:1, lite:1, rim:1},
- wall:{shadowMode:'multiply', shadowRgb:'#2A1A48', shadeMode:'multiply', shadeRgb:'#241640', rimMode:'screen', shadow:1, shade:1, rim:1}
+ sortUnderCrew:true,   /* 조명 레이어를 크루 스프라이트 아래에 소팅(2026-09-03 사용자 요청) */
+ /* 기본값 — 2026-09-03 사용자가 F10 패널에서 확정해 전달한 JSON(version 7.9.1-lx). TE 쪽 값은 아래 TE 패치 참조. */
+ lights:{ hero:{rgb:'#8AB1FF',mul:.85}, flash:{rgb:'#FFE2A8',mul:1}, torch:{rgb:'#2EFFE7',mul:1}, cold:{rgb:'#7FB8FF',mul:1.15},
+          bio:{rgb:'#4CF0B0',mul:1}, boss:{rgb:'#FF4A2A',mul:1.2}, fx:{rgb:'#FFD24A',mul:1.6}, exit:{rgb:'#3AE6FF',mul:1} },
+ lightmap:{on:true, mode:'multiply', opacity:1, dark:'#44248F', bright:1.03, saturation:.9, litColor:1, litClear:.07},
+ contrast:{on:true, mode:'soft-light', opacity:.42, darkLevel:.57, litLevel:.75, colorize:.78},
+ core:{on:true, mode:'color-dodge', opacity:.7, threshold:.78, softness:.2, strength:.8, tintMix:1},
+ zone:{on:true, mode:'color', opacity:.34, litFade:.62, blendSec:1.3, colors:['#9A5A3A','#7A4A9A','#6A4A3A','#9A6A3A']},
+ sprite:{shadeMode:'multiply', shadeRgb:'#4A2A5A', liteMode:'screen', rimMode:'lighter', shade:1, lite:1, rim:1},
+ wall:{shadowMode:'multiply', shadowRgb:'#3A1A38', shadeMode:'multiply', shadeRgb:'#2A1430', rimMode:'screen', shadow:1, shade:1, rim:1}
 };
 const LX_PRESETS={
  '기본 (LX)':{},
@@ -67,6 +77,15 @@ const LX_PRESETS={
    zone:{on:true,mode:'screen',opacity:.15,litFade:.5,blendSec:1,colors:['#B020FF','#00C8E0','#FF3090','#FF8A00']},
    sprite:{shadeMode:'multiply',shadeRgb:'#4A20B0',liteMode:'color-dodge',rimMode:'color-dodge',shade:1,lite:1.3,rim:1.4},
    wall:{shadowMode:'multiply',shadowRgb:'#3A1070',shadeMode:'multiply',shadeRgb:'#2C0C60',rimMode:'color-dodge',shadow:1,shade:1,rim:1.4}},
+ /* 사용자 방향(2026-09-03): ③ 광원 종류 간 색 대비 극대화 + ④ 글로우. 코어 임계를 내리고 부드러움을 올려 광원색 할로를 만든다. _te 는 패널이 TE 에 적용. */
+ '화려함 C (글로우·색대비)':{lights:{hero:{rgb:'#FFB040',mul:1},flash:{rgb:'#FFF0A0',mul:1},torch:{rgb:'#FF3010',mul:1.6},cold:{rgb:'#1070FF',mul:1.7},bio:{rgb:'#20FF70',mul:1.5},boss:{rgb:'#FF1060',mul:1.7},fx:{rgb:'#FFE020',mul:1.4},exit:{rgb:'#00FFE0',mul:1.6}},
+   lightmap:{mode:'multiply',opacity:1,dark:'#1E0C48',bright:1.0,saturation:1.9,litColor:1,litClear:0},
+   contrast:{on:true,mode:'overlay',opacity:.6,darkLevel:.32,litLevel:.62,colorize:1},
+   core:{on:true,mode:'screen',opacity:.85,threshold:.55,softness:.4,strength:.6,tintMix:1},
+   zone:{on:true,mode:'screen',opacity:.12,litFade:.5,blendSec:1,colors:['#B020FF','#00C8E0','#FF3090','#FF8A00']},
+   sprite:{shadeMode:'multiply',shadeRgb:'#4A20B0',liteMode:'color-dodge',rimMode:'color-dodge',shade:1,lite:1.3,rim:1.4},
+   wall:{shadowMode:'multiply',shadowRgb:'#3A1070',shadeMode:'multiply',shadeRgb:'#2C0C60',rimMode:'color-dodge',shadow:1,shade:1,rim:1.4},
+   _te:{lightSteps:16}},
  '화려함 B (하드라이트 펀치)':{lights:{hero:{rgb:'#FFA030',mul:1},flash:{rgb:'#FFE060',mul:1},torch:{rgb:'#FF4A10',mul:1.4},cold:{rgb:'#1E9CFF',mul:1.5},bio:{rgb:'#30FF90',mul:1.4},boss:{rgb:'#FF2040',mul:1.6},fx:{rgb:'#FFE030',mul:1.3},exit:{rgb:'#00F0FF',mul:1.4}},
    lightmap:{mode:'hard-light',opacity:1,dark:'#1C0C44',bright:.8,saturation:1.8,litColor:1,litClear:0},
    contrast:{on:true,mode:'overlay',opacity:.5,darkLevel:.32,litLevel:.62,colorize:.8},
@@ -91,6 +110,8 @@ function LX_lightF(kind){const l=LX.lights[kind]||LX.lights.hero;const f=LX_hex(
 /* 광원 종류 → 0~255 색 (LIT 재질 조명용) */
 function LX_light255(kind){const l=LX.lights[kind]||LX.lights.hero;return LX_hex(l.rgb).i;}
 function LX_modeIdx(m){const i=LX_MODES.indexOf(m);return i<0?0:i;}
+/* LX_MODES → Canvas2D globalCompositeOperation (normal→source-over, linear-dodge→lighter) */
+function LX_canvasOp(m){if(m==='normal')return 'source-over';if(m==='linear-dodge')return 'lighter';return LX_MODES.indexOf(m)>=0?m:'source-over';}
 /* 구역 앰비언스 색 — 시점 캐릭터 발밑 지층 밴드 색으로 blendSec 동안 보간 */
 const _lxZone={cur:null,t:0};
 function LX_zoneRgb(vc){
@@ -112,7 +133,7 @@ before('/* ══════════ WebGL FoW (seedloop fogLitMask pipelin
 after(" function u4(p,n,a,b,c,d){const l=gl.getUniformLocation(p,n);if(l)gl.uniform4f(l,a,b,c,d);}",
       NL + " function u3(p,n,a,b,c){const l=gl.getUniformLocation(p,n);if(l)gl.uniform3f(l,a,b,c);}");
 after(" let VW=2,VH=2,maskTex=null,maskFbo=null,losTex=null,losW=0,losH=0,losUploadKey='';",
-      NL + " let OW=2,OH=2,sceneTex=null;   /* LX: 출력 캔버스는 씬 해상도, 마스크는 LIGHTMAP_SCALE */");
+      NL + " let OW=2,OH=2;   /* LX: 레이어 버퍼는 씬 해상도, 마스크는 LIGHTMAP_SCALE */");
 
 /* ── 3. 스탬프 셰이더 — 광원 색을 RGB, 세기를 A 에 기록 ─────────────── */
 rep("  'uniform float u_softMask;uniform float u_intensity;',",
@@ -127,7 +148,8 @@ rep("  ' return texture2D(u_fogLitMaskTex,uv).r;}',", "  ' return texture2D(u_fo
 
 /* ── 4. LX 합성 셰이더 (기존 fogProg 뒤에 추가) ───────────────────────── */
 const LX_PROG = `
- /* ── LX 합성 — 씬 텍스처를 읽어 포토샵 블렌드 수식으로 직접 합성한다 ── */
+ /* ── LX 레이어 셰이더 — 레이어 하나의 색+알파만 출력한다. 블렌드는 Canvas2D globalCompositeOperation 이 담당.
+    (씬 캔버스를 텍스처로 읽지 않으므로 file:// 처럼 캔버스가 오염(tainted)된 환경에서도 동작한다) ── */
  const lxProg=program([
   'attribute vec2 a_pos;attribute vec2 a_uv;varying vec2 v_texcoord;',
   'void main(){v_texcoord=a_uv;gl_Position=vec4(a_pos,0.0,1.0);}'
@@ -137,14 +159,14 @@ const LX_PROG = `
   '#else',
   'precision mediump float;',
   '#endif',
-  'uniform sampler2D u_fogLitMaskTex;uniform sampler2D u_bayerTex;uniform sampler2D u_losTex;uniform sampler2D u_sceneTex;',
-  'uniform vec2 u_worldSourceSize;uniform float u_lightSteps;uniform float u_showMask;',
+  'uniform sampler2D u_fogLitMaskTex;uniform sampler2D u_bayerTex;uniform sampler2D u_losTex;',
+  'uniform vec2 u_worldSourceSize;uniform float u_lightSteps;uniform float u_showMask;uniform float u_layer;',
   'uniform float u_losEnabled;uniform vec2 u_losMapSize;',
   'uniform vec2 u_camXY;uniform vec2 u_offXY;uniform float u_zoom;uniform float u_cell;uniform float u_cssScale;',
-  'uniform float u_lmOn,u_lmMode,u_lmOpacity,u_lmBright,u_lmSat,u_lmLitCol,u_lmClear;uniform vec3 u_lmDark;',
-  'uniform float u_ctOn,u_ctMode,u_ctOpacity,u_ctDark,u_ctLit,u_ctColorize;',
-  'uniform float u_coOn,u_coMode,u_coOpacity,u_coThreshold,u_coSoft,u_coStrength,u_coTint;',
-  'uniform float u_znOn,u_znMode,u_znOpacity,u_znLitFade;uniform vec3 u_znRgb;',
+  'uniform float u_lmOpacity,u_lmBright,u_lmSat,u_lmLitCol,u_lmClear;uniform vec3 u_lmDark;',
+  'uniform float u_ctOpacity,u_ctDark,u_ctLit,u_ctColorize;',
+  'uniform float u_coOpacity,u_coThreshold,u_coSoft,u_coStrength,u_coTint;',
+  'uniform float u_znOpacity,u_znLitFade;uniform vec3 u_znRgb;',
   'varying vec2 v_texcoord;',
   'vec2 sampleLosLayers(vec2 pixelPos){',
   ' if(u_losEnabled<0.5||u_losMapSize.x<1.0)return vec2(1.0);',
@@ -159,33 +181,8 @@ const LX_PROG = `
   '     texture2D(u_losTex,tuv+vec2(d.x,-d.y)).rg+texture2D(u_losTex,tuv+vec2(-d.x,d.y)).rg)*0.07;',
   ' return clamp(s,0.0,1.0);}',
   'float edgeNoise(vec2 p){return fract(sin(dot(floor(p),vec2(127.1,311.7)))*43758.5453);}',
-  /* ── 포토샵/W3C 블렌드 수식 ── */
-  'float lum(vec3 c){return dot(c,vec3(0.3,0.59,0.11));}',
-  'vec3 clipColor(vec3 c){float l=lum(c);float n=min(c.r,min(c.g,c.b));float x=max(c.r,max(c.g,c.b));',
-  ' if(n<0.0)c=l+(c-l)*l/max(l-n,1e-5);if(x>1.0)c=l+(c-l)*(1.0-l)/max(x-l,1e-5);return c;}',
-  'vec3 setLum(vec3 c,float l){return clipColor(c+(l-lum(c)));}',
-  'float satOf(vec3 c){return max(c.r,max(c.g,c.b))-min(c.r,min(c.g,c.b));}',
-  'vec3 setSat(vec3 c,float s){float mx=max(c.r,max(c.g,c.b)),mn=min(c.r,min(c.g,c.b));if(mx>mn)return (c-mn)*s/(mx-mn);return vec3(0.0);}',
-  'vec3 blendMode(float m,vec3 b,vec3 s){',
-  ' if(m<0.5)return s;',
-  ' if(m<1.5)return b*s;',
-  ' if(m<2.5)return b+s-b*s;',
-  ' if(m<3.5)return mix(2.0*b*s,1.0-2.0*(1.0-b)*(1.0-s),step(vec3(0.5),b));',
-  ' if(m<4.5){vec3 d=mix(((16.0*b-12.0)*b+4.0)*b,sqrt(b),step(vec3(0.25),b));',
-  '  return mix(b-(1.0-2.0*s)*b*(1.0-b),b+(2.0*s-1.0)*(d-b),step(vec3(0.5),s));}',
-  ' if(m<5.5)return mix(2.0*b*s,1.0-2.0*(1.0-b)*(1.0-s),step(vec3(0.5),s));',
-  ' if(m<6.5)return min(vec3(1.0),b/max(1.0-s,vec3(1e-4)));',
-  ' if(m<7.5)return 1.0-min(vec3(1.0),(1.0-b)/max(s,vec3(1e-4)));',
-  ' if(m<8.5)return min(vec3(1.0),b+s);',
-  ' if(m<9.5)return max(b,s);',
-  ' if(m<10.5)return min(b,s);',
-  ' if(m<11.5)return setLum(setSat(s,satOf(b)),lum(b));',
-  ' if(m<12.5)return setLum(setSat(b,satOf(s)),lum(b));',
-  ' if(m<13.5)return setLum(s,lum(b));',
-  ' return setLum(b,lum(s));}',
   'void main(){vec2 pixelPos=v_texcoord*u_worldSourceSize;',
   ' vec4 m=texture2D(u_fogLitMaskTex,vec2(v_texcoord.x,1.0-v_texcoord.y));',
-  ' vec3 base=texture2D(u_sceneTex,v_texcoord).rgb;',
   ' float lit=m.a;float mx=max(m.r,max(m.g,m.b));',
   ' vec3 tint=mx>0.002?m.rgb/mx:vec3(1.0);',
   ' tint=clamp(mix(vec3(1.0),tint,u_lmSat),0.0,1.0);',
@@ -207,19 +204,17 @@ const LX_PROG = `
   ' if(u_showMask>0.5){gl_FragColor=vec4(tint*q,1.0);return;}',
   /* 미탐색은 더 어둡게, 탐색 잔상은 살짝 밝은 보라 공간감 */
   ' vec3 dark=mix(u_lmDark,u_lmDark*1.6,memoryMix);dark=mix(dark,dark*0.25,unseen);',
-  ' vec3 col=base;',
-  /* ① 컬러 라이트맵 */
-  ' if(u_lmOn>0.5){vec3 c=mix(dark,tint*u_lmBright,q*u_lmLitCol);float a=u_lmOpacity*(1.0-q*u_lmClear);a=max(a,unseen*u_lmOpacity);',
-  '  col=mix(col,blendMode(u_lmMode,col,clamp(c,0.0,1.0)),clamp(a,0.0,1.0));}',
-  /* ② 대비 — 회색 0.5 가 중립, 어두운 곳은 눌리고 밝은 곳은 채도·대비 상승 */
-  ' if(u_ctOn>0.5){float g=mix(u_ctDark,u_ctLit,q);vec3 c=mix(vec3(g),tint*g*2.0,u_ctColorize*q);',
-  '  col=mix(col,blendMode(u_ctMode,col,clamp(c,0.0,1.0)),u_ctOpacity);}',
-  /* ④ 구역 앰비언스 — 어두운 곳 위주(litFade) */
-  ' if(u_znOn>0.5){float a=u_znOpacity*(1.0-q*u_znLitFade);col=mix(col,blendMode(u_znMode,col,u_znRgb),clamp(a,0.0,1.0));}',
-  /* ③ 핫코어 — 광원 중심(세기≥threshold)만 태운다 */
-  ' if(u_coOn>0.5){float k=smoothstep(u_coThreshold,u_coThreshold+max(u_coSoft,0.001),lit)*u_coStrength;',
-  '  vec3 c=mix(vec3(1.0),tint,u_coTint)*k;col=mix(col,blendMode(u_coMode,col,clamp(c,0.0,1.0)),u_coOpacity);}',
-  ' gl_FragColor=vec4(clamp(col,0.0,1.0),1.0);}'
+  /* ① 컬러 라이트맵: 어둠색 → 광원색. 알파는 불투명도(밝은 곳 투명화·미탐색 반영) */
+  ' if(u_layer<0.5){vec3 c=mix(dark,tint*u_lmBright,q*u_lmLitCol);float a=u_lmOpacity*(1.0-q*u_lmClear);a=max(a,unseen*u_lmOpacity);',
+  '  gl_FragColor=vec4(clamp(c,0.0,1.0),clamp(a,0.0,1.0));return;}',
+  /* ② 대비: 회색 0.5 중립, 어둠은 눌리고 빛은 채도·대비 상승 */
+  ' if(u_layer<1.5){float g=mix(u_ctDark,u_ctLit,q);vec3 c=mix(vec3(g),tint*g*2.0,u_ctColorize*q);',
+  '  gl_FragColor=vec4(clamp(c,0.0,1.0),clamp(u_ctOpacity,0.0,1.0));return;}',
+  /* ④ 구역 앰비언스: 어두운 곳 위주 */
+  ' if(u_layer<2.5){float a=u_znOpacity*(1.0-q*u_znLitFade);gl_FragColor=vec4(u_znRgb,clamp(a,0.0,1.0));return;}',
+  /* ③ 핫코어: 세기≥threshold 인 중심만. 알파에 k 를 실어 어떤 블렌드에서도 바깥은 무변화 */
+  ' float k=smoothstep(u_coThreshold,u_coThreshold+max(u_coSoft,0.001),lit)*u_coStrength;',
+  ' vec3 c=mix(vec3(1.0),tint,u_coTint);gl_FragColor=vec4(c,clamp(k*u_coOpacity,0.0,1.0));}'
  ].join(String.fromCharCode(10)));`;
 after("  ' gl_FragColor=vec4(fogRgb,fogA);}'" + NL + " ].join(String.fromCharCode(10)));", LX_PROG.replace(/\n/g, NL));
 
@@ -263,37 +258,43 @@ const FINAL_PASS = `  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,OW
   gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
   const outS=OW/Math.max(1,LW);
   if(LX.on){
-   /* LX — 씬을 텍스처로 올려 셰이더에서 블렌드 합성. 출력은 불투명(씬 전체를 덮는다) */
-   if(!sceneTex)sceneTex=tex(1,1,null,{filter:gl.LINEAR});
-   gl.activeTexture(gl.TEXTURE3);gl.bindTexture(gl.TEXTURE_2D,sceneTex);
-   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,0);
-   try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,cv);}catch(err){LX.on=false;console.warn('LX scene upload failed',err);}
+   /* LX — 레이어를 하나씩 WebGL 로 그려 스테이지 캔버스(cx)에 Canvas2D 블렌드 모드로 합성한다.
+      fogGL 은 오프스크린 버퍼 역할만 하므로 숨긴다. 씬을 읽지 않으니 오염된 캔버스(file://)에서도 동작. */
+   fogCv.style.display='none';
    bindFullscreen(lxProg);
    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,maskTex);usamp(lxProg,'u_fogLitMaskTex',0);
    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,bayerTex);usamp(lxProg,'u_bayerTex',1);
    gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,losOn&&losTex?losTex:bayerTex);usamp(lxProg,'u_losTex',2);
-   usamp(lxProg,'u_sceneTex',3);
    u2(lxProg,'u_worldSourceSize',OW,OH);u1(lxProg,'u_lightSteps',TE.lightSteps);
-   u1(lxProg,'u_showMask',(LX.showMask||DEMO.showMask)?1:0);
    u1(lxProg,'u_losEnabled',losOn?1:0);
    u2(lxProg,'u_losMapSize',losOn?LOS.w:1,losOn?LOS.h:1);
    u2(lxProg,'u_camXY',G.camX,G.camY);u2(lxProg,'u_offXY',G.offX+shx,G.offY+shy);
    u1(lxProg,'u_zoom',G.Z);u1(lxProg,'u_cell',CELL);u1(lxProg,'u_cssScale',outS);
    {const M=LX.lightmap,d=LX_hex(M.dark).f;
-    u1(lxProg,'u_lmOn',M.on?1:0);u1(lxProg,'u_lmMode',LX_modeIdx(M.mode));u1(lxProg,'u_lmOpacity',M.opacity);
-    u1(lxProg,'u_lmBright',M.bright);u1(lxProg,'u_lmSat',M.saturation);u1(lxProg,'u_lmLitCol',M.litColor==null?1:M.litColor);u1(lxProg,'u_lmClear',M.litClear);u3(lxProg,'u_lmDark',d[0],d[1],d[2]);}
-   {const C=LX.contrast;
-    u1(lxProg,'u_ctOn',C.on?1:0);u1(lxProg,'u_ctMode',LX_modeIdx(C.mode));u1(lxProg,'u_ctOpacity',C.opacity);
-    u1(lxProg,'u_ctDark',C.darkLevel);u1(lxProg,'u_ctLit',C.litLevel);u1(lxProg,'u_ctColorize',C.colorize);}
-   {const K=LX.core;
-    u1(lxProg,'u_coOn',K.on?1:0);u1(lxProg,'u_coMode',LX_modeIdx(K.mode));u1(lxProg,'u_coOpacity',K.opacity);
-    u1(lxProg,'u_coThreshold',K.threshold);u1(lxProg,'u_coSoft',K.softness);u1(lxProg,'u_coStrength',K.strength);u1(lxProg,'u_coTint',K.tintMix);}
-   {const Z=LX.zone,z=LX_zoneRgb(vc);
-    u1(lxProg,'u_znOn',Z.on?1:0);u1(lxProg,'u_znMode',LX_modeIdx(Z.mode));u1(lxProg,'u_znOpacity',Z.opacity);
-    u1(lxProg,'u_znLitFade',Z.litFade);u3(lxProg,'u_znRgb',z[0],z[1],z[2]);}
+    u1(lxProg,'u_lmOpacity',M.opacity);u1(lxProg,'u_lmBright',M.bright);u1(lxProg,'u_lmSat',M.saturation);
+    u1(lxProg,'u_lmLitCol',M.litColor==null?1:M.litColor);u1(lxProg,'u_lmClear',M.litClear);u3(lxProg,'u_lmDark',d[0],d[1],d[2]);}
+   {const C=LX.contrast;u1(lxProg,'u_ctOpacity',C.opacity);u1(lxProg,'u_ctDark',C.darkLevel);u1(lxProg,'u_ctLit',C.litLevel);u1(lxProg,'u_ctColorize',C.colorize);}
+   {const K=LX.core;u1(lxProg,'u_coOpacity',K.opacity);u1(lxProg,'u_coThreshold',K.threshold);u1(lxProg,'u_coSoft',K.softness);u1(lxProg,'u_coStrength',K.strength);u1(lxProg,'u_coTint',K.tintMix);}
+   {const Z=LX.zone,z=LX_zoneRgb(vc);u1(lxProg,'u_znOpacity',Z.opacity);u1(lxProg,'u_znLitFade',Z.litFade);u3(lxProg,'u_znRgb',z[0],z[1],z[2]);}
    gl.disable(gl.BLEND);
-   gl.drawArrays(gl.TRIANGLES,0,6);
+   const g2=cx;g2.save();g2.setTransform(1,0,0,1,0,0);g2.globalAlpha=1;
+   const showMask=(LX.showMask||DEMO.showMask);
+   u1(lxProg,'u_showMask',showMask?1:0);
+   const drawLayer=(idx,op)=>{
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    u1(lxProg,'u_layer',idx);gl.drawArrays(gl.TRIANGLES,0,6);
+    g2.globalCompositeOperation=op;g2.drawImage(fogCv,0,0,OW,OH,0,0,cv.width,cv.height);};
+   if(showMask)drawLayer(0,'source-over');
+   else{
+    /* 합성 순서: ① 라이트맵 → ② 대비 → ④ 구역 → ③ 핫코어 */
+    if(LX.lightmap.on)drawLayer(0,LX_canvasOp(LX.lightmap.mode));
+    if(LX.contrast.on)drawLayer(1,LX_canvasOp(LX.contrast.mode));
+    if(LX.zone.on)drawLayer(2,LX_canvasOp(LX.zone.mode));
+    if(LX.core.on)drawLayer(3,LX_canvasOp(LX.core.mode));
+   }
+   g2.globalCompositeOperation='source-over';g2.restore();
   }else{
+   fogCv.style.display='block';
    bindFullscreen(fogProg);
    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,maskTex);usamp(fogProg,'u_fogLitMaskTex',0);
    gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,bayerTex);usamp(fogProg,'u_bayerTex',1);
@@ -355,6 +356,16 @@ rep("   const amt=T[P2.amt]*L[3];" + NL + "   if(amt<=0.004)continue;" + NL + " 
     "   const col=P2.dark?LX_css(mode==='shadow'?W2.shadowRgb:W2.shadeRgb):lcol(L[4]).join(',');");
 rep("    if(!P2.dark)g.globalCompositeOperation='lighter';" + NL + "    g.drawImage(tmpCv,0,0,tw,th,0,0,CW,CH);",
     "    g.globalCompositeOperation=(mode==='shadow'?W2.shadowMode:(mode==='shade'?W2.shadeMode:W2.rimMode))||'source-over';" + NL + "    g.drawImage(tmpCv,0,0,tw,th,0,0,CW,CH);");
+
+/* ── 8b. 소팅 — LX 모드에서는 조명 레이어를 크루 스프라이트 직전에 합성한다.
+      바닥·벽·적은 빛 아래, 히어로·AI 크루·코옵 피어·박쥐·파티클은 빛 위. 구 안개 모드는 기존 위치(전체 위) 유지. ── */
+rep(" /* Shelly */" + NL + " {const pl=1+G.pulse*.10,ft=FEEL.transform();",
+    " /* LX: 조명 레이어를 캐릭터보다 먼저 합성 → 손전등 콘·핫코어가 캐릭터를 덮지 않는다 (패널 '크루 위 소팅') */" + NL +
+    " const lxEarly=!!(FOW&&FOW.ok&&OPT.fog&&LX.on&&LX.sortUnderCrew!==false);" + NL +
+    " if(lxEarly)FOW.composite(shx,shy);" + NL +
+    " /* Shelly */" + NL + " {const pl=1+G.pulse*.10,ft=FEEL.transform();");
+rep(" if(FOW&&FOW.ok&&OPT.fog)FOW.composite(shx,shy);",
+    " if(FOW&&FOW.ok&&OPT.fog){if(!lxEarly)FOW.composite(shx,shy);}");
 
 /* ── 9. 식생 글리머는 UI 캔버스에 — LX 출력이 불투명해 스테이지 위 그림이 가려진다 ── */
 rep(" drawVegetationDarkGlimmer(shx,shy);" + NL + " paintUI(shx,shy);", " paintUI(shx,shy);   /* LX: 식생 글리머는 paintUI 안(ux)에서 */");

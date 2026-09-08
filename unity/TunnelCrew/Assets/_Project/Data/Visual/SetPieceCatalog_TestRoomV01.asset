@@ -1,0 +1,460 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbe6c0e6288a8854181f98d984cb8c6f, type: 3}
+  m_Name: SetPieceCatalog_TestRoomV01
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SetPieceCatalog
+  _entries:
+  - assetId: TR01-ARC-001
+    sprite: {fileID: 21300000, guid: 2311235d1c992b544af858521209675a, type: 3}
+    materials: {fileID: 11400000, guid: 52893ce22a69db54396ed0ecfd0015a6, type: 2}
+    footprintCells: {x: 5, y: 1}
+    visualHeightCells: 3.9
+    sortingLayer: BackStructure
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -2.5
+    - 0
+    - 2.5
+    - 0
+    - 2.5
+    - 1
+    - -2.5
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-DEC-BARREL-A
+    sprite: {fileID: 21300000, guid: f0a328731499df140a2e14a9ab3904ab, type: 3}
+    materials: {fileID: 11400000, guid: 1c50e871fb2c31449a9e1b47ea01a3be, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-BEAMS-A
+    sprite: {fileID: 21300000, guid: 2356ebb2e17b6874ea3f0958a9e0fc0f, type: 3}
+    materials: {fileID: 11400000, guid: 4ffbfc5dd7a5cf647913a136f712d10f, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-BUCKET-A
+    sprite: {fileID: 21300000, guid: 783911fb2a400db429142c2a53078fbc, type: 3}
+    materials: {fileID: 11400000, guid: 5e2f9bf4ca9632845aa249e5516165aa, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-CABLE-SPOOL-A
+    sprite: {fileID: 21300000, guid: b80bbcc4fd0783947948ea32e0ee6ce0, type: 3}
+    materials: {fileID: 11400000, guid: 24ae3d2c5b887e9479414705fc2d0e3f, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-CRATE-A
+    sprite: {fileID: 21300000, guid: 864224d4dccb580478356e838a2ab22f, type: 3}
+    materials: {fileID: 11400000, guid: 89bce1532cd76684f9cd7cc62fa2284d, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-HARDWARE-A
+    sprite: {fileID: 21300000, guid: 7e9b20f592827354a8415666b887ae04, type: 3}
+    materials: {fileID: 11400000, guid: 6787486165d5a104bba7a2ba4c1799a7, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-MINERAL-A
+    sprite: {fileID: 21300000, guid: 6709b3158dcf4a145af5a37021710897, type: 3}
+    materials: {fileID: 11400000, guid: 83ed9a3b229a5a149abae11a4572339b, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-PAPERS-A
+    sprite: {fileID: 21300000, guid: 23db560133d698143849d38fda8558d5, type: 3}
+    materials: {fileID: 11400000, guid: 6ec9e28656d56654e8bca9a73bbc59ad, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-ROCK-A
+    sprite: {fileID: 21300000, guid: 2f815375e13e0b546b14775de584282a, type: 3}
+    materials: {fileID: 11400000, guid: 82b3c02a6ca7736459d01b720d023e9e, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-DEC-TOOLBOX-A
+    sprite: {fileID: 21300000, guid: 16585fb8c2ce1a14abe9a511fefc994d, type: 3}
+    materials: {fileID: 11400000, guid: cae0a09fc8b70ea42917754f5c7682ce, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-FGV-HANGING-CABLE-A
+    sprite: {fileID: 21300000, guid: 7dfde222b4585d64fa3a400a3b11a651, type: 3}
+    materials: {fileID: 11400000, guid: 14c43073c1d02c44ba8669e4239ca055, type: 2}
+    footprintCells: {x: 2, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: FrontStructure
+    localOrder: 0
+    occluderGroup: TR01-FGV-HANGING-CABLE-A
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -1
+    - 0
+    - 1
+    - 0
+    - 1
+    - 1
+    - -1
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-FGV-PIPE-FRAME-A
+    sprite: {fileID: 21300000, guid: 8276805b07c6f894a98a6559dd9ec0e4, type: 3}
+    materials: {fileID: 11400000, guid: 5518fc04e4abe134dae7959d324a38d5, type: 2}
+    footprintCells: {x: 2, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: FrontStructure
+    localOrder: 0
+    occluderGroup: TR01-FGV-PIPE-FRAME-A
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -1
+    - 0
+    - 1
+    - 0
+    - 1
+    - 1
+    - -1
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-FGV-RAILING-A
+    sprite: {fileID: 21300000, guid: 43237740d6a3b68488e507f905587ff4, type: 3}
+    materials: {fileID: 11400000, guid: b4e4340ec7da8c442acaa593c48559cb, type: 2}
+    footprintCells: {x: 2, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: FrontStructure
+    localOrder: 0
+    occluderGroup: TR01-FGV-RAILING-A
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -1
+    - 0
+    - 1
+    - 0
+    - 1
+    - 1
+    - -1
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-FGV-ROCK-LIP-A
+    sprite: {fileID: 21300000, guid: 03d5665c97d303c4f9713676f823ec2b, type: 3}
+    materials: {fileID: 11400000, guid: f5bd40b8cb84acc45bea10d8c6d8bfe5, type: 2}
+    footprintCells: {x: 2, y: 1}
+    visualHeightCells: 1.9375
+    sortingLayer: FrontStructure
+    localOrder: 0
+    occluderGroup: TR01-FGV-ROCK-LIP-A
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -1
+    - 0
+    - 1
+    - 0
+    - 1
+    - 1
+    - -1
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-HERO-DRILL-A
+    sprite: {fileID: 21300000, guid: 7f67e4027e120d942a196dbf2baef3eb, type: 3}
+    materials: {fileID: 11400000, guid: 5fc57bef27c32804085bac2daf745acf, type: 2}
+    footprintCells: {x: 3, y: 2}
+    visualHeightCells: 2.875
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets:
+    - id: service
+      offsetCells: {x: 0.421875, y: 1.140625}
+      color: {r: 0.15294118, g: 0.7882353, b: 0.8745098, a: 1}
+      rangeCells: 1.25
+      intensity: 0.35
+      lightClass: 4
+    - id: status
+      offsetCells: {x: 0.6796875, y: 1.0546875}
+      color: {r: 0.8980392, g: 0.54509807, b: 0.14117648, a: 1}
+      rangeCells: 1
+      intensity: 0.25
+      lightClass: 4
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -1.5
+    - 0
+    - 1.5
+    - 0
+    - 1.5
+    - 2
+    - -1.5
+    - 2
+    replacementAssetId: 
+  - assetId: TR01-LGT-CRYSTAL-A
+    sprite: {fileID: 21300000, guid: 3b408dabfc13bff4da67a3cbc7753978, type: 3}
+    materials: {fileID: 11400000, guid: 365f22f86749e084482fc627b2bfcc73, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.875
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets:
+    - id: main
+      offsetCells: {x: 0, y: 1.3515625}
+      color: {r: 0.14117648, g: 0.84705883, b: 0.9372549, a: 1}
+      rangeCells: 3.5
+      intensity: 0.8
+      lightClass: 2
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LGT-WARNING-A
+    sprite: {fileID: 21300000, guid: c99d8904a2019b147b287cd336aaba8c, type: 3}
+    materials: {fileID: 11400000, guid: e601583f44dcae44e85935618bdda947, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.875
+    sortingLayer: BackStructure
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets:
+    - id: main
+      offsetCells: {x: 0, y: -0.0859375}
+      color: {r: 0.83137256, g: 0.16862746, b: 0.84705883, a: 1}
+      rangeCells: 2.25
+      intensity: 0.6
+      lightClass: 1
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LGT-WORKLAMP-A
+    sprite: {fileID: 21300000, guid: 33ea0187e1e981b46b231cb42ad92745, type: 3}
+    materials: {fileID: 11400000, guid: eeea9d78c3cbf914b910c56553df144c, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1.875
+    sortingLayer: WorldEntity
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets:
+    - id: main
+      offsetCells: {x: 0, y: 1.296875}
+      color: {r: 1, g: 0.6784314, b: 0.19607843, a: 1}
+      rangeCells: 3
+      intensity: 0.75
+      lightClass: 1
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-CABLE-JUNCTION-A
+    sprite: {fileID: 21300000, guid: bc827c987716fb345af11aaddd68548e, type: 3}
+    materials: {fileID: 11400000, guid: 59d127f50aea56c45a64cd1c65b7797f, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-PIPE-ELBOW-A
+    sprite: {fileID: 21300000, guid: 2ea27477e0032f441b315876f8598682, type: 3}
+    materials: {fileID: 11400000, guid: 69570065d052f6440ac6a8bf9766a764, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-RAIL-BROKEN-A
+    sprite: {fileID: 21300000, guid: d265d3499c37d7c43871dc1acf7693af, type: 3}
+    materials: {fileID: 11400000, guid: 157f0dd4fa489244d84abc7ee2cb5634, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-RAIL-CURVE-A
+    sprite: {fileID: 21300000, guid: 3374bfdbbce1ca541962ad932a3e9080, type: 3}
+    materials: {fileID: 11400000, guid: e74551959ee93d54781b2593457b92b9, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-RAIL-JUNCTION-A
+    sprite: {fileID: 21300000, guid: 22434d1e09e775e4dad3d1478433e953, type: 3}
+    materials: {fileID: 11400000, guid: fdf1daa1c5ce1824a90ebbfe7335808a, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-LIN-RAIL-STRAIGHT-A
+    sprite: {fileID: 21300000, guid: 96aa935551a77fc42b6e45c4fb2dc8db, type: 3}
+    materials: {fileID: 11400000, guid: 5312517984260a34e99bce69b799c68c, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 1
+    sortingLayer: GroundDetail
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells: []
+    replacementAssetId: 
+  - assetId: TR01-PIL-BROKEN-A
+    sprite: {fileID: 21300000, guid: cefa1a93beecaa148a02943d92d1862f, type: 3}
+    materials: {fileID: 11400000, guid: 84ba345d43c65a74188fe7a459ed9e5b, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 3.875
+    sortingLayer: BackStructure
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -0.5
+    - 0
+    - 0.5
+    - 0
+    - 0.5
+    - 1
+    - -0.5
+    - 1
+    replacementAssetId: 
+  - assetId: TR01-PIL-INTACT-A
+    sprite: {fileID: 21300000, guid: c5afc5307d695d24e9ae5704fd72cb3a, type: 3}
+    materials: {fileID: 11400000, guid: 12765a04f98e76e45bd39e8b6b22caa2, type: 2}
+    footprintCells: {x: 1, y: 1}
+    visualHeightCells: 3.875
+    sortingLayer: BackStructure
+    localOrder: 0
+    occluderGroup: 
+    fadeTargetAlpha: 0
+    lightSockets: []
+    contactShadowRadius: 0
+    shadowContourCells:
+    - -0.5
+    - 0
+    - 0.5
+    - 0
+    - 0.5
+    - 1
+    - -0.5
+    - 1
+    replacementAssetId: 

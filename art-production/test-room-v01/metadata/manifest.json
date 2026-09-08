@@ -1,0 +1,1321 @@
+{
+  "packageId": "tunnel-crew-test-room-v01",
+  "revision": 17,
+  "productionProjection": "ReferenceTopDown",
+  "sourcePixelsPerCell": 256,
+  "deliveryPixelsPerCell": 128,
+  "pivotPixelsCoordinateSystem": "image_top_left_y_down",
+  "assets": [
+    {
+      "assetId": "TR01-CONCEPT-ROOM-001",
+      "status": "concept",
+      "path": "concept/tr01_room_maintenance_a_concept.png",
+      "dimensionsPixels": [1672, 941],
+      "purpose": "room visual target"
+    },
+    {
+      "assetId": "TR01-CONCEPT-KIT-001",
+      "status": "concept",
+      "path": "concept/tr01_module_kit_a_layout.png",
+      "dimensionsPixels": [1643, 957],
+      "purpose": "module breakdown and silhouette target",
+      "knownIssues": [
+        "checkerboard appearance is baked into opaque concept-board pixels",
+        "not a production sprite sheet"
+      ]
+    },
+    {
+      "assetId": "TR01-ARC-001-SOURCE",
+      "revision": 1,
+      "status": "rejected",
+      "path": "source/tr01_arch_gate_a_albedo_source.png",
+      "dimensionsPixels": [1536, 1024],
+      "channels": {
+        "albedo": "source/tr01_arch_gate_a_albedo_source.png"
+      },
+      "knownIssues": [
+        "checkerboard background is baked into fully opaque pixels",
+        "must not be imported as a sprite"
+      ]
+    },
+    {
+      "assetId": "TR01-ARC-001",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [5, 1],
+      "pivotNormalized": [0.5, 0.015625],
+      "pivotPixels": [320, 504],
+      "pivotPixelsBottomOrigin": [320, 8],
+      "dimensionsPixels": [640, 512],
+      "visualHeightCells": 3.9,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "cyan_panels",
+      "channels": {
+        "albedo": "approved/albedo/setpiece/tr01_arch_gate_a_albedo.png",
+        "normal": "approved/normal/setpiece/tr01_arch_gate_a_normal.png",
+        "emission": "approved/emission/setpiece/tr01_arch_gate_a_emission.png",
+        "mask": "approved/mask/setpiece/tr01_arch_gate_a_mask.png",
+        "ao": "approved/ao/setpiece/tr01_arch_gate_a_ao.png"
+      },
+      "alphaInspection": {
+        "min": 0,
+        "max": 255,
+        "channelDimensionsAligned": true
+      },
+      "shadowCasterFootprintCells": [[0, 0], [5, 0], [5, 1], [0, 1]],
+      "sourceWorkingPath": "working/tr01_arch_gate_a_background_extraction_attempt.png"
+    },
+    {
+      "assetId": "TR01-FLR-BASE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_a_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_a_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_a_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_a_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-FLR-BASE-B",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_b_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_b_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_b_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_b_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_b_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-FLR-BASE-C",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_c_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_c_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_c_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_c_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_c_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-FLR-BASE-D",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_d_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_d_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_d_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_d_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_d_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-FLR-BASE-E",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_e_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_e_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_e_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_e_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_e_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-FLR-BASE-F",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/floor/tr01_floor_base_f_albedo.png",
+        "normal": "approved/normal/floor/tr01_floor_base_f_normal.png",
+        "emission": "approved/emission/floor/tr01_floor_base_f_emission.png",
+        "mask": "approved/mask/floor/tr01_floor_base_f_mask.png",
+        "ao": "approved/ao/floor/tr01_floor_base_f_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-WFR-A-C-SOURCE-SET",
+      "revision": 1,
+      "status": "rejected",
+      "paths": [
+        "source/wall/tr01_wall_front_a_rejected_source.png",
+        "source/wall/tr01_wall_front_b_rejected_source.png",
+        "source/wall/tr01_wall_front_c_rejected_source.png"
+      ],
+      "knownIssues": [
+        "generation expanded each requested one-cell module into a multi-cell wall panel",
+        "opaque presentation background",
+        "cannot be cropped into a seamless one-cell production module without redesign"
+      ],
+      "reuse": "material and reinforcement design reference only"
+    },
+    {
+      "assetId": "TR01-WFR-BASE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1.0,
+      "sortingLayerHint": "BackStructure",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_a_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_a_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_a_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_a_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_a_ao.png"
+      },
+      "qa": {
+        "leftRightEdgeMaeRgb": 2.5,
+        "repeatPreview": "working/wall_front_a_repeat_qa.png"
+      }
+    },
+    {
+      "assetId": "TR01-WFR-BC-SOURCE-SET",
+      "revision": 1,
+      "status": "working",
+      "paths": [
+        "source/wall/tr01_wall_front_b_albedo_source.png",
+        "source/wall/tr01_wall_front_c_albedo_source.png"
+      ],
+      "knownIssues": [
+        "top and bottom band topology differs from approved wall-front A",
+        "not eligible for the same wallFront variant array without redesign"
+      ],
+      "reuse": "future special wall and set-piece material reference"
+    },
+    {
+      "assetId": "TR01-WTP-BASE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "WallTop",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_a_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_a_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_a_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_a_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_a_ao.png"
+      },
+      "qa": { "repeatPreview": "working/wall_top/tr01_wall_top_a_repeat_qa.png" }
+    },
+    {
+      "assetId": "TR01-WTP-RIM-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "WallTop",
+      "channels": {
+        "albedo": "approved/albedo/wall_top_rim/tr01_wall_top_rim_a_albedo.png",
+        "normal": "approved/normal/wall_top_rim/tr01_wall_top_rim_a_normal.png",
+        "emission": "approved/emission/wall_top_rim/tr01_wall_top_rim_a_emission.png",
+        "mask": "approved/mask/wall_top_rim/tr01_wall_top_rim_a_mask.png",
+        "ao": "approved/ao/wall_top_rim/tr01_wall_top_rim_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-PIL-INTACT-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.015625],
+      "pivotPixels": [128, 504],
+      "pivotPixelsBottomOrigin": [128, 8],
+      "dimensionsPixels": [256, 512],
+      "visualHeightCells": 3.875,
+      "sortingLayerHint": "BackStructure",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/pillar/tr01_pillar_intact_a_albedo.png",
+        "normal": "approved/normal/pillar/tr01_pillar_intact_a_normal.png",
+        "emission": "approved/emission/pillar/tr01_pillar_intact_a_emission.png",
+        "mask": "approved/mask/pillar/tr01_pillar_intact_a_mask.png",
+        "ao": "approved/ao/pillar/tr01_pillar_intact_a_ao.png"
+      },
+      "shadowCasterFootprintCells": [[0, 0], [1, 0], [1, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-PIL-BROKEN-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.015625],
+      "pivotPixels": [128, 504],
+      "pivotPixelsBottomOrigin": [128, 8],
+      "dimensionsPixels": [256, 512],
+      "visualHeightCells": 3.875,
+      "sortingLayerHint": "BackStructure",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/pillar/tr01_pillar_broken_a_albedo.png",
+        "normal": "approved/normal/pillar/tr01_pillar_broken_a_normal.png",
+        "emission": "approved/emission/pillar/tr01_pillar_broken_a_emission.png",
+        "mask": "approved/mask/pillar/tr01_pillar_broken_a_mask.png",
+        "ao": "approved/ao/pillar/tr01_pillar_broken_a_ao.png"
+      },
+      "shadowCasterFootprintCells": [[0, 0], [1, 0], [1, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-LGT-WORKLAMP-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "visualHeightCells": 1.875,
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "amber_glass",
+      "channels": {
+        "albedo": "approved/albedo/light/tr01_light_worklamp_a_albedo.png",
+        "normal": "approved/normal/light/tr01_light_worklamp_a_normal.png",
+        "emission": "approved/emission/light/tr01_light_worklamp_a_emission.png",
+        "mask": "approved/mask/light/tr01_light_worklamp_a_mask.png",
+        "ao": "approved/ao/light/tr01_light_worklamp_a_ao.png"
+      },
+      "lightSockets": [{ "id": "main", "pixel": [128, 82], "color": "#ffad32", "rangeCells": 3.0, "intensity": 0.75 }]
+    },
+    {
+      "assetId": "TR01-LGT-WARNING-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "visualHeightCells": 1.875,
+      "sortingLayerHint": "BackStructure",
+      "emissionMode": "magenta_warning_glass",
+      "channels": {
+        "albedo": "approved/albedo/light/tr01_light_warning_a_albedo.png",
+        "normal": "approved/normal/light/tr01_light_warning_a_normal.png",
+        "emission": "approved/emission/light/tr01_light_warning_a_emission.png",
+        "mask": "approved/mask/light/tr01_light_warning_a_mask.png",
+        "ao": "approved/ao/light/tr01_light_warning_a_ao.png"
+      },
+      "lightSockets": [{ "id": "main", "pixel": [128, 139], "color": "#d42bd8", "rangeCells": 2.25, "intensity": 0.6 }]
+    },
+    {
+      "assetId": "TR01-LGT-CRYSTAL-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "visualHeightCells": 1.875,
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "cyan_crystal",
+      "channels": {
+        "albedo": "approved/albedo/light/tr01_light_crystal_a_albedo.png",
+        "normal": "approved/normal/light/tr01_light_crystal_a_normal.png",
+        "emission": "approved/emission/light/tr01_light_crystal_a_emission.png",
+        "mask": "approved/mask/light/tr01_light_crystal_a_mask.png",
+        "ao": "approved/ao/light/tr01_light_crystal_a_ao.png"
+      },
+      "lightSockets": [{ "id": "main", "pixel": [128, 75], "color": "#24d8ef", "rangeCells": 3.5, "intensity": 0.8 }]
+    },
+    {
+      "assetId": "TR01-HERO-DRILL-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [3, 2],
+      "pivotNormalized": [0.5, 0.020833333333333332],
+      "pivotPixels": [256, 376],
+      "dimensionsPixels": [512, 384],
+      "visualHeightCells": 2.875,
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "amber_cyan_indicators",
+      "channels": {
+        "albedo": "approved/albedo/hero/tr01_hero_drill_a_albedo.png",
+        "normal": "approved/normal/hero/tr01_hero_drill_a_normal.png",
+        "emission": "approved/emission/hero/tr01_hero_drill_a_emission.png",
+        "mask": "approved/mask/hero/tr01_hero_drill_a_mask.png",
+        "ao": "approved/ao/hero/tr01_hero_drill_a_ao.png"
+      },
+      "lightSockets": [
+        { "id": "service", "pixel": [310, 230], "color": "#27c9df", "rangeCells": 1.25, "intensity": 0.35 },
+        { "id": "status", "pixel": [343, 241], "color": "#e58b24", "rangeCells": 1.0, "intensity": 0.25 }
+      ],
+      "shadowCasterFootprintCells": [[0, 0], [3, 0], [3, 2], [0, 2]]
+    },
+    {
+      "assetId": "TR01-LIN-RAIL-STRAIGHT-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_rail_straight_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_rail_straight_a_normal.png",
+        "emission": "approved/emission/linear/tr01_rail_straight_a_emission.png",
+        "mask": "approved/mask/linear/tr01_rail_straight_a_mask.png",
+        "ao": "approved/ao/linear/tr01_rail_straight_a_ao.png"
+      },
+      "connectionPorts": [{"edge":"north","pixel":[128,0],"type":"rail_pair"},{"edge":"south","pixel":[128,256],"type":"rail_pair"}]
+    },
+    {
+      "assetId": "TR01-LIN-RAIL-CURVE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_rail_curve_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_rail_curve_a_normal.png",
+        "emission": "approved/emission/linear/tr01_rail_curve_a_emission.png",
+        "mask": "approved/mask/linear/tr01_rail_curve_a_mask.png",
+        "ao": "approved/ao/linear/tr01_rail_curve_a_ao.png"
+      },
+      "connectionPorts": [{"edge":"north","pixel":[128,0],"type":"rail_pair"},{"edge":"east","pixel":[256,128],"type":"rail_pair"}]
+    },
+    {
+      "assetId": "TR01-LIN-RAIL-JUNCTION-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_rail_junction_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_rail_junction_a_normal.png",
+        "emission": "approved/emission/linear/tr01_rail_junction_a_emission.png",
+        "mask": "approved/mask/linear/tr01_rail_junction_a_mask.png",
+        "ao": "approved/ao/linear/tr01_rail_junction_a_ao.png"
+      },
+      "connectionPorts": [{"edge":"west","pixel":[0,128],"type":"rail_pair"},{"edge":"east","pixel":[256,128],"type":"rail_pair"},{"edge":"south","pixel":[128,256],"type":"rail_pair"}]
+    },
+    {
+      "assetId": "TR01-LIN-RAIL-BROKEN-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_rail_broken_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_rail_broken_a_normal.png",
+        "emission": "approved/emission/linear/tr01_rail_broken_a_emission.png",
+        "mask": "approved/mask/linear/tr01_rail_broken_a_mask.png",
+        "ao": "approved/ao/linear/tr01_rail_broken_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.00177, "channelDimensionsAligned": true, "channelAlphaIdentical": true },
+      "connectionPorts": [{"edge":"north","pixel":[128,0],"type":"rail_pair"},{"edge":"south","pixel":[128,256],"type":"rail_pair"}]
+    },
+    {
+      "assetId": "TR01-LIN-PIPE-ELBOW-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_pipe_elbow_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_pipe_elbow_a_normal.png",
+        "emission": "approved/emission/linear/tr01_pipe_elbow_a_emission.png",
+        "mask": "approved/mask/linear/tr01_pipe_elbow_a_mask.png",
+        "ao": "approved/ao/linear/tr01_pipe_elbow_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.024414, "channelDimensionsAligned": true, "channelAlphaIdentical": true },
+      "connectionPorts": [{"edge":"west","pixel":[0,128],"type":"heavy_pipe"},{"edge":"north","pixel":[128,0],"type":"heavy_pipe"}]
+    },
+    {
+      "assetId": "TR01-LIN-CABLE-JUNCTION-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [128, 128],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "GroundDetail",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/linear/tr01_cable_junction_a_albedo.png",
+        "normal": "approved/normal/linear/tr01_cable_junction_a_normal.png",
+        "emission": "approved/emission/linear/tr01_cable_junction_a_emission.png",
+        "mask": "approved/mask/linear/tr01_cable_junction_a_mask.png",
+        "ao": "approved/ao/linear/tr01_cable_junction_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.007767, "channelDimensionsAligned": true, "channelAlphaIdentical": true },
+      "connectionPorts": [{"edge":"west","pixel":[0,128],"type":"power_bundle"},{"edge":"east","pixel":[256,128],"type":"power_bundle"},{"edge":"south","pixel":[128,256],"type":"power_bundle"}]
+    },
+    {
+      "assetId": "TR01-DEC-CRATE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_crate_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_crate_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_crate_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_crate_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_crate_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-DEC-TOOLBOX-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_toolbox_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_toolbox_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_toolbox_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_toolbox_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_toolbox_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.005096, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-DEC-ROCK-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_rock_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_rock_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_rock_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_rock_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_rock_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-DEC-MINERAL-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "magenta_mineral",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_mineral_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_mineral_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_mineral_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_mineral_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_mineral_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-DEC-BARREL-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_barrel_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_barrel_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_barrel_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_barrel_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_barrel_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.009003, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-DEC-PAPERS-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_papers_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_papers_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_papers_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_papers_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_papers_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.005112, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-DEC-CABLE-SPOOL-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_cable_spool_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_cable_spool_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_cable_spool_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_cable_spool_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_cable_spool_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.005722, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-DEC-BEAMS-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_beams_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_beams_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_beams_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_beams_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_beams_a_ao.png"
+      }
+    },
+    {
+      "assetId": "TR01-DEC-BUCKET-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_bucket_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_bucket_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_bucket_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_bucket_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_bucket_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.015045, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-DEC-HARDWARE-A",
+      "revision": 2,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [128, 248],
+      "dimensionsPixels": [256, 256],
+      "sortingLayerHint": "WorldEntity",
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/decoration/tr01_dec_hardware_a_albedo.png",
+        "normal": "approved/normal/decoration/tr01_dec_hardware_a_normal.png",
+        "emission": "approved/emission/decoration/tr01_dec_hardware_a_emission.png",
+        "mask": "approved/mask/decoration/tr01_dec_hardware_a_mask.png",
+        "ao": "approved/ao/decoration/tr01_dec_hardware_a_ao.png"
+      },
+      "alphaInspection": { "min": 0, "max": 255, "partialFraction": 0.006104, "channelDimensionsAligned": true, "channelAlphaIdentical": true }
+    },
+    {
+      "assetId": "TR01-FGV-RAILING-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [2, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [256, 248],
+      "dimensionsPixels": [512, 256],
+      "sortingLayerHint": "FrontStructure",
+      "emissionMode": "none",
+      "foregroundOccluder": true,
+      "channels": {
+        "albedo": "approved/albedo/foreground/tr01_foreground_railing_a_albedo.png",
+        "normal": "approved/normal/foreground/tr01_foreground_railing_a_normal.png",
+        "emission": "approved/emission/foreground/tr01_foreground_railing_a_emission.png",
+        "mask": "approved/mask/foreground/tr01_foreground_railing_a_mask.png",
+        "ao": "approved/ao/foreground/tr01_foreground_railing_a_ao.png"
+      },
+      "fadeMaskPath": "approved/mask/foreground/tr01_foreground_railing_a_fade.png",
+      "shadowCasterFootprintCells": [[0, 0], [2, 0], [2, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-FGV-ROCK-LIP-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [2, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [256, 248],
+      "dimensionsPixels": [512, 256],
+      "sortingLayerHint": "FrontStructure",
+      "emissionMode": "none",
+      "foregroundOccluder": true,
+      "channels": {
+        "albedo": "approved/albedo/foreground/tr01_foreground_rock_lip_a_albedo.png",
+        "normal": "approved/normal/foreground/tr01_foreground_rock_lip_a_normal.png",
+        "emission": "approved/emission/foreground/tr01_foreground_rock_lip_a_emission.png",
+        "mask": "approved/mask/foreground/tr01_foreground_rock_lip_a_mask.png",
+        "ao": "approved/ao/foreground/tr01_foreground_rock_lip_a_ao.png"
+      },
+      "fadeMaskPath": "approved/mask/foreground/tr01_foreground_rock_lip_a_fade.png",
+      "shadowCasterFootprintCells": [[0, 0], [2, 0], [2, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-FGV-HANGING-CABLE-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [2, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [256, 248],
+      "dimensionsPixels": [512, 256],
+      "sortingLayerHint": "FrontStructure",
+      "emissionMode": "none",
+      "foregroundOccluder": true,
+      "channels": {
+        "albedo": "approved/albedo/foreground/tr01_foreground_hanging_cable_a_albedo.png",
+        "normal": "approved/normal/foreground/tr01_foreground_hanging_cable_a_normal.png",
+        "emission": "approved/emission/foreground/tr01_foreground_hanging_cable_a_emission.png",
+        "mask": "approved/mask/foreground/tr01_foreground_hanging_cable_a_mask.png",
+        "ao": "approved/ao/foreground/tr01_foreground_hanging_cable_a_ao.png"
+      },
+      "fadeMaskPath": "approved/mask/foreground/tr01_foreground_hanging_cable_a_fade.png",
+      "shadowCasterFootprintCells": [[0, 0], [2, 0], [2, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-FGV-PIPE-FRAME-A",
+      "revision": 1,
+      "status": "approved",
+      "channelStatus": { "albedo": "approved", "normal": "approved", "emission": "approved", "mask": "approved", "ao": "approved" },
+      "footprintCells": [2, 1],
+      "pivotNormalized": [0.5, 0.03125],
+      "pivotPixels": [256, 248],
+      "dimensionsPixels": [512, 256],
+      "sortingLayerHint": "FrontStructure",
+      "emissionMode": "none",
+      "foregroundOccluder": true,
+      "channels": {
+        "albedo": "approved/albedo/foreground/tr01_foreground_pipe_frame_a_albedo.png",
+        "normal": "approved/normal/foreground/tr01_foreground_pipe_frame_a_normal.png",
+        "emission": "approved/emission/foreground/tr01_foreground_pipe_frame_a_emission.png",
+        "mask": "approved/mask/foreground/tr01_foreground_pipe_frame_a_mask.png",
+        "ao": "approved/ao/foreground/tr01_foreground_pipe_frame_a_ao.png"
+      },
+      "fadeMaskPath": "approved/mask/foreground/tr01_foreground_pipe_frame_a_fade.png",
+      "shadowCasterFootprintCells": [[0, 0], [2, 0], [2, 1], [0, 1]]
+    },
+    {
+      "assetId": "TR01-VFX-DUST-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [4,4],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [256, 256],
+      "dimensionsPixels": [512,512],
+      "sortingLayerHint": "WorldFX",
+      "vfxPlaybackMode": "particle_random",
+      "channels": { "albedo": "approved/vfx/tr01_vfx_dust_a_albedo.png" }
+    },
+    {
+      "assetId": "TR01-VFX-FOG-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [8,2],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [512, 128],
+      "dimensionsPixels": [1024,256],
+      "sortingLayerHint": "VisionAndGrade",
+      "vfxPlaybackMode": "horizontal_repeat_mirrored",
+      "channels": { "albedo": "approved/vfx/tr01_vfx_fog_a_albedo.png" }
+    },
+    {
+      "assetId": "TR01-VFX-RAYS-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [4,4],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [256, 256],
+      "dimensionsPixels": [512,512],
+      "sortingLayerHint": "WorldFX",
+      "vfxPlaybackMode": "static_additive_pulse",
+      "channels": { "albedo": "approved/vfx/tr01_vfx_rays_a_albedo.png" }
+    },
+    {
+      "assetId": "TR01-VFX-FALLOUT-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1,1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [256, 256],
+      "dimensionsPixels": [512,512],
+      "sortingLayerHint": "WorldFX",
+      "vfxPlaybackMode": "particle_burst_random",
+      "channels": { "albedo": "approved/vfx/tr01_vfx_fallout_a_albedo.png" }
+    },
+    {
+      "assetId": "TR01-WFR-BASE-B",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_b_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_b_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_b_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_b_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_b_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WFR-BASE-C",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_c_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_c_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_c_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_c_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_c_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WFR-BASE-D",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_d_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_d_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_d_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_d_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_d_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WFR-BASE-E",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_e_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_e_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_e_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_e_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_e_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WFR-BASE-F",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall/tr01_wall_front_f_albedo.png",
+        "normal": "approved/normal/wall/tr01_wall_front_f_normal.png",
+        "emission": "approved/emission/wall/tr01_wall_front_f_emission.png",
+        "mask": "approved/mask/wall/tr01_wall_front_f_mask.png",
+        "ao": "approved/ao/wall/tr01_wall_front_f_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WTP-BASE-B",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_b_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_b_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_b_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_b_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_b_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WTP-BASE-C",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_c_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_c_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_c_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_c_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_c_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WTP-BASE-D",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_d_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_d_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_d_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_d_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_d_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WTP-BASE-E",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_e_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_e_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_e_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_e_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_e_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-WTP-BASE-F",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal",
+        "emission",
+        "mask",
+        "ao"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/wall_top/tr01_wall_top_f_albedo.png",
+        "normal": "approved/normal/wall_top/tr01_wall_top_f_normal.png",
+        "emission": "approved/emission/wall_top/tr01_wall_top_f_emission.png",
+        "mask": "approved/mask/wall_top/tr01_wall_top_f_mask.png",
+        "ao": "approved/ao/wall_top/tr01_wall_top_f_ao.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-AO-CONTACT-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "channels": {
+        "albedo": "approved/albedo/contact_ao/tr01_contact_ao_a_albedo.png"
+      },
+      "alphaInspection": {
+        "wallEdge": 150,
+        "fadeEndPixel": 54,
+        "farEdge": 0
+      }
+    }
+  ]
+}

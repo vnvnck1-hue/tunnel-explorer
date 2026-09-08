@@ -7167,7 +7167,11 @@ function update(dt){
  /* 카메라 — 마우스 룩어헤드 + 데드존 + followSpeed */
  if(!G.fixed){
   /* 유동 줌 — 기본은 35% 더 줌인, 크루가 멀어지면 기존 줌(상한)까지 줌아웃 */
-  {
+  const craftZoomLock=(window.TC_CRAFT&&TC_CRAFT.phase==='placing'&&Number.isFinite(TC_CRAFT.zoomLock))?TC_CRAFT.zoomLock:0;
+  if(craftZoomLock>0){
+   /* 설치 지점을 고르는 동안 화면 배율이 흔들리지 않게 현재 줌을 고정한다. */
+   G.Z=craftZoomLock;G.zDyn=craftZoomLock;
+  }else{
    const baseZ=teZoomZ(), zIn=baseZ*1.35;
    let zNeed=zIn;
    if(typeof AICREW!=='undefined'&&AICREW.members&&AICREW.members.length){
@@ -21697,11 +21701,11 @@ body.obsActive #obsBadge{display:flex}
 .tcCraftConfirm:disabled{filter:grayscale(.84) brightness(.53);cursor:not-allowed;color:#746877}
 .tcCraftConfirm img{position:absolute;left:20px;top:50%;width:25px;height:25px;transform:translateY(-50%);object-fit:contain}
 .tcCraftHint{margin-top:7px;color:#8f829b;font:750 9px/1.25 ui-monospace,monospace;text-align:center}
-.tcCraftPlacement{position:fixed;display:none;width:82px;height:82px;transform:translate(-50%,-50%);pointer-events:none;z-index:2;border:2px solid #ff6f7f;border-radius:50%;box-shadow:0 0 0 5px rgba(255,90,110,.12),inset 0 0 16px rgba(255,90,110,.18)}
+.tcCraftPlacement{position:fixed;display:none;width:var(--craft-preview-w,82px);height:var(--craft-preview-h,82px);box-sizing:border-box;transform:translate(-50%,-50%);pointer-events:none;z-index:2;border:2px solid #ff6f7f;border-radius:7px;background:rgba(255,90,110,.07);box-shadow:0 0 0 4px rgba(255,90,110,.11),inset 0 0 16px rgba(255,90,110,.18)}
 #tcCraftingRoot.placing .tcCraftPlacement{display:block}
-.tcCraftPlacement.valid{border-color:#ffd36e;box-shadow:0 0 0 5px rgba(255,211,110,.12),inset 0 0 16px rgba(255,211,110,.18)}
-.tcCraftPlacement:before,.tcCraftPlacement:after{content:"";position:absolute;left:50%;top:50%;background:currentColor;opacity:.62}.tcCraftPlacement:before{width:108%;height:1px;transform:translate(-50%,-50%)}.tcCraftPlacement:after{width:1px;height:108%;transform:translate(-50%,-50%)}
-.tcCraftPlacement img{position:absolute;left:15%;top:15%;width:70%;height:70%;object-fit:contain;opacity:.78;filter:drop-shadow(0 4px 4px rgba(0,0,0,.55))}
+.tcCraftPlacement.valid{border-color:#ffd36e;background:rgba(255,211,110,.07);box-shadow:0 0 0 4px rgba(255,211,110,.12),inset 0 0 16px rgba(255,211,110,.18)}
+.tcCraftPlacement:before,.tcCraftPlacement:after{content:"";position:absolute;left:50%;top:50%;background:currentColor;opacity:.66}.tcCraftPlacement:before{width:calc(100% + 12px);height:1px;transform:translate(-50%,-50%)}.tcCraftPlacement:after{width:1px;height:calc(100% + 12px);transform:translate(-50%,-50%)}
+.tcCraftPlacement img{position:absolute;left:9%;top:9%;width:82%;height:82%;object-fit:contain;opacity:.82;transform:rotate(var(--craft-preview-angle,0deg));filter:drop-shadow(0 4px 4px rgba(0,0,0,.55))}
 .tcCraftPlaceLabel{position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);padding:5px 9px;border-radius:999px;background:rgba(10,7,16,.9);border:1px solid rgba(255,113,138,.35);color:#ff9aae;font:850 10px/1 ui-monospace,monospace;white-space:nowrap}
 .tcCraftPlacement.valid .tcCraftPlaceLabel{border-color:rgba(255,211,110,.45);color:#ffe3a5}
 .tcCraftToastIcon{display:inline-block;width:24px;height:24px;margin-right:6px;vertical-align:-7px;object-fit:contain}
@@ -21719,13 +21723,13 @@ body.obsActive #obsBadge{display:flex}
     {id:'shaped-charge',name:'성형 폭약',kind:'place',pulp:7,bloom:2,max:2,desc:'2초 뒤 벽과 적에게 범위 피해',effect:'벽 피해 180% · 적 피해 ×2.2',icon:'icon-shaped-charge.png',range:2.2},
     {id:'auto-turret',name:'자동 포탑',kind:'place',pulp:8,bloom:2,max:1,desc:'주변 적을 자동 사격하는 임시 포탑',effect:'지속 45초 · 동시 설치 1개',icon:'icon-auto-turret.png',range:2.8},
     {id:'coolant-capsule',name:'냉각 캡슐',kind:'instant',pulp:4,bloom:0,cd:12,desc:'드릴 냉각수를 즉시 분사',effect:'열 75% 제거 · 과열 잠금 해제',icon:'icon-coolant-capsule.png'},
-    {id:'folding-barricade',name:'접이식 방벽',kind:'place',pulp:6,bloom:0,max:2,desc:'적과 적 투사체를 막는 임시 방벽',effect:'지속 35초 · 동시 설치 2개',icon:'icon-folding-barricade.png',range:2.3},
+    {id:'folding-barricade',name:'접이식 방벽',kind:'place',pulp:6,bloom:0,max:2,desc:'적과 적 투사체를 막는 임시 방벽',effect:'지속 35초 · 동시 설치 2개',icon:'icon-folding-barricade.png',range:2.3,footW:2,footH:1},
     {id:'med-injector',name:'응급 주사',kind:'channel',pulp:5,bloom:1,cd:18,desc:'응급 약물을 주입해 체력을 회복',effect:'0.7초 주입 · 최대 체력 35% 회복',icon:'icon-med-injector.png'},
     {id:'flare-bundle',name:'휴대 조명탄',kind:'place',pulp:3,bloom:0,max:2,desc:'주변을 밝히는 휴대용 조명탄',effect:'지속 30초 · 동시 설치 2개',icon:'icon-flare-bundle.png',range:2.6}
   ];
   const RMAP = new Map(RECIPES.map(r => [r.id,r]));
   const P = window.TC_CRAFT = {
-    phase:'closed',selected:'auto-turret',placement:null,mouseX:innerWidth/2,mouseY:innerHeight*.42,cDownAt:0,
+    phase:'closed',selected:'auto-turret',placement:null,mouseX:innerWidth/2,mouseY:innerHeight*.42,cDownAt:0,zoomLock:null,
     cooldowns:new Map(),active:{turrets:[],barricades:[],flares:[],charges:[]},using:null,
     recipes:RECIPES,images:{},el:null,detail:null,slots:null,placeEl:null,renderAcc:0,debug:false
   };
@@ -21782,17 +21786,28 @@ body.obsActive #obsBadge{display:flex}
   }
   function clearAttack(){try{G.mouse.down=false;G.mouse.drillDown=false;G.mouse.gunDown=false;}catch(e){}try{SFX.drillHum(false);}catch(e){}}
   function open(){if(!playing()||P.phase!=='closed'||document.body.classList.contains('uiLabOn'))return false;const ae=document.activeElement;if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.isContentEditable))return false;ensureDom();P.phase='wheel';P.el.className='open';P.el.setAttribute('aria-hidden','false');clearAttack();render();sfx('ui');return true;}
-  function close(silent){if(!P.el||P.phase==='closed')return;P.phase='closed';P.placement=null;P.el.className='';P.el.setAttribute('aria-hidden','true');if(!silent)sfx('ui');}
+  function close(silent){if(!P.el||P.phase==='closed')return;P.phase='closed';P.placement=null;P.zoomLock=null;P.el.className='';P.el.setAttribute('aria-hidden','true');if(!silent)sfx('ui');}
   function cancelPlacement(){if(P.phase!=='placing')return;close(false);toastSafe('배치 취소');}
-  function beginPlacement(r){P.phase='placing';P.placement={recipe:r,valid:false,world:null,angle:(G.sh&&G.sh.aim)||0};P.el.className='placing';const pi=P.placeEl.querySelector('img');pi.src=ICON_ROOT+r.icon;updatePlacement(P.mouseX,P.mouseY);sfx('tick');}
+  function beginPlacement(r){P.zoomLock=Number.isFinite(G.Z)?G.Z:null;P.phase='placing';P.placement={recipe:r,valid:false,world:null,cell:null,angle:(G.sh&&G.sh.aim)||0};P.el.className='placing';const pi=P.placeEl.querySelector('img');pi.src=ICON_ROOT+r.icon;updatePlacement(P.mouseX,P.mouseY);toastSafe('카메라 줌 고정 · 타일 스냅 배치');sfx('tick');}
   function updatePlacement(x,y){
     P.mouseX=x;P.mouseY=y;if(P.phase!=='placing'||!P.placement)return;const r=P.placement.recipe;let world=null,valid=false;
-    try{world=screenToWorld(x,y);const d=Math.hypot(world.x-G.sh.x,world.y-G.sh.y),limit=CELL*(r.range||2.2),cr=toCell(world.x,world.y);valid=d<=limit&&d>=CELL*.55&&inB(cr[0],cr[1])&&!solid(cr[0],cr[1]);if(valid){for(const a of [...P.active.turrets,...P.active.barricades,...P.active.flares,...P.active.charges])if(Math.hypot(a.x-world.x,a.y-world.y)<CELL*.72){valid=false;break;}}P.placement.angle=Math.atan2(world.y-G.sh.y,world.x-G.sh.x);}catch(e){valid=false;}
-    P.placement.world=world;P.placement.valid=valid;P.placeEl.style.left=x+'px';P.placeEl.style.top=y+'px';P.placeEl.classList.toggle('valid',valid);P.placeEl.querySelector('.tcCraftPlaceLabel').textContent=valid?'클릭하여 설치':'설치 불가';
+    try{
+      const rect=cv.getBoundingClientRect(),sx=(x-rect.left)/Math.max(1,rect.width)*LW,sy=(y-rect.top)/Math.max(1,rect.height)*LH,raw=screenToWorld(sx,sy),cr=toCell(raw.x,raw.y),pivot={x:cxw(cr[0]),y:cyw(cr[1])};
+      const aim0=Math.atan2(pivot.y-G.sh.y,pivot.x-G.sh.x);P.placement.angle=r.id==='folding-barricade'?Math.round((aim0+Math.PI/2)/(Math.PI/2))*(Math.PI/2):aim0;
+      const vertical=r.id==='folding-barricade'&&Math.abs(Math.sin(P.placement.angle))>.5,fw=vertical?(r.footH||1):(r.footW||1),fh=vertical?(r.footW||1):(r.footH||1);
+      world={x:pivot.x+(fw-1)*CELL*.5,y:pivot.y+(fh-1)*CELL*.5};const d=Math.hypot(world.x-G.sh.x,world.y-G.sh.y),limit=CELL*(r.range||2.2);
+      valid=d<=limit&&d>=CELL*.55;
+      for(let gy=0;valid&&gy<fh;gy++)for(let gx=0;gx<fw;gx++){const cc=cr[0]+gx,rr=cr[1]+gy;if(!inB(cc,rr)||solid(cc,rr)){valid=false;break;}}
+      if(valid){for(const a of [...P.active.turrets,...P.active.barricades,...P.active.flares,...P.active.charges])if(Math.hypot(a.x-world.x,a.y-world.y)<CELL*Math.max(.72,Math.max(fw,fh)*.55)){valid=false;break;}}
+      P.placement.cell=cr;P.placement.foot=[fw,fh];
+      const sv=w2s(world.x,world.y),px=rect.left+sv[0]/LW*rect.width,py=rect.top+sv[1]/LH*rect.height,cellPx=CELL*G.Z*rect.width/LW;
+      P.placeEl.style.left=px+'px';P.placeEl.style.top=py+'px';P.placeEl.style.setProperty('--craft-preview-w',(cellPx*fw)+'px');P.placeEl.style.setProperty('--craft-preview-h',(cellPx*fh)+'px');P.placeEl.style.setProperty('--craft-preview-angle',(P.placement.angle*180/Math.PI)+'deg');
+    }catch(e){valid=false;}
+    P.placement.world=world;P.placement.valid=valid;P.placeEl.classList.toggle('valid',valid);const cell=P.placement.cell,foot=P.placement.foot;P.placeEl.querySelector('.tcCraftPlaceLabel').textContent=(cell?'타일 '+cell[0]+','+cell[1]+(foot&&foot[0]*foot[1]>1?' · '+foot[0]+'×'+foot[1]:'')+' · ':'')+(valid?'클릭하여 설치':'설치 불가');
   }
   function confirmPlacement(){const q=P.placement;if(P.phase!=='placing'||!q||!q.valid||!q.world){sfx('tick');return false;}const r=q.recipe;if(!spend(r)){toastSafe(reason(r));close(true);return false;}const x=q.world.x,y=q.world.y,a=q.angle||0;
     if(r.id==='auto-turret')P.active.turrets.push({x,y,a,life:45,maxLife:45,cd:.15});
-    else if(r.id==='folding-barricade')P.active.barricades.push({x,y,a:a+Math.PI/2,life:35,maxLife:35,hp:(G.phpMax||181)*1.6,maxHp:(G.phpMax||181)*1.6});
+    else if(r.id==='folding-barricade')P.active.barricades.push({x,y,a,life:35,maxLife:35,hp:(G.phpMax||181)*1.6,maxHp:(G.phpMax||181)*1.6});
     else if(r.id==='flare-bundle'){const lamp={c:0,r:0,x,y,ph:Math.random()*6,rad:DEMO.lampRadius,ttl:30,flare:1,craft:1,visionRange:3};G.lamps.push(lamp);P.active.flares.push({x,y,life:30,maxLife:30,lamp});try{LOS.markDirty();}catch(e){}}
     else if(r.id==='shaped-charge')P.active.charges.push({x,y,a,life:2,maxLife:2});
     close(true);sfx('cache');try{J.ring(x,y,'#FFD36E',6,CELL*.8,2.5);J.burst(x,y,8,['#FFD36E','#C7A0FF'],90);}catch(e){}toastSafe(r.name+' 설치');return true;
@@ -21815,7 +21830,7 @@ body.obsActive #obsBadge{display:flex}
     for(const f of P.active.flares)f.life-=dt;P.active.flares=P.active.flares.filter(f=>f.life>0&&f.lamp&&f.lamp.ttl>0);
     for(const q of P.active.charges){q.life-=dt;if(q.life<=0&&!q.done){q.done=true;explodeCharge(q);}}P.active.charges=P.active.charges.filter(q=>!q.done);
   }
-  function update(dt){if(!playing()){if(P.phase!=='closed')close(true);return;}updateObjects(dt);P.renderAcc+=dt;if(P.phase==='wheel'&&P.renderAcc>.12){P.renderAcc=0;render();}}
+  function update(dt){if(!playing()){if(P.phase!=='closed')close(true);return;}updateObjects(dt);if(P.phase==='placing')updatePlacement(P.mouseX,P.mouseY);P.renderAcc+=dt;if(P.phase==='wheel'&&P.renderAcc>.12){P.renderAcc=0;render();}}
   function visibleAt(x,y){try{return !DEMO.losOn||!LOS||LOS.seenAt(x,y);}catch(e){return true;}}
   function drawIcon(file,x,y,w,h,a,alpha){const im=img(file);if(!im.complete||!im.naturalWidth||!visibleAt(x,y))return;cx.save();cx.translate(x,y);cx.rotate(a||0);cx.globalAlpha=alpha==null?1:alpha;cx.drawImage(im,-w/2,-h/2,w,h);cx.restore();}
   function drawObjects(){
@@ -21850,6 +21865,7 @@ body.obsActive #obsBadge{display:flex}
       if(/^Digit[1-6]$/.test(e.code)){const i=+e.code.slice(-1)-1;if(P.selected===RECIPES[i].id)confirmSelection();else select(RECIPES[i].id);e.preventDefault();e.stopImmediatePropagation();return;}
     }
     if(P.phase==='placing'&&e.code==='Escape'){cancelPlacement();e.preventDefault();e.stopImmediatePropagation();return;}
+    if(P.phase==='placing'&&(e.code==='BracketLeft'||e.code==='BracketRight')){e.preventDefault();e.stopImmediatePropagation();return;}
     if(P.using&&['Space','KeyQ','KeyE'].includes(e.code)){e.preventDefault();e.stopImmediatePropagation();}
   },true);
   addEventListener('keyup',e=>{if(e.code==='KeyC'&&P.phase==='wheel'&&P.cDownAt){const held=performance.now()-P.cDownAt;P.cDownAt=0;if(held>=180)close(false);e.preventDefault();e.stopImmediatePropagation();}},true);

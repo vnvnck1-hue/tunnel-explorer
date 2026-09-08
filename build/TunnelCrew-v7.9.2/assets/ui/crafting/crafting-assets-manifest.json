@@ -1,0 +1,101 @@
+{
+  "format": 1,
+  "assets": {
+    "icon-auto-turret": {
+      "group": "icons",
+      "png": "icons/icon-auto-turret.png",
+      "webp": "icons/icon-auto-turret.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "icon-coolant-capsule": {
+      "group": "icons",
+      "png": "icons/icon-coolant-capsule.png",
+      "webp": "icons/icon-coolant-capsule.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "icon-med-injector": {
+      "group": "icons",
+      "png": "icons/icon-med-injector.png",
+      "webp": "icons/icon-med-injector.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "icon-flare-bundle": {
+      "group": "icons",
+      "png": "icons/icon-flare-bundle.png",
+      "webp": "icons/icon-flare-bundle.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "icon-folding-barricade": {
+      "group": "icons",
+      "png": "icons/icon-folding-barricade.png",
+      "webp": "icons/icon-folding-barricade.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "icon-shaped-charge": {
+      "group": "icons",
+      "png": "icons/icon-shaped-charge.png",
+      "webp": "icons/icon-shaped-charge.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "ui-wheel-slot": {
+      "group": "ui",
+      "png": "ui/ui-wheel-slot.png",
+      "webp": "ui/ui-wheel-slot.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "ui-wheel-selection": {
+      "group": "ui",
+      "png": "ui/ui-wheel-selection.png",
+      "webp": "ui/ui-wheel-selection.webp",
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "ui-wheel-connector": {
+      "group": "ui",
+      "png": "ui/ui-wheel-connector.png",
+      "webp": "ui/ui-wheel-connector.webp",
+      "width": 640,
+      "height": 640,
+      "alpha": true
+    },
+    "ui-detail-panel": {
+      "group": "ui",
+      "png": "ui/ui-detail-panel.png",
+      "webp": "ui/ui-detail-panel.webp",
+      "width": 384,
+      "height": 512,
+      "alpha": true
+    },
+    "ui-craft-button": {
+      "group": "ui",
+      "png": "ui/ui-craft-button.png",
+      "webp": "ui/ui-craft-button.webp",
+      "width": 512,
+      "height": 176,
+      "alpha": true
+    },
+    "ui-craft-action-glyph": {
+      "group": "ui",
+      "png": "ui/ui-craft-action-glyph.png",
+      "webp": "ui/ui-craft-action-glyph.webp",
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    }
+  }
+}

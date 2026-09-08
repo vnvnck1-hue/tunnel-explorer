@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: a8ecec2dbb80e3f479ef5d2bc17f4c06
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8133434785249725935
+    second: tr01_vfx_fallout_a_albedo_0
+  - first:
+      213: 2468201586495232328
+    second: tr01_vfx_fallout_a_albedo_1
+  - first:
+      213: -2986267193040477290
+    second: tr01_vfx_fallout_a_albedo_2
+  - first:
+      213: -3520762271025601873
+    second: tr01_vfx_fallout_a_albedo_3
+  - first:
+      213: 4920030033272616149
+    second: tr01_vfx_fallout_a_albedo_4
+  - first:
+      213: -5844228643505598116
+    second: tr01_vfx_fallout_a_albedo_5
+  - first:
+      213: -873343485087061175
+    second: tr01_vfx_fallout_a_albedo_6
+  - first:
+      213: 8618431235948887082
+    second: tr01_vfx_fallout_a_albedo_7
+  - first:
+      213: -3383000699026820627
+    second: tr01_vfx_fallout_a_albedo_8
+  - first:
+      213: -132131805560095404
+    second: tr01_vfx_fallout_a_albedo_9
+  - first:
+      213: 4789608372711833493
+    second: tr01_vfx_fallout_a_albedo_10
+  - first:
+      213: 439502639100789283
+    second: tr01_vfx_fallout_a_albedo_11
+  - first:
+      213: -8082032199123237696
+    second: tr01_vfx_fallout_a_albedo_12
+  - first:
+      213: -4251048459069388803
+    second: tr01_vfx_fallout_a_albedo_13
+  - first:
+      213: -1284379174137492926
+    second: tr01_vfx_fallout_a_albedo_14
+  - first:
+      213: 1285025718787305461
+    second: tr01_vfx_fallout_a_albedo_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_0
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 491
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1127265d72c302f80800000000000000
+      internalID: -8133434785249725935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_1
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 478
+        width: 39
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8499a1d0440d04220800000000000000
+      internalID: 2468201586495232328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_2
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 436
+        width: 34
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6936b625fc5ae86d0800000000000000
+      internalID: -2986267193040477290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_3
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 319
+        width: 79
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa2ebe84e5db32fc0800000000000000
+      internalID: -3520762271025601873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_4
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 342
+        width: 241
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d4b7717f35774440800000000000000
+      internalID: 4920030033272616149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_5
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 335
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c519fa5430125eea0800000000000000
+      internalID: -5844228643505598116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_6
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 232
+        width: 82
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94beb7c3ab241e3f0800000000000000
+      internalID: -873343485087061175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_7
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 296
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2c3dd3fb81da9770800000000000000
+      internalID: 8618431235948887082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_8
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 239
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de1bb93c9ca2d01d0800000000000000
+      internalID: -3383000699026820627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_9
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 221
+        width: 35
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45d3f0aa2d29a2ef0800000000000000
+      internalID: -132131805560095404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_10
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 213
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59fb9b4407b187240800000000000000
+      internalID: 4789608372711833493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_11
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 160
+        width: 50
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3220379525d691600800000000000000
+      internalID: 439502639100789283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_12
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 174
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c48dfb098ad6df80800000000000000
+      internalID: -8082032199123237696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_13
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 28
+        width: 351
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df7823213fd3105c0800000000000000
+      internalID: -4251048459069388803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_14
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 45
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24a00a032f7fc2ee0800000000000000
+      internalID: -1284379174137492926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_fallout_a_albedo_15
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 28
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ffee87351455d110800000000000000
+      internalID: 1285025718787305461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_vfx_fallout_a_albedo_0: -8133434785249725935
+      tr01_vfx_fallout_a_albedo_1: 2468201586495232328
+      tr01_vfx_fallout_a_albedo_10: 4789608372711833493
+      tr01_vfx_fallout_a_albedo_11: 439502639100789283
+      tr01_vfx_fallout_a_albedo_12: -8082032199123237696
+      tr01_vfx_fallout_a_albedo_13: -4251048459069388803
+      tr01_vfx_fallout_a_albedo_14: -1284379174137492926
+      tr01_vfx_fallout_a_albedo_15: 1285025718787305461
+      tr01_vfx_fallout_a_albedo_2: -2986267193040477290
+      tr01_vfx_fallout_a_albedo_3: -3520762271025601873
+      tr01_vfx_fallout_a_albedo_4: 4920030033272616149
+      tr01_vfx_fallout_a_albedo_5: -5844228643505598116
+      tr01_vfx_fallout_a_albedo_6: -873343485087061175
+      tr01_vfx_fallout_a_albedo_7: 8618431235948887082
+      tr01_vfx_fallout_a_albedo_8: -3383000699026820627
+      tr01_vfx_fallout_a_albedo_9: -132131805560095404
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -217,7 +217,7 @@ out = out.replace(new RegExp(`url\\((['"]?)(${ROOT_RE_SRC}[^'")]+?)\\1\\)`, 'g')
 });
 
 // 6-d. 코옵 클라이언트 (서버가 내려주는 /coop/client.js) 제거 — 단일 파일에선 서버가 없다
-out = out.replace(/<script\b[^>]*\bsrc=["']\/coop\/client\.js["'][^>]*><\/script>/g,
+out = out.replace(/<script\b[^>]*\bsrc=["']\/coop\/client\.js(?:\?[^"']*)?["'][^>]*><\/script>/g,
   '<!-- single-file build: /coop/client.js 제거 (LAN 코옵은 START.bat 패키지에서만) -->');
 
 // 6-d1. 메인 메뉴 LAN 코옵 버튼 잠금 — 서버가 없는 단일 파일에서는 눌러도 동작하지 않으므로 잠금 표시로 남긴다

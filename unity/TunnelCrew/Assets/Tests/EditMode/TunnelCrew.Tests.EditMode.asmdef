@@ -4,6 +4,10 @@
     "references": [
         "TunnelCrew.Sim",
         "TunnelCrew.Data",
+        "TunnelCrew.Presentation",
+        "TunnelCrew.Editor",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Universal.2D.Runtime",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

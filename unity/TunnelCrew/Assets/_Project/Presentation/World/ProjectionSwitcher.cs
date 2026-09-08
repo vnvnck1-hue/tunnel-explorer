@@ -55,7 +55,7 @@ namespace TunnelCrew.Presentation
             GUI.DrawTexture(r, Texture2D.whiteTexture);
             GUI.color = Color.white;
             GUI.Label(new Rect(r.x, r.y + 4f * k, r.width - 10f * k, 26f * k),
-                $"<b>투영 {(int)IsometricProjection.Preset + 1}/4</b>  {IsometricProjection.Label(IsometricProjection.Preset)}", _style);
+                $"<b>투영 {(int)IsometricProjection.Preset + 1}/{IsometricProjection.PresetCount}</b>  {IsometricProjection.Label(IsometricProjection.Preset)}", _style);
             GUI.Label(new Rect(r.x, r.y + 30f * k, r.width - 10f * k, 26f * k),
                 "<color=#aaa>F9 다음 · F8 이전 · F7 이 표시 숨기기</color>", _style);
         }

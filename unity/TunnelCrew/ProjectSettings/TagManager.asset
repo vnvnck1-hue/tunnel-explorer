@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -41,3 +41,41 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: WorldVoid
+    uniqueID: 529930605
+    locked: 0
+  - name: GroundBase
+    uniqueID: 659664867
+    locked: 0
+  - name: GroundDetail
+    uniqueID: 646211231
+    locked: 0
+  - name: GroundDecal
+    uniqueID: 2047639323
+    locked: 0
+  - name: BackStructure
+    uniqueID: 771520299
+    locked: 0
+  - name: WallTop
+    uniqueID: 1222341804
+    locked: 0
+  - name: WorldEntity
+    uniqueID: 223416044
+    locked: 0
+  - name: FrontStructure
+    uniqueID: 1666965005
+    locked: 0
+  - name: WorldFX
+    uniqueID: 2127927381
+    locked: 0
+  - name: VisionAndGrade
+    uniqueID: 919453861
+    locked: 0
+  - name: WorldOverlay
+    uniqueID: 112084401
+    locked: 0
+  - name: UI
+    uniqueID: 2079568635
+    locked: 0
+  m_RenderingLayers:
+  - Default

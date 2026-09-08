@@ -16,13 +16,15 @@ namespace TunnelCrew.Presentation
         Military1To1 = 2,
         /// <summary>45° 회전을 없앤 3/4 톱다운. 타일이 축 정렬 사각형으로 남는다(젤다·스타듀 계열).</summary>
         ThreeQuarter = 3,
+        /// <summary>레퍼런스 영상형 직교 톱다운. 회전과 세로 압축 없이 바닥 XY를 화면 XY에 1:1로 둔다.</summary>
+        ReferenceTopDown = 4,
     }
 
     /// <summary>
     /// 시뮬레이션의 직교 XY 좌표를 화면 좌표로 바꾼다.
     /// 게임 규칙·충돌·길찾기는 원래 좌표를 유지하고 Presentation 에서만 이 변환을 쓴다.
     ///
-    /// 2026-09-08: 손맛을 눈으로 비교하려고 프리셋 4종을 넣었다(<see cref="ProjectionPreset"/>).
+    /// 2026-09-08: 손맛을 눈으로 비교하려고 프리셋 5종을 넣었다(<see cref="ProjectionPreset"/>).
     /// 기본값은 기존과 완전히 같은 2:1 이고, 프리셋을 바꾸면 <see cref="Changed"/> 로 알린다.
     /// 매 프레임 <see cref="ToRender(Vec2, float)"/> 를 호출하는 뷰들은 그대로 따라오고,
     /// 한 번만 계산해 두는 쪽(타일 그리드 Transform · 벽 그림자 · 어둠 셰이더)만 이 이벤트로 다시 만든다.
@@ -41,7 +43,11 @@ namespace TunnelCrew.Presentation
         public static event Action Changed;
 
         /// <summary>45° 회전(마름모) 계열인가. false 면 타일이 축 정렬 사각형으로 남는다.</summary>
-        public static bool IsDiamond => Preset != ProjectionPreset.ThreeQuarter;
+        public static bool IsDiamond => Preset != ProjectionPreset.ThreeQuarter
+            && Preset != ProjectionPreset.ReferenceTopDown;
+
+        /// <summary>F8/F9 순환과 화면 라벨이 공유하는 전체 프리셋 수.</summary>
+        public static int PresetCount => System.Enum.GetValues(typeof(ProjectionPreset)).Length;
 
         /// <summary>발밑 그림자·원형 이펙트를 눌러야 하는 비율. 마름모의 납작함과 같다.</summary>
         public static float ShadowSquash => HalfTileHeight / HalfTileWidth;
@@ -54,6 +60,7 @@ namespace TunnelCrew.Presentation
             ProjectionPreset.TrueIsometric => (0.5f, 0.5f / 1.73205081f),   // 1:√3 — 3축 120°
             ProjectionPreset.Military1To1 => (0.5f, 0.5f),                  // 윗면이 진짜 정사각형
             ProjectionPreset.ThreeQuarter => (0.5f, 0.3f),                  // 회전 없음, 세로만 0.6배
+            ProjectionPreset.ReferenceTopDown => (0.5f, 0.5f),             // 회전·압축 없음, 바닥 XY를 화면 XY에 1:1 대응
             _ => (0.5f, 0.25f),                                             // 2:1 (기본)
         };
 
@@ -71,7 +78,7 @@ namespace TunnelCrew.Presentation
         /// <summary>프리셋을 순서대로 넘긴다(마지막 다음은 처음).</summary>
         public static ProjectionPreset Next(int step = 1)
         {
-            int n = System.Enum.GetValues(typeof(ProjectionPreset)).Length;
+            int n = PresetCount;
             return (ProjectionPreset)(((int)Preset + step % n + n) % n);
         }
 
@@ -80,6 +87,7 @@ namespace TunnelCrew.Presentation
             ProjectionPreset.TrueIsometric => "트루 아이소메트릭 (1.732:1 마름모 · 카메라 35.26°)",
             ProjectionPreset.Military1To1 => "밀리터리 1:1 (윗면 정사각형 · 벽이 가장 두껍다)",
             ProjectionPreset.ThreeQuarter => "3/4 톱다운 (회전 없음 · 타일 사각형)",
+            ProjectionPreset.ReferenceTopDown => "레퍼런스 3/4 직교 (회전·압축 없음 · 영상 기준)",
             _ => "2:1 다이메트릭 (기본 · 픽셀 정합)",
         };
 

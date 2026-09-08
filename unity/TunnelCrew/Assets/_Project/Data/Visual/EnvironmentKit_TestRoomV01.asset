@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e59ff12c09a6444c8bc61d204207005, type: 3}
+  m_Name: EnvironmentKit_TestRoomV01
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.EnvironmentKit
+  floorBase:
+  - {fileID: -8439215816025080422, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  - {fileID: -1180583878215403582, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  - {fileID: 4556988213262554816, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  - {fileID: 1160073201914015887, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  - {fileID: 8164167624011333696, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  - {fileID: 8347394807865398021, guid: 5766bd8fc354b4146b0bbedb33c58d7d, type: 3}
+  floorEdge: []
+  contactAo:
+  - {fileID: 21300000, guid: 1ad031bf65dd01d46aae75b638c04d1a, type: 3}
+  wallTop:
+  - {fileID: -8173315836451523839, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  - {fileID: 121948958, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  - {fileID: -41565363, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  - {fileID: 695477450, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  - {fileID: 1840983533, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  - {fileID: -981554445, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  wallTopRim:
+  - {fileID: -7884705167083971215, guid: 9d4fda737625e6d49ab85de4aa7e1344, type: 3}
+  wallFront:
+  - {fileID: -61002127620615827, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  - {fileID: 2021390732, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  - {fileID: 1147382662, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  - {fileID: 173675413, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  - {fileID: -1867312217, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  - {fileID: 571332027, guid: 20bda0ff849e3f247b32c37175deaee0, type: 3}
+  westSide: []
+  eastSide: []
+  outerCorner: []
+  innerCorner: []

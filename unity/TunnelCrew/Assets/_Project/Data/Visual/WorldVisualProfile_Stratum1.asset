@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01bd313d89e4c14586bc4cde0761103, type: 3}
+  m_Name: WorldVisualProfile_Stratum1
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.WorldVisualProfile
+  authoredProjection: 4
+  projectionBasisX: {x: 1, y: 0}
+  projectionBasisY: {x: 0, y: 1}
+  pixelsPerUnit: 128
+  sourcePixelsPerCell: 128
+  baseViewCells: 11.5
+  combatViewCells: 10.5
+  coopViewCells: 17
+  verticalAnchorFromBottom: 0.56
+  characterScreenHeightRange: {x: 0.13, y: 0.18}
+  characterVisualScale: 1
+  wallLiftCells: 1
+  wallLiftRangeByStratum: {x: 0.75, y: 1.5}
+  depthUnitsPerCell: 16
+  foregroundFadeAlpha: 0.34
+  foregroundFadeOut: 0.22
+  foregroundFadeIn: 0.32
+  foregroundFadeRadius: 0.9
+  enemySilhouetteMinAlpha: 0.55
+  contactShadowRadius: 0.34
+  contactShadowOpacity: 0.45
+  ambientColor: {r: 0.42, g: 0.46, b: 0.62, a: 1}
+  ambientIntensity: 0.34
+  minLightBySurface: {x: 0.22, y: 0.16, z: 0.12, w: 0.3}
+  activeLightBudget: {x: 16, y: 24}
+  shadowLightBudget: {x: 4, y: 8}
+  volumeProfileByStratum:
+  - Volume_Stratum1
+  - Volume_Stratum2
+  - Volume_Stratum3
+  - Volume_Anomaly
+  atmosphereSeparation: {x: 0.18, y: 0.08, z: 0.26}
+  lowFogDensity: 0.35
+  dustDensity: 0.4

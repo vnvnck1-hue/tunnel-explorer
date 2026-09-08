@@ -3,7 +3,7 @@
    붙여넣기 → 적용으로 JSON 을 되돌려 넣을 수 있다. localStorage(tc_lx_v791)에 자동 저장. */
 (function(){
  if(typeof LX==='undefined'||typeof LX_DEFAULT==='undefined')return;
- const LS_KEY='tc_lx_v791b';   /* 기본값이 바뀌면 키를 올려 예전 저장값이 덮어쓰지 않게 한다 */
+ const LS_KEY='tc_lx_v791c';   /* 기본값이 바뀌면 키를 올려 예전 저장값이 덮어쓰지 않게 한다 */
  const TE_KEYS=['ambient','flashRange','halfAngle','heightRatio','nStrength','fogDensity','lightSteps','softMask','flashlight','breathe'];
  const $=(t,cls,txt)=>{const e=document.createElement(t);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;};
  const css=`
@@ -113,12 +113,17 @@
   const maskBtn=$('button',LX.showMask?'lxOn':'','마스크 보기');
   maskBtn.addEventListener('click',()=>{LX.showMask=!LX.showMask;maskBtn.className=LX.showMask?'lxOn':'';changed();});
   bar.appendChild(maskBtn);
+  if(LX.sortUnderCrew==null)LX.sortUnderCrew=true;
+  const srtBtn=$('button',LX.sortUnderCrew?'lxOn':'','크루 위 소팅');srtBtn.title='켜짐: 조명 레이어를 크루 스프라이트 아래에 합성(캐릭터가 손전등 콘 위에 보임). 꺼짐: 화면 전체 위에 합성';
+  srtBtn.addEventListener('click',()=>{LX.sortUnderCrew=!LX.sortUnderCrew;srtBtn.className=LX.sortUnderCrew?'lxOn':'';changed();});
+  bar.appendChild(srtBtn);
   const alBtn=$('button',(typeof OPT!=='undefined'&&OPT.alphaLight)?'lxOn':'','재질 조명');alBtn.title='스프라이트·벽 알파 라이팅(LIT) 토글';
   alBtn.addEventListener('click',()=>{if(typeof OPT==='undefined')return;OPT.alphaLight=!OPT.alphaLight;alBtn.className=OPT.alphaLight?'lxOn':'';});
   bar.appendChild(alBtn);
   const pre=$('select');{const op=$('option',null,'프리셋…');op.value='';pre.appendChild(op);}
   for(const k in LX_PRESETS){const op=$('option',null,k);op.value=k;pre.appendChild(op);}
-  pre.addEventListener('change',()=>{const k=pre.value;if(!k)return;for(const kk in LX)delete LX[kk];lxDeepMerge(LX,LX_DEFAULT);lxDeepMerge(LX,LX_PRESETS[k]);changed();build();msg('프리셋 적용: '+k);});
+  pre.addEventListener('change',()=>{const k=pre.value;if(!k)return;const p=Object.assign({},LX_PRESETS[k]);const te=p._te;delete p._te;
+   for(const kk in LX)delete LX[kk];lxDeepMerge(LX,LX_DEFAULT);lxDeepMerge(LX,p);if(te)Object.assign(TE,te);changed();build();msg('프리셋 적용: '+k);});
   bar.appendChild(pre);
   const rs=$('button',null,'리셋');rs.addEventListener('click',()=>{resetAll();build();msg('기본값으로 리셋');});bar.appendChild(rs);
   panel.appendChild(bar);

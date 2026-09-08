@@ -1,0 +1,1859 @@
+fileFormatVersion: 2
+guid: 14a539fb0b415bc4dbd71cbbf3c7f4fa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8639184347597519021
+    second: tr01_vfx_dust_a_albedo_0
+  - first:
+      213: -6293253736148755059
+    second: tr01_vfx_dust_a_albedo_1
+  - first:
+      213: 8891601544668707303
+    second: tr01_vfx_dust_a_albedo_2
+  - first:
+      213: -8251797996520869745
+    second: tr01_vfx_dust_a_albedo_3
+  - first:
+      213: 7155029305122421336
+    second: tr01_vfx_dust_a_albedo_4
+  - first:
+      213: -338115726541025302
+    second: tr01_vfx_dust_a_albedo_5
+  - first:
+      213: -7982537243650593043
+    second: tr01_vfx_dust_a_albedo_6
+  - first:
+      213: 1591737495094662639
+    second: tr01_vfx_dust_a_albedo_7
+  - first:
+      213: -697658589041568208
+    second: tr01_vfx_dust_a_albedo_8
+  - first:
+      213: -1178996285322758758
+    second: tr01_vfx_dust_a_albedo_9
+  - first:
+      213: 5286412890637754160
+    second: tr01_vfx_dust_a_albedo_10
+  - first:
+      213: 854147568585794548
+    second: tr01_vfx_dust_a_albedo_11
+  - first:
+      213: 3509174325780716860
+    second: tr01_vfx_dust_a_albedo_12
+  - first:
+      213: 5877149029670554373
+    second: tr01_vfx_dust_a_albedo_13
+  - first:
+      213: -6770139226079356155
+    second: tr01_vfx_dust_a_albedo_14
+  - first:
+      213: 7898368054903845931
+    second: tr01_vfx_dust_a_albedo_15
+  - first:
+      213: -4493946958179142124
+    second: tr01_vfx_dust_a_albedo_16
+  - first:
+      213: -258103478088958777
+    second: tr01_vfx_dust_a_albedo_17
+  - first:
+      213: -2549629928457954659
+    second: tr01_vfx_dust_a_albedo_18
+  - first:
+      213: -2261967055447764401
+    second: tr01_vfx_dust_a_albedo_19
+  - first:
+      213: -2659307657514560886
+    second: tr01_vfx_dust_a_albedo_20
+  - first:
+      213: -6833015319641678060
+    second: tr01_vfx_dust_a_albedo_21
+  - first:
+      213: -2940035322107902801
+    second: tr01_vfx_dust_a_albedo_22
+  - first:
+      213: 5257075601463443699
+    second: tr01_vfx_dust_a_albedo_23
+  - first:
+      213: -2068622753184556230
+    second: tr01_vfx_dust_a_albedo_24
+  - first:
+      213: 4173923742738799252
+    second: tr01_vfx_dust_a_albedo_25
+  - first:
+      213: 8888354378831201782
+    second: tr01_vfx_dust_a_albedo_26
+  - first:
+      213: -3349181046874570043
+    second: tr01_vfx_dust_a_albedo_27
+  - first:
+      213: 1292630197783840979
+    second: tr01_vfx_dust_a_albedo_28
+  - first:
+      213: 5728626803476980944
+    second: tr01_vfx_dust_a_albedo_29
+  - first:
+      213: -1682509076461498330
+    second: tr01_vfx_dust_a_albedo_30
+  - first:
+      213: -7419752547757343876
+    second: tr01_vfx_dust_a_albedo_31
+  - first:
+      213: -4699772191386536732
+    second: tr01_vfx_dust_a_albedo_32
+  - first:
+      213: 8357890746381166723
+    second: tr01_vfx_dust_a_albedo_33
+  - first:
+      213: 7864042028809997544
+    second: tr01_vfx_dust_a_albedo_34
+  - first:
+      213: 2643609621041955500
+    second: tr01_vfx_dust_a_albedo_35
+  - first:
+      213: 5882181324164655692
+    second: tr01_vfx_dust_a_albedo_36
+  - first:
+      213: -9036606078186186706
+    second: tr01_vfx_dust_a_albedo_37
+  - first:
+      213: 8569406383027213148
+    second: tr01_vfx_dust_a_albedo_38
+  - first:
+      213: -779405983678890640
+    second: tr01_vfx_dust_a_albedo_39
+  - first:
+      213: -3357681615435441684
+    second: tr01_vfx_dust_a_albedo_40
+  - first:
+      213: -6355235112070288428
+    second: tr01_vfx_dust_a_albedo_41
+  - first:
+      213: 2906923750813577967
+    second: tr01_vfx_dust_a_albedo_42
+  - first:
+      213: -4813989766116250752
+    second: tr01_vfx_dust_a_albedo_43
+  - first:
+      213: -3786394619521176300
+    second: tr01_vfx_dust_a_albedo_44
+  - first:
+      213: -4193374451708835925
+    second: tr01_vfx_dust_a_albedo_45
+  - first:
+      213: -4792686203528455219
+    second: tr01_vfx_dust_a_albedo_46
+  - first:
+      213: -7836602006665541068
+    second: tr01_vfx_dust_a_albedo_47
+  - first:
+      213: 8910307780989356776
+    second: tr01_vfx_dust_a_albedo_48
+  - first:
+      213: -5221649656608712368
+    second: tr01_vfx_dust_a_albedo_49
+  - first:
+      213: -2484950348633621761
+    second: tr01_vfx_dust_a_albedo_50
+  - first:
+      213: -6778029903487769731
+    second: tr01_vfx_dust_a_albedo_51
+  - first:
+      213: 2835902484047391635
+    second: tr01_vfx_dust_a_albedo_52
+  - first:
+      213: 734620893724786136
+    second: tr01_vfx_dust_a_albedo_53
+  - first:
+      213: 8368894106252419253
+    second: tr01_vfx_dust_a_albedo_54
+  - first:
+      213: -4362736803421696674
+    second: tr01_vfx_dust_a_albedo_55
+  - first:
+      213: -2893506138209002329
+    second: tr01_vfx_dust_a_albedo_56
+  - first:
+      213: 8363118206532127677
+    second: tr01_vfx_dust_a_albedo_57
+  - first:
+      213: 2494473025019076749
+    second: tr01_vfx_dust_a_albedo_58
+  - first:
+      213: -4438643909868031727
+    second: tr01_vfx_dust_a_albedo_59
+  - first:
+      213: 2412516968434766663
+    second: tr01_vfx_dust_a_albedo_60
+  - first:
+      213: -2461832005536754275
+    second: tr01_vfx_dust_a_albedo_61
+  - first:
+      213: -5265706684867125489
+    second: tr01_vfx_dust_a_albedo_62
+  - first:
+      213: 8920015429751420406
+    second: tr01_vfx_dust_a_albedo_63
+  - first:
+      213: -1369075969611870196
+    second: tr01_vfx_dust_a_albedo_64
+  - first:
+      213: -5367426176243207939
+    second: tr01_vfx_dust_a_albedo_65
+  - first:
+      213: 5472675392858929329
+    second: tr01_vfx_dust_a_albedo_66
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 9
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 296
+        width: 233
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 357c554bb937b1880800000000000000
+      internalID: -8639184347597519021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_1
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 495
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8d147fe11fd9a8a0800000000000000
+      internalID: -6293253736148755059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_2
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 500
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e9fa42ce70556b70800000000000000
+      internalID: 8891601544668707303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_3
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 492
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f80f71b2179bb7d80800000000000000
+      internalID: -8251797996520869745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_4
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 380
+        width: 185
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85af4597e35cb4360800000000000000
+      internalID: 7155029305122421336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_5
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 467
+        width: 49
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aef8c82c985ce4bf0800000000000000
+      internalID: -338115726541025302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_6
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 500
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dee61e19ba4583190800000000000000
+      internalID: -7982537243650593043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_7
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 488
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe599c281dcf61610800000000000000
+      internalID: 1591737495094662639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_8
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 464
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0365da9a53b6156f0800000000000000
+      internalID: -697658589041568208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_9
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 470
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a95f4d5002d53afe0800000000000000
+      internalID: -1178996285322758758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_10
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 356
+        width: 100
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f5282f38c1d5940800000000000000
+      internalID: 5286412890637754160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_11
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 474
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f3e15b20ba8adb00800000000000000
+      internalID: 854147568585794548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_12
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 474
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3d9417f47713b030800000000000000
+      internalID: 3509174325780716860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_13
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 462
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50b8b8d67e3df8150800000000000000
+      internalID: 5877149029670554373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_14
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 456
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50b1a9d5e32ab02a0800000000000000
+      internalID: -6770139226079356155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_15
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 407
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2436d906e3ac9d60800000000000000
+      internalID: 7898368054903845931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_16
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 409
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 416f84e2d0b42a1c0800000000000000
+      internalID: -4493946958179142124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_17
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 315
+        width: 92
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ccf63111480b6cf0800000000000000
+      internalID: -258103478088958777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_18
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 213
+        width: 162
+        height: 179
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a1f8da615ed9cd0800000000000000
+      internalID: -2549629928457954659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_19
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 291
+        width: 69
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f42566e82f0eb90e0800000000000000
+      internalID: -2261967055447764401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_20
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 363
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a825e5d66cd381bd0800000000000000
+      internalID: -2659307657514560886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_21
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 344
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41f94f705c04c21a0800000000000000
+      internalID: -6833015319641678060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_22
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 266
+        width: 48
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa448a69375e237d0800000000000000
+      internalID: -2940035322107902801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_23
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 287
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f00a960862e4f840800000000000000
+      internalID: 5257075601463443699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_24
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 269
+        width: 41
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3bd426e096ca43e0800000000000000
+      internalID: -2068622753184556230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_25
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 310
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49ad3859781cce930800000000000000
+      internalID: 4173923742738799252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_26
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 277
+        width: 47
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f5850c0737c95b70800000000000000
+      internalID: 8888354378831201782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_27
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 267
+        width: 32
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c2029425915581d0800000000000000
+      internalID: -3349181046874570043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_28
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 287
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d849d4f05850f110800000000000000
+      internalID: 1292630197783840979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_29
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 293
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d4e608e9bb208f40800000000000000
+      internalID: 5728626803476980944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_30
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 288
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6205426c8e686a8e0800000000000000
+      internalID: -1682509076461498330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_31
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 286
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7bbf9d8e5eb70990800000000000000
+      internalID: -7419752547757343876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_32
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 294
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e47527a71e07ceb0800000000000000
+      internalID: -4699772191386536732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_33
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 289
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 388e2911a513df370800000000000000
+      internalID: 8357890746381166723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_34
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 280
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec46f94f80b22d60800000000000000
+      internalID: 7864042028809997544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_35
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 272
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca2c203a1fcffa420800000000000000
+      internalID: 2643609621041955500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_36
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 287
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4a654bcfb4b1a150800000000000000
+      internalID: 5882181324164655692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_37
+      rect:
+        serializedVersion: 2
+        x: 474
+        y: 265
+        width: 23
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e28939e56a6879280800000000000000
+      internalID: -9036606078186186706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_38
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 264
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c535d44e3b5ace670800000000000000
+      internalID: 8569406383027213148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_39
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 274
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07d7107236efe25f0800000000000000
+      internalID: -779405983678890640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_40
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 255
+        width: 12
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce95c1b4c5e1761d0800000000000000
+      internalID: -3357681615435441684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_41
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 261
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dbe5f8465badc7a0800000000000000
+      internalID: -6355235112070288428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_42
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 274
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe2b364ffb7775820800000000000000
+      internalID: 2906923750813577967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_43
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 263
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08b664630d5413db0800000000000000
+      internalID: -4813989766116250752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_44
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 274
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41d6dfb9726047bc0800000000000000
+      internalID: -3786394619521176300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 7
+        width: 258
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba742b357242ec5c0800000000000000
+      internalID: -4193374451708835925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_46
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 245
+        width: 15
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcb55c66a45fc7db0800000000000000
+      internalID: -4792686203528455219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_47
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 258
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43a469abefbce3390800000000000000
+      internalID: -7836602006665541068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_48
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 260
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ea054dc7b5c7ab70800000000000000
+      internalID: 8910307780989356776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_49
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 251
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0591c448d49f887b0800000000000000
+      internalID: -5221649656608712368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_50
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 263
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffab531e2dea38dd0800000000000000
+      internalID: -2484950348633621761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_51
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 264
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d73e2add6b99fe1a0800000000000000
+      internalID: -6778029903487769731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_52
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 260
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39bea43b8462b5720800000000000000
+      internalID: 2835902484047391635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_53
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 254
+        width: 12
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ddbb078fc5e13a00800000000000000
+      internalID: 734620893724786136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_54
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 264
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b0290e69d8442470800000000000000
+      internalID: 8368894106252419253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_55
+      rect:
+        serializedVersion: 2
+        x: 420
+        y: 241
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5dc687fdf17473c0800000000000000
+      internalID: -4362736803421696674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_56
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 250
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7acd3ac6f7338d7d0800000000000000
+      internalID: -2893506138209002329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_57
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 242
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbb03faf2b3cf0470800000000000000
+      internalID: 8363118206532127677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_58
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 242
+        width: 23
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d806e0efff52e9220800000000000000
+      internalID: 2494473025019076749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_59
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 236
+        width: 23
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1117dd381e4c662c0800000000000000
+      internalID: -4438643909868031727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_60
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 239
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7431826966bfa7120800000000000000
+      internalID: 2412516968434766663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_61
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 0
+        width: 280
+        height: 243
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d955b4595d0d5ddd0800000000000000
+      internalID: -2461832005536754275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_62
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 236
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0f58154ba37ce6b0800000000000000
+      internalID: -5265706684867125489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_63
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 207
+        width: 41
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f53659e5c24acb70800000000000000
+      internalID: 8920015429751420406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_64
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 220
+        width: 26
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00d2c8c8a0100de0800000000000000
+      internalID: -1369075969611870196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_65
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 4
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df0f3ee94521385b0800000000000000
+      internalID: -5367426176243207939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_vfx_dust_a_albedo_66
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 0
+        width: 49
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b8b06a3649d2fb40800000000000000
+      internalID: 5472675392858929329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_vfx_dust_a_albedo_0: -8639184347597519021
+      tr01_vfx_dust_a_albedo_1: -6293253736148755059
+      tr01_vfx_dust_a_albedo_10: 5286412890637754160
+      tr01_vfx_dust_a_albedo_11: 854147568585794548
+      tr01_vfx_dust_a_albedo_12: 3509174325780716860
+      tr01_vfx_dust_a_albedo_13: 5877149029670554373
+      tr01_vfx_dust_a_albedo_14: -6770139226079356155
+      tr01_vfx_dust_a_albedo_15: 7898368054903845931
+      tr01_vfx_dust_a_albedo_16: -4493946958179142124
+      tr01_vfx_dust_a_albedo_17: -258103478088958777
+      tr01_vfx_dust_a_albedo_18: -2549629928457954659
+      tr01_vfx_dust_a_albedo_19: -2261967055447764401
+      tr01_vfx_dust_a_albedo_2: 8891601544668707303
+      tr01_vfx_dust_a_albedo_20: -2659307657514560886
+      tr01_vfx_dust_a_albedo_21: -6833015319641678060
+      tr01_vfx_dust_a_albedo_22: -2940035322107902801
+      tr01_vfx_dust_a_albedo_23: 5257075601463443699
+      tr01_vfx_dust_a_albedo_24: -2068622753184556230
+      tr01_vfx_dust_a_albedo_25: 4173923742738799252
+      tr01_vfx_dust_a_albedo_26: 8888354378831201782
+      tr01_vfx_dust_a_albedo_27: -3349181046874570043
+      tr01_vfx_dust_a_albedo_28: 1292630197783840979
+      tr01_vfx_dust_a_albedo_29: 5728626803476980944
+      tr01_vfx_dust_a_albedo_3: -8251797996520869745
+      tr01_vfx_dust_a_albedo_30: -1682509076461498330
+      tr01_vfx_dust_a_albedo_31: -7419752547757343876
+      tr01_vfx_dust_a_albedo_32: -4699772191386536732
+      tr01_vfx_dust_a_albedo_33: 8357890746381166723
+      tr01_vfx_dust_a_albedo_34: 7864042028809997544
+      tr01_vfx_dust_a_albedo_35: 2643609621041955500
+      tr01_vfx_dust_a_albedo_36: 5882181324164655692
+      tr01_vfx_dust_a_albedo_37: -9036606078186186706
+      tr01_vfx_dust_a_albedo_38: 8569406383027213148
+      tr01_vfx_dust_a_albedo_39: -779405983678890640
+      tr01_vfx_dust_a_albedo_4: 7155029305122421336
+      tr01_vfx_dust_a_albedo_40: -3357681615435441684
+      tr01_vfx_dust_a_albedo_41: -6355235112070288428
+      tr01_vfx_dust_a_albedo_42: 2906923750813577967
+      tr01_vfx_dust_a_albedo_43: -4813989766116250752
+      tr01_vfx_dust_a_albedo_44: -3786394619521176300
+      tr01_vfx_dust_a_albedo_45: -4193374451708835925
+      tr01_vfx_dust_a_albedo_46: -4792686203528455219
+      tr01_vfx_dust_a_albedo_47: -7836602006665541068
+      tr01_vfx_dust_a_albedo_48: 8910307780989356776
+      tr01_vfx_dust_a_albedo_49: -5221649656608712368
+      tr01_vfx_dust_a_albedo_5: -338115726541025302
+      tr01_vfx_dust_a_albedo_50: -2484950348633621761
+      tr01_vfx_dust_a_albedo_51: -6778029903487769731
+      tr01_vfx_dust_a_albedo_52: 2835902484047391635
+      tr01_vfx_dust_a_albedo_53: 734620893724786136
+      tr01_vfx_dust_a_albedo_54: 8368894106252419253
+      tr01_vfx_dust_a_albedo_55: -4362736803421696674
+      tr01_vfx_dust_a_albedo_56: -2893506138209002329
+      tr01_vfx_dust_a_albedo_57: 8363118206532127677
+      tr01_vfx_dust_a_albedo_58: 2494473025019076749
+      tr01_vfx_dust_a_albedo_59: -4438643909868031727
+      tr01_vfx_dust_a_albedo_6: -7982537243650593043
+      tr01_vfx_dust_a_albedo_60: 2412516968434766663
+      tr01_vfx_dust_a_albedo_61: -2461832005536754275
+      tr01_vfx_dust_a_albedo_62: -5265706684867125489
+      tr01_vfx_dust_a_albedo_63: 8920015429751420406
+      tr01_vfx_dust_a_albedo_64: -1369075969611870196
+      tr01_vfx_dust_a_albedo_65: -5367426176243207939
+      tr01_vfx_dust_a_albedo_66: 5472675392858929329
+      tr01_vfx_dust_a_albedo_7: 1591737495094662639
+      tr01_vfx_dust_a_albedo_8: -697658589041568208
+      tr01_vfx_dust_a_albedo_9: -1178996285322758758
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
