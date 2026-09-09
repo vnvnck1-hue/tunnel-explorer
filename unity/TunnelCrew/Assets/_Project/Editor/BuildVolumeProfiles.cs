@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -43,7 +43,7 @@ namespace TunnelCrew.EditorTools
                 filter = new Color(1.00f, 0.97f, 1.00f),
                 contrast = 6f, saturation = 6f,
                 bloomIntensity = 0.60f, bloomThreshold = 0.70f,
-                vignette = 0.20f, grain = 0.14f,
+                vignette = 0.20f, grain = 0.055f,
             },
             new Preset
             {
@@ -51,7 +51,7 @@ namespace TunnelCrew.EditorTools
                 filter = new Color(0.98f, 0.94f, 1.00f),
                 contrast = 8f, saturation = 2f,
                 bloomIntensity = 0.70f, bloomThreshold = 0.68f,
-                vignette = 0.24f, grain = 0.17f,
+                vignette = 0.24f, grain = 0.070f,
             },
             new Preset
             {
@@ -59,7 +59,7 @@ namespace TunnelCrew.EditorTools
                 filter = new Color(1.00f, 0.92f, 0.95f),
                 contrast = 10f, saturation = -4f,
                 bloomIntensity = 0.80f, bloomThreshold = 0.66f,
-                vignette = 0.28f, grain = 0.20f,
+                vignette = 0.28f, grain = 0.085f,
             },
             new Preset
             {
@@ -67,7 +67,7 @@ namespace TunnelCrew.EditorTools
                 filter = new Color(0.92f, 0.90f, 1.00f),
                 contrast = 12f, saturation = -12f,
                 bloomIntensity = 0.90f, bloomThreshold = 0.64f,
-                vignette = 0.32f, grain = 0.24f,
+                vignette = 0.32f, grain = 0.105f,
             },
         };
 
@@ -124,7 +124,9 @@ namespace TunnelCrew.EditorTools
             vig.smoothness.overrideState = true; vig.smoothness.value = 0.55f;
             vig.color.overrideState = true; vig.color.value = new Color(0.02f, 0.01f, 0.04f);
 
-            // 원본의 Bayer 4x4 디더가 만들던 거친 질감
+            // 원본의 Bayer 4x4 디더가 만들던 거친 질감 — 이제 게임의 유일한 그레인이다
+            // (2026-09-09). 대기 셰이더의 해시 그레인과 이중으로 걸려 4K 에서 화면이 노이즈로
+            // 뭉갰다. 대기 쪽을 0 으로 내리고 이쪽 세기도 절반 아래로 낮췄다.
             var grain = profile.Add<FilmGrain>(true);
             grain.type.overrideState = true; grain.type.value = FilmGrainLookup.Medium1;
             grain.intensity.overrideState = true; grain.intensity.value = p.grain;

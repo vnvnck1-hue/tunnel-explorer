@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6251691348582134148
+--- !u!114 &-3950371664571712727
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 1
     m_Value: 1000
---- !u!114 &-3916140584601461613
+--- !u!114 &-3043268342834182011
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,26 +49,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66f335fb1ffd8684294ad653bf1c7564, type: 3}
-  m_Name: ColorAdjustments
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ColorAdjustments
+  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
+  m_Name: FilmGrain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FilmGrain
   active: 1
-  postExposure:
+  type:
     m_OverrideState: 1
-    m_Value: 0.55
-  contrast:
+    m_Value: 2
+  intensity:
     m_OverrideState: 1
-    m_Value: 10
-  colorFilter:
+    m_Value: 0.2
+  response:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 0.92, b: 0.95, a: 1}
-  hueShift:
+    m_Value: 0.8
+  texture:
     m_OverrideState: 1
-    m_Value: 0
-  saturation:
-    m_OverrideState: 1
-    m_Value: -4
---- !u!114 &-3792666134911763247
+    m_Value: {fileID: 0}
+--- !u!114 &-482485390073377604
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,12 +128,12 @@ MonoBehaviour:
   m_Name: Volume_Stratum3_Core
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
   components:
-  - {fileID: -3916140584601461613}
-  - {fileID: -6251691348582134148}
-  - {fileID: -3792666134911763247}
-  - {fileID: 8474113258524557185}
-  - {fileID: 4781406182029215380}
---- !u!114 &4781406182029215380
+  - {fileID: 2878494157540104781}
+  - {fileID: -3950371664571712727}
+  - {fileID: -482485390073377604}
+  - {fileID: 8428638877052249558}
+  - {fileID: -3043268342834182011}
+--- !u!114 &2878494157540104781
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,23 +142,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29fa0085f50d5e54f8144f766051a691, type: 3}
-  m_Name: FilmGrain
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FilmGrain
+  m_Script: {fileID: 11500000, guid: 66f335fb1ffd8684294ad653bf1c7564, type: 3}
+  m_Name: ColorAdjustments
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ColorAdjustments
   active: 1
-  type:
+  postExposure:
     m_OverrideState: 1
-    m_Value: 2
-  intensity:
+    m_Value: 0.55
+  contrast:
     m_OverrideState: 1
-    m_Value: 0.2
-  response:
+    m_Value: 10
+  colorFilter:
     m_OverrideState: 1
-    m_Value: 0.8
-  texture:
+    m_Value: {r: 1, g: 0.92, b: 0.95, a: 1}
+  hueShift:
     m_OverrideState: 1
-    m_Value: {fileID: 0}
---- !u!114 &8474113258524557185
+    m_Value: 0
+  saturation:
+    m_OverrideState: 1
+    m_Value: -4
+--- !u!114 &8428638877052249558
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}

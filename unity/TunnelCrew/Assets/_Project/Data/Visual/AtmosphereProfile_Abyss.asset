@@ -23,6 +23,6 @@ MonoBehaviour:
   vignetteStrength: 0.58
   vignetteInner: 0.38
   vignetteOuter: 0.98
-  grainStrength: 0.044
+  grainStrength: 0
   grainDensity: 600
   animateGrain: 1

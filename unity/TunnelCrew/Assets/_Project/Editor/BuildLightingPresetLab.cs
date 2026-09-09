@@ -68,39 +68,66 @@ namespace TunnelCrew.EditorTools
         const string WallFrontSetPath = "Assets/_Project/Data/Visual/SurfaceMaterialSet_Reference_wallfront.asset";
 
         /// <summary>
-        /// 랩의 월드 원점 오프셋(셀). 환경 렌더러의 필드는 (0,0) 에서 시작하므로, 원점 중심이던
-        /// 기존 좌표를 전부 이만큼 옮겨 방 내부(cols 1..15, rows 1..8)에 맞춘다. 4단계 선행 배선.
+        /// 소품/광원 좌표의 원점 — <b>방 중앙</b>이다. 방 크기를 바꾸면 같이 움직여야 하므로
+        /// 손으로 적지 않고 방 정의에서 계산한다(2026-09-09, 방을 4배로 키우면서).
         /// </summary>
-        static readonly Vector2 O = new Vector2(8f, 5f);
+        static Vector2 O => new Vector2(Room[0].Length * 0.5f, Room.Length * 0.5f);
         static Vector3 W(float x, float y, float z = 0f) => new Vector3(x + O.x, y + O.y, z);
         static Vector2 G(float x, float y) => new Vector2(x + O.x, y + O.y);
 
         /// <summary>
-        /// 방 정의 — 테두리 1칸 고체, 내부 15×8 빈칸(= 기존 손배치 바닥 격자와 같은 영역).
-        /// 테두리는 카메라(ortho 4, 중심 8.5,5) 밖이라 벽 아트가 없어도 화면이 깨지지 않고,
-        /// ShadowGeometryBuilder 는 그 윤곽으로 캐스터를 만든다.
-        /// </summary>
-        /// <summary>
-        /// 랩의 방. 테두리는 카메라 밖이라 벽 아트가 없어도 화면이 깨지지 않는다(§4-4).
+        /// 랩의 방 — 34×20 (2026-09-09, 요청으로 17×10 에서 <b>면적 4배</b>).
         ///
-        /// <b>내부 벽 뭉치를 넣었다(2026-09-09, 벽 아트 도착 후)</b> — 테두리 벽만 있으면
-        /// 화면에 벽 상단(cap) 한 줄만 스치고, 4단계 검증 항목인 <b>cap/front 접합</b>과
-        /// 남쪽이 열린 셀의 정면(front)을 볼 수가 없다. 카메라 중앙 근처에 두 덩이를 세워
-        /// 위(cap)·남쪽 면(front)·모서리·접점 AO 가 한 화면에 들어오게 한다.
+        /// 테두리 1칸은 고체다. 내부에는 벽 뭉치·복도·작은 방을 넣었다 — 빈 바닥만 넓히면
+        /// 걸어도 볼 것이 없고, 4단계 검증 항목인 <b>cap/front 접합</b>·모서리·접점 AO 가
+        /// 화면에 들어오지 않는다.
+        ///
+        /// 방이 커져서 화면(약 14×8칸)이 방의 1/6 밖에 안 되므로 카메라가 폰을 따라간다
+        /// (<see cref="LabCameraFollow"/>). 폰 이동 범위와 카메라 클램프는 이 배열에서 계산한다.
         /// </summary>
         static readonly string[] Room =
         {
-            "#################",
-            "#...............#",
-            "#...##.......##.#",
-            "#...##.......##.#",
-            "#...............#",
-            "#......###......#",
-            "#......###......#",
-            "#...............#",
-            "#...............#",
-            "#################",
+            "##################################",
+            "#................................#",
+            "#...####......######......####...#",
+            "#...####......#....#......####...#",
+            "#.............#....#.............#",
+            "#....######...#....#...######....#",
+            "#....#....#...######...#....#....#",
+            "#....#....#............#....#....#",
+            "#....#....#....######..#....#....#",
+            "#....######....#....#..######....#",
+            "#..............#....#............#",
+            "#....####......#....#......####..#",
+            "#....####......######......####..#",
+            "#................................#",
+            "#...######....########....######.#",
+            "#........#....#......#....#......#",
+            "#........#....#......#....#......#",
+            "#................................#",
+            "#................................#",
+            "##################################",
         };
+
+        /// <summary>
+        /// 방 내부(테두리 제외) 셀 사각형 — 폰 이동 범위.
+        ///
+        /// <c>ArraySolidField.Parse</c> 가 방 배열을 <b>절대 셀 좌표</b>(0..cols-1)로 만들므로
+        /// 여기도 절대 좌표다. 예전에는 17×10 방에 맞춘 <c>Rect(1.5, 1.4, 13, 6.4)</c> 를
+        /// 손으로 적어 두었는데, 방 크기를 바꾸면 같이 고쳐야 하는 값이라 계산으로 돌렸다.
+        /// </summary>
+        static Rect RoomInterior()
+        {
+            int cols = Room[0].Length, rows = Room.Length;
+            return new Rect(1.5f, 1.4f, cols - 3f, rows - 3.6f);
+        }
+
+        /// <summary>방 전체 셀 사각형(테두리 포함). 카메라가 방 밖을 비추지 않게 가둔다.</summary>
+        static Rect RoomBounds()
+        {
+            int cols = Room[0].Length, rows = Room.Length;
+            return new Rect(0f, 0f, cols, rows);
+        }
         const string ThreatSpritePath = "Assets/Art/Visual/Placeholder/lab_threat_capsule.png";
         const string LitMaterialPath =
             "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat";
@@ -450,7 +477,7 @@ namespace TunnelCrew.EditorTools
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = Background;
             // 방 내부(x 1..16, y 1..9)의 중심. 세로 8셀 = ortho 4 와 정확히 맞는다.
-            cameraGo.transform.position = new Vector3(8.5f, 5f, -10f);
+            cameraGo.transform.position = new Vector3(O.x, O.y, -10f);
             cameraGo.AddComponent<AudioListener>();
             // URP 후처리(Bloom 등)는 카메라마다 켜야 한다. 이게 없으면 Volume 이 있어도 아무것도 안 보인다.
             var camData = cameraGo.AddComponent<UniversalAdditionalCameraData>();
@@ -522,8 +549,14 @@ namespace TunnelCrew.EditorTools
             var mover = pawn.gameObject.AddComponent<LightingLabPawn>();
             // 이동 범위 = 방 내부(테두리 1칸 안쪽). X/C 파괴는 앞 칸이므로 위쪽 여유를 둔다.
             var mso = new SerializedObject(mover);
-            mso.FindProperty("_bounds").rectValue = new Rect(1.5f, 1.4f, 13f, 6.4f);
+            mso.FindProperty("_bounds").rectValue = RoomInterior();
             mso.ApplyModifiedPropertiesWithoutUndo();
+
+            // 방이 화면보다 훨씬 커졌으므로 카메라가 폰을 따라간다(2026-09-09).
+            // 방 경계로 클램프해 방 밖의 빈 공간을 비추지 않는다.
+            var follow = cameraGo.AddComponent<LabCameraFollow>();
+            follow.EditorAssign(pawn.transform, RoomBounds());
+            EditorUtility.SetDirty(follow);
 
             // 탐색광 — 드릴러가 파는 쪽(오른쪽) 앞. 콘 각도의 방향 규약에 기대지 않고도
             // 헤드램프가 앞을 비추는 것으로 읽힌다. 앵커의 자식이라 함께 움직인다.
@@ -598,6 +631,10 @@ namespace TunnelCrew.EditorTools
             // 이 컴포넌트가 왜 있는지를 화면에서 보여 주는 자리다(§B-2).
             AddNegativeVolume(negRoot, "Negative Mouth BottomLeft", W(-6.2f, -3.0f),
                 NegativeLightVolume.Mouth(5.2f, 2.8f, 0.42f));
+
+            // 방을 4배로 키우면 중앙 리그만으로는 방의 5/6 이 빈 암석이다 — 걸어 나가면
+            // 볼 것이 없다. 좌우 복도와 위아래 넓은 띠에 같은 계열의 소품·광원을 흩는다.
+            AddSatellites(propRoot, lightRoot, negRoot, art);
 
             // ── 대기 원근. 카메라 자식이어야 Bind 가 카메라를 잡는다.
             var atmoGo = new GameObject("Atmosphere");
@@ -761,6 +798,82 @@ namespace TunnelCrew.EditorTools
             eso.ApplyModifiedPropertiesWithoutUndo();
 
             return anchor;
+        }
+
+        /// <summary>
+        /// 방 곳곳에 흩는 위성 리그 (2026-09-09, 방을 4배로 키우면서 신설).
+        ///
+        /// <b>왜</b> — 중앙 리그는 원점 ±6칸 안에 다 모여 있다. 34×20 방에서는 화면(약 14×8칸)이
+        /// 방의 1/6 이므로, 중앙을 벗어나면 조명 없는 암석만 지나간다. 걸어 다니며 판단하는 것이
+        /// 이 랩의 용도이므로 <b>이동 경로마다 빛이 있어야</b> 한다.
+        ///
+        /// <b>좌표는 절대 셀</b>이다(<c>ArraySolidField.Parse</c> 와 같은 계). 세로 복도 col 1~3 ·
+        /// col 30~32 와 가로 띠 row 1 · row 18 은 방 정의에서 <b>모든 행/열이 열려 있는</b> 곳이라,
+        /// 배열의 상하 방향이 어느 쪽으로 파싱되어도 소품이 벽에 박히지 않는다.
+        ///
+        /// 분류·소켓 값은 중앙 리그와 같은 대역으로 둔다 — 위성이 다른 값을 쓰면 프리셋을 비교할 때
+        /// 무엇 때문에 달라졌는지 알 수 없다.
+        /// </summary>
+        static void AddSatellites(Transform propRoot, Transform lightRoot, Transform negRoot, Sprites art)
+        {
+            // 결정 + 광물광(마스크 애디티브). 마스크가 골라내므로 반경이 넓어도 암석은 밝아지지 않는다.
+            var crystals = new[]
+            {
+                new Vector2(2.5f, 4.5f), new Vector2(32.5f, 15.0f),
+                new Vector2(10.5f, 18.5f), new Vector2(24.5f, 1.5f),
+            };
+            for (int i = 0; i < crystals.Length; i++)
+            {
+                var at = crystals[i];
+                AddAnchored(propRoot, $"Satellite Crystal {i + 1}", art.Crystal, at,
+                    VisualLayers.BackStructure, new Vector2(1.2f, 1f), 0.6f);
+
+                var mineral = AddLight(lightRoot, $"Satellite MineralGlow {i + 1}",
+                    Light2D.LightType.Point, new Vector3(at.x, at.y + 0.35f, -0.1f),
+                    new Color(0.72f, 0.42f, 1f, 1f), 1.6f);
+                mineral.pointLightInnerRadius = 0.1f;
+                mineral.pointLightOuterRadius = 3.2f;
+                mineral.falloffIntensity = 0.6f;
+                mineral.blendStyleIndex = MaskAdditiveSlot;
+                AddSocket(mineral, LightClass.MineralGlow, 1.6f, 3.2f, 0.13f + i * 0.21f);
+            }
+
+            // 작업등 + 램프. 그림자 예산(§13)이 걸리는 분류라, 방을 키운 뒤에도 예산이 도는지가
+            // 여기서 드러난다 — 중앙 1개로는 예산 경쟁이 일어나지 않았다.
+            var lamps = new[] { new Vector2(2.5f, 15.5f), new Vector2(32.5f, 5.5f) };
+            for (int i = 0; i < lamps.Length; i++)
+            {
+                var at = lamps[i];
+                AddAnchored(propRoot, $"Satellite Lamp {i + 1}", art.Lamp, at,
+                    VisualLayers.BackStructure, new Vector2(0.4f, 1f), 0.25f);
+
+                var worklamp = AddLight(lightRoot, $"Satellite Worklamp {i + 1}",
+                    Light2D.LightType.Point, new Vector3(at.x, at.y + 1.0f, -0.1f),
+                    new Color(0.92f, 0.16f, 1f, 1f), 2.35f);
+                worklamp.pointLightInnerRadius = 0.18f;
+                worklamp.pointLightOuterRadius = 2.4f;
+                worklamp.falloffIntensity = 0.48f;
+                AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.44f + i * 0.27f);
+            }
+
+            // 표시등 — 예산 제외 분류. 먼 구석에서도 방향을 잡을 표식이 된다.
+            var marks = new[] { new Vector2(10.5f, 1.5f), new Vector2(24.5f, 18.5f) };
+            for (int i = 0; i < marks.Length; i++)
+            {
+                var indicator = AddLight(lightRoot, $"Satellite Indicator {i + 1}",
+                    Light2D.LightType.Point, new Vector3(marks[i].x, marks[i].y, -0.1f),
+                    new Color(0.45f, 0.92f, 1f, 1f), 0.38f);
+                indicator.pointLightInnerRadius = 0.05f;
+                indicator.pointLightOuterRadius = 0.6f;
+                indicator.blendStyleIndex = 1;
+                AddSocket(indicator, LightClass.Indicator, 0.38f, 0.6f, 0.72f + i * 0.15f);
+            }
+
+            // 넓어진 통로 중간의 암부. 광원 사이를 지날 때 밝기가 오르내리게 만든다.
+            AddNegativeVolume(negRoot, "Negative Corridor Left", new Vector3(8f, 10f, 0f),
+                NegativeLightVolume.Rect(new Vector2(5.0f, 6.0f)));
+            AddNegativeVolume(negRoot, "Negative Corridor Right", new Vector3(26f, 10f, 0f),
+                NegativeLightVolume.Mouth(5.0f, 6.0f, 0.5f));
         }
 
         static Light2D AddLight(Transform parent, string name, Light2D.LightType type,
