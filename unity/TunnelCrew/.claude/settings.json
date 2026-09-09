@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__unityMCP__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/require-unity-instance.py\"",
+            "timeout": 10,
+            "statusMessage": "Checking Unity instance routing"
+          }
+        ]
+      }
+    ]
+  }
+}
