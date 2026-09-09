@@ -82,7 +82,10 @@ namespace TunnelCrew.EditorTools
                 floors.Add(sp);
             }
 
-            // ── 벽 타일러블 — 아트 요청서의 파일명으로 있는 만큼 집는다. 지금은 0 이 정상이다.
+            // ── 임포트 정합을 먼저 전부 끝낸다(PrepareImports 주석 참고).
+            PrepareImports();
+
+            // ── 벽 타일러블 — 아트 요청서의 파일명으로 있는 만큼 집는다.
             var wallTop = Collect(WallTopPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var wallTopRim = Collect(WallTopRimPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var wallFront = Collect(WallFrontPattern, new Vector2(0.5f, 0.0f), alpha: false);   // 하단 중앙
@@ -91,7 +94,7 @@ namespace TunnelCrew.EditorTools
             var innerCorner = Collect(InnerCornerPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var floorEdge = Collect(FloorEdgePattern, new Vector2(0.5f, 0.5f), alpha: false);
 
-            // ── 키트. 없으면 만들고, 있으면 비어 있는 배열만 채운다.
+            // ── 키트. 없으면 만들고, 스프라이트 목록은 도구가 갈아치운다.
             var kit = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(KitPath);
             bool created = kit == null;
             if (created)
@@ -104,13 +107,13 @@ namespace TunnelCrew.EditorTools
             // 나머지 배열은 비어 있을 때만 채운다(아트 도착 시 재실행이 정상 사용법).
             kit.floorBase = floors.ToArray();
             report.Append($"  ↻ floorBase: {floors.Count}장으로 갱신(승인 a/b/c)\n");
-            FillIfEmpty(ref kit.floorEdge, floorEdge, "floorEdge", report);
-            FillIfEmpty(ref kit.contactAo, contactAo, "contactAo", report);
-            FillIfEmpty(ref kit.wallTop, wallTop, "wallTop", report);
-            FillIfEmpty(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
-            FillIfEmpty(ref kit.wallFront, wallFront, "wallFront", report);
-            FillIfEmpty(ref kit.outerCorner, outerCorner, "outerCorner", report);
-            FillIfEmpty(ref kit.innerCorner, innerCorner, "innerCorner", report);
+            Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            Replace(ref kit.contactAo, contactAo, "contactAo", report);
+            Replace(ref kit.wallTop, wallTop, "wallTop", report);
+            Replace(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
+            Replace(ref kit.wallFront, wallFront, "wallFront", report);
+            Replace(ref kit.outerCorner, outerCorner, "outerCorner", report);
+            Replace(ref kit.innerCorner, innerCorner, "innerCorner", report);
             EditorUtility.SetDirty(kit);
             AssetDatabase.SaveAssets();
 
@@ -147,17 +150,62 @@ namespace TunnelCrew.EditorTools
             return set;
         }
 
-        static void FillIfEmpty(ref Sprite[] target, List<Sprite> found, string label, StringBuilder report)
+        /// <summary>
+        /// 도구가 소유하는 슬롯 — 찾은 것으로 갈아치운다.
+        ///
+        /// 전에는 "비어 있을 때만" 채우는 <c>FillIfEmpty</c> 였는데, 그 규칙이 벽 아트가 도착한
+        /// 날(2026-09-09) 두 번 발목을 잡았다.
+        /// <list type="number">
+        /// <item>요소가 전부 <c>null</c> 인 길이 3 배열을 "기존 자산" 으로 오해해 유지했다.</item>
+        /// <item>3장 중 1장만 잡힌 부분 상태에서 멈춰 나머지 2장이 영구히 빠졌다.</item>
+        /// </list>
+        /// 아트가 갱신되면 전체를 다시 잡는 것이 맞다 — 사람이 인스펙터에서 조정하는 값은
+        /// 스프라이트 목록이 아니라 <see cref="SurfaceMaterialSet"/> 쪽이다.
+        /// </summary>
+        static void Replace(ref Sprite[] target, List<Sprite> found, string label, StringBuilder report)
         {
-            if (target != null && target.Length > 0)
-            {
-                report.Append($"  = {label}: 기존 {target.Length}장 유지\n");
-                return;
-            }
+            int before = 0;
+            if (target != null)
+                foreach (var s in target)
+                    if (s != null) before++;
+
             target = found.ToArray();
             report.Append(found.Count > 0
-                ? $"  + {label}: {found.Count}장 채움\n"
+                ? $"  ↻ {label}: {found.Count}장 (이전 {before}장)\n"
                 : $"  ○ {label}: 비어 있음\n");
+        }
+
+        /// <summary>
+        /// 수집 전에 대상 파일의 임포트 설정을 <b>모두 먼저</b> 맞춘다.
+        ///
+        /// 리임포트가 걸린 파일은 그 프레임에 서브 에셋이 없어 <c>LoadAssetAtPath&lt;Sprite&gt;</c> 가
+        /// null 이다. 정합과 수집을 같은 패스에서 하면 방금 고친 파일이 조용히 빠진다 —
+        /// 벽 아트 7장이 스프라이트 시트로 들어온 날 실제로 0장이 수집됐다(2026-09-09).
+        /// </summary>
+        static void PrepareImports()
+        {
+            var specs = new (string pattern, Vector2 pivot, bool alpha)[]
+            {
+                (WallTopPattern, new Vector2(0.5f, 0.5f), false),
+                (WallTopRimPattern, new Vector2(0.5f, 0.5f), false),
+                (WallFrontPattern, new Vector2(0.5f, 0.0f), false),   // 하단 중앙
+                (ContactAoPattern, new Vector2(0.5f, 0.5f), true),
+                (OuterCornerPattern, new Vector2(0.5f, 0.5f), false),
+                (InnerCornerPattern, new Vector2(0.5f, 0.5f), false),
+                (FloorEdgePattern, new Vector2(0.5f, 0.5f), false),
+            };
+
+            bool touched = false;
+            foreach (var (pattern, pivot, alpha) in specs)
+                foreach (string v in Variants)
+                {
+                    string path = $"{ArtDir}/{string.Format(pattern, v)}";
+                    if (!File.Exists(AbsolutePath(path))) continue;
+                    EnsureSprite(path, pivot, alpha);
+                    touched = true;
+                }
+
+            if (touched) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         }
 
         static List<Sprite> Collect(string pattern, Vector2 pivot, bool alpha)
@@ -169,6 +217,12 @@ namespace TunnelCrew.EditorTools
                 if (!File.Exists(AbsolutePath(path))) continue;
                 EnsureSprite(path, pivot, alpha);
                 var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sp == null)
+                {
+                    // 정합이 방금 리임포트를 걸었다면 한 번 더 확정하고 읽는다.
+                    AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+                    sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                }
                 if (sp != null) list.Add(sp);
             }
             return list;
@@ -199,25 +253,45 @@ namespace TunnelCrew.EditorTools
             }
             if (importer == null) throw new InvalidOperationException($"TextureImporter not found: {path}");
 
+            // 슬라이스 모드도 조건에 넣는다. 벽 아트가 스프라이트 시트(Multiple)로 들어온 날
+            // (2026-09-09) 이 조건이 없어서 "type=Sprite · PPU=128 · 스프라이트 로드 성공(서브 `_0`)"
+            // 이 전부 참이 되어 그냥 통과했다. 결과가 잘린 조각 하나와 먹지 않는 피벗이었다.
             bool ok = importer.textureType == TextureImporterType.Sprite
+                      && importer.spriteImportMode == SpriteImportMode.Single
                       && Mathf.Approximately(importer.spritePixelsPerUnit, 128f)
                       && AssetDatabase.LoadAssetAtPath<Sprite>(path) != null;
             if (ok) return;
 
             importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Single;
             importer.spritePixelsPerUnit = 128f;
-            var settings = new TextureImporterSettings();
-            importer.ReadTextureSettings(settings);
-            settings.spriteAlignment = (int)SpriteAlignment.Custom;
-            settings.spritePivot = pivot;
-            importer.SetTextureSettings(settings);
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.mipmapEnabled = false;
             importer.sRGBTexture = true;
             importer.alphaIsTransparency = alpha;
+
+            // 피벗은 TextureImporterSettings 로만 넣을 수 있다.
+            var settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteAlignment = (int)SpriteAlignment.Custom;
+            settings.spritePivot = pivot;
+            importer.SetTextureSettings(settings);
             importer.SaveAndReimport();
+
+            // 슬라이스 모드는 <b>그 뒤에 프로퍼티로 다시</b> 확정한다.
+            //
+            // ReadTextureSettings 가 디스크의 현재 설정을 통째로 읽어 오므로(spriteMode 포함),
+            // SetTextureSettings 앞에서 spriteImportMode 를 넣으면 되돌아간다. settings.spriteMode
+            // 를 직접 넣어도 Multiple 이 유지됐다(실측: 6장 중 5장). 프로퍼티 설정 + 잘린 조각
+            // 목록 비우기 + 두 번째 리임포트 조합이 실제로 통한다.
+            if (importer.spriteImportMode != SpriteImportMode.Single)
+            {
+                importer.spriteImportMode = SpriteImportMode.Single;
+#pragma warning disable CS0618
+                importer.spritesheet = new SpriteMetaData[0];
+#pragma warning restore CS0618
+                importer.SaveAndReimport();
+            }
         }
 
         static string AbsolutePath(string assetPath) =>

@@ -17,10 +17,17 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b09c447661f72be42b891c582fa1ccad, type: 3}
   - {fileID: 21300000, guid: b68ae2f506f37574498e159f78b75282, type: 3}
   floorEdge: []
-  contactAo: []
-  wallTop: []
+  contactAo:
+  - {fileID: 21300000, guid: 167a944d596704741af8ae6e69380046, type: 3}
+  wallTop:
+  - {fileID: 21300000, guid: d6ac016f723482a4fa8af70e830c9386, type: 3}
+  - {fileID: 21300000, guid: 93b090588e9e11841b4ec47ee329cd7c, type: 3}
+  - {fileID: 21300000, guid: 20044d6d3c4b0b847addbdd733c45ae8, type: 3}
   wallTopRim: []
-  wallFront: []
+  wallFront:
+  - {fileID: 21300000, guid: 9cfce8e27ea8b2b46bb98e1cd9a96e5a, type: 3}
+  - {fileID: 21300000, guid: 63cd07acf96e8a84aa5451cc977d2983, type: 3}
+  - {fileID: 21300000, guid: 86586dc77ab81e64283f367653b75fd2, type: 3}
   westSide: []
   eastSide: []
   outerCorner: []

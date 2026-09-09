@@ -777,3 +777,100 @@ Constraints: no HUD, interface, text, letters, numbers, labels, logos, watermark
   모서리 실질 투명. 방향 순서는 N·NE·E·SE·S·SW·W·NW이며 각 무기는 바깥쪽을 향한다.
 - 런타임 상태: 8방향 정체성 기준 이미지만 교체했다. Unity 방향별 런타임 시트와 애니메이션은
   변경하지 않았다.
+
+## TR01-REFERENCE-WALL-SET-V1
+
+- 날짜: `2026-09-09`
+- 목적: `EnvironmentKit_ReferenceV1`의 빈 `wallTop`, `wallFront`, `contactAo` 슬롯을 채우는
+  레퍼런스 트랙 벽 타일러블 세트 제작.
+- 생성 방식: built-in `image_gen` 신규 생성 1회(cap A), 정밀 편집 3회(cap A edge correction,
+  cap B, cap C), 신규 생성 3회(front A/B/C). 접합 AO는 생성형 이미지가 아닌 계약값을 따르는
+  결정적 기술 자산으로 제작했다.
+- 시각 레퍼런스: `concept/tr01_reference_asset_calibration_board_v1.png`를 최상위 보드로,
+  `working/reference_calibration_v1_direct/tr01_reference_wall_a_albedo.png`를 벽 표면
+  모티프 기준으로 사용했다. 기존 `TestRoomV01` 벽은 3단 구조와 반복 검수 선례만 참고했다.
+- 결과: cap A/B/C 및 front A/B/C albedo 6종을 128×128로 nearest 정규화하고, cap은 4면,
+  front는 좌우 4px 반복 경계를 픽셀 평균으로 잠갔다. front C는 생성 원본의 낮은 평균 명도를
+  변형 간 허용 범위로 맞추기 위해 작업본에서만 1.24배 명도 보정을 적용했다.
+- AO 결과: `tr01_reference_contact_ao_a.png`, 북쪽 alpha 150, y=54에서 0, 54px 선형 페이드.
+- 검수: cap 평균 명도 `97.61/98.22/97.10`, front 평균 명도 `73.42/80.50/73.02`,
+  모든 지정 반복 경계 평균 RGB 오차 `0`. 6×6 cap 혼합과 front 6연속 띠 QA 이미지를 생성했다.
+- 상태: albedo 6종과 접합 AO 1종 `approved`; normal/mask/emission은 요청서대로 후속 5단계에서
+  제작한다.
+
+### Cap A initial generation
+
+```text
+Use case: stylized-concept
+Asset type: production game environment texture, seamless tileable wall cap sprite
+Primary request: Create one square reference-track wall top cap tile, variant A, for Tunnel Crew. It must read as quiet purple underground masonry with subtle magenta mineral seams and only a restrained hint of cyan industrial mineral influence; no pipes, machinery, doors, characters, props, or UI.
+Style/medium: crisp high-quality pixel art, hand-authored game sprite look, hard pixel clusters, clean readable silhouette, no painterly blur, no anti-aliased edges, no text.
+Composition/framing: orthographic top-facing 1x1 cell tile, centered, square 128x128 pixel target, full tile visible, transparent outside the tile silhouette. Make all four edges genuinely seamless: left/right and top/bottom edge content must match exactly in motif, tone, and value. Keep an 8px safe transparent/quiet padding inside the canvas boundary.
+Lighting/mood: very weak baked self-shading only, unified light from screen upper-left at 35 degrees; no strong directional cast light, no bloom.
+Color palette: match the viewed Tunnel Crew ReferenceCalibrationV1 calibration board: muted violet-purple stone, charcoal-violet crevices, small restrained magenta mineral flecks, cool cyan accents only as tiny reflected notes. Preserve the purple ambient cast around #9E80C2 without a flat tint.
+Materials/textures: large quiet stone slabs with sparse hairline cracks and small edge chips; low contrast variation so A/B/C can mix in a grid without visible value stepping.
+Constraints: production-ready albedo only; opaque tile interior with no black background; exact square footprint; no rotation, mirroring, or perspective; do not imitate a complete wall panel; do not bake strong scene lighting into the albedo.
+Avoid: pipes, metal frames, machinery, doors, glowing neon crystals, heavy cracks, checkerboard patterns, borders, labels, lettering, watermark, vignette, drop shadow, black rectangle background.
+```
+
+### Cap A edge correction
+
+```text
+Use case: precise-object-edit
+Asset type: production game environment texture, seamless wall cap sprite
+Primary request: Edit the supplied wall cap texture into a true full-bleed tile. Preserve its purple stone slab layout, restrained magenta mineral flecks, tiny cyan reflected notes, pixel-art cluster style, and upper-left 35-degree weak self-shading. Remove the large transparent outer margin by extending the texture naturally to all four canvas edges.
+Constraints: final image must be an opaque square tile interior, seamless on left/right and top/bottom with matching 4px edge pairs, quiet low-contrast albedo, no strong cast light, no blur, no anti-aliasing, no text, no machinery, no pipes, no watermark, no black background, no transparency at the tile edges. Keep it suitable for reduction to 128x128 pixels.
+```
+
+### Cap B / Cap C edits
+
+```text
+Use case: precise-object-edit
+Asset type: production game environment texture, seamless wall cap sprite
+Primary request: Using the supplied full-bleed purple masonry cap as the style anchor, create variant B with only a restrained hairline crack network and a few chipped slab edges added. Keep the same overall palette, material, density, average brightness, and upper-left 35-degree weak self-shading.
+Constraints: opaque square full-bleed tile; left/right and top/bottom 4px edge pairs must be seamless; quiet violet stone with sparse magenta mineral flecks and tiny cyan reflected notes; no pipes, machinery, doors, characters, text, watermark, bloom, black background, transparency, rotation, mirroring, or strong scene lighting. Suitable for reduction to 128x128 albedo.
+```
+
+```text
+Use case: precise-object-edit
+Asset type: production game environment texture, seamless wall cap sprite
+Primary request: Using the supplied full-bleed purple masonry cap as the style anchor, create variant C with a few subtle mineral-vein and structural-reinforcement accents integrated into the stone. Keep these accents sparse and quiet, not glowing and not brighter overall than the base.
+Constraints: opaque square full-bleed tile; left/right and top/bottom 4px edge pairs must be seamless; keep the same muted purple palette, average value, slab density, and upper-left 35-degree weak self-shading; no pipes, machinery, doors, characters, text, watermark, bloom, black background, transparency, rotation, mirroring, or strong scene lighting. Suitable for reduction to 128x128 albedo.
+```
+
+### Front A / Front B / Front C generation
+
+```text
+Use case: stylized-concept
+Asset type: production game environment texture, 1x1 cell wall front sprite
+Primary request: Create variant A of a south-facing wall front tile for Tunnel Crew, a quiet purple stone wall face with a common upper rim, a subtle central reinforcement band, and a lower contact band. The wall face is exactly 128x128 target pixels and fills the square canvas edge-to-edge.
+Style/medium: crisp high-quality pixel art, hard pixel clusters, clean sprite edges, no painterly blur, no anti-aliased edges, no text.
+Composition/framing: orthographic front-facing 1x1 cell wall face, vertical stone slabs, bottom-center ground footpoint at approximately (64,128). Left/right edges must tile seamlessly with matching 4px pairs. The top 4px must visually connect to a cap underside.
+Lighting/mood: weak baked self-shading only from screen upper-left at 35 degrees; no strong cast light or bloom.
+Color palette: muted violet-purple stone and charcoal-violet seams from the Tunnel Crew ReferenceCalibrationV1 board, sparse restrained magenta mineral flecks, tiny cyan reflected notes, purple ambient cast around #9E80C2.
+Materials/textures: calm masonry, common top rim, central vertical reinforcement, lower contact band, sparse quiet cracks and chips; low contrast.
+Constraints: opaque full-bleed albedo, no transparent border, no black background, no pipes, no machinery, no door, no crystals dominating, no characters, no rotation, no mirroring, no watermark, no UI.
+```
+
+```text
+Use case: stylized-concept
+Asset type: production game environment texture, 1x1 cell wall front sprite
+Primary request: Create variant B of a south-facing wall front tile for Tunnel Crew. Match the same overall design, palette, brightness, and three-part structure as a quiet purple masonry wall: common upper rim, subtle central reinforcement, lower contact band. Add one restrained diagonal crack across the stone slabs as the only notable variation.
+Style/medium: crisp high-quality pixel art, hard pixel clusters, clean sprite edges, no painterly blur, no anti-aliased edges, no text.
+Composition/framing: orthographic front-facing square 1x1 cell, exactly 128x128 target pixels, fills canvas edge-to-edge, bottom-center ground footpoint (64,128). Left/right edges tile seamlessly with matching 4px pairs. Top 4px must match a cap underside.
+Lighting/mood: weak baked self-shading only from screen upper-left at 35 degrees; no strong cast light or bloom.
+Color palette: muted violet-purple stone, charcoal-violet seams, sparse restrained magenta flecks, tiny cyan reflected notes, purple ambient cast around #9E80C2.
+Constraints: opaque full-bleed albedo, no transparent border, no black background, no pipes, machinery, door, large glowing crystals, characters, rotation, mirroring, watermark, UI. Keep average value close to variants A and C.
+```
+
+```text
+Use case: stylized-concept
+Asset type: production game environment texture, 1x1 cell wall front sprite
+Primary request: Create variant C of a south-facing wall front tile for Tunnel Crew. Match the same overall design, palette, brightness, and three-part structure as a quiet purple masonry wall: common upper rim, subtle central reinforcement, lower contact band. Add a restrained repaired metal plate and a few damp mineral marks integrated into the face, without making it brighter overall.
+Style/medium: crisp high-quality pixel art, hard pixel clusters, clean sprite edges, no painterly blur, no anti-aliased edges, no text.
+Composition/framing: orthographic front-facing square 1x1 cell, exactly 128x128 target pixels, fills canvas edge-to-edge, bottom-center ground footpoint (64,128). Left/right edges tile seamlessly with matching 4px pairs. Top 4px must match a cap underside.
+Lighting/mood: weak baked self-shading only from screen upper-left at 35 degrees; no strong cast light or bloom.
+Color palette: muted violet-purple stone, charcoal-violet seams, sparse restrained magenta flecks, tiny cyan reflected notes, purple ambient cast around #9E80C2.
+Materials/textures: common upper rim, central reinforcement, lower contact band, small repaired plate with cool cyan-violet metal, subtle damp darkening; low contrast.
+Constraints: opaque full-bleed albedo, no transparent border, no black background, no pipes, machinery, door, large glowing crystals, characters, rotation, mirroring, watermark, UI. Keep average value close to variants A and B.
+```
