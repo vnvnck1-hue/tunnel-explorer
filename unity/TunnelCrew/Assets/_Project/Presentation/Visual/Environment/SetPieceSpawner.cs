@@ -212,9 +212,13 @@ namespace TunnelCrew.Presentation.Visual
             light.pointLightInnerAngle = 360f;
             light.pointLightOuterAngle = 360f;
             light.pointLightInnerRadius = 0f;
-            light.pointLightOuterRadius = Mathf.Max(0.1f, socket.rangeCells);
+            // 아트 값은 자산 기준 상대값이다. 방 스케일·환경광에 맞추는 배율은 프로파일이 든다.
+            float rangeScale = _profile != null ? Mathf.Max(0.01f, _profile.socketLightRangeScale) : 1f;
+            float intensityScale = _profile != null ? Mathf.Max(0.01f, _profile.socketLightIntensityScale) : 1f;
+
+            light.pointLightOuterRadius = Mathf.Max(0.1f, socket.rangeCells * rangeScale);
             light.color = socket.color;
-            light.intensity = Mathf.Max(0f, socket.intensity);
+            light.intensity = Mathf.Max(0f, socket.intensity * intensityScale);
 
             // 그림자는 여기서 정하지 않는다. §13 의 그림자 광원 예산은 전역 결정이라
             // LightSocketRenderer 가 방 전체를 우선순위로 줄 세워 켠다 — 광원 하나가
@@ -223,8 +227,10 @@ namespace TunnelCrew.Presentation.Visual
 
             var slot = go.AddComponent<LightSocket>();
             slot.lightClass = socket.lightClass;
-            slot.baseIntensity = Mathf.Max(0f, socket.intensity);
-            slot.rangeCells = Mathf.Max(0.1f, socket.rangeCells);
+            // 소켓 컴포넌트도 배율을 먹은 값을 든다 — 깜빡임과 그림자 우선순위가 실제 광원과
+            // 같은 수치를 봐야 한다.
+            slot.baseIntensity = Mathf.Max(0f, socket.intensity * intensityScale);
+            slot.rangeCells = Mathf.Max(0.1f, socket.rangeCells * rangeScale);
             // 위상을 ID 에서 유도해 같은 종류의 램프가 한꺼번에 흔들리지 않게 한다.
             // 해시라서 실행마다 같다.
             unchecked

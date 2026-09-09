@@ -91,11 +91,22 @@ Shader "TunnelCrew/Atmosphere"
 
             // 스크린 픽셀 격자 기반 해시. 해상도가 바뀌어도 밀도를 화면 비율로 세므로
             // 그레인 점의 체감 크기가 유지된다(§13 예산: 추가 렌더 타깃 없음).
-            float Hash21(float2 p)
+            //
+            // 시간은 좌표에 더하지 않고 <b>독립 성분</b>으로 넣는다. 전에는
+            // Hash21(g + _GrainTime * 37.0) 처럼 시간을 픽셀 좌표에 더했는데, 그러면 해시에
+            // 들어가는 수가 시간과 함께 무한히 커진다. float32 는 수가 커질수록 소수부 자리를
+            // 잃으므로 frac() 이 계단처럼 양자화되고, 그 결과가 화면을 가로지르는 <b>세로줄</b>
+            // 로 보였다. 1 분쯤 지나면 양자화가 끝까지 진행돼 값이 상수가 되고 — 줄이 사라지는
+            // 대신 그레인도 함께 죽었다(2026-09-09).
+            //
+            // frac(p.x * p.y) 자체도 두 성분의 곱이라 축에 정렬된 무늬를 잘 만든다.
+            // 세 성분을 섞는 방식(Hoskins) 으로 바꿨다 — sin 을 쓰지 않아 드라이버마다
+            // 결과가 갈리지도 않는다.
+            float Hash21(float2 p, float t)
             {
-                p = frac(p * float2(123.34, 456.21));
-                p += dot(p, p + 45.32);
-                return frac(p.x * p.y);
+                float3 p3 = frac(float3(p.x, p.y, t) * float3(0.1031, 0.1030, 0.0973));
+                p3 += dot(p3, p3.yzx + 33.33);
+                return frac((p3.x + p3.y) * p3.z);
             }
 
             // 격리 모드에서 해당 층만 남긴다. 0 이면 전부 통과.
@@ -158,7 +169,7 @@ Shader "TunnelCrew/Atmosphere"
                 {
                     float cell = max(1.0, _GrainDensity) / max(1.0, _ScreenParams.y);
                     float2 g = floor(uv * _ScreenParams.xy * cell);
-                    float n = Hash21(g + _GrainTime * 37.0) - 0.5;
+                    float n = Hash21(g, _GrainTime) - 0.5;
                     // 암부가 일부러 눌러 놓은 영역에는 그레인을 얹지 않는다. 색 버퍼를 읽을 수
                     // 없으니 실제 휘도는 모르지만, 검정으로 크러시한 곳에 디더를 뿌리면
                     // 프레임 테두리가 지글거린다 — 실제 캡처에서 그렇게 나왔다.

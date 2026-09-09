@@ -64,6 +64,12 @@ namespace TunnelCrew.Presentation.Visual
         };
 
         /// <summary>
+        /// Unity 기본 Sorting Layer. 이 체계에는 자리가 없지만 본선 Run 씬의 타일맵·캐릭터가
+        /// 아직 전부 여기 있어서 <see cref="Lit"/> 이 반드시 포함해야 한다.
+        /// </summary>
+        public const string UnlayeredDefault = "Default";
+
+        /// <summary>
         /// 2D 광원이 비춰야 하는 레이어(§7.1 "통합 월드 재질" — 바닥·벽·오브젝트가 같은
         /// 재질과 같은 빛을 받는다).
         ///
@@ -72,12 +78,22 @@ namespace TunnelCrew.Presentation.Visual
         /// 가 빠져 있어서 수정·상자·드릴·난간이 빛을 한 줄기도 받지 못했다(2026-09-09).
         /// 바닥만 밝고 오브젝트는 평평한 화면이 그 결과였다.
         ///
+        /// <b><see cref="UnlayeredDefault"/> 가 반드시 들어 있어야 한다.</b> 본선 Run 씬은 아직
+        /// 이 레이어 체계를 쓰지 않아 바닥·벽 타일맵과 캐릭터가 전부 <c>Default</c> 에 있다.
+        /// 2026-09-09 에 이 목록을 만들며 <c>Default</c> 를 빼는 바람에
+        /// <c>RunBootstrap.UseNormalMaps</c> 를 지나는 램프·손전등·플레이어 후광이
+        /// <b>아무것도 비추지 못했다</b> — 게임이 전역광만으로 평평하게 보였다. 본선을 레이어
+        /// 체계로 옮기는 것은 렌더 순서를 건드리는 별도 작업이고, 그때까지 <c>Default</c> 는
+        /// 실제 콘텐츠가 사는 레이어다.
+        ///
         /// 빠진 것: <see cref="WorldVoid"/>(빛이 닿을 표면이 아니다), <see cref="WorldFX"/>·
         /// <see cref="VisionAndGrade"/>·<see cref="WorldOverlay"/>·<see cref="UI"/>
-        /// (자체 발광·후처리·UI 라 2D 조명을 곱하면 안 된다).
+        /// (자체 발광·후처리·UI 라 2D 조명을 곱하면 안 된다). 화면을 덮는
+        /// <c>DarknessOverlay</c> 도 <c>Default</c> 에 있지만 언릿 셰이더라 영향을 받지 않는다.
         /// </summary>
         public static readonly string[] Lit =
         {
+            UnlayeredDefault,
             GroundBase,
             GroundDetail,
             GroundDecal,

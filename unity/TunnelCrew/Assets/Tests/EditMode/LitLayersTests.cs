@@ -32,6 +32,17 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
+        public void 조명은_본선이_실제로_쓰는_Default_레이어를_비춘다()
+        {
+            // 본선 Run 씬은 아직 이 레이어 체계를 쓰지 않는다 — 바닥·벽 타일맵과 캐릭터가
+            // 전부 Default 에 있다. 2026-09-09 에 Lit 을 만들며 Default 를 빼는 바람에
+            // 램프·손전등·플레이어 후광이 아무것도 비추지 못했고 게임이 전역광만으로
+            // 평평해졌다. 본선을 레이어 체계로 옮기기 전까지 이 항목을 빼면 안 된다.
+            Assert.Contains(VisualLayers.UnlayeredDefault, VisualLayers.Lit,
+                "Default 가 빠지면 본선의 모든 광원이 아무것도 비추지 못한다");
+        }
+
+        [Test]
         public void 조명은_바닥과_벽을_비춘다()
         {
             Assert.Contains(VisualLayers.GroundBase, VisualLayers.Lit);

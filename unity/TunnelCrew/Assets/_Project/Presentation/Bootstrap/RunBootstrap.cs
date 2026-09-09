@@ -709,7 +709,9 @@ namespace TunnelCrew.Presentation
                 if (_fNmQuality == null) Debug.LogWarning("[M7] Light2D.m_NormalMapQuality 필드를 찾지 못했다 — 타일 노멀맵 조명을 건너뛴다.");
             }
             _fNmQuality?.SetValue(l, Light2D.NormalMapQuality.Accurate);
-            _fNmDistance?.SetValue(l, 0.8f);   // 광원 높이(칸). 낮을수록 벽 가장자리 기울기가 강하게 반응한다 — 3 은 13/255, 1.5 는 "티가 안 난다"(사용자) → 0.8 + 베벨 ×12
+            // 광원 높이(칸) — 비주얼 트랙과 한 값을 쓴다. 낮추면 벽 요철은 살지만 바닥처럼
+            // 노멀이 평평한 면이 급격히 어두워진다(LightSocketRenderer.NormalMapHeightCells 주석).
+            _fNmDistance?.SetValue(l, TunnelCrew.Presentation.Visual.LightSocketRenderer.NormalMapHeightCells);
             // 오브젝트·전경까지 비춘다 — 대상 레이어가 비면 URP 가 씬 직렬화 값을 쓰고,
             // 그 값에 WorldEntity/FrontStructure 가 빠져 있었다(2026-09-09).
             TunnelCrew.Presentation.Visual.LightSocketRenderer.ApplyLitLayers(l);

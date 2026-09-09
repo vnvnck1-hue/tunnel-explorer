@@ -74,6 +74,18 @@ namespace TunnelCrew.Presentation.Visual
         [Header("환경광 (§7.2)")]
         public Color ambientColor = new Color(0.42f, 0.46f, 0.62f);
         [Range(0f, 2f)] public float ambientIntensity = 0.26f;
+
+        /// <summary>
+        /// 소켓 광원의 반경 배율. 아트 매니페스트의 <c>rangeCells</c> 는 자산 하나를 기준으로 한
+        /// 상대값이라 방 크기와 환경광에 맞춰 여기서 실제 스케일로 옮긴다.
+        ///
+        /// 배율 없이 쓰면 램프 반경이 2.3 셀이라 발밑조차 밝히지 못하고, 자기 스프라이트만
+        /// 발광으로 빛나 "오브젝트만 빛을 받는" 화면이 된다(2026-09-09).
+        /// </summary>
+        [Range(0.5f, 6f)] public float socketLightRangeScale = 2.5f;
+
+        /// <summary>소켓 광원의 세기 배율. 반경과 같은 이유로 둔다.</summary>
+        [Range(0.5f, 6f)] public float socketLightIntensityScale = 2f;
         [Tooltip("벽 상단·벽 정면·바닥·캐릭터의 서로 다른 최소광 계수.")]
         public Vector4 minLightBySurface = new Vector4(0.22f, 0.16f, 0.12f, 0.30f);
 

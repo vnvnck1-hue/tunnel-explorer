@@ -231,6 +231,9 @@ namespace TunnelCrew.Presentation.Visual
             _material.SetFloat(GrainTimeId, GrainTime(_profile, _freezeGrain, Time.unscaledTime));
         }
 
+        /// <summary>그레인 시간이 감기는 스텝 수. 24 스텝/초 기준 약 42 초 주기.</summary>
+        public const float GrainCycle = 1024f;
+
         /// <summary>
         /// 그레인 시간. 고정이거나 프로파일이 애니메이션을 껐으면 항상 0 이다 —
         /// §16.3 회귀 캡처가 프레임마다 달라지면 비교가 불가능해진다.
@@ -238,8 +241,13 @@ namespace TunnelCrew.Presentation.Visual
         public static float GrainTime(AtmosphereProfile profile, bool freeze, float time)
         {
             if (freeze || profile == null || !profile.animateGrain) return 0f;
-            // 초당 24 스텝의 이산 시간 — 부동소수 정밀도 손실 없이 필름 느낌이 난다.
-            return Mathf.Floor(time * 24f);
+            // 초당 24 스텝의 이산 시간 — 프레임률이 흔들려도 그레인이 같은 속도로 넘어간다.
+            //
+            // 값을 GrainCycle 로 감는다. 감지 않으면 이 수가 계속 커지고, 셰이더의 해시가
+            // float32 소수부를 잃어 그레인이 세로줄로 뭉쳤다가 1 분쯤 뒤 아예 사라졌다
+            // (2026-09-09). 1024 스텝이면 약 42 초마다 무늬가 반복되는데, 필름 그레인은
+            // 프레임마다 새로 보이면 그만이라 반복 주기는 눈에 띄지 않는다.
+            return Mathf.Repeat(Mathf.Floor(time * 24f), GrainCycle);
         }
 
         void LateUpdate()

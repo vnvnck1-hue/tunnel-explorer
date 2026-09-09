@@ -23,12 +23,12 @@ Shader "Tunnel Crew/WorldLit"
         _AOStrength("AO Strength", Range(0, 1)) = 1
         _EmissionColor("Emission Tint", Color) = (1,1,1,1)
         _EmissionIntensity("Emission Intensity", Range(0, 8)) = 1
-        _MinLight("Min Light", Range(0, 1)) = 0.08
+        _MinLight("Min Light", Range(0, 1)) = 0.14
 
         [Header(Distance Darkness)]
-        _DarkTint("어둠 색(곱)", Color) = (0.16, 0.18, 0.28, 1)
-        _DarkStrength("어둠 강도", Range(0, 1)) = 0.62
-        _DarkKnee("어둠이 시작되는 조명량", Range(0.01, 1)) = 0.65
+        _DarkTint("어둠 색(곱)", Color) = (0.28, 0.31, 0.42, 1)
+        _DarkStrength("어둠 강도", Range(0, 1)) = 0.38
+        _DarkKnee("어둠이 시작되는 조명량", Range(0.01, 1)) = 0.5
         _DarkCurve("어둠 곡선", Range(1, 6)) = 2
 
         [MaterialToggle] _ZWrite("ZWrite", Float) = 0

@@ -18,7 +18,7 @@ MonoBehaviour:
   emission: {fileID: 2800000, guid: 4081b814293b0d743b82868855b8f66f, type: 3}
   materialMask: {fileID: 2800000, guid: d5b019a42ae77e6409ca265b07df3146, type: 3}
   ao: {fileID: 2800000, guid: 2e56c229fe4c412449cc8882a0a96bdc, type: 3}
-  normalStrength: 1
+  normalStrength: 1.6
   aoStrength: 1
   emissionTint: {r: 1, g: 1, b: 1, a: 1}
   emissionIntensity: 1

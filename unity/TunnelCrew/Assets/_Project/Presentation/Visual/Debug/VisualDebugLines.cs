@@ -143,10 +143,14 @@ namespace TunnelCrew.Presentation.Visual
 
             for (int i = 0; i < contours.Count; i++)
             {
-                var pts = contours[i].Points;
+                var contour = contours[i];
                 buffer.Clear();
-                for (int j = 0; j < pts.Count; j++) buffer.Add(new Vector2(pts[j].X, pts[j].Y));
-                Loop(buffer, contours[i].IsOuter ? outerColor : innerColor);
+                for (int j = 0; j < contour.PointCount; j++)
+                {
+                    contour.PointAt(j, out float x, out float y);
+                    buffer.Add(new Vector2(x, y));
+                }
+                Loop(buffer, contour.IsOuter ? outerColor : innerColor);
             }
         }
 

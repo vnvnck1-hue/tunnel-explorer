@@ -244,13 +244,46 @@ namespace TunnelCrew.Presentation.Visual
             while (PendingCasters > 0) Step(int.MaxValue);
         }
 
+        /// <summary>
+        /// 세트피스 실루엣 다각형을 윤곽으로 감싼다.
+        ///
+        /// <b>정수로 반올림하지 않는다.</b> 전에는 <c>Mathf.RoundToInt</c> 로 셀 모서리에
+        /// 스냅했는데, 실루엣 정점은 셀 안쪽 소수(0.85 · 0.21 …)라 12점짜리 통이 네 모서리로
+        /// 뭉개져 모든 세트피스 그림자가 사각형으로 나왔다(2026-09-09). 셀 격자에 맞출 이유가
+        /// 있는 것은 벽 윤곽뿐이고, 그쪽은 <see cref="WallContourTracer"/> 가 처음부터 정수로 만든다.
+        ///
+        /// 감기 방향은 양수(반시계)로 맞춘다 — 벽의 바깥 고리와 같은 규약이라 디버그 뷰의
+        /// 안팎 색이 세트피스에서도 뜻이 같아진다.
+        /// </summary>
         static WallContourTracer.Contour FromPolygon(Vector2[] poly)
         {
             var c = new WallContourTracer.Contour();
+
+            var xy = new float[poly.Length * 2];
             for (int i = 0; i < poly.Length; i++)
-                c.Points.Add(new WallContourTracer.Corner(
-                    Mathf.RoundToInt(poly[i].x), Mathf.RoundToInt(poly[i].y)));
-            c.DoubleSignedArea = WallContourTracer.DoubleSignedArea(c.Points);
+            {
+                xy[i * 2] = poly[i].x;
+                xy[i * 2 + 1] = poly[i].y;
+            }
+
+            double area = WallContourTracer.DoubleSignedArea(xy);
+            if (area < 0.0)
+            {
+                // 뒤집어 감기 방향을 맞춘다.
+                for (int i = 0, j = poly.Length - 1; i < j; i++, j--)
+                {
+                    float tx = xy[i * 2], ty = xy[i * 2 + 1];
+                    xy[i * 2] = xy[j * 2];
+                    xy[i * 2 + 1] = xy[j * 2 + 1];
+                    xy[j * 2] = tx;
+                    xy[j * 2 + 1] = ty;
+                }
+                area = -area;
+            }
+
+            c.FineXY = xy;
+            // 정수 면적 필드에는 부호만 살려 담는다 — IsOuter 판정에만 쓰인다.
+            c.DoubleSignedArea = (long)System.Math.Round(area * 1024.0);
             c.ContentHash = WallContourTracer.HashOf(c);
             return c;
         }
@@ -259,13 +292,17 @@ namespace TunnelCrew.Presentation.Visual
         {
             if (!Available || _root == null) return null;
 
-            var pts = contour.Points;
+            int count = contour.PointCount;
+            if (count < 3) return null;
+
             // 캐스터 원점을 윤곽의 첫 정점에 두고 형태는 상대 좌표로 넣는다.
             // 그래야 큰 맵에서 좌표가 커져 정밀도가 떨어지지 않는다.
-            var originCell = new Vector2(pts[0].X, pts[0].Y);
-            var origin = IsometricProjection.ToRender(originCell);
+            contour.PointAt(0, out float ox, out float oy);
+            var origin = IsometricProjection.ToRender(new Vector2(ox, oy));
 
-            var go = new GameObject($"ShadowContour_{contour.StartCol}_{contour.StartRow}_{contour.StartSide}");
+            var go = new GameObject(contour.FineXY != null
+                ? $"ShadowContour_Fine_{contour.ContentHash:X8}"
+                : $"ShadowContour_{contour.StartCol}_{contour.StartRow}_{contour.StartSide}");
             go.transform.SetParent(_root, false);
             go.transform.position = new Vector3(origin.x, origin.y, 0f);
 
@@ -275,10 +312,11 @@ namespace TunnelCrew.Presentation.Visual
             caster.selfShadows = _selfShadows;
             caster.castsShadows = true;
 
-            var path = new Vector3[pts.Count];
-            for (int i = 0; i < pts.Count; i++)
+            var path = new Vector3[count];
+            for (int i = 0; i < count; i++)
             {
-                var p = IsometricProjection.ToRender(new Vector2(pts[i].X, pts[i].Y));
+                contour.PointAt(i, out float px, out float py);
+                var p = IsometricProjection.ToRender(new Vector2(px, py));
                 path[i] = new Vector3(p.x - origin.x, p.y - origin.y, 0f);
             }
 

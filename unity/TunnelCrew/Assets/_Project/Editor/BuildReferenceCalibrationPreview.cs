@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 namespace TunnelCrew.EditorTools
@@ -21,10 +22,7 @@ namespace TunnelCrew.EditorTools
         {
             "tr01_reference_floor_a_albedo.png",
             "tr01_reference_floor_b_albedo.png",
-            "tr01_reference_floor_c_albedo.png",
-            "tr01_reference_floor_d_albedo.png",
-            "tr01_reference_floor_e_albedo.png",
-            "tr01_reference_floor_f_albedo.png"
+            "tr01_reference_floor_c_albedo.png"
         };
         static bool s_running;
 
@@ -65,17 +63,29 @@ namespace TunnelCrew.EditorTools
             ConfigureSprite("tr01_reference_wall_a_albedo.png", new Vector2(0.5f, 0.02f), true);
             ConfigureSprite("tr01_reference_crystal_a_albedo.png", new Vector2(0.5f, 0.03f), true);
             ConfigureSprite("tr01_reference_driller_a_albedo.png", new Vector2(0.5f, 0.03f), true);
+            ConfigureSprite("tr01_reference_lamp_a_albedo.png", new Vector2(0.5f, 0.03f), true);
 
             var floors = Array.ConvertAll(FloorFiles, LoadSprite);
             var wall = LoadSprite("tr01_reference_wall_a_albedo.png");
             var crystal = LoadSprite("tr01_reference_crystal_a_albedo.png");
             var driller = LoadSprite("tr01_reference_driller_a_albedo.png");
+            var lamp = LoadSprite("tr01_reference_lamp_a_albedo.png");
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath)!);
             // Batch mode starts with an unsaved untitled scene, which Unity refuses to
             // accompany with an additive scene. Interactive use stays additive so the
             // user's currently open scene remains untouched.
-            var mode = Application.isBatchMode ? NewSceneMode.Single : NewSceneMode.Additive;
+            var existing = SceneManager.GetSceneByPath(ScenePath);
+            // This tool owns the calibration scene and writes it back to the
+            // same path, so a single-scene preview is deterministic even when
+            // the editor has no currently active scene.
+            var mode = NewSceneMode.Single;
+            if (existing.IsValid() && existing.isLoaded)
+            {
+                if (existing.isDirty)
+                    EditorSceneManager.SaveScene(existing, ScenePath);
+                EditorSceneManager.CloseScene(existing, true);
+            }
             Scene preview = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, mode);
             preview.name = "ReferenceCalibrationV1";
 
@@ -90,24 +100,27 @@ namespace TunnelCrew.EditorTools
             for (int y = -4; y <= 3; y++)
             for (int x = -7; x <= 7; x++)
             {
+                // Use only the three board-approved bitmaps.  Distribution may
+                // vary, but pixels, orientation, scale, and color may not.
                 int floorIndex = Mathf.Abs(x * 17 + y * 31 + x * y * 7) % floors.Length;
-                var sr = AddSprite(preview, $"Floor {x},{y} [{FloorFiles[floorIndex]}]", floors[floorIndex], new Vector3(x + 0.5f, y + 0.5f, 0f), 0);
-                int turn = Mathf.Abs(x * 11 + y * 19) % 4;
-                sr.transform.rotation = Quaternion.Euler(0f, 0f, turn * 90f);
-                if (((x + y) & 1) != 0)
-                    sr.transform.localScale = new Vector3(-1f, 1f, 1f);
-                float tint = 0.68f + (Mathf.Abs(x * 7 + y * 13) % 3) * 0.025f;
-                sr.color = new Color(tint, tint * 0.90f, tint * 1.08f, 1f);
+                var sr = AddSprite(preview, $"Floor {x},{y} [board-direct {floorIndex}]", floors[floorIndex], new Vector3(x + 0.5f, y + 0.5f, 0f), 0);
+                sr.color = Color.white;
             }
 
             var rear = AddSprite(preview, "Reference Wall", wall, new Vector3(3.25f, 0.82f, 0f), 10);
-            rear.color = new Color(0.78f, 0.72f, 0.88f, 1f);
+            rear.color = Color.white;
 
             var mineral = AddSprite(preview, "Reference Crystal", crystal, new Vector3(-4.15f, 0.7f, 0f), 20);
-            mineral.transform.localScale = Vector3.one * 1.12f;
+            mineral.transform.localScale = Vector3.one;
 
             var hero = AddSprite(preview, "Reference Driller", driller, new Vector3(-0.75f, -0.75f, 0f), 30);
-            hero.transform.localScale = Vector3.one * 1.12f;
+            hero.transform.localScale = Vector3.one;
+
+            var fixture = AddSprite(preview, "Reference Lamp", lamp, new Vector3(4.65f, -2.55f, 0f), 25);
+            fixture.transform.localScale = Vector3.one;
+
+            AddGlobalLight(preview);
+            AddLampLight(preview, new Vector3(4.65f, -1.52f, -0.1f));
 
             // Persist only project-backed sprites. The soft contact shadows below are
             // temporary capture aids with in-memory textures.
@@ -167,7 +180,34 @@ namespace TunnelCrew.EditorTools
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.sortingOrder = order;
+            var lit = AssetDatabase.LoadAssetAtPath<Material>(
+                "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat");
+            if (lit == null)
+                throw new InvalidOperationException("URP Sprite-Lit-Default material was not found");
+            sr.sharedMaterial = lit;
             return sr;
+        }
+
+        static void AddGlobalLight(Scene scene)
+        {
+            var go = NewObject(scene, "Calibration Ambient Light 2D");
+            var light = go.AddComponent<Light2D>();
+            light.lightType = Light2D.LightType.Global;
+            light.color = new Color(0.62f, 0.50f, 0.76f, 1f);
+            light.intensity = 0.62f;
+        }
+
+        static void AddLampLight(Scene scene, Vector3 position)
+        {
+            var go = NewObject(scene, "Reference Lamp Point Light 2D");
+            go.transform.position = position;
+            var light = go.AddComponent<Light2D>();
+            light.lightType = Light2D.LightType.Point;
+            light.color = new Color(0.92f, 0.16f, 1f, 1f);
+            light.intensity = 2.35f;
+            light.pointLightInnerRadius = 0.18f;
+            light.pointLightOuterRadius = 2.4f;
+            light.falloffIntensity = 0.48f;
         }
 
         static void AddShadow(Scene scene, Vector3 position, Vector2 size, int order)
@@ -221,6 +261,14 @@ namespace TunnelCrew.EditorTools
                 if (Directory.Exists(candidate))
                     return Path.Combine(candidate, "qa/reference-calibration-floor-variants-unity.png");
             }
+            // The MCP-connected editor may open the mirrored project from
+            // C:/Users/Loadcomplete/TunnelCrew, while the art package remains
+            // in the ChatGPT workspace.  Resolve that documented workspace
+            // location as a fallback so captures still land beside the board.
+            string documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string workspace = Path.Combine(documents, "ChatGPT", "땅굴 크루 만들기", "art-production", "test-room-v01");
+            if (Directory.Exists(workspace))
+                return Path.Combine(workspace, "qa/reference-calibration-floor-variants-unity.png");
             throw new DirectoryNotFoundException("art-production/test-room-v01 was not found above Unity project");
         }
 

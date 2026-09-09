@@ -67,6 +67,28 @@ namespace TunnelCrew.Presentation.Visual
 
             /// <summary>같은 윤곽인지 값으로 비교하는 해시. 캐스터 재생성 여부를 판단한다.</summary>
             public int ContentHash;
+
+            /// <summary>
+            /// 셀 격자 위에 있지 않은 윤곽의 실수 정점 — x,y 를 이어 붙인 평탄 배열이다.
+            /// null 이면 <see cref="Points"/> 가 형태다.
+            ///
+            /// 세트피스 실루엣이 여기 들어온다. <see cref="Corner"/> 는 셀 모서리라 정수인데,
+            /// 실루엣 정점은 0.85·0.21 처럼 셀 안쪽에 있다. 정수로 반올림하면 12점짜리 통이
+            /// (0,0)·(1,0)·(1,1)·(0,1) 네 모서리로 뭉개져 <b>모든 그림자가 사각형이 된다</b>.
+            /// </summary>
+            public float[] FineXY;
+
+            /// <summary>형태를 이루는 정점 수. 실수 윤곽이면 그쪽을 센다.</summary>
+            public int PointCount => FineXY != null ? FineXY.Length / 2 : Points.Count;
+
+            /// <summary>i 번째 정점. 정수·실수 윤곽을 한 가지로 읽게 해 준다.</summary>
+            public void PointAt(int i, out float x, out float y)
+            {
+                if (FineXY != null) { x = FineXY[i * 2]; y = FineXY[i * 2 + 1]; return; }
+                var c = Points[i];
+                x = c.X;
+                y = c.Y;
+            }
         }
 
         // ───────────────────────────── 추적
@@ -240,12 +262,51 @@ namespace TunnelCrew.Presentation.Visual
         }
 
         /// <summary>
+        /// 실수 정점의 슈레이스 부호 면적 × 2. 감기 방향 판정에만 쓴다.
+        /// </summary>
+        public static double DoubleSignedArea(float[] xy)
+        {
+            if (xy == null || xy.Length < 6) return 0.0;
+            int n = xy.Length / 2;
+            double acc = 0.0;
+            for (int i = 0; i < n; i++)
+            {
+                int j = (i + 1) % n;
+                acc += (double)xy[i * 2] * xy[j * 2 + 1] - (double)xy[j * 2] * xy[i * 2 + 1];
+            }
+            return acc;
+        }
+
+        /// <summary>
+        /// 실수 정점의 내용 해시. 1/1024 셀로 양자화해서 만든다 — 같은 형태가 같은 값이 되어야
+        /// 캐스터를 재사용할 수 있고, 부동소수 끝자리가 흔들려도 매 프레임 다시 만들지 않는다.
+        /// </summary>
+        public static int HashOf(float[] xy)
+        {
+            unchecked
+            {
+                uint h = 2166136261u;
+                if (xy != null)
+                {
+                    for (int i = 0; i < xy.Length; i++)
+                    {
+                        int q = (int)System.Math.Round(xy[i] * 1024.0);
+                        h = (h ^ (uint)q) * 16777619u;
+                    }
+                    h = (h ^ (uint)(xy.Length / 2)) * 16777619u;
+                }
+                return (int)(h & 0x7FFFFFFF);
+            }
+        }
+
+        /// <summary>
         /// 윤곽의 내용 해시. 정점 좌표만으로 만들며 시각·주소·프레임에 의존하지 않는다.
         /// 기존 <c>WallShadowBuilder.ApplyShape</c> 는 <c>Environment.TickCount</c> 를 섞어
         /// 같은 형태에서도 매번 다른 값이 나왔다 — 그러면 바뀐 캐스터만 다시 만들 수 없다.
         /// </summary>
         public static int HashOf(Contour contour)
         {
+            if (contour.FineXY != null) return HashOf(contour.FineXY);
             unchecked
             {
                 uint h = 2166136261u;

@@ -196,7 +196,17 @@ namespace TunnelCrew.Presentation.Visual
         }
 
         /// <summary>노멀 조명이 보는 광원 높이(칸). 낮을수록 요철이 강하게 선다.</summary>
-        internal const float NormalMapHeightCells = 0.8f;
+        /// <summary>
+        /// 노멀맵 조명이 쓰는 광원 높이(셀). URP 2D 는 이 값으로 빛의 입사각을 만든다 —
+        /// 평평한 면의 밝기가 <c>높이 / 광원까지의 거리</c> 에 비례한다.
+        ///
+        /// <b>낮추면 바닥이 죽는다.</b> 2026-09-09 에 요철을 세우려고 0.8 로 내렸더니, 바닥처럼
+        /// 노멀이 평평한 면은 2 셀만 떨어져도 밝기가 0.37 배로 주저앉았다. 반면 옆면 노멀을 가진
+        /// 기둥·상자는 그대로 밝아서 "오브젝트만 빛을 받고 바닥은 안 받는" 화면이 됐다.
+        /// 같은 공간에 있는 것들이 같은 빛을 받아야 하므로 다시 올린다. 요철은 광원 높이가 아니라
+        /// 머티리얼의 <c>_NormalStrength</c>(현재 1.6) 로 세운다.
+        /// </summary>
+        internal const float NormalMapHeightCells = 2f;
 
         void LateUpdate() => Apply(_freezeFlicker ? 0f : Time.unscaledTime);
 

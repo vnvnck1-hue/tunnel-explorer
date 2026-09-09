@@ -206,18 +206,18 @@ namespace TunnelCrew.Presentation.Visual
             for (int i = 0; i < contours.Count; i++)
             {
                 var contour = contours[i];
-                var pts = contour.Points;
-                if (pts.Count < 2) continue;
+                int count = contour.PointCount;
+                if (count < 2) continue;
 
                 var color = contour.IsOuter
                     ? new Color(1f, .45f, .25f, .9f)      // 벽 덩어리의 바깥 고리
                     : new Color(.35f, .9f, 1f, .9f);      // 방·통로 쪽 고리
 
-                for (int j = 0; j < pts.Count; j++)
+                for (int j = 0; j < count; j++)
                 {
-                    var a = pts[j];
-                    var b = pts[(j + 1) % pts.Count];
-                    DrawWorldLine(cam, new Vector2(a.X, a.Y), new Vector2(b.X, b.Y), color);
+                    contour.PointAt(j, out float ax, out float ay);
+                    contour.PointAt((j + 1) % count, out float bx, out float by);
+                    DrawWorldLine(cam, new Vector2(ax, ay), new Vector2(bx, by), color);
                 }
             }
         }
