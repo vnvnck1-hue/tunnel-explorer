@@ -1,7 +1,8 @@
-"""Normalize the reference-style calibration set for a 128 PPU Unity preview.
+"""Legacy normalizer for the pre-board-direct calibration set.
 
-These files remain working candidates.  The script deliberately does not touch the
-approved test-room package or its manifest.
+Do not use this script for V1 approval: it creates derived floor variants and
+would break the single-source board workflow.  Use
+``extract-reference-board-assets.py`` instead.
 """
 
 from pathlib import Path
