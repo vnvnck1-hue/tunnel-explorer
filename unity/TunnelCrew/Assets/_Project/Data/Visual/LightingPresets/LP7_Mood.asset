@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
+  m_Name: LP7_Mood
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
+  label: "\u2466 \uBB34\uB4DC (\uC870\uD569)"
+  note: "\uC5B4\uB460 + \uC554\uBD80 + \uD6C4\uCC98\uB9AC\uB97C \uD568\uAED8. \uC2E4\uC81C
+    \uCC44\uD0DD \uD6C4\uBCF4 1\uC21C\uC704."
+  ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
+  ambientIntensity: 0.22
+  lightScale: 1.2
+  shadowMode: 2
+  blobStrength: 0.6
+  negativeStrength: 0.45
+  postScale: 3

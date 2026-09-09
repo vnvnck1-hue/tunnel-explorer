@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: AtmosphereProfile_Stratum1
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.AtmosphereProfile
   fogColor: {r: 0.18, g: 0.2, b: 0.3, a: 1}
-  fogDensity: 0.22
-  fogHeight: 0.42
+  fogDensity: 0.24
+  fogHeight: 0.3
   fogSoftness: 0.45
   nearTint: {r: 0.24, g: 0.16, b: 0.26, a: 1}
   farTint: {r: 0.14, g: 0.2, b: 0.3, a: 1}
-  depthSeparation: 0.12
+  depthSeparation: 0.16
   vignetteColor: {r: 0.02, g: 0.02, b: 0.04, a: 1}
-  vignetteStrength: 0.35
+  vignetteStrength: 0.32
   vignetteInner: 0.55
   vignetteOuter: 1.15
-  grainStrength: 0.018
+  grainStrength: 0.012
   grainDensity: 540
   animateGrain: 1

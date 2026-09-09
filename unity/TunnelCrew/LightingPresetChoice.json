@@ -1,0 +1,14 @@
+{
+  "label": "⑧ 광원 강조 (Ori 방향)",
+  "asset": "LP8_LightForward",
+  "ambientColor": [0.62, 0.5, 0.76],
+  "ambientColorHex": "#9E80C2",
+  "ambientIntensity": 0.3,
+  "lightScale": 1.7,
+  "shadowMode": "BlobAndNegative",
+  "blobStrength": 0.55,
+  "negativeStrength": 0.35,
+  "postScale": 2,
+  "baseProfile": "AtmosphereProfile_Stratum1",
+  "note": "광원을 세게. 손칠 라이팅 없이 광원만으로 어디까지 가는지 확인하는 대조군."
+}

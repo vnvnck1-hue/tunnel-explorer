@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
+  m_Name: LP6_PostStrong
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
+  label: "\u2465 \uD6C4\uCC98\uB9AC \uAC15\uD568"
+  note: "\xD75. Katana ZERO \uBAA8\uB378 \u2014 \uAD11\uC6D0\uC774 \uC544\uB2C8\uB77C
+    \uD654\uBA74 \uD544\uD130\uAC00 \uBB34\uB4DC\uB97C \uB9CC\uB4DC\uB294 \uCABD."
+  ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
+  ambientIntensity: 0.2
+  lightScale: 1.1
+  shadowMode: 1
+  blobStrength: 0.5
+  negativeStrength: 0.45
+  postScale: 5

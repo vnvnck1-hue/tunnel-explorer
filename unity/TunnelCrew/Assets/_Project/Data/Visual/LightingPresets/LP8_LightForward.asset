@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
+  m_Name: LP8_LightForward
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
+  label: "\u2467 \uAD11\uC6D0 \uAC15\uC870 (Ori \uBC29\uD5A5)"
+  note: "\uAD11\uC6D0\uC744 \uC138\uAC8C. \uC190\uCE60 \uB77C\uC774\uD305 \uC5C6\uC774
+    \uAD11\uC6D0\uB9CC\uC73C\uB85C \uC5B4\uB514\uAE4C\uC9C0 \uAC00\uB294\uC9C0 \uD655\uC778\uD558\uB294
+    \uB300\uC870\uAD70."
+  ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
+  ambientIntensity: 0.3
+  lightScale: 1.7
+  shadowMode: 2
+  blobStrength: 0.55
+  negativeStrength: 0.35
+  postScale: 2

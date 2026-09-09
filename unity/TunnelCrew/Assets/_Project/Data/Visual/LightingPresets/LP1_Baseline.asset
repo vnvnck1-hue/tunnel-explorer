@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
+  m_Name: LP1_Baseline
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
+  label: "\u2460 \uD604\uC7AC (\uAE30\uC900\uC120)"
+  note: "\uB808\uD37C\uB7F0\uC2A4 \uCE98\uB9AC\uBE0C\uB808\uC774\uC158 \uC52C \uC7AC\uD604.
+    \uADF8\uB9BC\uC790\xB7\uD6C4\uCC98\uB9AC \uC5C6\uC74C. \uB098\uBA38\uC9C0\uC640
+    \uBE44\uAD50\uD560 \uCD9C\uBC1C\uC810."
+  ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
+  ambientIntensity: 0.62
+  lightScale: 1
+  shadowMode: 0
+  blobStrength: 0.55
+  negativeStrength: 0.45
+  postScale: 1

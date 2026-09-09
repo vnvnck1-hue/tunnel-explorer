@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
+  m_Name: LP9_Bloom
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
+  label: "\u2468 \uBE14\uB8F8 \uAC15\uC870"
+  note: "\u2466 \uBB34\uB4DC\uC5D0 URP Bloom \uB9CC \uC138\uAC8C(1.6 / thr 0.55,
+    \uBCF8\uD3B8 \uC9C0\uCE351 \uC740 0.60 / 0.70). '\uBE5B\uB098\uB294 \uAC83\uC774
+    \uBE5B\uB098\uB294\uAC00' \u2014 \uB9AC\uC11C\uCE58 2\uC21C\uC704 \uC9C0\uB81B\uB300."
+  ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
+  ambientIntensity: 0.22
+  lightScale: 1.2
+  shadowMode: 2
+  blobStrength: 0.6
+  negativeStrength: 0.45
+  postScale: 3
+  atmosphereProfile: {fileID: 0}
+  volumeProfile: {fileID: 0}
+  bloomIntensity: 1.6
+  bloomThreshold: 0.55
