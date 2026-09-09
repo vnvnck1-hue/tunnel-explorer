@@ -5,3 +5,11 @@ build/.single-cache/
 unity/Build/
 unity/TunnelCrew/Captures/
 unity/TunnelCrew/*.png
+
+# 디버그 캡처는 Assets 안에 두지 않는다 — Unity 가 텍스처로 임포트해 프로젝트가 무거워진다.
+# (2026-09-09: 34장 89MB 가 Assets/Screenshots 에 쌓여 있었다. 문서용 캡처는 docs/unity-port/img/ 로.)
+unity/TunnelCrew/Assets/Screenshots/
+unity/TunnelCrew/Assets/Screenshots.meta
+
+# 파이썬 캐시
+tools/art/__pycache__/
