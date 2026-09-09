@@ -24,12 +24,13 @@ namespace TunnelCrew.Presentation.Visual
     /// 이 컴포넌트는 <b>씬에 무엇이 있는지 스스로 찾는다</b> — 전역광, 나머지 광원, 대기 감독,
     /// 깊이·그림자 시스템, <see cref="LabShadowBlob"/>. 그래서 랩 씬뿐 아니라 본선 씬에 얹어도 동작한다.
     ///
-    /// 조작: 숫자키 <c>1</c>~<c>9</c>·<c>0</c> 프리셋 선택 · <c>H</c> UI 토글 · <c>Enter</c> 확정 기록
+    /// 조작: 숫자키 <c>1</c>~<c>9</c>·<c>0</c> 프리셋 선택 · <c>←</c>/<c>→</c> 전체 순환(10개 초과분) ·
+    /// <c>H</c> UI 토글 · <c>Enter</c> 확정 기록
     /// · <c>F1</c> 발점·전경 그룹 디버그 선.
     /// </summary>
     public sealed class LightingPresetSwitcher : MonoBehaviour
     {
-        [Tooltip("버튼 순서대로 숫자키 1~9, 0 에 대응한다.")]
+        [Tooltip("버튼 순서대로 숫자키 1~9, 0 에 대응한다. 10개를 넘으면 ←/→ 로만 닿는다.")]
         [SerializeField] LightingPreset[] _presets = System.Array.Empty<LightingPreset>();
 
         [Tooltip("비어 있으면 씬에서 lightType == Global 인 Light2D 를 찾는다.")]
@@ -64,6 +65,8 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>소켓이 없는 광원(구 경로). 전역광과 어두운 블롭은 따로 다룬다.</summary>
         readonly List<(Light2D light, float baseIntensity)> _sceneLights = new();
         readonly List<LabShadowBlob> _blobs = new();
+        /// <summary>정식 네거티브 라이팅(freeform). 임시 블롭을 대체한 것 — 세기 축은 같다.</summary>
+        readonly List<NegativeLightVolume> _negatives = new();
 
         // 이주 2단계 — 정식 소켓 파이프라인. LightSocketRenderer 가 매 프레임
         // light.intensity = baseIntensity × 깜빡임 으로 덮어쓰므로, 프리셋의 lightScale 은
@@ -131,9 +134,12 @@ namespace TunnelCrew.Presentation.Visual
         {
             _sceneLights.Clear();
             _blobs.Clear();
+            _negatives.Clear();
 
             foreach (var blob in FindObjectsByType<LabShadowBlob>(FindObjectsSortMode.None))
                 _blobs.Add(blob);
+            foreach (var neg in FindObjectsByType<NegativeLightVolume>(FindObjectsSortMode.None))
+                _negatives.Add(neg);
 
             _sockets.Clear();
             _socketRenderer = FindAnyObjectByType<LightSocketRenderer>();
@@ -222,6 +228,9 @@ namespace TunnelCrew.Presentation.Visual
             // 네거티브 라이팅은 아직 정식 시스템이 없다(§B-2). 임시 블롭이 계속 맡는다.
             // Contact 종류 블롭이 씬에 남아 있어도(구 씬) 정식 그림자와 겹치지 않게 끈다.
             float negative = preset.shadowMode == LabShadowMode.BlobAndNegative ? preset.negativeStrength : 0f;
+            // 정식 freeform 암부. 임시 블롭과 같은 축을 민다 — 프리셋 값을 그대로 쓴다.
+            for (int i = 0; i < _negatives.Count; i++)
+                if (_negatives[i] != null) _negatives[i].Strength = negative;
             for (int i = 0; i < _blobs.Count; i++)
             {
                 var blob = _blobs[i];
@@ -333,6 +342,15 @@ namespace TunnelCrew.Presentation.Visual
             else if (kb.digit8Key.wasPressedThisFrame) Apply(7);
             else if (kb.digit9Key.wasPressedThisFrame) Apply(8);
             else if (kb.digit0Key.wasPressedThisFrame) Apply(9);
+
+            // 숫자키는 10개뿐이다. 프리셋이 그보다 많아졌으므로(지층 팔레트 ⑪⑫, 2026-09-09)
+            // 좌우 방향키로 전체를 순환한다 — 키 없는 프리셋에 손이 닿지 않는 것을 막는다.
+            if (_presets.Length > 0)
+            {
+                if (kb.rightArrowKey.wasPressedThisFrame) Apply((_current + 1) % _presets.Length);
+                else if (kb.leftArrowKey.wasPressedThisFrame)
+                    Apply((_current - 1 + _presets.Length) % _presets.Length);
+            }
         }
 
         /// <summary>

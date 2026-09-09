@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb19c69b53d651f40b5adb52d15a294b, type: 3}
-  m_Name: AtmosphereProfile_Stratum1
+  m_Name: AtmosphereProfile_Stratum3
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.AtmosphereProfile
-  fogColor: {r: 0.18, g: 0.2, b: 0.3, a: 1}
-  fogDensity: 0.22
-  fogHeight: 0.42
-  fogSoftness: 0.45
-  nearTint: {r: 0.24, g: 0.16, b: 0.26, a: 1}
-  farTint: {r: 0.14, g: 0.2, b: 0.3, a: 1}
-  depthSeparation: 0.12
-  vignetteColor: {r: 0.02, g: 0.02, b: 0.04, a: 1}
-  vignetteStrength: 0.35
-  vignetteInner: 0.55
-  vignetteOuter: 1.15
-  grainStrength: 0.018
-  grainDensity: 540
+  fogColor: {r: 0.14, g: 0.12, b: 0.24, a: 1}
+  fogDensity: 0.38
+  fogHeight: 0.58
+  fogSoftness: 0.38
+  nearTint: {r: 0.27, g: 0.14, b: 0.27, a: 1}
+  farTint: {r: 0.1, g: 0.13, b: 0.28, a: 1}
+  depthSeparation: 0.22
+  vignetteColor: {r: 0.01, g: 0.01, b: 0.03, a: 1}
+  vignetteStrength: 0.5
+  vignetteInner: 0.44
+  vignetteOuter: 1.04
+  grainStrength: 0.034
+  grainDensity: 580
   animateGrain: 1

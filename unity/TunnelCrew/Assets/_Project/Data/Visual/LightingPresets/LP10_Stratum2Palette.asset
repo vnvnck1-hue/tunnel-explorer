@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: LP10_Stratum2Palette
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
   label: "\u2469 \uC9C0\uCE352 \uD314\uB808\uD2B8"
-  note: "\u2466 \uBB34\uB4DC \uADF8\uB300\uB85C, Volume \uB9CC \uC9C0\uCE352(Fracture:
-    \uB300\uBE44 8\xB7\uCC44\uB3C4 2\xB7\uBE14\uB8F8 0.70)\uB85C. \uAD11\uC6D0\uC744
-    \uB298\uB9AC\uC9C0 \uC54A\uACE0 \uD314\uB808\uD2B8\uB85C '\uB2E4\uB978 \uC9C0\uCE35'\uC744
+  note: "\u2466 \uBB34\uB4DC \uADF8\uB300\uB85C, \uD314\uB808\uD2B8\uB9CC \uC9C0\uCE352(Fracture:
+    \uB300\uBE44 8\xB7\uCC44\uB3C4 2 / \uC548\uAC1C .30\xB7\uBE44\uB124\uD2B8 .42\xB7\uADF8\uB808\uC778
+    .026). \uAD11\uC6D0\uC744 \uB298\uB9AC\uC9C0 \uC54A\uACE0 '\uB2E4\uB978 \uC9C0\uCE35'\uC744
     \uB9CC\uB4DC\uB294 Rain World \uC2DD."
   ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
-  ambientIntensity: 0.22
+  ambientIntensity: 0.24
   lightScale: 1.2
   shadowMode: 2
   blobStrength: 0.6
   negativeStrength: 0.45
-  postScale: 3
-  atmosphereProfile: {fileID: 0}
+  postScale: 2.2
+  atmosphereProfile: {fileID: 11400000, guid: 34ef4f5963b674f4e9c1d4ed550fff1d, type: 2}
   volumeProfile: {fileID: 11400000, guid: d59422702bdfb82498cb9ee4958dea2e, type: 2}
   bloomIntensity: -1
   bloomThreshold: -1

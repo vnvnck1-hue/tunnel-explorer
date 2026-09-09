@@ -50,6 +50,18 @@ namespace TunnelCrew.EditorTools
         const string VolumeDir = "Assets/_Project/Data/Resources";
         const string DefaultVolumePath = VolumeDir + "/Volume_Stratum1_Surface.asset";
         const string Stratum2VolumePath = VolumeDir + "/Volume_Stratum2_Fracture.asset";
+        const string Stratum3VolumePath = VolumeDir + "/Volume_Stratum3_Core.asset";
+        const string AbyssVolumePath = VolumeDir + "/Volume_Abyss.asset";
+
+        /// <summary>지층별 대기 프로파일 — `BuildAtmosphereProfiles` 가 만든다.</summary>
+        const string AtmosphereDir = "Assets/_Project/Data/Visual";
+
+        /// <summary>마스크가 붙은 랩 전용 머티리얼이 사는 곳. 랩만 쓴다(본선은 SurfaceMaterialSet).</summary>
+        const string MaterialDir = "Assets/_Project/Data/Visual/LabMaterials";
+
+        /// <summary>`Renderer2D.asset` 슬롯 3 = `Additive with Mask` = B(습윤·결정).
+        /// 정답지는 `docs/unity-port/mask-channel-convention.md`.</summary>
+        const int MaskAdditiveSlot = 3;
         const string KitPath = "Assets/_Project/Data/Visual/EnvironmentKit_ReferenceV1.asset";
         const string FloorSetPath = "Assets/_Project/Data/Visual/SurfaceMaterialSet_Reference_floor.asset";
         const string WallTopSetPath = "Assets/_Project/Data/Visual/SurfaceMaterialSet_Reference_walltop.asset";
@@ -115,7 +127,7 @@ namespace TunnelCrew.EditorTools
             var art = LoadSprites();
             BuildScene(art, presetPaths);
 
-            Debug.Log("[라이팅] 프리셋 랩 생성 완료 — Play 를 눌러 숫자키 1~8 로 전환한다. F1 발점 디버그.\n" +
+            Debug.Log("[라이팅] 프리셋 랩 생성 완료 — Play 를 눌러 숫자키 1~9·0 또는 ←/→ 로 전환한다. F1 발점 디버그.\n" +
                       $"씬: {ScenePath}\n프리셋: {PresetDir}");
         }
 
@@ -130,14 +142,18 @@ namespace TunnelCrew.EditorTools
             public readonly float BloomIntensity, BloomThreshold;
             /// <summary>지층 팔레트용 Volume 프로파일 자산 경로. null = 기본(Stratum1).</summary>
             public readonly string VolumePath;
+            /// <summary>지층 팔레트용 대기 프로파일 자산 경로. null = 기본(Stratum1).</summary>
+            public readonly string AtmospherePath;
 
             public Spec(string file, string label, float ambient, float lightScale,
                         LabShadowMode shadow, float blob, float negative, float post, string note,
-                        float bloomIntensity = -1f, float bloomThreshold = -1f, string volumePath = null)
+                        float bloomIntensity = -1f, float bloomThreshold = -1f, string volumePath = null,
+                        string atmospherePath = null)
             {
                 File = file; Label = label; Ambient = ambient; LightScale = lightScale;
                 Shadow = shadow; Blob = blob; Negative = negative; Post = post; Note = note;
-                BloomIntensity = bloomIntensity; BloomThreshold = bloomThreshold; VolumePath = volumePath;
+                BloomIntensity = bloomIntensity; BloomThreshold = bloomThreshold;
+                VolumePath = volumePath; AtmospherePath = atmospherePath;
             }
         }
 
@@ -164,9 +180,18 @@ namespace TunnelCrew.EditorTools
             new Spec("LP9_Bloom", "⑨ 블룸 강조", 0.22f, 1.20f, LabShadowMode.BlobAndNegative, 0.60f, 0.45f, 3f,
                 "⑦ 무드에 URP Bloom 만 세게(1.6 / thr 0.55, 본편 지층1 은 0.60 / 0.70). '빛나는 것이 빛나는가' — 리서치 2순위 지렛대.",
                 bloomIntensity: 1.6f, bloomThreshold: 0.55f),
-            new Spec("LP10_Stratum2Palette", "⑩ 지층2 팔레트", 0.22f, 1.20f, LabShadowMode.BlobAndNegative, 0.60f, 0.45f, 3f,
-                "⑦ 무드 그대로, Volume 만 지층2(Fracture: 대비 8·채도 2·블룸 0.70)로. 광원을 늘리지 않고 팔레트로 '다른 지층'을 만드는 Rain World 식.",
-                volumePath: Stratum2VolumePath),
+            new Spec("LP10_Stratum2Palette", "⑩ 지층2 팔레트", 0.24f, 1.20f, LabShadowMode.BlobAndNegative, 0.60f, 0.45f, 2.2f,
+                "⑦ 무드 그대로, 팔레트만 지층2(Fracture: 대비 8·채도 2 / 안개 .30·비네트 .42·그레인 .026). 광원을 늘리지 않고 '다른 지층'을 만드는 Rain World 식.",
+                volumePath: Stratum2VolumePath, atmospherePath: AtmosphereDir + "/AtmosphereProfile_Stratum2.asset"),
+
+            // ── 지층 팔레트 축 완성 (2026-09-09). Volume 과 대기 프로파일을 <b>함께</b> 갈아끼운다 —
+            // 전에는 ⑩ 이 Volume 만 바꿔서 안개·비네트·그레인은 지층 1 값 그대로였다.
+            new Spec("LP11_Stratum3Palette", "⑪ 지층3 팔레트", 0.26f, 1.20f, LabShadowMode.BlobAndNegative, 0.62f, 0.50f, 1.8f,
+                "중심부(Core: 대비 10·채도 −4 / 안개 .38·비네트 .50·그레인 .034). 위에서 내리누르는 압력 — 시야가 좁고 색이 빠진다. 후처리 배율은 1.8 — 프로파일이 이미 과감하므로 ×3 을 곱하면 그레인이 형태를 덮는다(2026-09-09 캡처로 확인).",
+                volumePath: Stratum3VolumePath, atmospherePath: AtmosphereDir + "/AtmosphereProfile_Stratum3.asset"),
+            new Spec("LP12_AbyssPalette", "⑫ 이상지대 팔레트", 0.24f, 1.25f, LabShadowMode.BlobAndNegative, 0.65f, 0.55f, 1.5f,
+                "이상지대(Abyss: 대비 12·채도 −12 / 안개 .46·비네트 .58·그레인 .044). 색이 거의 빠지고 그레인이 화면 정체성이 된다 — Katana ZERO·SIGNALIS 대역.",
+                volumePath: AbyssVolumePath, atmospherePath: AtmosphereDir + "/AtmosphereProfile_Abyss.asset"),
         };
 
         /// <summary>
@@ -212,7 +237,45 @@ namespace TunnelCrew.EditorTools
                             Debug.LogWarning($"[라이팅] Volume 프로파일이 없다: {spec.VolumePath} — " +
                                              "'Tunnel Crew/M2 · 지층별 Volume 프로파일 생성' 을 먼저 실행할 것.");
                     }
+                    if (!string.IsNullOrEmpty(spec.AtmospherePath))
+                    {
+                        preset.atmosphereProfile =
+                            AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(spec.AtmospherePath);
+                        if (preset.atmosphereProfile == null)
+                            Debug.LogWarning($"[라이팅] 대기 프로파일이 없다: {spec.AtmospherePath} — " +
+                                             "'Tunnel Crew/비주얼 · 지층별 대기 프로파일 생성' 을 먼저 실행할 것.");
+                    }
                     EditorUtility.SetDirty(preset);
+                }
+
+                // 값은 덮지 않지만 비어 있는 참조는 채운다.
+                //
+                // 2026-09-09: 프리셋 10 에 대기 프로파일 축을 새로 추가했는데 자산이 이미 있어서
+                // `if (created)` 블록을 타지 않았다. 결과가 "Volume 은 지층2, 안개는 지층1" 이라
+                // 팔레트 전환이 반쪽만 됐다(캡처로 확인).
+                //
+                // 수치는 사용자가 인스펙터에서 조정한 결과이므로 계속 보존한다. 반면 null 참조는
+                // 조정 결과가 아니라 "그 축이 아직 없던 시절의 흔적" 이라 채우는 것이 맞다.
+                if (!string.IsNullOrEmpty(spec.AtmospherePath) && preset.atmosphereProfile == null)
+                {
+                    preset.atmosphereProfile =
+                        AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(spec.AtmospherePath);
+                    if (preset.atmosphereProfile != null)
+                    {
+                        EditorUtility.SetDirty(preset);
+                        Debug.Log($"[라이팅] {spec.File}: 비어 있던 대기 프로파일을 채웠다 - " +
+                                  Path.GetFileNameWithoutExtension(spec.AtmospherePath));
+                    }
+                }
+                if (!string.IsNullOrEmpty(spec.VolumePath) && preset.volumeProfile == null)
+                {
+                    preset.volumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(spec.VolumePath);
+                    if (preset.volumeProfile != null)
+                    {
+                        EditorUtility.SetDirty(preset);
+                        Debug.Log($"[라이팅] {spec.File}: 비어 있던 Volume 프로파일을 채웠다 - " +
+                                  Path.GetFileNameWithoutExtension(spec.VolumePath));
+                    }
                 }
 
                 paths.Add(path);
@@ -492,15 +555,19 @@ namespace TunnelCrew.EditorTools
             worklamp.falloffIntensity = 0.48f;
             AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.31f);
 
-            // 광물광은 애디티브(블렌드 스타일 1) — Katana ZERO 의 글로우 부품. 분류상 비그림자.
+            // 광물광은 <b>마스크 애디티브(슬롯 3 = B 습윤·결정)</b> — 마스크 채널 규약 확정(2026-09-09).
+            // 라이트 하나가 화면 전체의 광맥·수정만 골라 발광시킨다. Katana ZERO 의 글로우 부품이고
+            // 분류상 비그림자다. 전에는 슬롯 1(마스크 없는 애디티브)이라 닿는 모든 픽셀이 밝아졌다.
             var mineral = AddLight(lightRoot, "MineralGlow (LightClass.MineralGlow)",
                 Light2D.LightType.Point, W(-4.15f, 1.05f, -0.1f),
                 new Color(0.72f, 0.42f, 1f, 1f), 1.6f);
             mineral.pointLightInnerRadius = 0.1f;
             mineral.pointLightOuterRadius = 1.7f;
             mineral.falloffIntensity = 0.6f;
-            mineral.blendStyleIndex = 1;
-            AddSocket(mineral, LightClass.MineralGlow, 1.6f, 1.7f, 0.67f);
+            mineral.blendStyleIndex = MaskAdditiveSlot;
+            // 마스크가 골라내므로 반경을 넓혀도 회색 암석은 밝아지지 않는다 — 그게 이 채널의 값이다.
+            mineral.pointLightOuterRadius = 3.2f;
+            AddSocket(mineral, LightClass.MineralGlow, 1.6f, 3.2f, 0.67f);
 
             // 표시등 — 반지름 1.5칸·세기 0.4 이하라 LightClassRules 의 표시등 조건에 든다. 예산 제외.
             var indicator = AddLight(lightRoot, "Indicator (LightClass.Indicator)",
@@ -513,10 +580,16 @@ namespace TunnelCrew.EditorTools
 
             // ── 네거티브 라이팅 — 아직 정식 시스템이 없는 격차(§B-2). 임시 블롭이 맡는다.
             // 접촉 그림자 블롭은 1단계에서 ContactShadowRenderer 로 대체되어 여기 없다.
-            var negRoot = NewObject(scene, "Negative Lighting (임시)").transform;
-            AddNegative(negRoot, "Negative TopLeft", W(-5.6f, 3.0f), new Vector2(6.0f, 3.2f));
-            AddNegative(negRoot, "Negative TopRight", W(6.0f, 2.9f), new Vector2(5.4f, 3.4f));
-            AddNegative(negRoot, "Negative BottomLeft", W(-6.2f, -3.0f), new Vector2(5.2f, 2.8f));
+            var negRoot = NewObject(scene, "Negative Lighting (freeform)").transform;
+            // 사각형 암부 — 전과 같은 자리, 이제 다각형이다.
+            AddNegativeVolume(negRoot, "Negative TopLeft", W(-5.6f, 3.0f),
+                NegativeLightVolume.Rect(new Vector2(6.0f, 3.2f)));
+            AddNegativeVolume(negRoot, "Negative TopRight", W(6.0f, 2.9f),
+                NegativeLightVolume.Rect(new Vector2(5.4f, 3.4f)));
+            // 갱도 입구 — 위로 좁아지는 사다리꼴. 타원 블롭으로는 만들 수 없던 형태이고,
+            // 이 컴포넌트가 왜 있는지를 화면에서 보여 주는 자리다(§B-2).
+            AddNegativeVolume(negRoot, "Negative Mouth BottomLeft", W(-6.2f, -3.0f),
+                NegativeLightVolume.Mouth(5.2f, 2.8f, 0.42f));
 
             // ── 대기 원근. 카메라 자식이어야 Bind 가 카메라를 잡는다.
             var atmoGo = new GameObject("Atmosphere");
@@ -538,6 +611,31 @@ namespace TunnelCrew.EditorTools
             var presets = ReloadPresets(presetPaths);
             var atmoForSwitcher = AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(AtmoProfilePath);
             var worldForSwitcher = AssetDatabase.LoadAssetAtPath<WorldVisualProfile>(WorldProfilePath);
+
+            // ── 무드 축(깊이·위기). 지층 팔레트를 축 하나로 구동하고 인스펙터 스크럽을 준다.
+            // 프리셋(⑩⑪⑫)이 팔레트를 손으로 고르는 길이고, 이쪽은 깊이로 자동 선택하는 길이다.
+            // 둘 다 남긴다 — 랩에서는 손으로 비교하고, 본선에서는 깊이가 정한다.
+            var moodGo = NewObject(scene, "Stratum Mood");
+            var mood = moodGo.AddComponent<StratumMoodDirector>();
+            mood.atmosphereByStratum = new[]
+            {
+                AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(AtmosphereDir + "/AtmosphereProfile_Stratum1.asset"),
+                AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(AtmosphereDir + "/AtmosphereProfile_Stratum2.asset"),
+                AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(AtmosphereDir + "/AtmosphereProfile_Stratum3.asset"),
+                AssetDatabase.LoadAssetAtPath<AtmosphereProfile>(AtmosphereDir + "/AtmosphereProfile_Abyss.asset"),
+            };
+            mood.volumeByStratum = new[]
+            {
+                AssetDatabase.LoadAssetAtPath<VolumeProfile>(DefaultVolumePath),
+                AssetDatabase.LoadAssetAtPath<VolumeProfile>(Stratum2VolumePath),
+                AssetDatabase.LoadAssetAtPath<VolumeProfile>(Stratum3VolumePath),
+                AssetDatabase.LoadAssetAtPath<VolumeProfile>(AbyssVolumePath),
+            };
+            for (int i = 0; i < mood.atmosphereByStratum.Length; i++)
+                if (mood.atmosphereByStratum[i] == null)
+                    Debug.LogWarning($"[라이팅] 지층 {i + 1} 대기 프로파일이 없다 — " +
+                                     "'Tunnel Crew/비주얼 · 지층별 대기 프로파일 생성' 을 먼저 실행할 것.");
+            EditorUtility.SetDirty(mood);
 
             var labGo = NewObject(scene, "Lighting Lab");
             var switcher = labGo.AddComponent<LightingPresetSwitcher>();
@@ -587,7 +685,40 @@ namespace TunnelCrew.EditorTools
             var lit = AssetDatabase.LoadAssetAtPath<Material>(LitMaterialPath);
             if (lit == null) throw new InvalidOperationException("URP Sprite-Lit-Default material was not found");
             sr.sharedMaterial = lit;
+            AttachMaskIfAny(sr, sprite);
             return sr;
+        }
+
+        /// <summary>
+        /// 스프라이트에 짝이 되는 `_mask` 텍스처가 있으면 <b>전용 머티리얼</b>에 붙인다.
+        ///
+        /// 공용 `Sprite-Lit-Default` 를 그대로 쓰면 마스크가 모든 스프라이트에 함께 걸린다.
+        /// 그래서 마스크가 있는 것만 인스턴스를 만들어 씬에 함께 저장한다(랩 전용 자산).
+        ///
+        /// 마스크가 없으면 아무것도 하지 않는다 — `_MaskTex` 는 흰색으로 떨어지고, 마스크 라이트가
+        /// 닿는 모든 픽셀이 밝아진다(= 마스크 없는 애디티브와 같다).
+        /// </summary>
+        static void AttachMaskIfAny(SpriteRenderer sr, Sprite sprite)
+        {
+            if (sprite == null || sprite.texture == null) return;
+            string albedo = AssetDatabase.GetAssetPath(sprite.texture);
+            if (string.IsNullOrEmpty(albedo) || !albedo.EndsWith("_albedo.png", StringComparison.Ordinal)) return;
+
+            string maskPath = albedo.Replace("_albedo.png", "_mask.png");
+            var mask = AssetDatabase.LoadAssetAtPath<Texture2D>(maskPath);
+            if (mask == null) return;
+
+            string matPath = $"{MaterialDir}/LabLit_{Path.GetFileNameWithoutExtension(albedo)}.mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (mat == null)
+            {
+                mat = new Material(sr.sharedMaterial);
+                Directory.CreateDirectory(AbsolutePath(MaterialDir));
+                AssetDatabase.CreateAsset(mat, matPath);
+            }
+            mat.SetTexture("_MaskTex", mask);
+            EditorUtility.SetDirty(mat);
+            sr.sharedMaterial = mat;
         }
 
         /// <summary>
@@ -657,6 +788,32 @@ namespace TunnelCrew.EditorTools
             so.FindProperty("_rangeCells").floatValue = rangeCells;
             so.FindProperty("_phase").floatValue = phase;
             so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>
+        /// 정식 네거티브 라이팅(freeform 다각형). 임시 <see cref="LabShadowBlob"/> 을 대체한다 —
+        /// 이주 계획 5단계의 "Negative → 정식 Freeform + Multiply + AlphaBlend 승격".
+        /// </summary>
+        static void AddNegativeVolume(Transform parent, string name, Vector3 position, Vector2[] path)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.position = position;
+
+            var light = go.AddComponent<Light2D>();
+            var vol = go.AddComponent<NegativeLightVolume>();
+            var so = new SerializedObject(vol);
+            var arr = so.FindProperty("_path");
+            arr.arraySize = path.Length;
+            for (int i = 0; i < path.Length; i++)
+                arr.GetArrayElementAtIndex(i).vector2Value = path[i];
+            so.FindProperty("_strength").floatValue = 0.45f;
+            so.FindProperty("_falloff").floatValue = 0.9f;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            // 씬에 직렬화된 상태도 런타임과 같게 맞춘다 — 에디터에서 열었을 때도 보인다.
+            NegativeLightVolume.Configure(light, path, 0.9f);
+            light.intensity = 0.45f;
         }
 
         static void AddNegative(Transform parent, string name, Vector3 position, Vector2 size)

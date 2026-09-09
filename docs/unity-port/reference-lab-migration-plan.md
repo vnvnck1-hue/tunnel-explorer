@@ -280,4 +280,19 @@ Scout · MineralGlow · Indicator) · `AtmosphereDirector` · `LabShadowBlob` �
 | 2 | **완료** — §4-2 | 2026-09-09 |
 | 3 | **완료(아트 대기 상태로)** — 요청서 + 키트·머티리얼 셋 authoring, §4-3 | 2026-09-09 |
 | 4 | **선행 배선 완료** — 렌더러·윤곽 그림자·파괴 검증됨, 벽 슬롯만 아트 대기 (§4-4) | 2026-09-09 |
-| 5 | 아트 대기 | |
+| 5 | **부분 완료** - 마스크 채널 확정 - 광맥 발광(Additive with Mask) - 네거티브 freeform 승격 완료. 크루 림 라이트는 캐릭터 마스크 대기 | 2026-09-09 |
+
+### 5단계 진행 기록 (2026-09-09)
+
+구현 기록 [visual-overhaul-implementation.md](visual-overhaul-implementation.md) §23 에 상세.
+
+| 항목 | 상태 |
+|---|---|
+| 마스크 blend style 채널 확정 (Multiply->G - Additive->B) | **완료** - [mask-channel-convention.md](mask-channel-convention.md) + 테스트 6종 |
+| 마스크 채널 규약 문서화 - 아트 계약 반영 | **완료** |
+| 광맥 발광 `Additive with Mask` | **완료** - 임시 마스크(`BakePlaceholderMasks`)로 실증 |
+| 네거티브 -> 정식 `Freeform` + `Multiply` + `AlphaBlend` | **완료** - `NegativeLightVolume`, 리플렉션 없음 |
+| 크루 실루엣 림 라이트 (`Multiply with Mask` G) | **아트 대기** - 캐릭터 전용 마스크 없음 |
+| 지층별 고정 광원 방향을 아트 계약에 | **완료** - `production-spec.md` §5-1 |
+| 지층별 제한 팔레트 (대기 프로파일 4종) | **완료** - `BuildAtmosphereProfiles`, 프리셋 ⑩⑪⑫ |
+| 무드 축(깊이/위기) + 에디터 스크럽 | **완료** - `StratumMoodDirector` |
