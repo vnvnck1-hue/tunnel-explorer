@@ -1,0 +1,78 @@
+{
+  "reference": "assets\\characters\\driller-8dir-transparent.png",
+  "canvas": [
+    2048,
+    2048
+  ],
+  "directions": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "pivot_rule": "approved reference slot bottom-center, fixed across all frames",
+  "frames": [
+    "assets\\characters\\driller-8dir-walk-4f\\frames\\frame_000.png",
+    "assets\\characters\\driller-8dir-walk-4f\\frames\\frame_001.png",
+    "assets\\characters\\driller-8dir-walk-4f\\frames\\frame_002.png",
+    "assets\\characters\\driller-8dir-walk-4f\\frames\\frame_003.png"
+  ],
+  "gif": "assets\\characters\\driller-8dir-walk-4f.gif",
+  "frame_duration_ms": 100,
+  "loop_duration_ms": 400,
+  "contact_sheet": "assets\\characters\\driller-8dir-walk-4f\\driller-8dir-walk-4f-contact.png",
+  "reference_boxes": {
+    "N": [
+      922,
+      334,
+      1152,
+      615
+    ],
+    "NE": [
+      1408,
+      455,
+      1700,
+      755
+    ],
+    "E": [
+      1548,
+      904,
+      1855,
+      1188
+    ],
+    "SE": [
+      1361,
+      1318,
+      1637,
+      1600
+    ],
+    "S": [
+      917,
+      1450,
+      1147,
+      1742
+    ],
+    "SW": [
+      424,
+      1318,
+      702,
+      1600
+    ],
+    "W": [
+      214,
+      902,
+      521,
+      1188
+    ],
+    "NW": [
+      376,
+      456,
+      671,
+      756
+    ]
+  }
+}

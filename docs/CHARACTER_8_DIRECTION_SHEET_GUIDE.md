@@ -1,10 +1,13 @@
 # 8방향 캐릭터 시트 제작 가이드
 
-> 기준 결과물:
-> [드릴러](../assets/characters/driller-8dir-transparent.png) ·
+> 크기 기준 결과물:
 > [스카웃](../assets/characters/scout-8dir-transparent.png) ·
 > [엔지니어](../assets/characters/engineer-8dir-transparent.png) ·
 > [거너](../assets/characters/gunner-8dir-transparent.png)
+>
+> **주의:** `driller-8dir-transparent.png` V2는 2026-09-09 크기 검수에서 기존 3캐릭터 대비
+> 약 59% 크기로 판정되어 크기 기준에서 제외했다. 교정·재승인 전에는 이 파일의 크기를 후속
+> 캐릭터나 애니메이션의 기준으로 사용하지 않는다.
 >
 > 스타일 기준 레퍼런스: 사용자가 제공한 12인 캐릭터 이미지. 큰 둥근 머리, 약 2등신, 짧은 팔다리, 짙은 손그림 선, 제한된 평면 색상과 인쇄 질감을 기준으로 한다.
 >
@@ -61,7 +64,33 @@
 
 생성 도구가 해상도를 임의 변경하더라도 정사각형 구도와 정규화 좌표를 우선한다. 리사이즈가 필요하면 비율을 유지하고 캐릭터를 자르지 않는다.
 
-### 3.2 방향별 중심 좌표
+`2048×2048`은 작업 캔버스 권장값일 뿐 캐릭터를 작게 만드는 근거가 아니다. 기존 캐릭터와
+비교할 때는 모든 시트를 종횡비를 유지한 채 동일한 `2048×2048` 정사각 비교 좌표에 맞춘 뒤
+방향별 실루엣 크기를 측정한다. 캔버스 픽셀 수만 같게 맞추고 캐릭터 점유율을 무시하면 실패다.
+
+### 3.2 캐릭터 크기 캘리브레이션 — 필수
+
+새 캐릭터를 생성하거나 교체하기 전에 스카웃·엔지니어·거너 기존 시트를 동일한 정사각 비교
+좌표에 `contain` 방식으로 환산한다. 투명 실루엣의 방향별 바운딩 박스를 측정하며, 캐릭터
+크기는 캔버스가 아니라 이 바운딩 박스로 판정한다.
+
+현재 기준값은 다음과 같다.
+
+| 기준 캐릭터 | 원본 캔버스 | 2048 정사각 환산 중간 높이 | 환산 높이 점유율 |
+|---|---:|---:|---:|
+| 스카웃 | `1339×1174` | 약 `485px` | `23.7%` |
+| 엔지니어 | `1300×1209` | 약 `506px` | `24.7%` |
+| 거너 | `1312×1199` | 약 `453px` | `22.1%` |
+| 허용 목표 | — | `450~510px` | `22~25%` |
+
+- 신규 시트 방향별 중간 높이는 우선 `450~510px` 범위에 들어와야 한다.
+- 기존 3캐릭터 중간값 대비 `±10%`를 넘으면 승인 후보로 올리지 않는다.
+- 역할 장비 때문에 폭은 달라질 수 있지만 몸통·머리·발을 포함한 높이는 동일 체급으로 맞춘다.
+- 안전 여백 확보를 이유로 캐릭터만 일괄 축소하지 않는다. 필요하면 원형 반지름이나 방향별
+  슬롯 간격을 조절하되 캐릭터 체급을 먼저 보존한다.
+- 임의의 후처리 배율(예: `figure_scale=0.7`)을 검증 없이 적용하지 않는다.
+
+### 3.3 방향별 중심 좌표
 
 아래 좌표는 전체 캔버스를 `0.0~1.0`으로 본 정규화 좌표다. 각 캐릭터의 **발 중앙 또는 지면 피벗**을 기준으로 한다.
 
@@ -78,16 +107,16 @@
 
 좌표는 캐릭터·무기 크기에 따라 `±0.03` 범위에서만 조정한다. 원 전체를 찌그러뜨리거나 한 방향만 중심에 붙이지 않는다.
 
-### 3.3 중앙 여백
+### 3.4 중앙 여백
 
 - 중앙점 기준 반경 `0.20~0.24`는 비운다.
 - 캐릭터, 무기, 머리카락, 장비가 중앙 여백을 침범하지 않는다.
 - 방향 안내 원, 십자선, 숫자, 방향 문자는 최종 결과에 넣지 않는다.
 - 시트만 보아도 각 캐릭터가 중심에서 바깥쪽으로 향하고 있어야 한다.
 
-### 3.4 안전 여백과 겹침
+### 3.5 안전 여백과 겹침
 
-- 캔버스 바깥쪽 안전 여백: 최소 `4%`
+- 캔버스 바깥쪽 안전 여백: 최소 `2%` (`2048px` 기준 약 `41px`)
 - 인접 캐릭터 사이 투명 간격: 최소 캐릭터 폭의 `12%`
 - 무기 끝, 머리카락, 배낭, 부츠를 자르지 않는다.
 - 어떤 두 방향의 실루엣도 겹치지 않는다.
@@ -242,6 +271,40 @@
 - 하프톤 망점, 촘촘한 스티플, 사실적인 재질 노이즈 금지
 - 모든 방향에 비슷한 질감 밀도를 사용
 
+### 7.7 실제 픽셀 아트 출력 게이트 — 필수
+
+생성 모델의 결과가 픽셀 아트처럼 보여도 안티앨리어싱, 연속 그라데이션, 임의 크기 픽셀과
+수백 개의 유사색이 남으면 최종 픽셀 아트로 인정하지 않는다.
+
+- 최종 캔버스: `2048×2048 RGBA`
+- 논리 픽셀 캔버스와 팔레트는 승인된 아트보드의 밀도 프로필을 따른다.
+  - 표준 컴팩트 캐릭터: `512×512`, 정확히 `4×`, 투명색 제외 최대 `64색`
+  - 고밀도 아트보드 캐릭터: `1024×1024`, 정확히 `2×`, 투명색 제외 최대 `96색`
+- 확대는 `nearest-neighbor`만 사용한다.
+- 모든 출력 픽셀은 선택한 확대 배율과 동일한 RGBA 블록에 정렬한다.
+- 알파: `0` 또는 `255`만 허용
+- 디더링: 금지
+- 선과 색면에 안티앨리어싱·블러·반투명 프린지·연속 그라데이션 금지
+- 생성 직후 바로 최종 파일로 쓰지 않고 `tools/art/pixelize-8dir-turnaround.py`를 통과시킨다.
+
+이 게이트는 그래픽 스타일을 새로 해석하기 위한 필터가 아니라, 승인된 형태·크기·방향을
+고정된 픽셀 격자와 제한 팔레트로 확정하는 결정적 후처리다.
+
+### 7.8 승인 단일 원화 직결 모드 — 사용자 지정 시 우선
+
+사용자가 승인한 고밀도 단일 캐릭터 원화를 비율·디자인·묘사 밀도 그대로 8방향으로 회전하라고
+지정한 경우에는 이 모드를 사용한다. 이 지시는 §7.7의 표준 후처리보다 우선한다.
+
+- 승인된 단일 원화를 캐릭터 디자인·체형·장비·팔레트·픽셀 밀도의 절대 기준으로 사용한다.
+- 기존 8방향 시트는 방향 순서·원형 배치·빈 중앙·고정 카메라만 참고한다.
+- 생성 후 `normalize-8dir-turnaround.py`, `pixelize-8dir-turnaround.py`, 팔레트 양자화,
+  임의 리사이즈와 방향별 크롭을 실행하지 않는다.
+- 캔버스 안에 맞추기 위해 머리–몸 비율, 팔다리 길이, 장비 크기 또는 묘사 밀도를 줄이지 않는다.
+- 배경이 실제 체크무늬 RGB로 생성된 경우에만 캐릭터와 배치를 잠근 배경 추출을 허용한다.
+- 최종 검수는 원본 캔버스 그대로 방향 8개, 방향 순서, 중앙 무침범, 무겹침, 무잘림,
+  RGBA와 투명 외곽을 확인한다.
+- 현재 거너 이후의 승인 캐릭터 8방향 제작은 사용자가 별도로 지시하지 않는 한 이 모드를 따른다.
+
 ### 7.5 얼굴
 
 - 눈: 작은 점 또는 짧은 타원
@@ -249,6 +312,11 @@
 - 입: 한 줄 또는 작은 곡선
 - 표정은 한눈에 읽히되 과장된 치아·주름·콧구멍을 피한다.
 - 같은 캐릭터의 눈 간격, 얼굴 폭, 머리카락 윤곽이 8방향에서 일관되어야 한다.
+- 픽셀 팔레트 축소 후에도 눈의 밝은 영역, 작은 동공, 피부색 간격이 서로 분리되어야 한다.
+- 눈썹과 동공이 합쳐진 검은 띠, 검은 안대, 큰 검은 사각형처럼 보이면 실패다.
+- `S`, `SE`, `SW`, `E`, `W` 얼굴을 논리 해상도 기준 4배 이상 확대해 각각 검수한다.
+- `S` 정면은 두 눈 사이에 최소 1 논리 픽셀 이상의 피부색 간격을 둔다.
+- 눈썹을 사용하는 경우 눈의 밝은 영역과 최소 1 논리 픽셀 이상 분리한다.
 
 ### 7.6 디테일 예산
 
@@ -286,14 +354,49 @@
 
 ## 10. 기본 생성 워크플로
 
-1. 캐릭터 컨셉 이미지와 스타일 레퍼런스를 입력한다.
-2. 컨셉에서 유지할 정체성 요소를 3~6개로 요약한다.
-3. 아래 마스터 프롬프트로 8방향 시트를 생성한다.
-4. 방향 수, 순서, 뒷모습, 카메라, 비율을 검수한다.
-5. 체크무늬가 실제 픽셀이면 배경 추출 프롬프트를 별도로 실행한다.
-6. 알파 채널과 모서리 픽셀을 검사한다.
-7. 프로젝트의 기존 대상 파일을 직접 갱신한다.
-8. 이 시트를 방향별 애니메이션의 정체성 참조로 사용한다.
+1. 기존 스카웃·엔지니어·거너 시트의 방향별 크기를 동일한 정사각 비교 좌표에서 측정한다.
+2. 캐릭터 컨셉 이미지와 스타일 레퍼런스를 입력한다.
+3. 컨셉에서 유지할 정체성 요소를 3~6개로 요약한다.
+4. 아래 마스터 프롬프트로 8방향 시트를 생성한다.
+5. 방향 수, 순서, 뒷모습, 카메라, 비율을 검수한다.
+6. 체크무늬가 실제 픽셀이면 배경 추출 프롬프트를 별도로 실행한다.
+7. 알파 채널과 모서리 픽셀을 검사한다.
+8. 방향별 중간 높이를 측정하고 `450~510px / 2048` 범위인지 검사한다.
+9. 승인 아트보드의 밀도 프로필을 고정한다. 표준은 512 논리 픽셀·4배 NEAREST·64색,
+   고밀도는 1024 논리 픽셀·2배 NEAREST·96색이며 둘 다 이진 알파를 적용한다.
+10. 부분 재작화 결과는 기존 승인본과 방향별 지면 앵커를 비교한다. 위치가 변했으면
+   `align-8dir-to-reference.py`로 4px 격자 단위 정렬하고 중앙 여백을 다시 검사한다.
+11. 픽셀 격자·팔레트·알파·크기·방향·카메라·얼굴·중앙 여백 검사를 모두 통과한 경우에만 기존 대상 파일을 갱신한다.
+12. 승인된 시트는 방향별 정체성 참조로만 사용한다. 생성형 애니메이션 입력으로 사용하지 않는다.
+
+정규화·크기 게이트 실행 예:
+
+```powershell
+python tools/art/normalize-8dir-turnaround.py `
+  INPUT_RGBA.png `
+  assets/characters/CHARACTER_ID-8dir-transparent.png
+```
+
+이 명령은 기본적으로 `2048×2048`, 픽셀 격자 스냅 전 방향별 중간 높이 `456px`, 외곽 여백
+`2%`, 입력 방향
+8개 및 출력 실루엣 무겹침을 검사한다. 하나라도 실패하면 오류로 중단되며 대상 파일을 승인하지 않는다.
+
+정규화 통과 파일에는 다음 픽셀 아트 확정 단계를 실행한다.
+
+```powershell
+python tools/art/pixelize-8dir-turnaround.py `
+  NORMALIZED_RGBA.png `
+  assets/characters/CHARACTER_ID-8dir-transparent.png
+```
+
+고밀도 아트보드 캐릭터는 다음 옵션을 명시한다.
+
+```powershell
+python tools/art/pixelize-8dir-turnaround.py `
+  NORMALIZED_RGBA.png `
+  assets/characters/CHARACTER_ID-8dir-transparent.png `
+  --logical-size 1024 --colors 96
+```
 
 한 번에 스타일·배경·애니메이션까지 모두 해결하려 하지 않는다. 먼저 턴어라운드의 정체성과 카메라를 고정한다.
 
@@ -306,17 +409,20 @@ Use case: style-transfer
 Asset type: transparent 8-direction [ROLE] character sheet
 
 Image 1 is the character concept and identity reference.
-Image 2 is the sole reference for proportions, line style, shape language, colors, and rendering simplicity.
+Image 2 is the sole reference for proportions, line style, shape language, colors, and rendering density.
 
 Create exactly eight full-body views of the same [ROLE] character, evenly arranged around an empty center. Every character faces directly outward from the center.
 
 Preserve these identity elements from Image 1: [3 TO 6 ICONIC FEATURES].
 
+Match Image 2 closely. Do not apply a generic chibi ratio. Preserve its exact head-to-body ratio,
+torso length, waist, limb length, hand and foot scale, silhouette, and equipment density.
+
+Character-specific proportion override: [WRITE THE APPROVED ARTBOARD RATIO AND BODY LANDMARKS HERE].
+For the current Driller: rugged adult dwarf, about 2.8 to 3 heads tall; a smaller helmeted head;
+clearly readable torso, waist, thighs, and shins; sturdy hands and boots; never a baby-like chibi body.
+
 Match Image 2 closely:
-- extremely compact chibi proportions, about 2 heads tall
-- one large rounded head, tiny torso, very short arms and legs
-- small simple hands and feet
-- rounded toy-like silhouette and simplified equipment
 - thick dark-brown hand-drawn outlines with organic irregular edges
 - flat muted colors with only one simple shadow tone
 - subtle dry-print grain and sparse speckles
@@ -352,7 +458,7 @@ Image 2 is the sole style and proportion reference.
 
 Redraw only the eight characters from Image 1 in the proportions and graphic style of Image 2. Preserve the character's role, colors, costume, weapon, and largest iconic equipment shapes.
 
-Match Image 2: about 2 heads tall, large rounded head, tiny torso, very short limbs, small hands and feet, thick dark-brown organic outlines, flat muted colors, one shadow tone, subtle dry-print texture, dot-like eyes, minimal facial features, and strongly simplified equipment.
+Match Image 2's exact approved anatomy and density; never force a generic 2-head chibi body. Preserve its head-to-body ratio, torso, waist, thighs, shins, hands, boots, thick dark-brown organic outlines, flat muted colors, one shadow tone, subtle dry-print texture, readable small eyes, minimal facial features, and equipment detail level. For the current Driller, use a rugged adult dwarf at about 2.8 to 3 heads tall with a smaller head and clearly readable torso and legs.
 
 Strict invariants: preserve Image 1's canvas, exact eight positions, radial spacing, outward-facing directions, character scale, ground pivots, empty center, and fixed orthographic top-down three-quarter camera. Rotate only the character. Do not move, zoom, tilt, crop, overlap, add, remove, or duplicate a direction.
 
@@ -374,29 +480,20 @@ Preserve every character exactly: same identity, compact proportions, graphic st
 Output a clean 32-bit RGBA PNG with alpha exactly zero everywhere outside the eight silhouettes. Preserve intentional light colors inside the characters. No halos, checkerboard, white or black background, guide, center dot, floor, shadow, text, or watermark.
 ```
 
-## 14. 애니메이션 참조 규칙
+## 14. 생성형 애니메이션·GIF 금지 규칙
 
-8방향 턴어라운드 시트를 이미지-투-비디오 또는 애니메이션 생성의 참조로 사용할 때:
+> **2026-09-09 사용자 결정: ChatGPT/Codex 또는 다른 생성형 이미지 모델을 통한 캐릭터
+> 애니메이션 프레임 및 GIF 제작을 금지한다. 향후 이 방식을 제안하거나 실행하지 않는다.**
 
-- 캐릭터별 위치와 지면 피벗을 고정한다.
-- 방향을 바꾸지 않는다.
-- 카메라를 움직이지 않는다.
-- 원형 배치와 중앙 여백을 유지한다.
-- 각 캐릭터가 제자리에서 같은 동작을 수행하게 한다.
-- 루프의 마지막 프레임은 첫 프레임과 연결한다.
-- 무기와 배낭의 관성만 작은 보조 움직임으로 허용한다.
-
-걷기 예시:
-
-```text
-Use the attached 8-direction sheet as the exact first frame and identity reference.
-
-Animate all eight characters walking in place at the same time, each continuing to face its original compass direction. Use short alternating steps, subtle body bounce, and small secondary motion in hair, clothing, weapon, and backpack.
-
-Keep every character locked to the exact position and ground pivot. No travel, turning, sliding, rotation, scaling, camera movement, layout change, or direction change. Preserve the transparent background and empty center.
-
-Create a clean 2-second seamless loop. The final frame must connect perfectly to the first frame.
-```
+- 생성형 모델로 동일 캐릭터의 걷기·대기·공격 등 연속 프레임을 각각 그리지 않는다.
+- 생성형 모델 출력 여러 장을 정렬해 GIF나 애니메이션 시트로 조립하지 않는다.
+- 피벗 후처리로 위치를 고정해도 프레임마다 얼굴·장비·비율·선·색이 달라지는 문제를 해결할
+  수 없으므로 승인 후보로 사용하지 않는다.
+- 8방향 턴어라운드는 정지된 디자인·방향·크기 승인까지만 사용한다.
+- 후속 애니메이션은 하나의 승인된 원화를 기반으로 리깅, 파츠 변형, 수작업 픽셀 수정처럼
+  동일 픽셀 정체성을 보존하는 결정적 제작 방식으로 별도 설계한다.
+- 사용자가 이미 완성된 외부 GIF를 명시적으로 제공해 추출·투명화·시트 변환을 요청한 경우의
+  결정적 픽셀 변환은 예외다. 이 경우에도 새로운 프레임을 생성하거나 다시 그리지 않는다.
 
 ## 15. 검수 체크리스트
 
@@ -407,6 +504,9 @@ Create a clean 2-second seamless loop. The final frame must connect perfectly to
 - [ ] 8명이 같은 반지름과 간격으로 배치됐다.
 - [ ] 캐릭터나 무기가 겹치지 않는다.
 - [ ] 캔버스 밖으로 잘린 부분이 없다.
+- [ ] 중앙 반경 17% 안의 가시 픽셀이 0이다.
+- [ ] 동일한 2048 정사각 비교 좌표에서 방향별 중간 높이가 `450~510px`다.
+- [ ] 기존 스카웃·엔지니어·거너 중간값 대비 크기 편차가 `±10%` 이내다.
 
 ### 15.2 방향
 
@@ -435,6 +535,10 @@ Create a clean 2-second seamless loop. The final frame must connect perfectly to
 - [ ] 명암이 기본색과 그림자색 중심이다.
 - [ ] 인쇄 질감이 약하고 균일하다.
 - [ ] 8방향 모두 같은 인물로 보인다.
+- [ ] 정면·대각·측면 눈에 밝은 영역과 작은 동공이 분리되어 읽힌다.
+- [ ] 눈과 눈썹이 합쳐진 검은 안대 또는 검은 띠가 없다.
+- [ ] 최종 64색 변환 후 얼굴 확대 검수를 다시 통과했다.
+- [ ] 부분 재작화 전후 방향별 지면 앵커가 일치한다.
 
 ### 15.5 파일
 
