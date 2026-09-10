@@ -106,17 +106,24 @@ namespace TunnelCrew.Tests
         [Test]
         public void 벽_발밑_바닥에_접촉AO_가_깔린다()
         {
+            // 접점 AO 는 2026-09-10 부터 <b>네 방향</b>이다(아트 n/e/s/w 4장, 우선순위 N>S>E>W). 그래서 "열린 칸"은
+            // 사방이 전부 바닥이어야 한다 — 격자 가장자리는 범위 밖이 고체(ISolidField 규약)라 AO 가 깔린다.
             var f = ArraySolidField.Parse(
                 "#####",
                 ".....",
+                ".....",
                 ".....");
 
-            var underWall = At(f, 2, 1);   // 북쪽이 벽
-            var open = At(f, 2, 0);        // 북쪽도 바닥
+            var underWall = At(f, 2, 2);   // 북쪽이 벽 → AO, 방향 N(0)
+            var open = At(f, 2, 1);        // 사방이 바닥
+            var bottom = At(f, 2, 0);      // 남쪽이 범위 밖(고체) → AO, 방향 S(2)
 
             Assert.IsTrue((underWall.Surfaces & SurfaceMask.ContactAo) != 0,
                 "벽이 서 있는 발밑에는 접촉 AO 가 필요하다");
-            Assert.IsTrue((open.Surfaces & SurfaceMask.ContactAo) == 0);
+            Assert.AreEqual(0, underWall.AoDir, "북쪽 접점은 방향 0");
+            Assert.IsTrue((open.Surfaces & SurfaceMask.ContactAo) == 0, "사방이 바닥이면 AO 없음");
+            Assert.IsTrue((bottom.Surfaces & SurfaceMask.ContactAo) != 0, "남쪽 접점도 AO 를 받는다(4방향)");
+            Assert.AreEqual(2, bottom.AoDir, "남쪽 접점은 방향 2");
         }
 
         // ───────────────────────────── 모서리 (§6.3)
