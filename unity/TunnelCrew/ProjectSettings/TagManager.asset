@@ -38,9 +38,6 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
   - name: WorldVoid
     uniqueID: 529930605
     locked: 0
@@ -58,6 +55,9 @@ TagManager:
     locked: 0
   - name: WallTop
     uniqueID: 1222341804
+    locked: 0
+  - name: Default
+    uniqueID: 0
     locked: 0
   - name: WorldEntity
     uniqueID: 223416044

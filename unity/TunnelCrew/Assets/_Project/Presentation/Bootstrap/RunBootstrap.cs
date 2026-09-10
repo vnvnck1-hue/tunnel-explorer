@@ -50,6 +50,17 @@ namespace TunnelCrew.Presentation
         static readonly Color R2DarkColor = new Color(0.020f, 0.010f, 0.045f, 1f);
         static readonly Color R2MemoryColor = new Color(0.16f, 0.09f, 0.30f, 1f);
         const float R2SolidVisibility = 0.5f;
+        /// <summary>벽 윗면 전역광 = 앰비언트 × 이 값(랩 프리셋 ⑬ wallTopAmbientScale).</summary>
+        const float R2WallTopAmbientScale = 0.25f;
+        Light2D _globalTopLight;
+
+        /// <summary>
+        /// R2 이고 비주얼 소팅 레이어가 프로젝트에 있으면 true — 타일맵·광원·그림자를 레이어로 나눈다(이주 B 6단계).
+        /// 레이어가 없으면(다른 체크아웃) R2 값만 얹는 미리보기로 떨어진다.
+        /// </summary>
+        bool R2Layers => _r2Look && TunnelCrew.Presentation.Visual.VisualLayers.Exists(TunnelCrew.Presentation.Visual.VisualLayers.WallTop);
+        /// <summary><see cref="UseNormalMaps"/> 가 정적이라 레이어 정책을 여기로 전달한다.</summary>
+        static bool s_groundLevelLights;
 
         [Header("디버그")]
         [SerializeField] bool _showHud = true;
@@ -408,6 +419,16 @@ namespace TunnelCrew.Presentation
             var floor = Layer("Floor", 0);
             var walls = Layer("Walls", 10);
             var coreTop = Layer("CoreTop", 20);
+            // 이주 B 6단계(2026-09-10): 타일맵을 비주얼 레이어로. 바닥 → GroundBase, 벽·코어 상단 → WallTop.
+            // 적·드롭·FX·플레이어는 그대로 Default 에 두고, 프로젝트 소팅 레이어 순서에서 <b>Default 를 WallTop 과
+            // WorldEntity 사이로 옮겼다</b>(TagManager) — Default 가 맨 아래면 벽을 올리는 순간 개체가 벽 밑에 깔린다.
+            // 그래서 Default = "개체 대역" 이고, 전역광 2분할·그림자 수신 제한이 본선에서도 성립한다.
+            if (_r2Look && TunnelCrew.Presentation.Visual.VisualLayers.Exists(TunnelCrew.Presentation.Visual.VisualLayers.WallTop))
+            {
+                floor.GetComponent<TilemapRenderer>().sortingLayerName = TunnelCrew.Presentation.Visual.VisualLayers.GroundBase;
+                walls.GetComponent<TilemapRenderer>().sortingLayerName = TunnelCrew.Presentation.Visual.VisualLayers.WallTop;
+                coreTop.GetComponent<TilemapRenderer>().sortingLayerName = TunnelCrew.Presentation.Visual.VisualLayers.WallTop;
+            }
             // 벽 노멀맵 — 벽 타일은 전부 한 아틀라스에서 잘리므로(BuildArtAssets.RunWallAtlas) 머티리얼 하나의 _NormalMap 으로 덮는다.
             // 임포트 세컨더리 텍스처 방식은 URP 17 타일맵·스프라이트 조명에 반영되지 않는 것을 확인했다(2026-09-07). Chunk 모드 유지 = 벽 전체 1배치.
             // 타일맵 청크 메시에는 NORMAL/TANGENT 가 없어 URP 의 Sprite-Lit-Default 노멀 패스가 TBN=0 을 만든다 → 노멀맵 조명을 켜면
@@ -486,6 +507,8 @@ namespace TunnelCrew.Presentation
         {
             var root = new GameObject("Lighting");
             _lightRoot = root.transform;
+            // 이 아래에서 만드는 점광원 전부(손전등·후광·램프·크루·보스·플레어)가 UseNormalMaps 를 지난다 — 레이어 정책을 먼저 정한다.
+            s_groundLevelLights = R2Layers;
 
             // 전역광 — 원본 TE.ambient. 아무것도 없는 곳도 완전 검정은 아니다.
             var globalGo = new GameObject("Global Light 2D");
@@ -494,6 +517,19 @@ namespace TunnelCrew.Presentation
             _globalLight.lightType = Light2D.LightType.Global;
             _globalLight.intensity = _ambientIntensity;
             _globalLight.color = _r2Look ? R2AmbientColor : new Color(0.62f, 0.58f, 0.80f);
+
+            // 전역광 2분할(랩 확정, 6단계 후속 3): 바닥·개체용과 벽 윗면용. 윗면은 빛이 옆(방)에서 오므로 훨씬 어둡다.
+            if (R2Layers)
+            {
+                _globalLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitGroundLevelLayerIds();
+                var topGo = new GameObject("Global Light 2D (wall tops)");
+                topGo.transform.SetParent(root.transform, false);
+                _globalTopLight = topGo.AddComponent<Light2D>();
+                _globalTopLight.lightType = Light2D.LightType.Global;
+                _globalTopLight.intensity = _ambientIntensity * R2WallTopAmbientScale;
+                _globalTopLight.color = R2AmbientColor;
+                _globalTopLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitElevatedLayerIds();
+            }
 
             // 손전등 — 원본 halfAngle 28°, flashRange 468px = 9.36셀. F 로 켜고 끈다.
             var flashGo = new GameObject("Flashlight");
@@ -557,7 +593,9 @@ namespace TunnelCrew.Presentation
             if (_r2Look)
             {
                 _darkness.SetColors(R2DarkColor, R2MemoryColor);
-                _darkness.SetSolidVisibility(R2SolidVisibility);
+                // 레이어가 있으면 벽 윗면 어둡기는 윗면 전역광(×0.25)이 맡는다 — 가시도 흉내는 끈다. 없으면 흉내값.
+                _darkness.SetSolidVisibility(R2Layers ? 1f : R2SolidVisibility);
+                if (R2Layers) _darkness.SetSorting(TunnelCrew.Presentation.Visual.VisualLayers.VisionAndGrade, 0);
             }
         }
 
@@ -746,7 +784,8 @@ namespace TunnelCrew.Presentation
             _fNmDistance?.SetValue(l, TunnelCrew.Presentation.Visual.LightSocketRenderer.NormalMapHeightCells);
             // 오브젝트·전경까지 비춘다 — 대상 레이어가 비면 URP 가 씬 직렬화 값을 쓰고,
             // 그 값에 WorldEntity/FrontStructure 가 빠져 있었다(2026-09-09).
-            TunnelCrew.Presentation.Visual.LightSocketRenderer.ApplyLitLayers(l);
+            // R2 + 레이어: 손전등·램프·크루·보스·플레어는 전부 지면 광원 — 벽 윗면(WallTop)은 비추지 않는다.
+            TunnelCrew.Presentation.Visual.LightSocketRenderer.ApplyLitLayers(l, lightsWallTops: !s_groundLevelLights);
         }
 
         void RebuildLamps()

@@ -27,7 +27,7 @@ namespace TunnelCrew.Presentation
         const int RebuildsPerFrame = 2;
 
         // ───────────────────────────── 리플렉션
-        static FieldInfo _fShapePath, _fShapePathHash, _fCastingSource, _fForceRebuild;
+        static FieldInfo _fShapePath, _fShapePathHash, _fCastingSource, _fForceRebuild, _fApplyLayers;
         static Type _castingSourceType;
         static bool _probed;
 
@@ -51,6 +51,8 @@ namespace TunnelCrew.Presentation
             _fShapePathHash = t.GetField("m_ShapePathHash", F);
             _fCastingSource = t.GetField("m_ShadowCastingSource", F);
             _fForceRebuild = t.GetField("m_ForceShadowMeshRebuild", F);
+            // 그림자가 떨어지는 레이어(공개 API 없음). 이주 B 6단계 — 바닥에만, 개체 대역(Default)엔 안 떨어진다.
+            _fApplyLayers = t.GetField("m_ApplyToSortingLayers", F);
             _castingSourceType = _fCastingSource?.FieldType;
 
             if (_fShapePath == null || _fCastingSource == null)
@@ -61,6 +63,13 @@ namespace TunnelCrew.Presentation
         static void ApplyShape(ShadowCaster2D caster, Vector3[] path)
         {
             _fShapePath.SetValue(caster, path);
+            // 벽·발밑 그림자는 바닥 레이어에만 떨어진다(VisualLayers.ShadowReceivers). 프로젝트에 비주얼 레이어가 없으면
+            // 빈 배열이 나오므로 그대로 두어 URP 기본(전 레이어)을 유지한다.
+            if (_fApplyLayers != null)
+            {
+                var receivers = TunnelCrew.Presentation.Visual.VisualLayers.ShadowReceiverLayerIds();
+                if (receivers.Length > 0) _fApplyLayers.SetValue(caster, receivers);
+            }
             _fShapePathHash?.SetValue(caster, path.GetHashCode() ^ Environment.TickCount);
             // ShadowCastingSources.ShapeEditor == 1
             _fCastingSource.SetValue(caster, Enum.ToObject(_castingSourceType, 1));

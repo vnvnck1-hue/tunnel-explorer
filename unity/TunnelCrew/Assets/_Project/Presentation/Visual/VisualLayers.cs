@@ -158,7 +158,9 @@ namespace TunnelCrew.Presentation.Visual
         /// </summary>
         public static readonly string[] ShadowReceivers =
         {
-            UnlayeredDefault,
+            // Default 는 넣지 않는다. 이주 B 6단계(2026-09-10)에서 프로젝트 소팅 레이어 순서의 Default 를
+            // WallTop 과 WorldEntity 사이로 옮겨 본선의 적·드롭·FX·플레이어가 사는 "개체 대역"이 됐다 —
+            // 그림자가 여기 떨어지면 캐릭터가 벽 그림자에 잠긴다. 바닥은 본선도 GroundBase 로 옮겼다.
             GroundBase,
             GroundDetail,
             GroundDecal,

@@ -147,6 +147,26 @@
 맨 아래라 벽만 다른 레이어로 올리면 적·드롭·FX 가 벽 밑으로 들어간다. 부분 이동이 불가능하므로 **이주 B 6단계(레이어 12종)는
 전부-아니면-전무**다.
 
+#### 본선 B 6단계 — 소팅 레이어 도입 (2026-09-10) ✅
+
+"전부-아니면-전무"라고 적었는데 **더 싼 길이 있었다**: 개체를 전부 옮기는 대신 <b>`Default` 레이어 자체를 옮겼다</b>.
+`ProjectSettings/TagManager.asset` 의 소팅 레이어 순서에서 `Default` 를 `WallTop` 과 `WorldEntity` 사이로 이동 →
+적·드롭·FX·플레이어·크루(전부 `Default`, order 25~60)는 코드 변경 없이 "개체 대역"이 된다. 실측 순서:
+`WorldVoid(-6) … WallTop(-1) Default(0) WorldEntity(1) FrontStructure(2) WorldFX(3) VisionAndGrade(4) …`
+
+| 항목 | 본선 적용 | 실측 |
+|---|---|---|
+| 타일맵 | Floor → **GroundBase** · Walls·CoreTop → **WallTop** (`R2Layers` 조건) | ✓ |
+| 전역광 2분할 | 바닥·개체 0.16 → `LitGroundLevel` / **윗면 0.04**(×0.25) → `LitElevated` | ✓ |
+| 점광원 | `UseNormalMaps` → `ApplyLitLayers(l, lightsWallTops:false)` — 손전등·후광·램프·크루·보스·플레어 전부 지면 광원 | 9개 중 WallTop 비추는 것 **0** |
+| 벽·발밑 그림자 | `WallShadowBuilder.ApplyShape` 가 `m_ApplyToSortingLayers = ShadowReceivers`(GroundBase·GroundDetail·GroundDecal·BackStructure, **Default 제외**) | 캐스터 366개 전부 바닥 전용 |
+| 어둠 오버레이 | `VisionAndGrade:0`. 벽 칸 가시도 흉내(0.5)는 레이어가 있으면 **끔**(윗면 전역광이 맡는다) | ✓ |
+| `VisualLayers.ShadowReceivers` | `Default` 제거 — 이제 Default 는 개체 대역 | 랩·본선 공통 |
+
+레이어가 없는 체크아웃에서는 `R2Layers=false` 로 떨어져 A(미리보기 값만)로 동작한다.
+
+**남은 B**: 7 `WorldRenderer`→`EnvironmentChunkRenderer`(지층 1 키트) · 8 `WorldLit` 채널 재질 · 9 `ShadowGeometryBuilder` 윤곽 캐스터 · 10 램프 소켓 · 12 회귀.
+
 **결론.** 랩은 본선의 복제가 아니라 본선의 <b>다음 버전</b>이다(계획 §0: 본편 이식은 오버홀 완료 후). 그래도 본선에서
 가져와야 할 두 가지가 빠져 있다 — ① **크루 손전등**(코옵에서 화면 빛의 절반) ② **램프의 본선 정의**(넓고 약한 주황)
 와 랩 마젠타 램프의 관계 정리. 그리고 전역광 색 드리프트는 결정 사항이다.
