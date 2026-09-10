@@ -70,6 +70,8 @@ namespace TunnelCrew.Presentation
         Tilemap _bossTint;
         Tile _bossTintTile;
         Transform _envRoot;
+        /// <summary>플레이어의 발 위치 앵커(관심 캐릭터). 전경 cap 페이드·가림 실루엣이 이걸 기준으로 동작한다(§6.6).</summary>
+        TunnelCrew.Presentation.Visual.VisualHeightAnchor _playerAnchor;
         bool _envDropDirty;
         bool UseEnvironmentRenderer => _r2Environment && R2Layers && _envKit != null && _envRules != null;
 
@@ -503,7 +505,38 @@ namespace TunnelCrew.Presentation
             crackGo.transform.SetParent(_envRoot, false);
             _envCrack = crackGo.AddComponent<TunnelCrew.Presentation.Visual.WallCrackOverlay>();
 
+            // 깊이 시스템(§6.5·§6.6) — 랩의 "Depth" 와 같다. 북쪽이 열린 벽의 cap 은 lift 만큼 올라가 그 바닥의 캐릭터를
+            // 덮는 전경 오클루더(FrontStructure)다. 이 셋이 없으면 캐릭터가 cap 뒤로 그냥 사라진다(2026-09-10 캡처).
+            // 관심 캐릭터가 겹치면 그 청크의 cap 이 페이드하고, 가려진 몸은 실루엣으로 보정된다.
+            var depthGo = new GameObject("Depth");
+            depthGo.transform.SetParent(_envRoot, false);
+            depthGo.AddComponent<TunnelCrew.Presentation.Visual.FootpointSorter>().Profile = _envProfile;
+            depthGo.AddComponent<TunnelCrew.Presentation.Visual.ForegroundFadeController>().Profile = _envProfile;
+            depthGo.AddComponent<TunnelCrew.Presentation.Visual.OccludedSilhouetteRenderer>().Profile = _envProfile;
+
             BindEnvironment();
+        }
+
+        /// <summary>
+        /// 플레이어를 관심 캐릭터로 등록한다. 앵커를 플레이어 오브젝트에 직접 붙이면 <c>VisualHeightAnchor.Apply</c> 가
+        /// 트랜스폼을 발 위치로 옮겨 <c>PlayerView.Render</c> 와 매 프레임 서로 덮어쓴다 — 별도 오브젝트에 두고
+        /// 발 위치만 매 프레임 넣는다(UpdateLighting). 실루엣은 플레이어 스프라이트를 body 로 가리킨다.
+        /// </summary>
+        void BuildPlayerInterest()
+        {
+            var sr = _playerView != null ? _playerView.GetComponent<SpriteRenderer>() : null;
+            if (sr == null) return;
+            var go = new GameObject("Player Interest");
+            go.transform.SetParent(_envRoot, false);
+            _playerAnchor = go.AddComponent<TunnelCrew.Presentation.Visual.VisualHeightAnchor>();
+            _playerAnchor.isLocalInterest = true;
+            _playerAnchor.wantsSilhouette = true;
+            _playerAnchor.footprintRadius = 0.45f;
+            _playerAnchor.sortingLayer = TunnelCrew.Presentation.Visual.VisualLayers.UnlayeredDefault;   // 개체 대역. 자식 렌더러가 없어 실제 영향은 없다
+            var sil = go.AddComponent<TunnelCrew.Presentation.Visual.OccludedSilhouette>();
+            sil.body = sr;
+            sil.mode = TunnelCrew.Presentation.Visual.SilhouetteMode.Interest;
+            sil.color = new Color(0.42f, 0.82f, 1f);
         }
 
         void BindEnvironment()
@@ -743,6 +776,13 @@ namespace TunnelCrew.Presentation
 
             _playerHalo.transform.position = pos;
             _flashlight.transform.position = pos;
+
+            // 전경 페이드·실루엣의 관심 캐릭터 발 위치(§6.6). 환경 렌더러 모드에서만 의미가 있다.
+            if (_env != null)
+            {
+                if (_playerAnchor == null) BuildPlayerInterest();
+                if (_playerAnchor != null) _playerAnchor.groundPosition = new Vector2((float)p.Position.X, (float)p.Position.Y);
+            }
             // Light2D 스팟은 위쪽(+Y)이 기준이라 90도를 뺀다
             _flashlight.transform.rotation =
                 Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(p.Aim) * Mathf.Rad2Deg - 90f);

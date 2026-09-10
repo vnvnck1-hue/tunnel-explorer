@@ -185,6 +185,19 @@
 `EnvironmentChunkRenderer.EditorAssign` 의 에디터 가드를 빼고 `Assign` 으로 일반화, `FrontFaceRenderer` · `WallTopRenderer` · `GridRoot` 접근자 추가.
 실측(런 시작 직후): GroundBase 1711 · WallTop 1107 · WallCorner 614 · BackStructure(정면) 379 · 림 cap 379 · GroundDecal(AO) 1062 · 드롭섀도 1486 · FrontStructure 25청크.
 
+#### 7단계 후속 — 캐릭터가 cap 뒤로 사라짐 · 손전등 "점멸" (2026-09-10)
+
+**캐릭터 가림.** 북쪽이 열린 벽의 cap 은 lift 만큼 올라가 그 바닥 위 캐릭터를 덮는 전경 오클루더(FrontStructure, §6.6)다.
+랩은 `Depth`(FootpointSorter·ForegroundFadeController·OccludedSilhouetteRenderer)와 관심 캐릭터 앵커가 있어 겹치면
+cap 이 페이드하고 몸이 실루엣으로 보정되지만, 본선에는 셋 다 없었다 → 그냥 가려졌다.
+→ `BuildEnvironment` 가 `Depth` 를 세우고, `Player Interest`(별도 오브젝트의 `VisualHeightAnchor` isLocalInterest + `OccludedSilhouette` body=플레이어 스프라이트)를
+`UpdateLighting` 에서 발 위치로 밀어 준다. 앵커를 플레이어 오브젝트에 직접 붙이면 `Apply` 가 트랜스폼을 옮겨 `PlayerView.Render` 와 싸운다.
+실측: 오클루더 25 등록 · 실루엣 1 · 플레이어 인접 cap 2개 페이드 중.
+
+**손전등 점멸 — 재현 못 함.** 300프레임 동안 `Flashlight.enabled/intensity/shadow` 불변, 600프레임 화면 중앙 밝기 급락 0,
+벽 3개 채굴(ForceClear) 전후 밝기 변화 ≤0.01, 캐스터 366→368 만. 관찰된 것은 `Feedback` 히트스톱(`timeScale 0.06`)뿐.
+조건(이동 중? 채굴 중? 크루 근처? 램프 근처?)을 받아 다시 본다.
+
 **남은 B**: 9 `WallShadowBuilder`→`ShadowGeometryBuilder` 윤곽 캐스터(지금은 청크 사각 캐스터가 새 렌더러 위에서 그대로 돈다) · 10 램프 소켓 · 12 회귀(채굴·폭발·보스 지형 변경, 성능 예산, EditMode).
 **아트 대기**: 지층 2·3·이상지대 키트 — 지금은 모든 층이 지층 1 키트로 그려진다.
 
