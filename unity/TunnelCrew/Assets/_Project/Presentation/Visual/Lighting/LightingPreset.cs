@@ -103,7 +103,7 @@ namespace TunnelCrew.Presentation.Visual
         public Color losMemoryColor = new Color(0.16f, 0.09f, 0.30f, 1f);
         [Tooltip("미탐색 영역을 얼마나 완전히 가리는가. 1 = 완전 암흑.")]
         [Range(0f, 1f)] public float losMaxDarkness = 1f;
-        [Tooltip("시야 경계의 날카로움(smoothstep 폭). 작을수록 날카롭다. 0 = 오버레이 기본값 유지.")]
-        [Range(0f, 1f)] public float losEdgeSoftness = 0.35f;
+        [Tooltip("시야 smoothstep 상한(원본 0.88). 낮출수록 경계가 날카롭다. 0 = 오버레이 기본값 유지. 경계 폭은 셰이더의 1.35칸 9탭 필터가 만든다.")]
+        [Range(0f, 1f)] public float losEdgeSoftness = 0.88f;
     }
 }

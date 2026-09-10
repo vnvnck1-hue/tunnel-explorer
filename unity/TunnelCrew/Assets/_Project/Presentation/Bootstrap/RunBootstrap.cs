@@ -796,7 +796,8 @@ namespace TunnelCrew.Presentation
         /// </summary>
         void BindDarkness()
         {
-            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam, supersample: _r2Look ? 4 : 1);
+            // 경계 부드러움은 Darkness.shader 의 원본 9탭 필터가 만든다 — 텍스처는 셀 해상도(4× 초해상은 네모 경계·빠른 스왑 피드백으로 폐기).
+            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam, supersample: 1);
             if (_r2Look)
             {
                 _darkness.SetColors(R2DarkColor, R2MemoryColor);

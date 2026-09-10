@@ -27,7 +27,8 @@ namespace TunnelCrew.Presentation
         [SerializeField] Color _darkColor = new Color(0.03f, 0.025f, 0.06f, 1f);
         [SerializeField] Color _memoryColor = new Color(0.10f, 0.09f, 0.16f, 1f);
         [SerializeField, Range(0f, 1f)] float _maxDarkness = 1f;
-        [SerializeField, Range(0.001f, 1f)] float _edgeSoftness = 0.35f;
+        [Tooltip("시야 smoothstep 상한(원본 fogProg 0.88). 낮추면 경계가 날카로워진다. 경계 폭 자체는 셰이더의 1.35칸 9탭 필터가 만든다.")]
+        [SerializeField, Range(0.05f, 1f)] float _edgeSoftness = 0.88f;
 
         [Header("경계 해상도")]
         [Tooltip("셀당 텍셀 수. 1 = 셀 해상도(경계가 한 칸 폭으로 번진다). 4 면 경계가 1/4칸 폭으로 죄어져 " +

@@ -87,22 +87,42 @@ Shader "TunnelCrew/Darkness"
                 if (uv.x < 0 || uv.y < 0 || uv.x > 1 || uv.y > 1)
                     return half4(_DarkColor.rgb, _MaxDarkness);
 
-                half2 los = SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv).rg;
-                half visible = los.r;
-                half memory  = los.g;   // 이미 0~0.29 범위의 "농도" 다
+                // ── 원본 HTML(v7.9.2 fogProg) 의 LOS 합성을 그대로 옮긴다(2026-09-10).
+                // 바이리니어 한 번으로는 셀 경계가 네모로 딱딱 끊기고, 시야가 바뀌는 칸이 통째로 튀어 화면이 정신없다.
+                // 원본은 ① 1.35칸 간격 9탭 필터로 약 1.5칸 폭의 반그림자를 만들고 ② 경계에만 월드 고정 노이즈를 섞어
+                // 완벽한 원·타일 윤곽을 깨고 ③ smoothstep 으로 시야/기억을 정리한 뒤 ④ "알려진 정도"로 어둠 알파를 냈다.
+                // 오프셋은 월드 셀 단위라 텍스처 해상도(supersample)와 무관하다.
+                float2 d = 1.35 / _WorldSize.xy;
+                half2 s = SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv).rg * 0.24;
+                s += (SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv + float2(d.x, 0)).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv - float2(d.x, 0)).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv + float2(0, d.y)).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv - float2(0, d.y)).rg) * 0.12;
+                s += (SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv + d).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv - d).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv + float2(d.x, -d.y)).rg
+                    + SAMPLE_TEXTURE2D(_LosTex, sampler_LosTex, uv + float2(-d.x, d.y)).rg) * 0.07;
+                s = saturate(s);
+                half visible = s.r;
+                half memory  = s.g;   // 0~0.29 범위의 "농도"(LosService.MemoryValue)
 
-                // 밝기는 두 값 중 큰 쪽. 원본은 memory 를 그대로 밝기로 썼으므로
-                // 여기에 smoothstep 을 걸면 안 된다. 걸면 29% 기억이 거의 최대 밝기가 된다.
-                // 부드러운 경계는 셀 해상도 텍스처의 바이리니어 보간이 이미 만든다.
-                // _EdgeSoftness 는 "보이는" 채널의 가장자리만 살짝 다듬는 데 쓴다.
-                visible = smoothstep(0.0, _EdgeSoftness, visible);
-                half light = max(visible, memory);
+                // 경계에만 약한 월드 고정 노이즈 — 카메라가 움직여도 무늬가 크롤링하지 않는다.
+                float2 np = floor(simXY * 0.72);
+                half noise = frac(sin(dot(np, float2(127.1, 311.7))) * 43758.5453);
+                half edge = 4.0 * visible * (1.0 - visible);
+                visible = saturate(visible + (noise - 0.5) * 0.16 * edge);
 
-                half alpha = saturate((1.0 - light) * _MaxDarkness);
+                // _EdgeSoftness = 시야 smoothstep 의 상한(원본 0.88). 낮추면 경계가 날카로워진다.
+                visible = smoothstep(0.035, max(_EdgeSoftness, 0.05), visible);
+                memory  = smoothstep(0.004, 0.24, memory) * 0.22;
 
-                // 기억으로만 보이는 구역은 완전한 검정이 아니라 살짝 색이 남는다.
-                half memoryWeight = saturate(memory - visible);
-                half3 tint = lerp(_DarkColor.rgb, _MemoryColor.rgb, memoryWeight);
+                // 알려진 정도 → 어둠. 기억은 시야의 1.45배 가중으로 "본 적 있는 곳"을 보랏빛 공간감으로 남긴다.
+                half known  = max(visible, memory * 1.45);
+                half unseen = 1.0 - smoothstep(0.015, 0.46, known);
+                half alpha  = saturate(unseen * _MaxDarkness);
+
+                half memoryMix = (1.0 - visible) * smoothstep(0.01, 0.20, memory);
+                half3 tint = lerp(_DarkColor.rgb, _MemoryColor.rgb, memoryMix);
 
                 return half4(tint, alpha);
             }

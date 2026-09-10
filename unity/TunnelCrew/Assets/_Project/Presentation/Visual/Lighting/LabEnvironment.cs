@@ -140,9 +140,10 @@ namespace TunnelCrew.Presentation.Visual
             var go = new GameObject("Darkness (tile LOS)");
             go.transform.SetParent(transform, false);
             _darkness = go.AddComponent<DarknessOverlay>();
-            // supersample 4 — 셀 해상도 텍스처의 바이리니어 번짐(한 칸 폭)을 1/4칸으로 죄어
-            // 코어키퍼처럼 벽 가장자리에서 딱 끊긴다("어둠 경계가 너무 뭉개진다", 2026-09-10).
-            _darkness.Bind(_los, _field.Cols, _field.Rows, _cam, supersample: 4);
+            // supersample 은 1 로 되돌렸다(2026-09-10 저녁). 4× 로 죄었더니 "암흑이 네모네모로 딱딱하고 시야가 너무 빨리 스왑돼
+            // 정신없다"는 피드백 — 원본 HTML 은 셀 해상도 + 1.35칸 9탭 필터 + 경계 노이즈로 부드럽게 갔고(Darkness.shader),
+            // 그 조합을 셰이더에 그대로 옮겼다. 경계 폭은 셰이더가 만들므로 텍스처는 셀 해상도면 충분하다.
+            _darkness.Bind(_los, _field.Cols, _field.Rows, _cam, supersample: 1);
             _darkness.SetSorting(VisualLayers.Exists(VisualLayers.VisionAndGrade)
                 ? VisualLayers.VisionAndGrade : "Default", 0);
             _darkness.SetColors(_darkColor, _memoryColor);
