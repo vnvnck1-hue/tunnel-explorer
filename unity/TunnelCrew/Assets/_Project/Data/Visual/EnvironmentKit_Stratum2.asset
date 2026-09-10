@@ -12,16 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e59ff12c09a6444c8bc61d204207005, type: 3}
   m_Name: EnvironmentKit_Stratum2
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.EnvironmentKit
-  floorBase: []
+  floorBase:
+  - {fileID: 1141967079, guid: 0698b88798c15c643b57733026933052, type: 3}
+  - {fileID: -796610835, guid: 0698b88798c15c643b57733026933052, type: 3}
+  - {fileID: 1115300620, guid: 0698b88798c15c643b57733026933052, type: 3}
   floorEdge: []
   contactAo:
   - {fileID: 21300000, guid: 167a944d596704741af8ae6e69380046, type: 3}
   - {fileID: 21300000, guid: 4e81eb3e2c4d8d9f3c1fe7e9b767e6f6, type: 3}
   - {fileID: 21300000, guid: 97e5696f643dc624b5de6ca064bf789a, type: 3}
   - {fileID: 21300000, guid: d36bae2b2373c91b64b49ef595e95f3d, type: 3}
-  wallTop: []
-  wallTopRim: []
-  wallFront: []
+  wallTop:
+  - {fileID: 78296285, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  - {fileID: 320719049, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  - {fileID: 823972113, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  wallTopRim:
+  - {fileID: 1827080406, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  - {fileID: -1457391328, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  - {fileID: 1726994224, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  wallFront:
+  - {fileID: 1875314602, guid: a7f319e577505af478aff35081714828, type: 3}
+  - {fileID: 231498852, guid: a7f319e577505af478aff35081714828, type: 3}
+  - {fileID: -1108940658, guid: a7f319e577505af478aff35081714828, type: 3}
   westSide: []
   eastSide: []
   outerCorner: []
@@ -31,6 +43,19 @@ MonoBehaviour:
   - {fileID: 21300000, guid: f6e462806b1be768f3bfb3fde0ba1111, type: 3}
   - {fileID: 21300000, guid: 3186d0429a4c03494aad9884191f96a6, type: 3}
   - {fileID: 21300000, guid: df64cf779cf3e36fb1d60c76ec327a13, type: 3}
+  bossWallTop: {fileID: 1663312587, guid: e535927d2d759d64a84cbcd6a270778b, type: 3}
+  bossWallFront: {fileID: -2124699980, guid: a7f319e577505af478aff35081714828, type: 3}
+  floorSet: {fileID: 11400000, guid: 509b226a3eb48a345be8a82c94e86ad5, type: 2}
+  wallTopSet: {fileID: 11400000, guid: 999c9565d4144b24f84480c6505619a4, type: 2}
+  wallFrontSet: {fileID: 11400000, guid: aa3ca40fbf647024d901045ff73d5079, type: 2}
+  oreFront:
+  - {fileID: 21300000, guid: 238e738c7a2661447b9524987a6a89ad, type: 3}
+  - {fileID: 21300000, guid: a700c7a360d14d7438aa7128687bc10d, type: 3}
+  oreFrontEmission:
+  - {fileID: 21300000, guid: 7b20cf641d53df24dab66ffc25943173, type: 3}
+  - {fileID: 21300000, guid: e0d101d8f006d734d8c34c0c93c1b619, type: 3}
+  torch: {fileID: 21300000, guid: 723baf3b061ad3344a6492803301ab2b, type: 3}
+  torchEmission: {fileID: 21300000, guid: 7802489a3c5ff504aade559340dddd94, type: 3}
   wallCrack:
   - {fileID: 21300000, guid: 6a44e9f04fa032fe31fe7092aecf461f, type: 3}
   - {fileID: 21300000, guid: e07941de024a0e0983284665c63c9527, type: 3}

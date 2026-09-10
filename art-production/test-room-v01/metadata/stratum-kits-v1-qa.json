@@ -1,6 +1,9 @@
 {
+  "manifestRevision": 22,
   "deliveryPixelsPerCell": 128,
   "seamLockedPixels": 4,
+  "normalAssets": 48,
+  "optionalProps": 7,
   "assets": {
     "tr01_stratum2_floor_a_albedo.png": {
       "dimensions": [

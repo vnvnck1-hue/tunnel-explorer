@@ -278,6 +278,28 @@ namespace TunnelCrew.Tests
                 SurfaceTopologyBuilder.MacroHash(0, 0, macro, 0));
         }
 
+        // ───────────────────────────── 보스 소환 벽 (4차 아트 요청 §3)
+
+        [Test]
+        public void 보스_벽_표시는_고체_셀에만_붙고_이웃에_퍼지지_않는다()
+        {
+            var f = ArraySolidField.Parse(
+                ".....",
+                ".###.",
+                ".....");
+            f.SetBossWall(2, 1, true);
+            f.SetBossWall(0, 1, true);   // 빈칸 — 무시돼야 한다
+
+            var boss = At(f, 2, 1);
+            Assert.IsTrue((boss.Surfaces & SurfaceMask.BossWall) != 0, "표시된 고체 셀은 BossWall");
+            Assert.IsTrue((boss.Surfaces & SurfaceMask.FrontFace) != 0, "보스 벽도 남쪽이 열리면 정면을 가진다");
+
+            Assert.IsTrue((At(f, 1, 1).Surfaces & SurfaceMask.BossWall) == 0, "옆 벽은 보스 벽이 아니다");
+            Assert.IsTrue((At(f, 3, 1).Surfaces & SurfaceMask.BossWall) == 0);
+            Assert.IsTrue((At(f, 0, 1).Surfaces & SurfaceMask.BossWall) == 0, "빈칸에 붙인 표시는 무시된다");
+            Assert.IsTrue(At(f, 0, 1).IsFloor);
+        }
+
         // ───────────────────────────── 청크 dirty (§6.7)
 
         [Test]

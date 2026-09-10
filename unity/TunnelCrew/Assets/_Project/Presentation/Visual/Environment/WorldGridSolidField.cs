@@ -9,8 +9,14 @@ namespace TunnelCrew.Presentation.Visual
     public sealed class WorldGridSolidField : ISolidField
     {
         readonly WorldGrid _world;
+        readonly System.Func<int, bool> _isBossWall;
 
-        public WorldGridSolidField(WorldGrid world) => _world = world;
+        /// <param name="isBossWall">셀 인덱스(<c>WorldGrid.Index</c>) → 보스 소환 벽 여부. 보통 <c>BossSystem.WallCells.Contains</c>. null 이면 보스 벽 없음.</param>
+        public WorldGridSolidField(WorldGrid world, System.Func<int, bool> isBossWall = null)
+        {
+            _world = world;
+            _isBossWall = isBossWall;
+        }
 
         public int Cols => _world.Cols;
         public int Rows => _world.Rows;
@@ -23,6 +29,9 @@ namespace TunnelCrew.Presentation.Visual
 
         public byte SurfaceSeedAt(int col, int row)
             => _world.InBounds(col, row) ? _world.DecAt(_world.Index(col, row)) : (byte)0;
+
+        public bool IsBossWallAt(int col, int row)
+            => _isBossWall != null && _world.InBounds(col, row) && _isBossWall(_world.Index(col, row));
     }
 
     /// <summary>
@@ -34,6 +43,7 @@ namespace TunnelCrew.Presentation.Visual
         readonly bool[] _solid;
         readonly byte[] _band;
         readonly byte[] _seed;
+        readonly bool[] _boss;
 
         public int Cols { get; }
         public int Rows { get; }
@@ -44,6 +54,7 @@ namespace TunnelCrew.Presentation.Visual
             _solid = new bool[cols * rows];
             _band = new byte[cols * rows];
             _seed = new byte[cols * rows];
+            _boss = new bool[cols * rows];
         }
 
         /// <summary>
@@ -83,10 +94,17 @@ namespace TunnelCrew.Presentation.Visual
             if (In(col, row)) _seed[row * Cols + col] = seed;
         }
 
+        /// <summary>보스 소환 벽 표시. 고체가 아니면 표면 생성기가 무시한다.</summary>
+        public void SetBossWall(int col, int row, bool boss)
+        {
+            if (In(col, row)) _boss[row * Cols + col] = boss;
+        }
+
         bool In(int c, int r) => c >= 0 && r >= 0 && c < Cols && r < Rows;
 
         public bool IsSolid(int col, int row) => !In(col, row) || _solid[row * Cols + col];
         public byte BandAt(int col, int row) => In(col, row) ? _band[row * Cols + col] : (byte)0;
         public byte SurfaceSeedAt(int col, int row) => In(col, row) ? _seed[row * Cols + col] : (byte)0;
+        public bool IsBossWallAt(int col, int row) => In(col, row) && _boss[row * Cols + col];
     }
 }

@@ -308,7 +308,7 @@ namespace TunnelCrew.Presentation.Visual
             // 벽 정면 + 측면
             Tile front = null;
             if ((s.Surfaces & SurfaceMask.FrontFace) != 0)
-                front = TileFor(EnvironmentKit.Pick(_kit.wallFront, s.FrontModule));
+                front = TileFor(_kit.FrontFor(s));   // 보스 소환 벽이면 전용 정면(4차 §3)
             // 서·동 측면은 그리지 않는다(개정 R2, 기획서 §8.6.2). 코어키퍼 실측에 해당 레이어가 없고
             // ReferenceTopDown(회전 0°)에서 측면이 보일 근거가 없다. 실제로 이 두 장이 조명을 받지 않는
             // 밝은 판으로 방에 붙은 벽 옆에 떠서 "벽 윗면이 통째로 보인다"고 읽혔다(2026-09-10 실측:

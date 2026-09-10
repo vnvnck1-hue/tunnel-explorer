@@ -1,6 +1,6 @@
 {
   "packageId": "tunnel-crew-test-room-v01",
-  "revision": 21,
+  "revision": 24,
   "productionProjection": "ReferenceTopDown",
   "sourcePixelsPerCell": 256,
   "deliveryPixelsPerCell": 128,
@@ -2427,7 +2427,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2452,7 +2453,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_a_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_a_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2464,7 +2466,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2489,7 +2492,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_b_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_b_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2501,7 +2505,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2526,7 +2531,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_c_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_c_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2538,7 +2544,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2563,7 +2570,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_front_a_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_front_a_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_front_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2575,7 +2583,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2600,7 +2609,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_front_b_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_front_b_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_front_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2612,7 +2622,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2637,7 +2648,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_front_c_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_front_c_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_front_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2825,7 +2837,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2850,7 +2863,8 @@
       "localOrder": 1,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_rim_a_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_a_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_rim_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -2970,7 +2984,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -2995,7 +3010,8 @@
       "localOrder": 1,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_rim_b_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_b_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_rim_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3007,7 +3023,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3032,7 +3049,8 @@
       "localOrder": 1,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_reference_wall_top_rim_c_albedo.png"
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_c_albedo.png",
+        "normal": "approved/normal/tr01_reference_wall_top_rim_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3273,7 +3291,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3298,7 +3317,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_floor_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_floor_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_floor_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3310,7 +3330,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3335,7 +3356,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_floor_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_floor_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_floor_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3347,7 +3369,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3372,7 +3395,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_floor_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_floor_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_floor_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3384,7 +3408,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3409,7 +3434,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3421,7 +3447,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3446,7 +3473,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3458,7 +3486,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3483,7 +3512,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3495,7 +3525,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3520,7 +3551,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_rim_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3532,7 +3564,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3557,7 +3590,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_rim_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3569,7 +3603,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3594,7 +3629,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_top_rim_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_top_rim_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3606,7 +3642,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3631,7 +3668,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_front_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_front_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_front_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3643,7 +3681,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3668,7 +3707,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_front_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_front_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_front_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3680,7 +3720,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3705,7 +3746,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum2_wall_front_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum2_wall_front_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum2_wall_front_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3717,7 +3759,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3742,7 +3785,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_floor_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_floor_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_floor_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3754,7 +3798,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3779,7 +3824,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_floor_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_floor_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_floor_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3791,7 +3837,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3816,7 +3863,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_floor_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_floor_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_floor_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3828,7 +3876,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3853,7 +3902,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3865,7 +3915,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3890,7 +3941,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3902,7 +3954,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3927,7 +3980,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3939,7 +3993,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -3964,7 +4019,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_rim_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -3976,7 +4032,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4001,7 +4058,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_rim_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4013,7 +4071,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4038,7 +4097,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_top_rim_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_top_rim_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4050,7 +4110,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4075,7 +4136,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_front_a_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_front_a_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_front_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4087,7 +4149,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4112,7 +4175,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_front_b_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_front_b_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_front_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4124,7 +4188,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4149,7 +4214,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_stratum3_wall_front_c_albedo.png"
+        "albedo": "approved/albedo/tr01_stratum3_wall_front_c_albedo.png",
+        "normal": "approved/normal/tr01_stratum3_wall_front_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4161,7 +4227,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4186,7 +4253,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_floor_a_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_floor_a_albedo.png",
+        "normal": "approved/normal/tr01_abyss_floor_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4198,7 +4266,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4223,7 +4292,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_floor_b_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_floor_b_albedo.png",
+        "normal": "approved/normal/tr01_abyss_floor_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4235,7 +4305,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4260,7 +4331,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_floor_c_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_floor_c_albedo.png",
+        "normal": "approved/normal/tr01_abyss_floor_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4272,7 +4344,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4297,7 +4370,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_a_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_a_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4309,7 +4383,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4334,7 +4409,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_b_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_b_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4346,7 +4422,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4371,7 +4448,8 @@
       "localOrder": 0,
       "repeatEdges": "nesw",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_c_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_c_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4383,7 +4461,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4408,7 +4487,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_a_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_a_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_rim_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4420,7 +4500,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4445,7 +4526,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_b_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_b_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_rim_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4457,7 +4539,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4482,7 +4565,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_c_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_top_rim_c_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_top_rim_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4494,7 +4578,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4519,7 +4604,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_front_a_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_front_a_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_front_a_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4531,7 +4617,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4556,7 +4643,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_front_b_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_front_b_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_front_b_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4568,7 +4656,8 @@
       "revision": 1,
       "status": "approved",
       "requiredChannels": [
-        "albedo"
+        "albedo",
+        "normal"
       ],
       "footprintCells": [
         1,
@@ -4593,7 +4682,8 @@
       "localOrder": 0,
       "repeatEdges": "ew",
       "channels": {
-        "albedo": "approved/albedo/tr01_abyss_wall_front_c_albedo.png"
+        "albedo": "approved/albedo/tr01_abyss_wall_front_c_albedo.png",
+        "normal": "approved/normal/tr01_abyss_wall_front_c_normal.png"
       },
       "tileability": {
         "seamLockedPixels": 4,
@@ -4673,6 +4763,272 @@
         "seamLockedPixels": 4,
         "oppositeEdgesIdentical": true
       }
+    },
+    {
+      "assetId": "TR01-REF-FLR-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "repeatEdges": "nesw",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_floor_a_albedo.png",
+        "normal": "approved/normal/tr01_reference_floor_a_normal.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      },
+      "sourceWorkingPath": "working/reference_calibration_v1_direct/tr01_reference_floor_a_albedo.png"
+    },
+    {
+      "assetId": "TR01-REF-FLR-B",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "repeatEdges": "nesw",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_floor_b_albedo.png",
+        "normal": "approved/normal/tr01_reference_floor_b_normal.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      },
+      "sourceWorkingPath": "working/reference_calibration_v1_direct/tr01_reference_floor_b_albedo.png"
+    },
+    {
+      "assetId": "TR01-REF-FLR-C",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "normal"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "Ground",
+      "localOrder": 0,
+      "repeatEdges": "nesw",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_floor_c_albedo.png",
+        "normal": "approved/normal/tr01_reference_floor_c_normal.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      },
+      "sourceWorkingPath": "working/reference_calibration_v1_direct/tr01_reference_floor_c_albedo.png"
+    },
+    {
+      "assetId": "TR01-REF-ORE-FRONT-A",
+      "revision": 3,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "emission"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "ore_crystals",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_ore_front_a_albedo.png",
+        "emission": "approved/emission/tr01_reference_ore_front_a_emission.png"
+      },
+      "sourceWorkingPath": "working/stratum_kits_v1/tr01_reference_ore_front_a_source.png",
+      "notes": "r2 (2026-09-10 Claude): alpha-bound crop refit to 112px max side, bottom at y=124 — was ~60% of canvas and read too small on the wall front. r3 (2026-09-10 Claude via codex exec): replaced standalone boulder with wide embedded vein overlay (120x~96 fit, bottom y=124); boulder kept at working/ore_front_r1/. Source working/ore_vein_r1/."
+    },
+    {
+      "assetId": "TR01-REF-ORE-FRONT-B",
+      "revision": 3,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "emission"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "emissionMode": "ore_crystals",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_ore_front_b_albedo.png",
+        "emission": "approved/emission/tr01_reference_ore_front_b_emission.png"
+      },
+      "sourceWorkingPath": "working/stratum_kits_v1/tr01_reference_ore_front_b_source.png",
+      "notes": "r2 (2026-09-10 Claude): alpha-bound crop refit to 112px max side, bottom at y=124 — was ~60% of canvas and read too small on the wall front. r3 (2026-09-10 Claude via codex exec): replaced standalone boulder with wide embedded vein overlay (120x~96 fit, bottom y=124); boulder kept at working/ore_front_r1/. Source working/ore_vein_r1/."
+    },
+    {
+      "assetId": "TR01-REF-TORCH-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo",
+        "emission"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.0
+      ],
+      "pivotPixels": [
+        64,
+        128
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "WorldFX",
+      "localOrder": 0,
+      "emissionMode": "amber_flame",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_torch_a_albedo.png",
+        "emission": "approved/emission/tr01_reference_torch_a_emission.png"
+      },
+      "sourceWorkingPath": "working/stratum_kits_v1/tr01_reference_torch_a_source.png",
+      "notes": "2026-09-10 Claude: 96px canvas padded to 128 (footprint 1 cell); pivot bottom-center."
+    },
+    {
+      "assetId": "TR01-REF-FLOOR-EDGE-A",
+      "revision": 2,
+      "status": "approved",
+      "requiredChannels": [
+        "albedo"
+      ],
+      "footprintCells": [
+        1,
+        1
+      ],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "emissionMode": "none",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_floor_edge_a_albedo.png"
+      },
+      "sourceWorkingPath": "working/stratum_kits_v1/tr01_reference_floor_edge_a_source.png",
+      "notes": "2026-09-10 Claude: pivotNormalized fixed to center to match pivotPixels; consumption on hold until material matches floor a/b/c. r23 (2026-09-10 Claude via codex exec): regenerated to match floor a/b/c slab scale and palette; r1 kept at working/floor_edge_r1_art_track/. Source working/floor_edge_r3/floor_edge_a_source.png."
     }
   ]
 }

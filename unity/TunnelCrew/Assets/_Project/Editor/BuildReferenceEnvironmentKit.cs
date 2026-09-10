@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using TunnelCrew.EditorTools.ArtPipeline;
 using TunnelCrew.Presentation.Visual;
 using UnityEditor;
 using UnityEngine;
@@ -58,6 +59,13 @@ namespace TunnelCrew.EditorTools
         const string OuterCornerPattern = "tr01_reference_wall_outer_corner_{0}_albedo.png";
         const string InnerCornerPattern = "tr01_reference_wall_inner_corner_{0}_albedo.png";
         const string FloorEdgePattern = "tr01_reference_floor_edge_{0}_albedo.png";
+
+        /// <summary>
+        /// 바닥 경계(floorEdge) 소비 보류 — 2026-09-10 도착한 <c>tr01_reference_floor_edge_a</c> 는 결정 바닥(a/b/c)과 재질이 달라
+        /// 벽에 붙은 바닥 셀이 전부 회색으로 바뀌고 결정 바닥이 띠처럼 고립돼 보였다(사용자 지적). 경계 타일은 바닥 기본과
+        /// 같은 재질의 블렌드여야 한다(기획서 §8.5). 아트가 다시 오고 검사기 피벗 오류가 풀리면 true 로.
+        /// </summary>
+        const bool ConsumeFloorEdge = true;
         static readonly string[] Variants = { "a", "b", "c", "d", "e", "f" };
 
         /// <summary>
@@ -92,6 +100,21 @@ namespace TunnelCrew.EditorTools
             "tr01_reference_contact_ao_s.png",   // S
             "tr01_reference_contact_ao_w.png",   // W
         };
+
+        const string BossWallTopFile = "tr01_reference_boss_wall_top_a_albedo.png";
+        const string BossWallFrontFile = "tr01_reference_boss_wall_front_a_albedo.png";
+
+        /// <summary>단일 스프라이트 파일 — 없으면 null 을 돌려주고 보고서에만 남긴다.</summary>
+        static Sprite LoadSingle(string file, Vector2 pivot, string label, StringBuilder report, bool alpha = false)
+        {
+            string path = $"{ArtDir}/{file}";
+            if (!File.Exists(AbsolutePath(path))) { report.Append($"  ⚠ {label} 누락: {file}\n"); return null; }
+            EnsureSprite(path, pivot, alpha);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (sp == null) report.Append($"  ⚠ {label} 스프라이트 로드 실패: {file}\n");
+            return sp;
+        }
 
         [MenuItem("Tunnel Crew/비주얼 · 레퍼런스 환경 키트 생성 (3단계)", priority = 27)]
         public static void Run()
@@ -164,6 +187,10 @@ namespace TunnelCrew.EditorTools
                 if (sp != null) wallCrack.Add(sp);
             }
 
+            // 보스 소환 벽 2장(4차 §3) — cap 중앙 피벗 · 정면 하단 중앙. 지층 공용이라 지층 키트가 참조 복사한다.
+            var bossTop = LoadSingle(BossWallTopFile, new Vector2(0.5f, 0.5f), "보스 벽 cap", report);
+            var bossFront = LoadSingle(BossWallFrontFile, new Vector2(0.5f, 0.0f), "보스 벽 정면", report);
+
             // ── 키트. 없으면 만들고, 스프라이트 목록은 도구가 갈아치운다.
             var kit = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(KitPath);
             bool created = kit == null;
@@ -177,17 +204,29 @@ namespace TunnelCrew.EditorTools
             // 나머지 배열은 비어 있을 때만 채운다(아트 도착 시 재실행이 정상 사용법).
             kit.floorBase = floors.ToArray();
             report.Append($"  ↻ floorBase: {floors.Count}장으로 갱신(승인 a/b/c)\n");
-            Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            if (ConsumeFloorEdge) Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            else { kit.floorEdge = System.Array.Empty<Sprite>(); report.Append("  ○ floorEdge: 소비 보류(재질 불일치 — ConsumeFloorEdge)\n"); }
             Replace(ref kit.contactAo, contactAo, "contactAo", report);
             Replace(ref kit.wallTop, wallTop, "wallTop", report);
             Replace(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
             Replace(ref kit.wallFront, wallFront, "wallFront", report);
-            Replace(ref kit.westSide, westSide, "westSide", report);
-            Replace(ref kit.eastSide, eastSide, "eastSide", report);
-            Replace(ref kit.outerCorner, outerCorner, "outerCorner", report);
-            Replace(ref kit.innerCorner, innerCorner, "innerCorner", report);
+            // 개정 R2(기획서 §8.6.2): 측면·코너 조각은 소비하지 않는다. 지층 키트는 처음부터 비웠는데 레퍼런스 키트에는 남아 있어
+            // 모든 cap 모서리에 회전 없는 한 장이 얹혀 "구멍 뚫린 모서리" 로 보였다(2026-09-11 사용자 지적). 파일은 두고 슬롯만 비운다.
+            kit.westSide = System.Array.Empty<Sprite>(); kit.eastSide = System.Array.Empty<Sprite>();
+            kit.outerCorner = System.Array.Empty<Sprite>(); kit.innerCorner = System.Array.Empty<Sprite>();
+            report.Append($"  ○ westSide/eastSide/outerCorner/innerCorner: R2 폐기 — 비움 (파일 {westSide.Count}/{eastSide.Count}/{outerCorner.Count}/{innerCorner.Count}장은 유지)\n");
             Replace(ref kit.wallShadow, wallShadow, "wallShadow(center/edge/outer/inner)", report);
             Replace(ref kit.wallCrack, wallCrack, "wallCrack(1/2/3)", report);
+            kit.bossWallTop = bossTop; kit.bossWallFront = bossFront;
+            // 4차 §4 소품 — 광맥 정면 a/b(+이미션) · 횃불(+이미션). 알파 스프라이트, 피벗 하단 중앙. 지층 공용.
+            var oreFront = Collect("tr01_reference_ore_front_{0}_albedo.png", new Vector2(0.5f, 0.0f), alpha: true);
+            var oreEmit = Collect("tr01_reference_ore_front_{0}_emission.png", new Vector2(0.5f, 0.0f), alpha: true);
+            Replace(ref kit.oreFront, oreFront, "oreFront", report);
+            Replace(ref kit.oreFrontEmission, oreEmit, "oreFrontEmission", report);
+            kit.torch = LoadSingle("tr01_reference_torch_a_albedo.png", new Vector2(0.5f, 0.0f), "횃불", report, alpha: true);
+            kit.torchEmission = LoadSingle("tr01_reference_torch_a_emission.png", new Vector2(0.5f, 0.0f), "횃불 이미션", report, alpha: true);
+            report.Append(kit.torch ? "  ↻ torch(+emission)\n" : "  ○ torch: 없음\n");
+            report.Append(kit.HasBossWall ? "  ↻ bossWallTop/Front: 2장\n" : "  ○ bossWallTop/Front: 누락 — 보스 벽이 일반 벽으로 그려진다\n");
             EditorUtility.SetDirty(kit);
             AssetDatabase.SaveAssets();
 
@@ -248,7 +287,8 @@ namespace TunnelCrew.EditorTools
             if (kit == null) { kit = ScriptableObject.CreateInstance<EnvironmentKit>(); AssetDatabase.CreateAsset(kit, kitPath); report.Append("  + 키트 생성\n"); }
 
             Replace(ref kit.floorBase, floor, "floorBase", report);
-            Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            if (ConsumeFloorEdge) Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            else kit.floorEdge = System.Array.Empty<Sprite>();
             Replace(ref kit.wallTop, wallTop, "wallTop", report);
             Replace(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
             Replace(ref kit.wallFront, wallFront, "wallFront", report);
@@ -256,7 +296,10 @@ namespace TunnelCrew.EditorTools
             if (shared != null)
             {
                 kit.contactAo = shared.contactAo; kit.wallShadow = shared.wallShadow; kit.wallCrack = shared.wallCrack;
-                report.Append($"  = 공용 마스크 복사: AO {Len(shared.contactAo)} · 드롭섀도 {Len(shared.wallShadow)} · 균열 {Len(shared.wallCrack)}\n");
+                kit.bossWallTop = shared.bossWallTop; kit.bossWallFront = shared.bossWallFront;   // 보스 벽도 지층 공용(4차 §3)
+                kit.oreFront = shared.oreFront; kit.oreFrontEmission = shared.oreFrontEmission;   // 광맥·횃불도 지층 공용(4차 §4)
+                kit.torch = shared.torch; kit.torchEmission = shared.torchEmission;
+                report.Append($"  = 공용 마스크 복사: AO {Len(shared.contactAo)} · 드롭섀도 {Len(shared.wallShadow)} · 균열 {Len(shared.wallCrack)} / boss {(shared.HasBossWall ? 2 : 0)}\n");
             }
             // 측면·코너는 R2 에서 소비하지 않는다 — 비워 둔다.
             kit.westSide = null; kit.eastSide = null; kit.outerCorner = null; kit.innerCorner = null;
@@ -282,6 +325,100 @@ namespace TunnelCrew.EditorTools
                         touched = true;
                     }
             if (touched) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        // ───────────────────────────── 채널 아틀라스 (4차 아트 요청 §2-A · 2026-09-10)
+
+        /// <summary>
+        /// 가족(family) 하나 = 키트 하나. manifest 의 assetId 접두어로 자기 자산을 고르고, 보스 벽(TR01-REFERENCE-BOSS-*)은
+        /// 지층 공용이라 모든 가족에 넣는다 — cap·정면 재질을 같이 쓰므로 같은 아틀라스 안에 있어야 노멀 UV 가 맞는다.
+        /// </summary>
+        static readonly (string family, string idPrefix, string kitPath)[] AtlasFamilies =
+        {
+            ("reference", "TR01-REF-",      KitPath),
+            ("stratum2",  "TR01-STRATUM2-", DataDir + "/EnvironmentKit_Stratum2.asset"),
+            ("stratum3",  "TR01-STRATUM3-", DataDir + "/EnvironmentKit_Stratum3.asset"),
+            ("abyss",     "TR01-ABYSS-",    DataDir + "/EnvironmentKit_Abyss.asset"),
+        };
+        const string BossIdPrefix = "TR01-REFERENCE-BOSS-";
+        const string ReferenceAtlasDir = "Assets/Art/Visual/ReferenceCalibrationV1/Atlas";
+
+        /// <summary>
+        /// 레퍼런스 세트의 재질은 <c>SurfaceMaterialSet_Reference_{floor,walltop,wallfront}</c> 그대로(Run 씬이 참조한다).
+        /// 지층은 <c>SurfaceMaterialSet_Stratum2_floor</c> 식으로 새로 만든다.
+        /// </summary>
+        static string SetPathFor(string family, string group)
+            => family == "reference"
+                ? $"{DataDir}/SurfaceMaterialSet_Reference_{group}.asset"
+                : $"{DataDir}/SurfaceMaterialSet_{Capitalize(family)}_{group}.asset";
+
+        static string Capitalize(string s) => string.IsNullOrEmpty(s) ? s : char.ToUpperInvariant(s[0]) + s.Substring(1);
+
+        [MenuItem("Tunnel Crew/비주얼 · 레퍼런스·지층 키트 채널 아틀라스 굽기 (4차 §2-A)", priority = 29)]
+        public static void RunChannelAtlases() => RunChannelAtlases(force: false);
+
+        [MenuItem("Tunnel Crew/비주얼 · 레퍼런스·지층 키트 채널 아틀라스 굽기 — 강제(albedo 만으로 경로 검증)", priority = 30)]
+        public static void RunChannelAtlasesForced() => RunChannelAtlases(force: true);
+
+        /// <summary>
+        /// 가족마다 albedo 외 채널(normal/emission/mask/ao)이 하나라도 도착했을 때만 굽는다 — 채널 없이 구우면
+        /// 개별 스프라이트를 아틀라스 스프라이트로 바꾸기만 하고 얻는 것이 없다. <paramref name="force"/> 는 경로 검증용.
+        /// 구운 뒤에는 키트가 자기 재질(floorSet/wallTopSet/wallFrontSet)을 가지며 RunBootstrap 이 그것을 우선 쓴다.
+        /// 주의: 이후 3단계·4차 메뉴를 다시 돌리면 슬롯이 개별 스프라이트로 되돌아간다(아틀라스 UV 와 재질 노멀이 어긋남) — 그때는 이 메뉴를 다시 실행한다.
+        /// </summary>
+        public static void RunChannelAtlases(bool force)
+        {
+            string root = ArtPackageLocator.Resolve(out string source);
+            var report = new StringBuilder($"[비주얼] 채널 아틀라스 — 패키지 {root} ({source})\n");
+            var validation = ApprovedArtValidator.Validate(root);
+            if (!validation.ManifestFound) { report.Append("  ✕ manifest 를 찾지 못했다.\n"); Debug.LogWarning(report.ToString()); return; }
+
+            var profile = AssetDatabase.LoadAssetAtPath<WorldVisualProfile>($"{DataDir}/WorldVisualProfile_Stratum1.asset");
+            Directory.CreateDirectory(AbsolutePath(ReferenceAtlasDir));
+
+            foreach (var f in AtlasFamilies)
+            {
+                report.Append($"\n── {f.family} ({f.idPrefix}*)\n");
+                var kit = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(f.kitPath);
+                if (kit == null) { report.Append("  ✕ 키트 없음 — 3단계/4차 메뉴를 먼저 실행할 것.\n"); continue; }
+
+                bool Mine(ApprovedAsset a) => (a.AssetId.StartsWith(f.idPrefix, StringComparison.OrdinalIgnoreCase)
+                                           || a.AssetId.StartsWith(BossIdPrefix, StringComparison.OrdinalIgnoreCase))
+                                           && (ConsumeFloorEdge || a.Slot != ApprovedArtContract.KitSlot.FloorEdge)
+                                           && a.Slot != ApprovedArtContract.KitSlot.OuterCorner && a.Slot != ApprovedArtContract.KitSlot.InnerCorner
+                                           && a.Slot != ApprovedArtContract.KitSlot.WestSide && a.Slot != ApprovedArtContract.KitSlot.EastSide;   // R2 폐기 조각은 아틀라스에도 넣지 않는다
+                int assets = 0, withChannels = 0;
+                foreach (var a in validation.Importable)
+                {
+                    if (!Mine(a)) continue;
+                    assets++;
+                    foreach (var ch in a.Channels.Keys) if (ch != "albedo" && a.Slot != ApprovedArtContract.KitSlot.ContactAo) { withChannels++; break; }
+                }
+                if (assets == 0) { report.Append("  ○ 패키지에 자산이 없다.\n"); continue; }
+                if (withChannels == 0 && !force)
+                {
+                    report.Append($"  ■ 아트 대기 — 자산 {assets}개가 전부 albedo 만이다. 노멀 등 채널이 오면 이 메뉴를 다시 실행한다(개별 스프라이트 유지).\n");
+                    continue;
+                }
+
+                string family = f.family;
+                var r = ChannelAtlasBuilder.Build(validation, root, kit, profile, new ChannelAtlasBuilder.Options
+                {
+                    Family = family,
+                    Filter = Mine,
+                    AtlasDirectory = ReferenceAtlasDir,
+                    MaterialSetPath = g => SetPathFor(family, g),
+                    AssignSetsToKit = true,
+                });
+                if (!ConsumeFloorEdge) kit.floorEdge = System.Array.Empty<Sprite>();   // 보류 중인 경계 타일이 남지 않게
+                kit.westSide = System.Array.Empty<Sprite>(); kit.eastSide = System.Array.Empty<Sprite>();
+                kit.outerCorner = System.Array.Empty<Sprite>(); kit.innerCorner = System.Array.Empty<Sprite>();
+                EditorUtility.SetDirty(kit);
+                report.Append($"  ↻ 아틀라스 {r.AtlasCount}장(채널 {r.ChannelAtlasCount}) · 스프라이트 {r.SpriteCount}개 · 재질 floor={(r.Floor ? "O" : "-")} walltop={(r.WallTop ? "O" : "-")} wallfront={(r.WallFront ? "O" : "-")}\n");
+                report.Append($"  키트: floor {Len(kit.floorBase)} · top {Len(kit.wallTop)} · rim {Len(kit.wallTopRim)} · front {Len(kit.wallFront)} · 보스 {(kit.HasBossWall ? 2 : 0)} · 노멀 {(r.WallTop != null && r.WallTop.HasNormal ? "O" : "-")}\n");
+            }
+            AssetDatabase.SaveAssets();
+            Debug.Log(report.ToString());
         }
 
         static SurfaceMaterialSet EnsureSet(string path, MinLightSlot slot, StringBuilder report)

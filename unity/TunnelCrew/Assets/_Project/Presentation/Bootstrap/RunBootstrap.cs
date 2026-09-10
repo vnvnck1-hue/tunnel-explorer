@@ -84,6 +84,7 @@ namespace TunnelCrew.Presentation
         TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer _env;
         TunnelCrew.Presentation.Visual.LabWallDropShadow _envDropShadow;
         TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
+        TunnelCrew.Presentation.Visual.WallOreOverlay _envOre;
         TunnelCrew.Presentation.Visual.ShadowGeometryBuilder _envShadows;
         TunnelCrew.Presentation.Visual.LightSocketRenderer _lightSockets;
 
@@ -99,8 +100,6 @@ namespace TunnelCrew.Presentation
             var s = light.gameObject.AddComponent<TunnelCrew.Presentation.Visual.LightSocket>();
             s.lightClass = cls; s.baseIntensity = baseIntensity; s.rangeCells = rangeCells; s.phase = phase; s.mountHeightCells = mountHeight;
         }
-        Tilemap _bossTint;
-        Tile _bossTintTile;
         Transform _envRoot;
         /// <summary>플레이어의 발 위치 앵커(관심 캐릭터). 전경 cap 페이드·가림 실루엣이 이걸 기준으로 동작한다(§6.6).</summary>
         TunnelCrew.Presentation.Visual.VisualHeightAnchor _playerAnchor;
@@ -537,6 +536,10 @@ namespace TunnelCrew.Presentation
             crackGo.transform.SetParent(_envRoot, false);
             _envCrack = crackGo.AddComponent<TunnelCrew.Presentation.Visual.WallCrackOverlay>();
 
+            var oreGo = new GameObject("Wall Ore Fronts");
+            oreGo.transform.SetParent(_envRoot, false);
+            _envOre = oreGo.AddComponent<TunnelCrew.Presentation.Visual.WallOreOverlay>();
+
             // 깊이 시스템(§6.5·§6.6) — 랩의 "Depth" 와 같다. 북쪽이 열린 벽의 cap 은 lift 만큼 올라가 그 바닥의 캐릭터를
             // 덮는 전경 오클루더(FrontStructure)다. 이 셋이 없으면 캐릭터가 cap 뒤로 그냥 사라진다(2026-09-10 캡처).
             // 관심 캐릭터가 겹치면 그 청크의 cap 이 페이드하고, 가려진 몸은 실루엣으로 보정된다.
@@ -582,12 +585,24 @@ namespace TunnelCrew.Presentation
             var world = Sim.World;
             // 층마다 키트를 고른다(지층 2·3·이상지대는 아트가 도착한 층만 자기 키트). Assign 은 Bind 전에 다시 불러도 안전하다.
             var kit = KitForDepth(Sim.Depth);   // _depth 는 시작 깊이일 뿐 — 하강은 Sim 이 관리한다
-            _env.Assign(_envProfile, _envRules, kit, _envFloorSet, _envWallTopSet, _envWallFrontSet);
-            _env.Bind(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
+            // 재질 세트 — 키트가 자기 아틀라스 재질을 가지면(노멀 등 채널 도착) 그것을, 아니면 공용 최소광 세트를 쓴다(4차 §2-A).
+            _env.Assign(_envProfile, _envRules, kit,
+                kit.floorSet != null ? kit.floorSet : _envFloorSet,
+                kit.wallTopSet != null ? kit.wallTopSet : _envWallTopSet,
+                kit.wallFrontSet != null ? kit.wallFrontSet : _envWallFrontSet);
+            // 보스 소환 벽(원본 INF.bossWallCells)은 표면 생성기가 SurfaceMask.BossWall 로 표시하고 키트의 전용 cap/정면으로 그린다(4차 §3).
+            // BossSystem 은 WallCells 갱신 뒤에 SetTile/ClearSilent → TileChanged 를 올리므로 dirty 재생성 시점엔 집합이 최종 상태다.
+            // Sim.Bosses 는 층마다 새로 만들어지므로 람다 안에서 늦게 읽는다.
+            _env.Bind(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world, k => Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k)));
+            if (!kit.HasBossWall) Debug.LogWarning($"[비주얼] {kit.name} 에 보스 벽 아트(bossWallTop/Front)가 없다 — 보스 소환 벽이 일반 벽으로 그려진다. '레퍼런스 환경 키트 생성' 메뉴를 다시 실행할 것.");
             if (_envShadows != null) { _envShadows.Bind(_env.IsWallCell, _env.Cols, _env.Rows); _envShadows.FlushPending(); }
             _envDropShadow.Resync(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
             _envCrack.Bind(kit, _env.FrontFaceRenderer);
-            BuildBossTint();
+            // 광맥 정면(4차 §4) — 채굴 대상 고체 셀 중 남쪽이 빈 셀. 표면 dirty 와 무관하게 격자에서 직접 판정한다.
+            _envOre.Bind(kit, _env.FrontFaceRenderer);
+            for (int r = 0; r < world.Rows; r++)
+                for (int c = 0; c < world.Cols; c++)
+                    RefreshOre(c, r);
 
             // 층마다 WorldGrid 가 새로 만들어지므로 이벤트도 새 인스턴스에 건다.
             world.TileBroken += e => OnEnvCellChanged(e.Col, e.Row);
@@ -602,49 +617,19 @@ namespace TunnelCrew.Presentation
             _envShadows?.MarkDirty();   // 표면 dirty 와 같은 프레임에 윤곽 재추적(LateUpdate)
             _envCrack.SetStage(c, r, world.IsSolid(c, r) ? world.DamageStage(world.Index(c, r)) : 0);
             _envDropDirty = true;   // 셀마다 전체 Resync 는 비싸다 — 프레임 끝에 한 번
-            RefreshBossTint(c, r);
+            RefreshOre(c, r);
+            RefreshOre(c, r + 1);   // 남쪽이 뚫리면 북쪽 셀의 정면이 드러난다
         }
 
-        /// <summary>
-        /// 보스 소환 벽(원본 INF.bossWallCells) — 구 WorldRenderer 는 전용 붉은 타일 2종으로 그렸다. 키트에는 그 타일이 없으므로
-        /// cap 위(WallTop, order 2)에 붉은 반투명 셀을 얹어 "이 벽은 다르다"를 유지한다. 키트 보스 벽 아트가 오면 교체.
-        /// </summary>
-        void BuildBossTint()
+        /// <summary>광맥 정면 표시 — 채굴 대상(Ore·Gem·Crys) 고체 셀이고 남쪽이 빈 칸일 때만.</summary>
+        void RefreshOre(int c, int r)
         {
-            if (_bossTint == null)
-            {
-                var go = new GameObject("Boss Wall Tint");
-                go.transform.SetParent(_envRoot, false);   // 렌더러 그리드 아래에 두면 Bind 때 파괴된다
-                go.AddComponent<Grid>().cellSize = new Vector3(1f, 1f, 0f);
-                _bossTint = go.AddComponent<Tilemap>();
-                var tr = go.AddComponent<TilemapRenderer>();
-                tr.mode = TilemapRenderer.Mode.Chunk;
-                var top = _env.WallTopRenderer;
-                if (top != null) { tr.sortingLayerName = top.sortingLayerName; tr.sortingOrder = top.sortingOrder + 2; }
-                var unlit = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
-                if (unlit != null) tr.sharedMaterial = new Material(unlit) { name = "BossWallTint" };
-                _bossTintTile = ScriptableObject.CreateInstance<Tile>();
-                _bossTintTile.sprite = TunnelCrew.Presentation.Visual.LabWallDropShadow.SolidCellSprite();
-                _bossTintTile.colliderType = Tile.ColliderType.None;
-                _bossTint.color = new Color(1f, 0.30f, 0.32f, 0.42f);
-            }
-            _bossTint.ClearAllTiles();
-            // cap 은 lift 만큼 올려 그린다 — 같은 만큼 올린다.
-            var topTr = _env.WallTopRenderer;
-            if (topTr != null) _bossTint.transform.localPosition = topTr.transform.localPosition;
+            if (_envOre == null || !_envOre.Ready) return;
             var world = Sim.World;
-            for (int r = 0; r < world.Rows; r++)
-                for (int c = 0; c < world.Cols; c++)
-                    RefreshBossTint(c, r);
-        }
-
-        void RefreshBossTint(int c, int r)
-        {
-            if (_bossTint == null) return;
-            var world = Sim.World;
-            int k = world.Index(c, r);
-            bool boss = world.IsSolid(c, r) && Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k);
-            _bossTint.SetTile(new Vector3Int(c, r, 0), boss ? _bossTintTile : null);
+            if (!world.InBounds(c, r)) return;
+            var t = world.At(c, r);
+            bool ore = (t == TunnelCrew.Sim.TileType.Ore || t == TunnelCrew.Sim.TileType.Gem || t == TunnelCrew.Sim.TileType.Crys) && !world.IsSolid(c, r - 1);
+            _envOre.Set(c, r, ore, TunnelCrew.Presentation.Visual.SurfaceTopologyBuilder.Hash(c, r, 0x0BE5));
         }
 
         void BuildPlayer()
@@ -715,6 +700,9 @@ namespace TunnelCrew.Presentation
             var globalGo = new GameObject("Global Light 2D");
             globalGo.transform.SetParent(root.transform, false);
             _globalLight = globalGo.AddComponent<Light2D>();
+            // 타겟 레이어를 lightType 보다 먼저 정한다 — 새 Light2D 는 모든 레이어를 타겟으로 시작하므로 Global 로 바꾸는
+            // 순간 다른 전역광과 레이어가 겹쳐 "More than one global light on layer …" 오류가 난다(2026-09-10 실측 6건).
+            if (R2Layers) _globalLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitGroundLevelLayerIds();
             _globalLight.lightType = Light2D.LightType.Global;
             _globalLight.intensity = _ambientIntensity;
             _globalLight.color = _r2Look ? R2AmbientColor : new Color(0.62f, 0.58f, 0.80f);
@@ -722,14 +710,13 @@ namespace TunnelCrew.Presentation
             // 전역광 2분할(랩 확정, 6단계 후속 3): 바닥·개체용과 벽 윗면용. 윗면은 빛이 옆(방)에서 오므로 훨씬 어둡다.
             if (R2Layers)
             {
-                _globalLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitGroundLevelLayerIds();
                 var topGo = new GameObject("Global Light 2D (wall tops)");
                 topGo.transform.SetParent(root.transform, false);
                 _globalTopLight = topGo.AddComponent<Light2D>();
+                _globalTopLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitElevatedLayerIds();   // Global 전환 전에
                 _globalTopLight.lightType = Light2D.LightType.Global;
                 _globalTopLight.intensity = _ambientIntensity * R2WallTopAmbientScale;
                 _globalTopLight.color = R2AmbientColor;
-                _globalTopLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitElevatedLayerIds();
             }
 
             // 손전등 — 원본 halfAngle 28°, flashRange 468px = 9.36셀. F 로 켜고 끈다.
@@ -751,8 +738,10 @@ namespace TunnelCrew.Presentation
                 _flashlight.shadowIntensity = TunnelCrew.Presentation.Visual.LightClassRules.ShadowIntensity(TunnelCrew.Presentation.Visual.LightClass.Scout);
                 _flashlight.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Scout);
             }
-            UseNormalMaps(_flashlight);
+            UseNormalMaps(_flashlight, PlayerLightNormalHeightCells);
             AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.6f, 9.36f, 0.31f);
+            // 소켓 렌더러가 매 프레임 높이를 되돌리므로 소켓에도 같은 값을 준다.
+            if (_flashlight.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out var flashSocket)) flashSocket.normalMapHeightCells = PlayerLightNormalHeightCells;
 
             // 플레이어를 감싸는 약한 원 — 손전등을 꺼도 발밑은 보인다
             var haloGo = new GameObject("Player Halo");
@@ -767,7 +756,8 @@ namespace TunnelCrew.Presentation
             _playerHalo.color = new Color(0.95f, 0.88f, 0.78f);
             // 헤일로는 그림자를 만들지 않는다 — 캐릭터 중심(발 위 0.5칸)에서 발밑 캐스터를 늘 위에서 비춰 "아래로 고정된 마름모 그림자"가 생기던 원인
             _playerHalo.shadowIntensity = 0f;
-            UseNormalMaps(_playerHalo);
+            UseNormalMaps(_playerHalo, PlayerLightNormalHeightCells);
+            if (_playerHalo.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out var haloSocket)) haloSocket.normalMapHeightCells = PlayerLightNormalHeightCells;
 
             RebuildLamps();
 
@@ -983,7 +973,10 @@ namespace TunnelCrew.Presentation
         /// <summary>던전 랜턴 — 생성기가 배치한 자리 그대로. 층마다 다시 만든다(이전 층 랜턴이 남아 새 층의 엉뚱한 자리를 비추던 누락 수정, 2026-09-07).</summary>
         /// <summary>벽 타일 노멀맵을 읽게 한다 — 광원 쪽 벽 가장자리가 밝고 반대쪽이 어두워진다(원본 wRim .36 / wShade 1.2 의 대체). 광원 높이 3칸 기준.</summary>
         static System.Reflection.FieldInfo _fNmQuality, _fNmDistance; static bool _nmProbed;
-        static void UseNormalMaps(Light2D l)
+        /// <summary>플레이어 광원(손전등·헤드램프)의 노멀맵 광원 높이(셀). 사용자 결정 2026-09-10 — 랩 실측 p95 14 → 25.</summary>
+        const float PlayerLightNormalHeightCells = 1.0f;
+
+        static void UseNormalMaps(Light2D l, float heightCells = -1f)
         {
             // URP 17 은 normalMapQuality/Distance 가 읽기 전용 프로퍼티다 — 직렬화 필드에 직접 쓴다 (WallShadowBuilder 와 같은 방식)
             if (!_nmProbed)
@@ -997,12 +990,45 @@ namespace TunnelCrew.Presentation
             _fNmQuality?.SetValue(l, Light2D.NormalMapQuality.Accurate);
             // 광원 높이(칸) — 비주얼 트랙과 한 값을 쓴다. 낮추면 벽 요철은 살지만 바닥처럼
             // 노멀이 평평한 면이 급격히 어두워진다(LightSocketRenderer.NormalMapHeightCells 주석).
-            _fNmDistance?.SetValue(l, TunnelCrew.Presentation.Visual.LightSocketRenderer.NormalMapHeightCells);
+            _fNmDistance?.SetValue(l, heightCells > 0f ? heightCells : TunnelCrew.Presentation.Visual.LightSocketRenderer.NormalMapHeightCells);
             // 오브젝트·전경까지 비춘다 — 대상 레이어가 비면 URP 가 씬 직렬화 값을 쓰고,
             // 그 값에 WorldEntity/FrontStructure 가 빠져 있었다(2026-09-09).
             // R2 + 레이어: 손전등·램프·크루·보스·플레어는 전부 지면 광원 — 벽 윗면(WallTop)은 비추지 않는다.
             TunnelCrew.Presentation.Visual.LightSocketRenderer.ApplyLitLayers(l, lightsWallTops: !s_groundLevelLights);
         }
+
+        /// <summary>
+        /// 랜턴 광원 자리에 횃불 실체를 세운다(4차 §4 · 코어키퍼 "횃불 박기"). 광원 위치·세기는 그대로 두고 그림만 붙인다.
+        /// 스프라이트 피벗 하단 중앙 → 바닥을 셀 아래쪽에 두어 불꽃(상단)이 광원 근처에 온다. 이미션은 Unlit 으로 항상 빛난다.
+        /// </summary>
+        void AttachTorch(Transform lamp)
+        {
+            if (!UseEnvironmentRenderer || Sim == null) return;
+            var kit = KitForDepth(Sim.Depth);
+            if (kit == null || kit.torch == null) return;
+            var go = new GameObject("Torch");
+            go.transform.SetParent(lamp, false);
+            go.transform.localPosition = new Vector3(0f, -0.45f, 0f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = kit.torch;
+            sr.sortingLayerName = TunnelCrew.Presentation.Visual.VisualLayers.UnlayeredDefault;   // 개체 대역, 플레이어(30) 뒤
+            sr.sortingOrder = 10;
+            var lit = Shader.Find("Universal Render Pipeline/2D/Sprite-Lit-Default");
+            if (lit != null) sr.sharedMaterial = TorchLitMaterial(lit);
+            if (kit.torchEmission != null)
+            {
+                var eg = new GameObject("Torch Emission");
+                eg.transform.SetParent(go.transform, false);
+                var er = eg.AddComponent<SpriteRenderer>();
+                er.sprite = kit.torchEmission;
+                er.sortingLayerName = sr.sortingLayerName;
+                er.sortingOrder = sr.sortingOrder + 1;
+                er.sharedMaterial = TorchUnlitMaterial();
+            }
+        }
+        static Material s_torchLit, s_torchUnlit;
+        static Material TorchLitMaterial(Shader lit) => s_torchLit != null ? s_torchLit : (s_torchLit = new Material(lit) { name = "Torch-Lit" });
+        static Material TorchUnlitMaterial() => s_torchUnlit != null ? s_torchUnlit : (s_torchUnlit = TunnelCrew.Presentation.Visual.OverlayMaterials.Unlit("Torch-Emission"));
 
         void RebuildLamps()
         {
@@ -1031,6 +1057,7 @@ namespace TunnelCrew.Presentation
                 UseNormalMaps(l);
                 AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, 1.1f, 5.2f, 0.13f + 0.21f * (_lamps.Count % 7));
                 _lamps.Add(l);
+                AttachTorch(go.transform);
             }
         }
 

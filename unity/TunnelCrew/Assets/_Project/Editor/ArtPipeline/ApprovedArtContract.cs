@@ -125,6 +125,10 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             EastSide,
             OuterCorner,
             InnerCorner,
+            /// <summary>보스 소환 벽 cap(4차 §3). 지층 공용 1장 — 배열이 아니라 단일 슬롯.</summary>
+            BossWallTop,
+            /// <summary>보스 소환 벽 남향 정면(4차 §3).</summary>
+            BossWallFront,
         }
 
         /// <summary>
@@ -146,6 +150,10 @@ namespace TunnelCrew.EditorTools.ArtPipeline
 
             string token = parts[1];
             bool Has(string s) => id.Contains(s);
+
+            // 보스 소환 벽 — 토큰(REFERENCE)보다 앞에서 본다. 일반 WTP/WFR 변형으로 섞이면 안 된다.
+            if (Has("-BOSS-WALL-TOP")) return KitSlot.BossWallTop;
+            if (Has("-BOSS-WALL-FRONT")) return KitSlot.BossWallFront;
 
             switch (token)
             {
@@ -194,6 +202,8 @@ namespace TunnelCrew.EditorTools.ArtPipeline
 
             // 긴 이름을 먼저 본다 — wall_top_rim 이 wall_top 보다 앞이어야 한다.
             if (stem.Contains("_contact_ao") || stem.Contains("_ao_contact")) return KitSlot.ContactAo;
+            if (stem.Contains("boss_wall_top")) return KitSlot.BossWallTop;
+            if (stem.Contains("boss_wall_front")) return KitSlot.BossWallFront;
 
             if (stem.Contains("_wall_top") || stem.Contains("_walltop") || stem.Contains("_wtp"))
             {
@@ -252,6 +262,8 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                 case KitSlot.WallFront:
                 case KitSlot.WestSide:
                 case KitSlot.EastSide:
+                case KitSlot.BossWallTop:
+                case KitSlot.BossWallFront:
                     return false;   // 셀을 꽉 채우는 불투명 타일이어도 된다
 
                 case KitSlot.ContactAo:

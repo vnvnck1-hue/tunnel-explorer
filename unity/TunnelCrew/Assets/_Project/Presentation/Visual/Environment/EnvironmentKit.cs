@@ -44,6 +44,27 @@ namespace TunnelCrew.Presentation.Visual
                  "4장이 다 있을 때만 쓰고, 아니면 LabWallDropShadow 가 단색 셀로 되돌아간다.")]
         public Sprite[] wallShadow;
 
+        [Header("보스 소환 벽 (4차 아트 요청 §3 · 지층 공용)")]
+        [Tooltip("보스 소환 벽 cap. 붉은 기운·맥동 균열. 비면 일반 cap 을 쓴다(보스 벽 표시가 사라지므로 채울 것).")]
+        public Sprite bossWallTop;
+        [Tooltip("같은 벽의 남향 정면. 피벗 하단 중앙. 비면 일반 정면.")]
+        public Sprite bossWallFront;
+
+        [Header("채널 재질 (ChannelAtlasBuilder 결과 · 4차 §2-A)")]
+        [Tooltip("이 키트의 바닥 아틀라스 재질. 비면 RunBootstrap 의 공용 세트를 쓴다. 노멀맵이 지층마다 다르므로 키트가 자기 재질을 갖는다.")]
+        public SurfaceMaterialSet floorSet;
+        public SurfaceMaterialSet wallTopSet;
+        public SurfaceMaterialSet wallFrontSet;
+
+        [Header("광맥 정면 오버레이 · 횃불 (4차 아트 요청 §4 · 지층 공용)")]
+        [Tooltip("채굴 대상(Ore·Gem·Crys) 고체 셀의 남향 정면에 얹는 광맥 2종. 피벗 하단 중앙. 인덱스 = 셀 해시.")]
+        public Sprite[] oreFront;
+        [Tooltip("oreFront 와 같은 순서의 이미션(Unlit 으로 얹는다). 길이가 다르면 무시.")]
+        public Sprite[] oreFrontEmission;
+        [Tooltip("던전 랜턴 자리에 세우는 횃불 실체(코어키퍼 '횃불 박기'). 피벗 하단 중앙.")]
+        public Sprite torch;
+        public Sprite torchEmission;
+
         [Header("벽 정면 균열 (3차 아트 요청 ③ · 채굴 피드백)")]
         [Tooltip("정면 위에 얹는 투명 오버레이 3단계. 인덱스 = 타격 단계-1. 피벗 하단 중앙(정면과 같다).")]
         public Sprite[] wallCrack;
@@ -62,13 +83,24 @@ namespace TunnelCrew.Presentation.Visual
             return a[i];
         }
 
-        /// <summary>한 셀의 cap. 상단 림 여부에 따라 배열을 바꾼다.</summary>
+        /// <summary>한 셀의 cap. 보스 소환 벽이면 전용 아트, 아니면 상단 림 여부에 따라 배열을 바꾼다.</summary>
         public Sprite CapFor(in CellSurface s)
         {
+            if ((s.Surfaces & SurfaceMask.BossWall) != 0 && bossWallTop != null) return bossWallTop;
             bool rim = (s.Surfaces & SurfaceMask.TopRim) != 0;
             var sp = rim ? Pick(wallTopRim, s.TopModule) : null;
             return sp != null ? sp : Pick(wallTop, s.TopModule);
         }
+
+        /// <summary>한 셀의 남향 정면. 보스 소환 벽이면 전용 아트, 아니면 매크로 모듈로 고른 변형.</summary>
+        public Sprite FrontFor(in CellSurface s)
+        {
+            if ((s.Surfaces & SurfaceMask.BossWall) != 0 && bossWallFront != null) return bossWallFront;
+            return Pick(wallFront, s.FrontModule);
+        }
+
+        /// <summary>보스 벽 아트가 둘 다 있는가 — 없으면 보스 벽이 일반 벽과 구분되지 않는다(RunBootstrap 이 경고).</summary>
+        public bool HasBossWall => bossWallTop != null && bossWallFront != null;
 
         /// <summary>한 셀의 바닥. 경계면이면 전용 배열을 먼저 본다.</summary>
         public Sprite FloorFor(in CellSurface s)

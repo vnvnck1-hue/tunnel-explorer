@@ -64,6 +64,7 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                     ApprovedArtContract.KitSlot.WallTopRim,
                     ApprovedArtContract.KitSlot.OuterCorner,
                     ApprovedArtContract.KitSlot.InnerCorner,
+                    ApprovedArtContract.KitSlot.BossWallTop,     // cap 재질을 같이 쓰므로 같은 아틀라스에 있어야 노멀 UV 가 맞는다(4차 §3)
                 },
             },
             new Group
@@ -75,15 +76,46 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                     ApprovedArtContract.KitSlot.WallFront,
                     ApprovedArtContract.KitSlot.WestSide,
                     ApprovedArtContract.KitSlot.EastSide,
+                    ApprovedArtContract.KitSlot.BossWallFront,
                 },
             },
         };
+
+        /// <summary>
+        /// 아틀라스 묶음의 대상·이름 규칙. 기본값(null)은 TestRoomV01 랩 경로 그대로다.
+        /// 레퍼런스·지층 키트(4차 §2-A)는 <see cref="Family"/> 로 파일명·재질 이름을 나누고
+        /// <see cref="Filter"/> 로 패키지 안의 자기 자산만 고른다 — 한 manifest 에 네 지층이 함께 있다.
+        /// </summary>
+        public sealed class Options
+        {
+            /// <summary>아틀라스 파일·재질 이름에 들어가는 식별자(예: "reference" · "stratum2"). null = TestRoom 기본 이름.</summary>
+            public string Family;
+            /// <summary>이 묶음에 넣을 자산. null = 전부.</summary>
+            public System.Func<ApprovedAsset, bool> Filter;
+            /// <summary>아틀라스 PNG 를 둘 폴더. null = <see cref="AtlasDir"/>.</summary>
+            public string AtlasDirectory;
+            /// <summary>묶음 이름(floor/walltop/wallfront) → SurfaceMaterialSet 자산 경로. null = TestRoom 기본.</summary>
+            public System.Func<string, string> MaterialSetPath;
+            /// <summary>true 면 키트의 floorSet/wallTopSet/wallFrontSet 에 결과 재질을 연결한다(본선은 이걸 우선 쓴다).</summary>
+            public bool AssignSetsToKit;
+
+            internal string Dir => string.IsNullOrEmpty(AtlasDirectory) ? AtlasDir : AtlasDirectory;
+            internal string AtlasPath(string group, string channel)
+                => string.IsNullOrEmpty(Family)
+                    ? $"{Dir}/tr01_atlas_{group}_{channel}.png"
+                    : $"{Dir}/tr01_atlas_{Family}_{group}_{channel}.png";
+            internal string SetPath(string group)
+                => MaterialSetPath != null ? MaterialSetPath(group) : $"{DataDir}/SurfaceMaterialSet_TestRoom_{group}.asset";
+            internal bool Accept(ApprovedAsset a) => Filter == null || Filter(a);
+        }
 
         public struct Result
         {
             public SurfaceMaterialSet Floor, WallTop, WallFront;
             public int AtlasCount;
             public int SpriteCount;
+            /// <summary>albedo 를 뺀 채널 아틀라스 수. 0 이면 아직 노멀 등 채널이 하나도 도착하지 않은 것이다.</summary>
+            public int ChannelAtlasCount;
         }
 
         /// <summary>
@@ -93,11 +125,17 @@ namespace TunnelCrew.EditorTools.ArtPipeline
         /// </summary>
         public static Result Build(ArtValidationReport report, string packageRoot, EnvironmentKit kit,
             WorldVisualProfile profile)
+            => Build(report, packageRoot, kit, profile, null);
+
+        /// <summary><paramref name="options"/> 로 자산 부분집합·이름 규칙을 정한다(레퍼런스·지층 키트). null = TestRoom 기본.</summary>
+        public static Result Build(ArtValidationReport report, string packageRoot, EnvironmentKit kit,
+            WorldVisualProfile profile, Options options)
         {
             var result = new Result();
             if (report == null || kit == null) return result;
+            if (options == null) options = new Options();
 
-            Directory.CreateDirectory(AtlasDir);
+            Directory.CreateDirectory(options.Dir);
 
             var groups = MakeGroups();
             var bySlot = new Dictionary<ApprovedArtContract.KitSlot, Group>();
@@ -106,7 +144,8 @@ namespace TunnelCrew.EditorTools.ArtPipeline
 
             // assetId 순으로 담는다 — 모듈 번호가 배열 인덱스이므로 순서가 흔들리면
             // 같은 시드에서 다른 배치가 나온다(§16.1 결정성).
-            var sorted = new List<ApprovedAsset>(report.Importable);
+            var sorted = new List<ApprovedAsset>();
+            foreach (var a in report.Importable) if (options.Accept(a)) sorted.Add(a);
             sorted.Sort((a, b) => string.CompareOrdinal(a.AssetId, b.AssetId));
 
             foreach (var asset in sorted)
@@ -116,15 +155,16 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             {
                 if (g.Assets.Count == 0) continue;
 
-                var set = BuildGroup(g, packageRoot, kit, profile, out int sprites);
+                var set = BuildGroup(g, packageRoot, kit, profile, options, out int sprites, out int channelAtlases);
                 result.SpriteCount += sprites;
-                result.AtlasCount += ApprovedArtContract.Channels.Length;
+                result.AtlasCount += 1 + channelAtlases;
+                result.ChannelAtlasCount += channelAtlases;
 
                 switch (g.Name)
                 {
-                    case "floor": result.Floor = set; break;
-                    case "walltop": result.WallTop = set; break;
-                    case "wallfront": result.WallFront = set; break;
+                    case "floor": result.Floor = set; if (options.AssignSetsToKit) kit.floorSet = set; break;
+                    case "walltop": result.WallTop = set; if (options.AssignSetsToKit) kit.wallTopSet = set; break;
+                    case "wallfront": result.WallFront = set; if (options.AssignSetsToKit) kit.wallFrontSet = set; break;
                 }
             }
 
@@ -136,9 +176,10 @@ namespace TunnelCrew.EditorTools.ArtPipeline
         // ───────────────────────────── 묶음 하나
 
         static SurfaceMaterialSet BuildGroup(Group group, string packageRoot, EnvironmentKit kit,
-            WorldVisualProfile profile, out int spriteCount)
+            WorldVisualProfile profile, Options options, out int spriteCount, out int channelAtlasCount)
         {
             spriteCount = 0;
+            channelAtlasCount = 0;
 
             // 1) 원본 Albedo 를 읽어 셀 크기를 정한다.
             var sizes = new List<Vector2Int>(group.Assets.Count);
@@ -183,9 +224,10 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                 // 셰이더의 기본값(bump / black / white)이 "그 채널 없음" 을 뜻한다.
                 if (!anyContent && channel != "albedo") continue;
 
-                string path = $"{AtlasDir}/tr01_atlas_{group.Name}_{channel}.png";
+                string path = options.AtlasPath(group.Name, channel);
                 WritePng(path, pixels, layout.AtlasWidth, layout.AtlasHeight);
                 atlasPaths[channel] = path;
+                if (channel != "albedo") channelAtlasCount++;
             }
 
             AssetDatabase.Refresh();
@@ -222,17 +264,23 @@ namespace TunnelCrew.EditorTools.ArtPipeline
             ApplyToKit(kit, bySlot);
 
             // 5) 채널 아틀라스를 재질 묶음에 연결한다.
-            var set = LoadOrCreate<SurfaceMaterialSet>($"{DataDir}/SurfaceMaterialSet_TestRoom_{group.Name}.asset");
+            string setPath = options.SetPath(group.Name);
+            bool created = AssetDatabase.LoadAssetAtPath<SurfaceMaterialSet>(setPath) == null;
+            var set = LoadOrCreate<SurfaceMaterialSet>(setPath);
             set.kind = SurfaceMaterialSet.Kind.World;
             set.minLightSlot = group.MinLight;
             set.normal = LoadTexture(atlasPaths, "normal");
             set.emission = LoadTexture(atlasPaths, "emission");
             set.materialMask = LoadTexture(atlasPaths, "mask");
             set.ao = LoadTexture(atlasPaths, "ao");
-            set.normalStrength = 1f;
-            set.aoStrength = 1f;
-            set.emissionIntensity = 1f;
-            set.minLightOverride = -1f;
+            // 세기 값은 사람이 인스펙터에서 조정하는 튜닝이다 — 이미 있는 세트(레퍼런스 1.6 등)는 건드리지 않는다.
+            if (created)
+            {
+                set.normalStrength = 1.6f;   // 사용자 결정(2026-09-10): 전 지층 1.6
+                set.aoStrength = 1f;
+                set.emissionIntensity = 1f;
+                set.minLightOverride = -1f;
+            }
             EditorUtility.SetDirty(set);
 
             Debug.Log($"[비주얼] 아틀라스 '{group.Name}' — {layout} · 채널 {atlasPaths.Count}종 · 스프라이트 {spriteCount}");
@@ -262,6 +310,8 @@ namespace TunnelCrew.EditorTools.ArtPipeline
                     case ApprovedArtContract.KitSlot.EastSide: kit.eastSide = Get(kv.Key); break;
                     case ApprovedArtContract.KitSlot.OuterCorner: kit.outerCorner = Get(kv.Key); break;
                     case ApprovedArtContract.KitSlot.InnerCorner: kit.innerCorner = Get(kv.Key); break;
+                    case ApprovedArtContract.KitSlot.BossWallTop: kit.bossWallTop = kv.Value.Count > 0 ? kv.Value[0] : null; break;
+                    case ApprovedArtContract.KitSlot.BossWallFront: kit.bossWallFront = kv.Value.Count > 0 ? kv.Value[0] : null; break;
                 }
             }
         }

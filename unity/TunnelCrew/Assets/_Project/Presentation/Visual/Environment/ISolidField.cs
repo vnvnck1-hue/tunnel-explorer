@@ -21,5 +21,8 @@ namespace TunnelCrew.Presentation.Visual
 
         /// <summary>표면 시드. 원본의 <c>dec</c> 값처럼 셀 고정 변형 재료로 쓴다.</summary>
         byte SurfaceSeedAt(int col, int row);
+
+        /// <summary>보스 소환 벽인가(4차 아트 요청 §3). 고체 셀에서만 의미가 있다. 범위 밖은 false.</summary>
+        bool IsBossWallAt(int col, int row);
     }
 }

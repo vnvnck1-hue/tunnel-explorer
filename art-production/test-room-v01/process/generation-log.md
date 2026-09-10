@@ -813,6 +813,36 @@ Constraints: production-ready albedo only; opaque tile interior with no black ba
 Avoid: pipes, metal frames, machinery, doors, glowing neon crystals, heavy cracks, checkerboard patterns, borders, labels, lettering, watermark, vignette, drop shadow, black rectangle background.
 ```
 
+## STRATUM-KITS-V1-REMAINING
+
+- 날짜: `2026-09-10`
+- 범위: 4차 요청서의 미착수분인 `§2-A` normal 48종과 `§4` 선택 소품 7종.
+- 기준 레퍼런스: `concept/tr01_reference_asset_calibration_board_v1.png`, 승인된
+  `tr01_stratum2/3`·`tr01_abyss` floor/wall top/rim/front albedo, 기존
+  `ReferenceCalibrationV1` 피벗 규칙.
+- Normal 제작: built-in ImageGen을 사용하지 않고 승인 albedo에서 결정적으로 파생했다.
+  종류별 강도(floor 2.2, wall top 3.0, rim 4.2, front 3.4), 좌우/상하 wrap 규칙,
+  upper-left 35° 재질 편향을 고정한 PowerShell 도구
+  `tools/art/generate-stratum-normal-maps.ps1`로 생성했다. OpenGL +Y, neutral
+  `(128,128,255)` 기준이며 동일 캔버스·알파·피벗을 유지한다.
+- Normal 결과: reference floor/top/rim/front 12종과 stratum2/3/abyss 각 12종,
+  합계 48종을 `approved/normal/` 및 Unity `ReferenceCalibrationV1/`에 반입했다.
+- Optional 생성 프롬프트 세트:
+  1. `tr01_reference_ore_front_a/b_albedo`: 투명 128×128, 하단 중앙 피벗,
+     보라 암석과 절제된 magenta/cyan 광맥, albedo only.
+  2. `tr01_reference_torch_a_albedo`: 투명 96×128, 하단 중앙 피벗, 보라 금속/석재
+     브래킷과 amber flame housing, albedo only.
+  3. `tr01_reference_floor_edge_a_albedo`: 불투명 128×128 좌우 반복 가능 purple
+     stone edge transition, albedo only.
+- Optional 생성 방식: built-in ImageGen 신규 생성 4회, target canvas로 nearest 정규화.
+  ore/torch emission은 albedo의 magenta/cyan/amber 픽셀만 결정적으로 분리해 별도
+  emission 채널로 만들었으며 albedo에 glow를 굽지 않았다.
+- 결과: ore albedo/emission 4종, torch albedo/emission 2종, floor edge albedo 1종을
+  승인 폴더와 Unity에 반입했다. 기준 floor albedo 3종도 작업 폴더에서 승인 폴더로
+  승격해 normal pair와 manifest에 포함했다.
+- 패키지 상태: manifest revision `22`, validator `PASS`, approved assets `120`,
+  validated files `355`.
+
 ### Cap A edge correction
 
 ```text

@@ -150,7 +150,7 @@ namespace TunnelCrew.Presentation.Visual
             // 방향만 말하면 된다 — 진하고 딱딱하면 검정 띠가 바닥을 가른다(2026-09-10 지적). 분류 규칙과 맞춘다.
             _flashlight.shadowIntensity = LightClassRules.ShadowIntensity(LightClass.Scout);
             _flashlight.shadowSoftness = LightClassRules.ShadowSoftness(LightClass.Scout);
-            UseNormalMaps(_flashlight);
+            UseNormalMaps(_flashlight, PlayerLightNormalHeightCells);
 
             var haloGo = new GameObject("Player Halo");
             haloGo.transform.SetParent(root.transform, false);
@@ -163,7 +163,7 @@ namespace TunnelCrew.Presentation.Visual
             _halo.intensity = 1.4f;
             _halo.color = new Color(0.95f, 0.88f, 0.78f);
             _halo.shadowIntensity = 0f;
-            UseNormalMaps(_halo);
+            UseNormalMaps(_halo, PlayerLightNormalHeightCells);
         }
 
         /// <summary>
@@ -172,7 +172,10 @@ namespace TunnelCrew.Presentation.Visual
         /// </summary>
         static System.Reflection.FieldInfo _fNmQuality, _fNmDistance;
         static bool _nmProbed;
-        static void UseNormalMaps(Light2D l)
+        /// <summary>본편 RunBootstrap.PlayerLightNormalHeightCells 와 같은 값 — 손전등·헤드램프만 1.0(사용자 결정 2026-09-10).</summary>
+        const float PlayerLightNormalHeightCells = 1.0f;
+
+        static void UseNormalMaps(Light2D l, float heightCells = -1f)
         {
             if (!_nmProbed)
             {
@@ -185,7 +188,7 @@ namespace TunnelCrew.Presentation.Visual
                     Debug.LogWarning("[랩] Light2D.m_NormalMapQuality 를 찾지 못했다 — 캐릭터 광원이 노멀맵을 읽지 않는다.");
             }
             _fNmQuality?.SetValue(l, Light2D.NormalMapQuality.Accurate);
-            _fNmDistance?.SetValue(l, LightSocketRenderer.NormalMapHeightCells);
+            _fNmDistance?.SetValue(l, heightCells > 0f ? heightCells : LightSocketRenderer.NormalMapHeightCells);
 
             // 캐릭터 광원은 <b>지면 높이</b>다 — 벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추면
             // 벽에 높이가 없다는 뜻이 된다. 바닥·벽 정면·개체만 비춘다.

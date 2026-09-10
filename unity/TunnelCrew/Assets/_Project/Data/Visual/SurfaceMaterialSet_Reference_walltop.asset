@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
   kind: 0
   minLightSlot: 0
-  normal: {fileID: 0}
+  normal: {fileID: 2800000, guid: b5837cbc58e63664fb5cc692f5503115, type: 3}
   emission: {fileID: 0}
   materialMask: {fileID: 0}
   ao: {fileID: 0}

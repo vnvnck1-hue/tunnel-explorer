@@ -43,6 +43,12 @@ namespace TunnelCrew.Presentation.Visual
 
         /// <summary>그림자 캐스터 윤곽에 기여하는 고체 경계(§7.4).</summary>
         ShadowEdge = 1 << 10,
+
+        /// <summary>
+        /// 고체 + 보스 소환 벽(원본 INF.bossWallCells). cap·정면을 키트의 전용 보스 벽 아트로 갈아 끼운다
+        /// (4차 아트 요청 §3). 게임플레이 정보라 지층 키트와 무관하게 항상 같은 것으로 읽혀야 한다.
+        /// </summary>
+        BossWall = 1 << 11,
     }
 
     /// <summary>

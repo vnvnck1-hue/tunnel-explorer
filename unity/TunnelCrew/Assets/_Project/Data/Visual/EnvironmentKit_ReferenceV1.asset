@@ -13,40 +13,50 @@ MonoBehaviour:
   m_Name: EnvironmentKit_ReferenceV1
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.EnvironmentKit
   floorBase:
-  - {fileID: 21300000, guid: 4cbeddb24d5d6cc45812620cb5dc53ca, type: 3}
-  - {fileID: 21300000, guid: b09c447661f72be42b891c582fa1ccad, type: 3}
-  - {fileID: 21300000, guid: b68ae2f506f37574498e159f78b75282, type: 3}
-  floorEdge: []
+  - {fileID: -1052940901, guid: 98245c22cb55b85499842f4b19dd0f97, type: 3}
+  - {fileID: -1868294730, guid: 98245c22cb55b85499842f4b19dd0f97, type: 3}
+  - {fileID: 447774752, guid: 98245c22cb55b85499842f4b19dd0f97, type: 3}
+  floorEdge:
+  - {fileID: 541881117, guid: 98245c22cb55b85499842f4b19dd0f97, type: 3}
   contactAo:
   - {fileID: 21300000, guid: 167a944d596704741af8ae6e69380046, type: 3}
   - {fileID: 21300000, guid: 4e81eb3e2c4d8d9f3c1fe7e9b767e6f6, type: 3}
   - {fileID: 21300000, guid: 97e5696f643dc624b5de6ca064bf789a, type: 3}
   - {fileID: 21300000, guid: d36bae2b2373c91b64b49ef595e95f3d, type: 3}
   wallTop:
-  - {fileID: 21300000, guid: d6ac016f723482a4fa8af70e830c9386, type: 3}
-  - {fileID: 21300000, guid: 93b090588e9e11841b4ec47ee329cd7c, type: 3}
-  - {fileID: 21300000, guid: 20044d6d3c4b0b847addbdd733c45ae8, type: 3}
+  - {fileID: 560330343, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
+  - {fileID: 1113840647, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
+  - {fileID: -1463500651, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
   wallTopRim:
-  - {fileID: 21300000, guid: 2a0fd58ac99c311b0444b92451bee992, type: 3}
-  - {fileID: 21300000, guid: 72a8712472b64b9473dc8ab1894065f3, type: 3}
-  - {fileID: 21300000, guid: 9d4bea1f0f92d9cb996c521456cf1e4b, type: 3}
+  - {fileID: -1521411161, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
+  - {fileID: 776468721, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
+  - {fileID: -51273878, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
   wallFront:
-  - {fileID: 21300000, guid: 9cfce8e27ea8b2b46bb98e1cd9a96e5a, type: 3}
-  - {fileID: 21300000, guid: 63cd07acf96e8a84aa5451cc977d2983, type: 3}
-  - {fileID: 21300000, guid: 86586dc77ab81e64283f367653b75fd2, type: 3}
-  westSide:
-  - {fileID: 21300000, guid: 3600e0abbc5649c8c6a34293b1a8fcb2, type: 3}
-  eastSide:
-  - {fileID: 21300000, guid: e42ad5fb3613f269cfe53bb356f83fff, type: 3}
-  outerCorner:
-  - {fileID: 21300000, guid: 71ef005112aea5ef345c050ebadb00c7, type: 3}
-  innerCorner:
-  - {fileID: 21300000, guid: 73b420fb9ae4fa1d1500a2c8126390e6, type: 3}
+  - {fileID: -1080093950, guid: 1ff97dd49db07fd41b363ec4199a7968, type: 3}
+  - {fileID: -1573977561, guid: 1ff97dd49db07fd41b363ec4199a7968, type: 3}
+  - {fileID: -1973043236, guid: 1ff97dd49db07fd41b363ec4199a7968, type: 3}
+  westSide: []
+  eastSide: []
+  outerCorner: []
+  innerCorner: []
   wallShadow:
   - {fileID: 21300000, guid: 2c4a5380b8c28ff64b2baa21863a47dd, type: 3}
   - {fileID: 21300000, guid: f6e462806b1be768f3bfb3fde0ba1111, type: 3}
   - {fileID: 21300000, guid: 3186d0429a4c03494aad9884191f96a6, type: 3}
   - {fileID: 21300000, guid: df64cf779cf3e36fb1d60c76ec327a13, type: 3}
+  bossWallTop: {fileID: 1663312587, guid: 26c2a2df157d65e4f8d5e76609641729, type: 3}
+  bossWallFront: {fileID: -2124699980, guid: 1ff97dd49db07fd41b363ec4199a7968, type: 3}
+  floorSet: {fileID: 11400000, guid: a55bce0a8a8bf8d4da5151977b93dd4a, type: 2}
+  wallTopSet: {fileID: 11400000, guid: b9f7ab0ca8fc5024e9f444eacea6e462, type: 2}
+  wallFrontSet: {fileID: 11400000, guid: 31c1020ebd8ec1b499a43df31e50d3bb, type: 2}
+  oreFront:
+  - {fileID: 21300000, guid: 238e738c7a2661447b9524987a6a89ad, type: 3}
+  - {fileID: 21300000, guid: a700c7a360d14d7438aa7128687bc10d, type: 3}
+  oreFrontEmission:
+  - {fileID: 21300000, guid: 7b20cf641d53df24dab66ffc25943173, type: 3}
+  - {fileID: 21300000, guid: e0d101d8f006d734d8c34c0c93c1b619, type: 3}
+  torch: {fileID: 21300000, guid: 723baf3b061ad3344a6492803301ab2b, type: 3}
+  torchEmission: {fileID: 21300000, guid: 7802489a3c5ff504aade559340dddd94, type: 3}
   wallCrack:
   - {fileID: 21300000, guid: 6a44e9f04fa032fe31fe7092aecf461f, type: 3}
   - {fileID: 21300000, guid: e07941de024a0e0983284665c63c9527, type: 3}

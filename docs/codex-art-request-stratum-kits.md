@@ -7,6 +7,8 @@
 이전 요청서: [1차](codex-art-request-reference-wall-set.md) · [2차](codex-art-request-wall-volume.md) · [3차](codex-art-request-r2-darkness-boundary.md) — **전부 납품·소비 완료(manifest r20)**
 
 상태: **기존 범위 납품 완료 (2026-09-10 · manifest r21)**  
+§2-A 노멀 48장 · §4 소품 도착: **manifest r22 (2026-09-10 22:22)** — 노멀은 구현 트랙이 소비 완료(아틀라스 굽기, 아래 §2-A 참조). §4 소품 **소비 완료(2026-09-10 23:30, manifest r23)** — 광맥 정면 a/b(+이미션)는 `WallOreOverlay`, 횃불(+이미션)은 랜턴 자리 `AttachTorch`, 바닥 경계는 Claude 가 코덱스에 직접 재요청해 r3 채택(r1 은 재질 불일치로 교체, `working/floor_edge_r1_art_track/` 보존). 횃불 캔버스 96→128 패딩·피벗 정리 완료. 이전 문구: §4 소품(광맥 정면 a/b + 이미션 · 횃불 + 이미션 · 바닥 경계)은 미소비 — 바닥 경계는 명시적으로 보류(`ConsumeFloorEdge=false`): 결정 바닥 a/b/c 와 재질이 달라 본선에서 바닥이 끊겨 보였다(22:50 사용자 지적). 경계 타일은 바닥 기본과 같은 재질의 가장자리 블렌드로 다시 그려야 한다 — 검사기 오류 2건(횃불 캔버스 96px < footprint 128px · 바닥 경계 pivotNormalized (0.5,0) vs pivotPixels (64,64) 불일치)을 아트 트랙이 정리해야 한다. 노멀은 albedo 밝기에서 뽑은 생성형(`tools/art/generate-stratum-normal-maps.ps1`)이라 §2-A 의 "생성형 금지" 조건과 어긋난다 — 사용자 판정 대기.
+구현 트랙 소비: **완료 (2026-09-10 저녁)** — §2 36장 → `EnvironmentKit_Stratum2/3/Abyss`(메뉴 "지층 2·3·이상지대 환경 키트 생성 (4차)"), §3 보스 벽 2장 → 모든 키트의 `bossWallTop/Front` 슬롯(`SurfaceMask.BossWall` · `Boss Wall Tint` 제거). 플레이 캡처 `docs/unity-port/img/stratum-kits-2026-09-10/`. 상세는 [unity-port/worklog-2026-09-10-r2.md](unity-port/worklog-2026-09-10-r2.md) §3.  
 범위 메모: 최초 요청 범위인 지층 알베도 36장 + 보스 벽 2장을 완료했다. 이후 추가된 §2-A 노멀맵 48장은 사용자 지시에 따라 이번 납품에서 제외하며 **미착수** 상태로 남긴다. §4 권장 소품도 미착수다.
 
 납품 위치:
@@ -72,7 +74,12 @@ TestRoomV01 세트에는 노멀 46장이 있어 VisualLab 에서는 동작한다
 - 지층 2·3·이상지대 키트(§2)도 **albedo 와 함께 `_normal` 을 짝으로** 납품한다 — 지층당 12장 추가. 채널 없이 오면 그 지층은 노멀 라이팅이 없는 채로 들어간다.
 - `_ao` · `_mask` · `_emission` 은 그 다음(2차 §4 우선순위 그대로).
 
-**구현 트랙**: 타일맵 하나에 재질 하나라 cap 3장이 노멀 1장을 공유할 수 없다 — 스프라이트별 세컨더리 텍스처는 URP 17 타일맵 조명에
+**구현 트랙 소비 완료(2026-09-10 22:40)** — manifest r22 의 노멀 48장을 네 가족 아틀라스로 구웠다(`Assets/Art/Visual/ReferenceCalibrationV1/Atlas/tr01_atlas_{reference,stratum2,stratum3,abyss}_{floor,walltop,wallfront}_{albedo,normal}.png`, NormalMap·Linear 임포트). 랩 ⑭/⑮/⑯ 세 장면이 이제 다르다(조명 영역 평균 차 3.2/255, p95 14). 효과가 약한 이유는 광원 `normalMapDistance` 2~3칸 → 빛이 거의 수직이라 노멀 기울기가 6% 안팎만 반영되기 때문. 실험: distance 1.0 에서 p95 25 로 늘고 0.4 는 1.0 과 같다(`docs/unity-port/img/normal-atlas-2026-09-10/lab_normal_distance_compare.png`). 튜닝 결정(2026-09-10 23:35): 생성형 노멀 일단 채택(정식 재요청 보류) · normalMapDistance 손전등·헤드램프 1.0 · `_NormalStrength` 전 지층 1.6. 반영 기록은 worklog §7.
+
+**구현 트랙 준비 완료(2026-09-10 밤)** — 메뉴 `Tunnel Crew/비주얼 · 레퍼런스·지층 키트 채널 아틀라스 굽기 (4차 §2-A)`. manifest 의 assetId 접두어(`TR01-REF-` · `TR01-STRATUM2-` · `TR01-STRATUM3-` · `TR01-ABYSS-`)로 가족을 나눠 가족마다 floor/walltop/wallfront 아틀라스 3종을 굽고, 결과 재질을 키트의 `floorSet/wallTopSet/wallFrontSet` 에 연결한다(본선 `RunBootstrap` 이 우선 사용). 보스 벽 2장은 모든 가족의 cap/정면 아틀라스에 함께 들어간다. albedo 만 있는 가족은 "아트 대기" 로 건너뛴다 — 노멀이 오면 메뉴를 다시 실행하면 끝.
+**아트 트랙에 요청**: (1) 노멀은 manifest 의 해당 자산 `channels.normal` 에 경로를 추가해 납품한다(파일만 오면 잡히지 않는다). (2) **레퍼런스 바닥 3장(`tr01_reference_floor_{a,b,c}`)은 manifest 에 자산 항목이 없다** — 노멀과 함께 `TR01-REF-FLR-{A,B,C}` 항목(albedo + normal)을 추가해야 바닥 아틀라스가 만들어진다. 지층 2·3·이상지대 바닥은 이미 항목이 있다.
+
+**구현 트랙(원문)**: 타일맵 하나에 재질 하나라 cap 3장이 노멀 1장을 공유할 수 없다 — 스프라이트별 세컨더리 텍스처는 URP 17 타일맵 조명에
 반영되지 않는다(RunBootstrap 주석 2026-09-07). 변형 a/b/c 를 한 아틀라스로 굽고 노멀도 같은 배치로 굽는 경로(`ChannelAtlasBuilder`)를
 레퍼런스 키트에 연결한다. 이건 아트 도착 전에 준비한다.
 

@@ -14,6 +14,7 @@ namespace TunnelCrew.Presentation.Visual
     {
         Tilemap _map;
         Tile[] _tiles;
+        Material _material;
 
         public bool Ready => _map != null && _tiles != null && _tiles.Length > 0;
 
@@ -34,13 +35,18 @@ namespace TunnelCrew.Presentation.Visual
             if (_map == null)
             {
                 _map = gameObject.AddComponent<Tilemap>();
+                // 균열 스프라이트 피벗은 하단 중앙(정면과 같다) — 앵커도 정면 타일맵과 같은 셀 남쪽 경계에 둔다.
+                // 기본 앵커(0.5,0.5)면 균열이 반 칸 위로 떠서 cap 에 걸린다(2026-09-10 발견).
+                _map.tileAnchor = new Vector3(0.5f, 0f, 0f);
                 var tr = gameObject.AddComponent<TilemapRenderer>();
                 tr.mode = TilemapRenderer.Mode.Individual;
                 if (host != null)
                 {
                     tr.sortingLayerName = host.sortingLayerName;
-                    tr.sortingOrder = host.sortingOrder + 1;
-                    tr.sharedMaterial = host.sharedMaterial;
+                    tr.sortingOrder = host.sortingOrder + 2;   // 광맥(+1) 위, 광맥 이미션(+3) 아래
+                    // 정면 재질을 그대로 빌리면 노멀 아틀라스를 개별 스프라이트 UV 로 샘플한다 — 채널만 뗀 복제본(4차 §2-A 이후).
+                    _material = OverlayMaterials.LitWithoutChannels(host.sharedMaterial, "WallCrack-Lit");
+                    if (_material != null) tr.sharedMaterial = _material;
                 }
                 else if (VisualLayers.Exists(VisualLayers.BackStructure))
                     tr.sortingLayerName = VisualLayers.BackStructure;
@@ -67,5 +73,7 @@ namespace TunnelCrew.Presentation.Visual
         }
 
         public void Clear() { if (_map != null) _map.ClearAllTiles(); }
+
+        void OnDestroy() { if (_material != null) Destroy(_material); }
     }
 }

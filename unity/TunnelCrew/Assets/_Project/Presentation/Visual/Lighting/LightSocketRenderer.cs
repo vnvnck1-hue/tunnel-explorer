@@ -33,6 +33,13 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("설치 높이(셀). 0.75 이상이면 벽 윗면·전경 cap 까지 비춘다.")]
         public float mountHeightCells = 0f;
 
+        /// <summary>
+        /// 노멀맵 조명이 보는 광원 높이(셀) 오버라이드. 0 이하 = 공용값(<see cref="LightSocketRenderer.NormalMapHeightCells"/>).
+        /// 사용자 결정(2026-09-10): 손전등·헤드램프만 1.0 — 플레이어가 벽 베벨을 마주볼 때 요철이 선다. 램프·크루·보스는 공용값.
+        /// </summary>
+        [Tooltip("노멀맵 광원 높이(셀) 오버라이드. 0 이하 = 공용값 2.")]
+        public float normalMapHeightCells = -1f;
+
         /// <summary>벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추는가.</summary>
         public bool LightsWallTops => mountHeightCells >= SurfaceRules.MinLiftCells;
 
@@ -176,7 +183,7 @@ namespace TunnelCrew.Presentation.Visual
         /// <c>NormalsRendering</c> 패스가 전부 무시된다 —
         /// <see cref="LightClassRules.NormalQuality"/> 의 주석을 볼 것.
         /// </summary>
-        void ApplyNormalQuality(Light2D light, LightClass c)
+        void ApplyNormalQuality(Light2D light, LightClass c, float heightOverride = -1f)
         {
             if (light.lightType == Light2D.LightType.Global) return;   // 전역광은 노멀을 쓰지 않는다
 
@@ -204,9 +211,10 @@ namespace TunnelCrew.Presentation.Visual
             // 광원 높이(칸). 이 값이 노멀 반응의 세기를 정한다 — 크면 빛이 거의 정면에서
             // 오는 것이 되어 요철이 사라진다. 씬 직렬화 기본값 3 이 "노멀이 안 보인다" 의
             // 원인이었다. 본선(RunBootstrap.UseNormalMaps)이 쓰는 0.8 과 같게 맞춘다.
+            float height = heightOverride > 0f ? heightOverride : NormalMapHeightCells;
             if (use && _normalDistanceField != null &&
-                !Equals(_normalDistanceField.GetValue(light), NormalMapHeightCells))
-                _normalDistanceField.SetValue(light, NormalMapHeightCells);
+                !Equals(_normalDistanceField.GetValue(light), height))
+                _normalDistanceField.SetValue(light, height);
         }
 
         /// <summary>노멀 조명이 보는 광원 높이(칸). 낮을수록 요철이 강하게 선다.</summary>
@@ -242,7 +250,7 @@ namespace TunnelCrew.Presentation.Visual
                 float k = LightClassRules.FlickerAt(s.lightClass, time, s.phase,
                     VisualQualityRules.FlashScale(_reducePhotosensitivity));
                 light.intensity = Mathf.Max(0f, s.baseIntensity * k);
-                ApplyNormalQuality(light, s.lightClass);
+                ApplyNormalQuality(light, s.lightClass, s.normalMapHeightCells);
                 ApplyLitLayers(light, s.LightsWallTops);
 
                 s.ShadowOn = false;

@@ -115,6 +115,8 @@ namespace TunnelCrew.Presentation.Visual
             }
 
             s.Surfaces |= SurfaceMask.WallTop;
+            // 보스 소환 벽 — cap·정면 아트를 갈아 끼우는 표시. 이웃이 아니라 자기 셀만 본다.
+            if (field.IsBossWallAt(c, r)) s.Surfaces |= SurfaceMask.BossWall;
 
             // 북쪽이 열려 있으면 올려 그린 cap 이 그 바닥의 캐릭터와 겹친다 →
             // 전경 오클루더. 남쪽이 열려 있으면 남쪽 방에서 보이는 벽 정면이다.
