@@ -1,0 +1,443 @@
+{
+  "deliveryPixelsPerCell": 128,
+  "seamLockedPixels": 4,
+  "assets": {
+    "tr01_stratum2_floor_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 72.12
+    },
+    "tr01_stratum2_floor_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 81.12
+    },
+    "tr01_stratum2_floor_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 78.9
+    },
+    "tr01_stratum2_wall_top_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 86.71
+    },
+    "tr01_stratum2_wall_top_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 93.2
+    },
+    "tr01_stratum2_wall_top_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 90.06
+    },
+    "tr01_stratum2_wall_top_rim_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 77.08
+    },
+    "tr01_stratum2_wall_top_rim_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 89.95
+    },
+    "tr01_stratum2_wall_top_rim_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 87.5
+    },
+    "tr01_stratum2_wall_front_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 53.75
+    },
+    "tr01_stratum2_wall_front_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 53.68
+    },
+    "tr01_stratum2_wall_front_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 48.31
+    },
+    "tr01_stratum3_floor_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 58.02
+    },
+    "tr01_stratum3_floor_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 63.45
+    },
+    "tr01_stratum3_floor_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 55.3
+    },
+    "tr01_stratum3_wall_top_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 52.27
+    },
+    "tr01_stratum3_wall_top_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 58.13
+    },
+    "tr01_stratum3_wall_top_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 68.9
+    },
+    "tr01_stratum3_wall_top_rim_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 43.74
+    },
+    "tr01_stratum3_wall_top_rim_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 36.24
+    },
+    "tr01_stratum3_wall_top_rim_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 41.67
+    },
+    "tr01_stratum3_wall_front_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 51.07
+    },
+    "tr01_stratum3_wall_front_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 64.48
+    },
+    "tr01_stratum3_wall_front_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 54.98
+    },
+    "tr01_abyss_floor_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 68.75
+    },
+    "tr01_abyss_floor_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 77.86
+    },
+    "tr01_abyss_floor_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 81.71
+    },
+    "tr01_abyss_wall_top_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 89.05
+    },
+    "tr01_abyss_wall_top_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 93.19
+    },
+    "tr01_abyss_wall_top_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 89.6
+    },
+    "tr01_abyss_wall_top_rim_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 50.72
+    },
+    "tr01_abyss_wall_top_rim_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 53.43
+    },
+    "tr01_abyss_wall_top_rim_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 45.03
+    },
+    "tr01_abyss_wall_front_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 62.25
+    },
+    "tr01_abyss_wall_front_b_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 68.01
+    },
+    "tr01_abyss_wall_front_c_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 65.65
+    },
+    "tr01_reference_boss_wall_top_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0,
+        "ns": 0.0
+      },
+      "meanLuma": 43.84
+    },
+    "tr01_reference_boss_wall_front_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "edgeMse": {
+        "ew": 0.0
+      },
+      "meanLuma": 34.43
+    }
+  }
+}

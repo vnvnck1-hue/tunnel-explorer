@@ -6,7 +6,14 @@
 계약: [../art-production/test-room-v01/process/production-spec.md](../art-production/test-room-v01/process/production-spec.md)
 이전 요청서: [1차](codex-art-request-reference-wall-set.md) · [2차](codex-art-request-wall-volume.md) · [3차](codex-art-request-r2-darkness-boundary.md) — **전부 납품·소비 완료(manifest r20)**
 
-상태: **요청 (미착수)**
+상태: **기존 범위 납품 완료 (2026-09-10 · manifest r21)**  
+범위 메모: 최초 요청 범위인 지층 알베도 36장 + 보스 벽 2장을 완료했다. 이후 추가된 §2-A 노멀맵 48장은 사용자 지시에 따라 이번 납품에서 제외하며 **미착수** 상태로 남긴다. §4 권장 소품도 미착수다.
+
+납품 위치:
+- 승인본: `art-production/test-room-v01/approved/albedo/`
+- Unity 임포트본: `unity/TunnelCrew/Assets/Art/Visual/ReferenceCalibrationV1/`
+- 생성 원본·로그: `art-production/test-room-v01/source/stratum_kits_v1/`
+- 반복/비교 QA: `art-production/test-room-v01/qa/tr01_stratum2_*_6x6.png`, `tr01_stratum3_*_6x6.png`, `tr01_abyss_*_6x6.png`, `tr01_stratum_kits_comparison.png`, `tr01_reference_boss_wall_comparison.png`
 
 ## 0. 왜 4차인가
 
