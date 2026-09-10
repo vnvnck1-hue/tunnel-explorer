@@ -64,6 +64,23 @@ namespace TunnelCrew.Presentation
         [SerializeField] TunnelCrew.Presentation.Visual.WorldVisualProfile _envProfile;
         [SerializeField] TunnelCrew.Presentation.Visual.SurfaceRuleSet _envRules;
         [SerializeField] TunnelCrew.Presentation.Visual.SurfaceMaterialSet _envFloorSet, _envWallTopSet, _envWallFrontSet;
+        /// <summary>
+        /// 지층 2 · 지층 3 · 이상지대 키트(4차 아트 요청). 인덱스 = <c>StratumMoodDirector.IndexFor(depth) - 1</c>.
+        /// 비어 있거나 <c>IsEmpty</c>(아트 미도착)면 지층 1 키트(<see cref="_envKit"/>)로 떨어진다.
+        /// 재질 세트는 채널이 없는 최소광 슬롯만이라 지층 공용이다.
+        /// </summary>
+        [SerializeField] TunnelCrew.Presentation.Visual.EnvironmentKit[] _envKitsByStratum = new TunnelCrew.Presentation.Visual.EnvironmentKit[3];
+
+        TunnelCrew.Presentation.Visual.EnvironmentKit KitForDepth(int depth)
+        {
+            int idx = TunnelCrew.Presentation.Visual.StratumMoodDirector.IndexFor(depth) - 1;   // 0 = 지층 2
+            if (idx >= 0 && _envKitsByStratum != null && idx < _envKitsByStratum.Length)
+            {
+                var k = _envKitsByStratum[idx];
+                if (k != null && !k.IsEmpty) return k;
+            }
+            return _envKit;
+        }
         TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer _env;
         TunnelCrew.Presentation.Visual.LabWallDropShadow _envDropShadow;
         TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
@@ -563,10 +580,13 @@ namespace TunnelCrew.Presentation
         void BindEnvironment()
         {
             var world = Sim.World;
+            // 층마다 키트를 고른다(지층 2·3·이상지대는 아트가 도착한 층만 자기 키트). Assign 은 Bind 전에 다시 불러도 안전하다.
+            var kit = KitForDepth(Sim.Depth);   // _depth 는 시작 깊이일 뿐 — 하강은 Sim 이 관리한다
+            _env.Assign(_envProfile, _envRules, kit, _envFloorSet, _envWallTopSet, _envWallFrontSet);
             _env.Bind(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
             if (_envShadows != null) { _envShadows.Bind(_env.IsWallCell, _env.Cols, _env.Rows); _envShadows.FlushPending(); }
             _envDropShadow.Resync(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
-            _envCrack.Bind(_envKit, _env.FrontFaceRenderer);
+            _envCrack.Bind(kit, _env.FrontFaceRenderer);
             BuildBossTint();
 
             // 층마다 WorldGrid 가 새로 만들어지므로 이벤트도 새 인스턴스에 건다.

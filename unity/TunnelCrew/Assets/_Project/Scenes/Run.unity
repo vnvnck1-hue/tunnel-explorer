@@ -163,6 +163,10 @@ MonoBehaviour:
   _envFloorSet: {fileID: 11400000, guid: a55bce0a8a8bf8d4da5151977b93dd4a, type: 2}
   _envWallTopSet: {fileID: 11400000, guid: b9f7ab0ca8fc5024e9f444eacea6e462, type: 2}
   _envWallFrontSet: {fileID: 11400000, guid: 31c1020ebd8ec1b499a43df31e50d3bb, type: 2}
+  _envKitsByStratum:
+  - {fileID: 11400000, guid: 7af46817d871d574193acc75286d4ec2, type: 2}
+  - {fileID: 11400000, guid: 45300b59ddcce9d45aa7631b97b5d710, type: 2}
+  - {fileID: 11400000, guid: 285abdc0a1d00ab489ebc8691d65786b, type: 2}
   _showHud: 1
 --- !u!4 &1525295235
 Transform:

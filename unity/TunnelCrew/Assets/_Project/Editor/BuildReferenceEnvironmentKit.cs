@@ -205,6 +205,85 @@ namespace TunnelCrew.EditorTools
 
         // ───────────────────────────── 자산
 
+        // ───────────────────────────── 지층 키트 (4차 아트 요청 §5 · 2026-09-10)
+
+        /// <summary>
+        /// 4차 요청서의 지층 접두어. 순서 = <c>StratumMoodDirector.IndexFor(depth) - 1</c>
+        /// (지층 2 · 지층 3 · 이상지대). 지층 1 은 기존 <c>tr01_reference_</c> 키트다.
+        /// </summary>
+        static readonly (string prefix, string kitName, string label)[] Strata =
+        {
+            ("tr01_stratum2_", "EnvironmentKit_Stratum2", "지층 2 균열"),
+            ("tr01_stratum3_", "EnvironmentKit_Stratum3", "지층 3 코어"),
+            ("tr01_abyss_",    "EnvironmentKit_Abyss",    "이상지대"),
+        };
+
+        [MenuItem("Tunnel Crew/비주얼 · 지층 2·3·이상지대 환경 키트 생성 (4차)", priority = 28)]
+        public static void RunStrata()
+        {
+            var report = new StringBuilder("[비주얼] 지층 환경 키트\n");
+            PrepareStratumImports();
+            var shared = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(KitPath);
+            if (shared == null) report.Append("  ⚠ 지층 1 키트가 없다 — 공용 마스크(AO·드롭섀도·균열)를 복사하지 못한다. 3단계 메뉴를 먼저 실행할 것.\n");
+            foreach (var s in Strata) BuildStratumKit(s.prefix, $"{DataDir}/{s.kitName}.asset", s.label, shared, report);
+            AssetDatabase.SaveAssets();
+            Debug.Log(report.ToString());
+        }
+
+        /// <summary>
+        /// 지층 하나의 키트. 바닥·상단·림·정면은 지층 접두어로 집고, 접점 AO·드롭섀도·균열은 <b>순수 알파 마스크라
+        /// 지층 1 키트에서 참조 복사</b>한다(4차 요청서 §2 "지층 공용"). 아트가 없으면 배열이 비고,
+        /// <c>RunBootstrap.KitForDepth</c> 가 <c>IsEmpty</c> 를 보고 지층 1 키트로 떨어진다 — 그래서 미리 만들어 둬도 안전하다.
+        /// </summary>
+        static void BuildStratumKit(string prefix, string kitPath, string label, EnvironmentKit shared, StringBuilder report)
+        {
+            report.Append($"\n── {label} ({prefix}*)\n");
+            var floor = Collect(prefix + "floor_{0}_albedo.png", new Vector2(0.5f, 0.5f), alpha: false);
+            var wallTop = Collect(prefix + "wall_top_{0}_albedo.png", new Vector2(0.5f, 0.5f), alpha: false);
+            var wallTopRim = Collect(prefix + "wall_top_rim_{0}_albedo.png", new Vector2(0.5f, 0.5f), alpha: false);
+            var wallFront = Collect(prefix + "wall_front_{0}_albedo.png", new Vector2(0.5f, 0.0f), alpha: false);
+            var floorEdge = Collect(prefix + "floor_edge_{0}_albedo.png", new Vector2(0.5f, 0.5f), alpha: false);
+
+            var kit = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(kitPath);
+            if (kit == null) { kit = ScriptableObject.CreateInstance<EnvironmentKit>(); AssetDatabase.CreateAsset(kit, kitPath); report.Append("  + 키트 생성\n"); }
+
+            Replace(ref kit.floorBase, floor, "floorBase", report);
+            Replace(ref kit.floorEdge, floorEdge, "floorEdge", report);
+            Replace(ref kit.wallTop, wallTop, "wallTop", report);
+            Replace(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
+            Replace(ref kit.wallFront, wallFront, "wallFront", report);
+            // 공용 알파 마스크 — 지층 1 에서 참조 복사(같은 스프라이트 자산을 가리킨다).
+            if (shared != null)
+            {
+                kit.contactAo = shared.contactAo; kit.wallShadow = shared.wallShadow; kit.wallCrack = shared.wallCrack;
+                report.Append($"  = 공용 마스크 복사: AO {Len(shared.contactAo)} · 드롭섀도 {Len(shared.wallShadow)} · 균열 {Len(shared.wallCrack)}\n");
+            }
+            // 측면·코너는 R2 에서 소비하지 않는다 — 비워 둔다.
+            kit.westSide = null; kit.eastSide = null; kit.outerCorner = null; kit.innerCorner = null;
+            EditorUtility.SetDirty(kit);
+
+            bool ready = Len(kit.floorBase) > 0 && Len(kit.wallTop) > 0 && Len(kit.wallFront) > 0;
+            report.Append(ready ? "  ▶ 본선에서 이 지층은 자기 키트로 그려진다.\n" : "  ■ 아트 대기 — 비어 있어 본선은 지층 1 키트로 떨어진다.\n");
+        }
+
+        /// <summary>지층 접두어 파일의 임포트 설정을 먼저 맞춘다(PrepareImports 와 같은 이유).</summary>
+        static void PrepareStratumImports()
+        {
+            bool touched = false;
+            foreach (var s in Strata)
+                foreach (var (suffix, pivot) in new[] { ("floor_{0}_albedo.png", new Vector2(0.5f, 0.5f)), ("wall_top_{0}_albedo.png", new Vector2(0.5f, 0.5f)),
+                                                        ("wall_top_rim_{0}_albedo.png", new Vector2(0.5f, 0.5f)), ("wall_front_{0}_albedo.png", new Vector2(0.5f, 0.0f)),
+                                                        ("floor_edge_{0}_albedo.png", new Vector2(0.5f, 0.5f)) })
+                    foreach (string v in Variants)
+                    {
+                        string path = $"{ArtDir}/{string.Format(s.prefix + suffix, v)}";
+                        if (!File.Exists(AbsolutePath(path))) continue;
+                        EnsureSprite(path, pivot, alpha: false);
+                        touched = true;
+                    }
+            if (touched) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        }
+
         static SurfaceMaterialSet EnsureSet(string path, MinLightSlot slot, StringBuilder report)
         {
             var set = AssetDatabase.LoadAssetAtPath<SurfaceMaterialSet>(path);

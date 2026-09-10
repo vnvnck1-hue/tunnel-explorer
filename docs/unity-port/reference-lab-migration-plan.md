@@ -208,7 +208,16 @@ cap 이 페이드하고 몸이 실루엣으로 보정되지만, 본선에는 셋
 **그림자 예산(§13) 주의** — `High` 예산이 4 라 Scout 4개가 전부 먹는다. 코옵 4인 + AI 크루면 램프는 그림자를 못 받는다.
 설계대로지만(넓고 센 광원 우선), 램프 그림자를 원하면 `Ultra`(8) 또는 High 를 6 으로.
 
-**남은 B**: 12 회귀(채굴·폭발·보스 지형 변경 동시 갱신, 층 전환 반복, 성능 예산, EditMode 테스트) · 4차 §5 키트 지층화(아트 도착 전 준비).
+#### 4차 §5 — 키트 지층화 준비 (2026-09-10) ✅
+
+| 항목 | 적용 |
+|---|---|
+| 빌더 | `BuildReferenceEnvironmentKit.RunStrata()` — 메뉴 "지층 2·3·이상지대 환경 키트 생성 (4차)". 접두어 `tr01_stratum2_` · `tr01_stratum3_` · `tr01_abyss_` 로 floor/wall_top/wall_top_rim/wall_front(/floor_edge) 수집. 접점 AO·드롭섀도·균열은 지층 1 키트에서 **참조 복사**(알파 마스크, 지층 공용) |
+| 자산 | `EnvironmentKit_Stratum2/3/Abyss` 미리 생성(빈 채로, 공용 마스크 4/4/3 복사됨). 아트가 오면 메뉴만 다시 실행 |
+| 본선 | `RunBootstrap._envKitsByStratum[3]`(Run 씬에 할당) + `KitForDepth(Sim.Depth)` — `StratumMoodDirector.IndexFor` 로 지층 인덱스. 키트가 비면(`IsEmpty`) 지층 1 키트로 폴백. `BindEnvironment` 가 층마다 `Assign` 후 `Bind` |
+| 주의 | `_depth` 는 **시작 깊이**일 뿐 — 하강은 `Sim.Depth` 가 진짜 값 |
+
+**남은 B**: 12 회귀(채굴·폭발·보스 지형 변경 동시 갱신, 층 전환 반복, 성능 예산, EditMode 테스트).
 **아트 대기**: 지층 2·3·이상지대 키트 — 지금은 모든 층이 지층 1 키트로 그려진다.
 
 **결론.** 랩은 본선의 복제가 아니라 본선의 <b>다음 버전</b>이다(계획 §0: 본편 이식은 오버홀 완료 후). 그래도 본선에서

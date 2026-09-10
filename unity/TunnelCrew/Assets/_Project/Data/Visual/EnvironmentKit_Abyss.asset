@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e59ff12c09a6444c8bc61d204207005, type: 3}
+  m_Name: EnvironmentKit_Abyss
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.EnvironmentKit
+  floorBase: []
+  floorEdge: []
+  contactAo:
+  - {fileID: 21300000, guid: 167a944d596704741af8ae6e69380046, type: 3}
+  - {fileID: 21300000, guid: 4e81eb3e2c4d8d9f3c1fe7e9b767e6f6, type: 3}
+  - {fileID: 21300000, guid: 97e5696f643dc624b5de6ca064bf789a, type: 3}
+  - {fileID: 21300000, guid: d36bae2b2373c91b64b49ef595e95f3d, type: 3}
+  wallTop: []
+  wallTopRim: []
+  wallFront: []
+  westSide: []
+  eastSide: []
+  outerCorner: []
+  innerCorner: []
+  wallShadow:
+  - {fileID: 21300000, guid: 2c4a5380b8c28ff64b2baa21863a47dd, type: 3}
+  - {fileID: 21300000, guid: f6e462806b1be768f3bfb3fde0ba1111, type: 3}
+  - {fileID: 21300000, guid: 3186d0429a4c03494aad9884191f96a6, type: 3}
+  - {fileID: 21300000, guid: df64cf779cf3e36fb1d60c76ec327a13, type: 3}
+  wallCrack:
+  - {fileID: 21300000, guid: 6a44e9f04fa032fe31fe7092aecf461f, type: 3}
+  - {fileID: 21300000, guid: e07941de024a0e0983284665c63c9527, type: 3}
+  - {fileID: 21300000, guid: 666aafd898ad322588405fb16fd76494, type: 3}
