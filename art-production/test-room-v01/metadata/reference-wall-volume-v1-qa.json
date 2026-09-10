@@ -1,0 +1,108 @@
+{
+  "deliveryPixelsPerCell": 128,
+  "edgeLockPixels": 4,
+  "assets": {
+    "tr01_reference_wall_side_west_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "meanRgb": [
+        67.67,
+        53.7,
+        85.97
+      ],
+      "meanLuma": 59.0,
+      "horizontalEdgeMse": 0.0,
+      "verticalEdgeMse": 3510.2891
+    },
+    "tr01_reference_wall_side_east_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "meanRgb": [
+        55.07,
+        43.34,
+        71.2
+      ],
+      "meanLuma": 47.85,
+      "horizontalEdgeMse": 0.0,
+      "verticalEdgeMse": 2303.1029
+    },
+    "tr01_reference_wall_outer_corner_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "meanRgb": [
+        67.33,
+        52.59,
+        84.54
+      ],
+      "meanLuma": 58.03,
+      "horizontalEdgeMse": 940.1029,
+      "verticalEdgeMse": 1155.1211
+    },
+    "tr01_reference_wall_inner_corner_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "meanRgb": [
+        68.37,
+        53.32,
+        85.67
+      ],
+      "meanLuma": 58.85,
+      "horizontalEdgeMse": 4170.8112,
+      "verticalEdgeMse": 2744.7552
+    },
+    "tr01_reference_wall_top_rim_a_albedo.png": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "meanRgb": [
+        102.97,
+        81.73,
+        125.15
+      ],
+      "meanLuma": 89.38,
+      "horizontalEdgeMse": 0.0,
+      "verticalEdgeMse": 3937.4714
+    },
+    "contact_ao_n": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "alphaMax": 150,
+      "alphaSum": 528000
+    },
+    "contact_ao_e": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "alphaMax": 150,
+      "alphaSum": 528000
+    },
+    "contact_ao_s": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "alphaMax": 150,
+      "alphaSum": 528000
+    },
+    "contact_ao_w": {
+      "dimensions": [
+        128,
+        128
+      ],
+      "alphaMax": 150,
+      "alphaSum": 528000
+    }
+  }
+}

@@ -102,8 +102,13 @@ namespace TunnelCrew.Presentation.Visual
             // (bump / black / white) 이 "그 채널 없음" 을 뜻한다.
             if (normal != null) m.SetTexture(IdNormal, normal);
             if (emission != null) m.SetTexture(IdEmission, emission);
-            if (materialMask != null) m.SetTexture(IdMask, materialMask);
             if (ao != null) m.SetTexture(IdAo, ao);
+
+            // 마스크만은 예외다(2026-09-10 실측). _MaskTex 가 비면 셰이더 기본이 <b>white</b> 라 마스크 채널이
+            // 전부 1 이 되고, "Additive with Mask" 슬롯의 수정광이 마스크 없는 벽 정면을 통째로 흰색으로
+            // 날렸다(앰비언트 0 에서도 (240,204,241)). "마스크 없음" = "마스크 광원에 반응하지 않음" 이어야
+            // 하므로 검정을 명시한다. 마스크 채널 계약: docs/unity-port/mask-channel-convention.md.
+            m.SetTexture(IdMask, materialMask != null ? materialMask : Texture2D.blackTexture);
 
             m.SetFloat(IdNormalStrength, normalStrength);
             m.SetFloat(IdAoStrength, aoStrength);

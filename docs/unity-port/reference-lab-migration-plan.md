@@ -3,10 +3,176 @@
 작성: 2026-09-09 · 대상 씬: `Assets/_Project/Scenes/LightingPresetLab.unity`
 연계: [../urp-2d-lighting/09-tunnel-crew-application.md](../urp-2d-lighting/09-tunnel-crew-application.md) · [visual-overhaul-implementation.md](visual-overhaul-implementation.md) · [../unity-visual-overhaul-functional-spec.md](../unity-visual-overhaul-functional-spec.md)
 
+## 0-0. 개정 R2 (2026-09-10) — 목표를 코어키퍼 룩으로 전환
+
+**이 절이 문서 전체에서 최우선한다.** 아래와 충돌하는 기존 단계·결정은 모두 이 절로 대체된다.
+근거: [../core-keeper-look-direction-analysis.md](../core-keeper-look-direction-analysis.md) ·
+개정 기획서: [../unity-visual-overhaul-functional-spec.md](../unity-visual-overhaul-functional-spec.md) §0.2 · §5.4 · §7.6 · §8.6
+
+1~5단계로 VisualLab 스택 이주는 끝났으나 **공간감이 생기지 않았다.** 원인은 이주 대상 목록에
+없던 것 하나다 — **벽 너머가 보인다.** 환경 목표를 코어키퍼 배경 룩으로 확정하고,
+아래 6단계를 **다른 모든 잔여 작업보다 앞에 둔다.**
+
+### 6단계 — 어둠 골격 (최우선, 신설)
+
+| # | 작업 | 아트 의존 |
+|---|---|---|
+| 1 | 랩 방을 **고체 채움 + 굴착 통로** 구조로 재작성. 34×20 열린 평면 폐기. 연결성은 콜라이더 flood fill 로 검증(고립 0) | 없음 |
+| 2 | Global 환경광 `0.35 → 0.03`. `Negative Freeform` 광원 5개 **제거** | 없음 |
+| 3 | **타일 LOS 계산기 이식** — 원본 HTML `v7.9.2` 의 `LOS`(L5164~)를 C# 순수 함수로. EditMode 검증 | 없음 |
+| 4 | **라이트마스크 합성**. 퍼플을 `WorldVisualProfile.ambientColor` → 마스크 `dark: #44248F` 로 이전 | 없음 |
+| 5 | **`explored` 잔상**(농도 0.29 · 페이드 11셀) + 시간 이징 | 없음 |
+| 6 | 굴착 → `MarkDirty()` LOS 갱신 연동 | 없음 |
+| 7 | 프리셋 랩 A/B 축 교체 — `dark`·`litClear`·드러남/밝음 비율 | 없음 |
+
+**6단계 전체가 아트 의존 없음이다.** 아트를 기다릴 필요가 없다.
+
+#### 6단계 구현 기록 (2026-09-10, 1~6 완료 · 7 부분)
+
+| # | 결과 |
+|---|---|
+| 1 | 방 재작성 완료. 223/680 = 33% 바닥(예전 64%). 콜라이더 flood fill: 자유 223 · 도달 223 · 고립 0. 스폰 (16,9) 중앙 챔버 |
+| 2 | 환경광 **0.14**(아래 정정 참고). `Negative Freeform` 5개 제거 — 씬에서 `NegativeLightVolume` 0개 확인 |
+| 3 | **새로 짜지 않았다.** 본편에 이미 `Sim/Vision/LosService.cs`(원본 LOS 이식본)가 있어 격자 접근을 델리게이트로 일반화해(`LosService(cols, rows, isSolid, version)`) 랩의 `ArraySolidField` 에 물렸다. 본편 `WorldGrid` 생성자는 그대로 |
+| 4 | **새로 짜지 않았다.** 본편 `Presentation/Lighting/DarknessOverlay.cs` + `TunnelCrew/Darkness` 셰이더를 그대로 쓴다. 랩은 12종 소팅 레이어라 `SetSorting("VisionAndGrade", 0)` 만 추가(`Default` 에 두면 타일 밑에 깔린다) |
+| 5 | `DarknessOverlay` 가 이미 R/G(시야/기억) + rise 0.16s / fall 0.38s 이징을 갖고 있다. `SimTuning.Los*` = 19 · 360 · 11 · 0.29 · 바닥 0.30 승계 |
+| 6 | `LabEnvironment.SetCell` 이 표면·그림자·드롭섀도·콜라이더·LOS 를 같은 프레임에 갱신. 채굴은 **마우스 왼쪽**(손 닿는 1.6셀), 메우기 오른쪽. 검증: (21,9) 채굴 → 콜라이더 457→456, 가시 셀 90→91, edits 1 |
+| 7 | 프리셋 **⑬ 코어키퍼 기준 (R2)** 추가(시작 프리셋). **O** 키로 LOS 켜고 끄며 R1↔R2 비교. `LightingPreset` 에 어둠 축 신설: `losDarkColor` · `losMemoryColor` · `losMaxDarkness` · `losEdgeSoftness` → 스위처 `ApplyLosDarkness` 가 `DarknessOverlay` 에 민다. 기존 자산은 기본값(=⑬ 값)을 받는다 |
+
+#### 6단계 후속 (2026-09-10 오후) — 경계 날카로움 · 조명 소팅 · 비네트
+
+| 항목 | 조치 | 실측 |
+|---|---|---|
+| **어둠 경계 뭉개짐** | `DarknessOverlay.Bind(..., supersample: 4)` — 셀 값을 4×4 텍셀로 복제해 바이리니어 번짐 폭을 한 칸 → 1/4칸으로. 본편은 기본값 1 그대로 | LOS 텍스처 34×20 → **136×80** |
+| **조명 소팅 정밀화** | `LightSocket.mountHeightCells` 신설. `≥ SurfaceRules.MinLiftCells(0.75)` 이면 `Lit`(윗면 포함), 아니면 `LitGroundLevel`. 기둥 램프 1.0 · 바닥 결정 0.35 · 표시등 0 | 3단 분리 확인 — **윗면까지**: Worklamp×3 + Global / **지면만**: MineralGlow×5 · Indicator×3 · Flashlight · Halo |
+| **비네트 이중 적용** | URP Volume 에 활성 `Vignette` 가 있으면 스위처가 대기 프로파일 복제본의 `vignetteStrength` 를 0 으로 | atmo vignette **0.00**, URP vignette active |
+
+미결 → 결정: 라이트마스크 합성 위치는 **카메라 추적 오버레이 쿼드**(본편 `DarknessOverlay` 방식). Renderer Feature 는 쓰지 않는다.
+
+#### 6단계 후속 2 (2026-09-10) — 벽 그림자 소팅·부드러움 ("그림자가 딱딱하고 캐릭터를 덮는다")
+
+| 항목 | 조치 | 실측 |
+|---|---|---|
+| **벽 그림자가 캐릭터를 덮음** | `ShadowCaster2D.m_ApplyToSortingLayers`(공개 API 없음 → 리플렉션)를 `VisualLayers.ShadowReceivers` = Default·GroundBase·GroundDetail·GroundDecal·BackStructure 로. **WorldEntity·WallTop·FrontStructure 제외** | 벽 캐스터 10개 전부 5레이어 수신. 남은 1개(ALL)는 캐릭터 자신의 발밑 캐스터(본편 PlayerView) |
+| **동적 그림자 딱딱함** | `LightClassRules.ShadowIntensity` 0.85/0.6 → **0.70/0.45**, `ShadowSoftness` 신설 Scout 0.55 · Worklamp 0.75. `LightSocketRenderer` 가 매 프레임 적용, 랩 손전등도 같은 규칙 | Flashlight 0.70/0.55 · Worklamp×3 0.45/0.75 |
+| **드롭섀도 딱딱함** | 임시 완화 opacity 0.85 → **0.55**. 근본 해결은 3차 아트 요청 ②(페이드 있는 타일셋) | Shadow Map alpha 0.55, GroundDecal:-50 |
+
+3차 아트 요청서: [../codex-art-request-r2-darkness-boundary.md](../codex-art-request-r2-darkness-boundary.md) — 림 b/c · 부드러운 드롭섀도 4장 · 정면 균열 3단계.
+
+#### 6단계 후속 3 (2026-09-10) — 벽 윗면이 통째로 보인다 ("폐쇄감이 덜하다")
+
+**원인은 아트도 림도 아니다.** 전역광 하나가 `Lit` 전체를 같은 세기로 칠해서, LOS 가 "보인다"고 표시한
+벽 셀의 윗면이 바닥과 같은 밝기로 드러났다. 타일 LOS 는 벽 타일까지 표시하고 차단하므로 방에 붙은 벽 한 줄은
+항상 가시다 — 그 한 줄의 윗면이 바닥과 같은 밝기면 "벽"이 아니라 "밝은 띠"로 읽힌다. 코어키퍼에서 윗면이
+어두운 이유는 빛이 옆(방)에서 오기 때문이다 — 정면은 받고 윗면은 거의 못 받는다.
+
+| 조치 | 실측 |
+|---|---|
+| 전역광을 둘로 분리. `Global (ambient)` → `LitGroundLevel`, 신설 `Global (wall tops)` → `LitElevated`(WallTop·FrontStructure) | ambient 0.140 / wall tops **0.035** |
+| `LightingPreset.wallTopAmbientScale` 신설(기본 0.25). 스위처가 두 전역광을 함께 민다 | ⑬ 기준 0.14 × 0.25 |
+| 윗면을 밝히는 나머지 경로는 설치 높이 ≥0.75 인 램프만(후속 1) | 램프 옆 윗면만 살아남 |
+
+두 전역광의 대상 레이어가 겹치지 않아 URP 의 "같은 레이어에 전역광 둘" 경고는 없다.
+
+**그런데 진범은 전역광이 아니었다.** 픽셀 실측으로 추적한 결과, "통째로 보이는 벽 윗면"은 벽 윗면이 아니라
+`BackStructure` 의 **벽 정면 타일**이었고, 앰비언트 0 · 이미션 0 · Sprite-Lit 로 바꿔도 (240,204,241) 로 남았다.
+원인은 **수정광(`MineralGlow`, 블렌드 슬롯 3 "Additive with Mask")** — `WorldLit` 의 `_MaskTex` 기본값이 `"white"` 라서
+마스크 맵을 납품받지 못한 벽 정면 재질은 마스크 채널이 전부 1 이고, 반경 3.2 셀 안의 정면이 통째로 가산됐다.
+첫 R2 캡처의 좌상단 밝은 직사각형이 그것이다(수정 소품 옆).
+
+| 조치 | 실측 |
+|---|---|
+| `SurfaceMaterialSet.Apply` — `materialMask` 가 없으면 `_MaskTex = Texture2D.blackTexture` 명시. "마스크 없음 = 마스크 광원에 반응하지 않음" | 같은 픽셀 (246,213,240) → **(37,26,42)** |
+| 서·동 측면 소비 중단(`EnvironmentChunkRenderer`, 기획서 §8.6.2) | BackStructure 에 side 스프라이트 0 |
+
+#### 3차 아트(manifest r20) 투입 (2026-09-10)
+
+| 납품 | 소비 경로 | 실측 |
+|---|---|---|
+| 림 b/c | 기존 `CapFor()` — 파일만 넣으면 됨 | FrontStructure 에 rim a 9 · b 19 · c 19 |
+| **드롭섀도 타일셋 4장** | `EnvironmentKit.wallShadow`(인덱스 계약 center/edge/outer/inner) + `LabWallDropShadow.EnsureRoleTiles` — 남쪽 열림 edge · 동쪽 열림 edge 90° 회전 · 둘 다 corner_outer · 남동 대각만 corner_inner · 그 밖 center. 4장이 다 없으면 단색 셀로 복귀 | center 120 · edge 155 · outer 16 · inner 9 · opacity 0.75 |
+| 균열 3단계 | **아직 미소비** — 랩 채굴이 1클릭 즉시 파괴라 단계가 없다. 다음: 3타 채굴 + 정면 오버레이 | — |
+
+#### 6단계 후속 4 (2026-09-10) — 램프 옆 벽 기둥 윗면 ("이 부분도 어두워야")
+
+동쪽 벽 기둥(셀 21, 8~10) 윗면이 밝았다. 원인은 기둥 램프의 설치 높이 1.0 ≥ lift 0.75 → `Lit`(윗면 포함)을 비춤.
+→ **램프 설치 높이 0.5** 로 내려 지면 광원으로. 이제 점광원 중 윗면을 비추는 것은 없고, 윗면은 윗면 전역광 0.035 만 받는다.
+실측: (21,8) (18,13,28) · (21,9) (46,36,63) · (21,10) (13,6,19).
+코어키퍼도 횃불 옆 윗면을 조금 밝히지만, 우리 목표(폐쇄감)에서는 윗면을 전역광 축 하나로만 다루는 쪽이 맞다 —
+윗면 밝기를 올리고 싶으면 `wallTopAmbientScale` 을 올린다(프리셋 축).
+
+#### 본선(Run) 조명 설정 대조 — "본선 필드 조명이 랩에 다 들어와 있나?" (2026-09-10)
+
+**아니다. 일부만 같고, 다른 것은 의도된 진화이거나 드리프트다.** 근거 `RunBootstrap.BuildLighting` / `BuildWorld` / `RebuildLamps`.
+
+| 항목 | 본선 (RunBootstrap) | 랩 (⑬ 기준) | 판정 |
+|---|---|---|---|
+| 전역광 세기 | `_ambientIntensity` **0.16** | 바닥 **0.14** · 윗면 0.035 | 유사. 랩은 윗면 분리(R2) |
+| 전역광 색 | (0.62, **0.58**, 0.80) | (0.62, **0.50**, 0.76) | **드리프트** — 랩이 더 퍼플. 어느 쪽이 정답인지 결정 필요 |
+| 손전등 | 40/56° · r 9.36 · I 2.6 · (1,.94,.80) · 그림자 0.9/0.35 | 같음 · 그림자 **0.70/0.55** | 그림자만 의도적으로 부드럽게(후속 2) |
+| 후광 | 360° · r 2.6 · I 1.4 · 그림자 0 | 같음 | 동일 |
+| **램프** | 360° · **r 5.2 · I 1.1 · 주황 (1,.69,.28)** · 그림자 기본 | Worklamp **r 2.4 · I 2.35 · 마젠타 (0.92,0.16,1)** · 소켓 파이프라인 | **다르다.** 본선은 넓고 약한 주황(§7.3 "따뜻한 작업광"), 랩은 승인 아트의 마젠타 유리 |
+| 크루 손전등 | 멤버 수만큼 r 8.4 · I 2.0 | 없음 | 랩 미포함 — 코옵 룩에 영향 큼 |
+| 보스·플레어 광 | 있음 | 없음 | 무관 |
+| 어둠 오버레이 | `DarknessOverlay` 기본색 (0.03,0.025,0.06)/(0.10,0.09,0.16) · 셀 해상도 | 퍼플 (0.02,0.01,0.045)/(0.16,0.09,0.30) · **4× 초해상** | 랩이 진화형. 본선으로 역이식 대상 |
+| 벽 그림자 | `WallShadowBuilder`(청크 캐스터) | `ShadowGeometryBuilder`(윤곽) + 수신 레이어 제한 | 다른 시스템. 랩이 진화형 |
+| 타일 재질 | `Tunnel Crew/Tilemap-Lit-Normal` + 벽 노멀 아틀라스 | `Tunnel Crew/WorldLit` (SurfaceMaterialSet, 채널 4종) | 다른 셰이더. 랩이 진화형 |
+| Volume | `Resources/Volume_Stratum1_Surface` | 같은 자산 + 프리셋 Bloom 오버라이드 | 동일 자산 |
+| 카메라 | ortho · bg (0.04,0.03,0.07) · post on · AA none | ortho 4 · bg (0.018,0.008,0.028) · post on | 배경색 소폭 다름 |
+| 노멀맵 | `UseNormalMaps` Accurate + height | 같은 함수 | 동일 |
+| 소팅 레이어 | `Default` 단일(Floor 0 / Walls 10 / CoreTop 20) | 12종 | 다름 — 본선 이식 시 최대 작업 |
+| 대기 패스 | 없음 | `AtmosphereDirector` | 랩만 |
+
+#### 6단계 후속 5 (2026-09-10) — 크루 손전등 · 3타 채굴 + 균열
+
+| 항목 | 조치 | 실측 |
+|---|---|---|
+| **크루 손전등** | `LabCrewLights` 신설 — 서 있는 동료 2명(챔버 (15,8)·(19,10)), 본선 수치(40/56° · r 8.4 · I 2.0 · 지면 광원 · Scout 그림자). `VisionSource.Crew` 로 LOS 에 합산 | 2개 생성 · I 2.6(프리셋 lightScale 1.3 반영) · wallTops=False · 가시 셀 90→92 |
+| **3타 채굴 + 균열** | `LabEnvironment` 타격 카운트(`_hitsToBreak` 3). 1·2타에 `EnvironmentKit.wallCrack[stage-1]` 을 "Crack Map"(정면 레이어 +1, 정면 재질 공유)에 얹고 3타에 파괴. 메우기·X/C 는 기록 무효화. 키트 슬롯 `wallCrack` + 빌더 `WallCrackByStage` | 키트 wallCrack=3 · stage2 타일 1 · 스프라이트 `wall_crack_2` |
+
+**결론.** 랩은 본선의 복제가 아니라 본선의 <b>다음 버전</b>이다(계획 §0: 본편 이식은 오버홀 완료 후). 그래도 본선에서
+가져와야 할 두 가지가 빠져 있다 — ① **크루 손전등**(코옵에서 화면 빛의 절반) ② **램프의 본선 정의**(넓고 약한 주황)
+와 랩 마젠타 램프의 관계 정리. 그리고 전역광 색 드리프트는 결정 사항이다.
+
+**정정 — 환경광 0.03 은 틀렸다.** 계획서와 기획서 §7.2 에 "0.35 → 0.03"으로 적었는데, `DarknessOverlay` 는
+알파 블렌드 오버레이라 **드러난 영역의 밝기는 환경광이 결정**한다. 0.03 이면 LOS 가 드러낸 19칸 반경이
+그냥 검게 보여 "드러남 대 밝음" 비율(§7.6.4)이 사라진다. 원본 HTML 도 같은 구조였다 — 씬을 밝게
+렌더한 뒤 마스크로 곱했다. 그래서 **0.14** 로 잡았다: 드러났지만 조명이 닿지 않는 영역 = 어두운 퍼플,
+손전등·후광 ~2칸 = 밝음. 퍼플의 두 번째 거처는 `DarknessOverlay` 의 `memoryColor`(0.16, 0.09, 0.30).
+기획서 §7.2·§14 B0 의 "0.03"은 이 정정으로 읽을 것.
+
+플레이 실측(⑬ 프리셋, 스폰 직후): 가시 셀 90(벽면 포함) · 탐색 90 · 어둠 쿼드 `VisionAndGrade:0`
+`TunnelCrew/Darkness` · 전역광 0.14 · 벽 상단 188 · 정면(BackStructure) 220 · 코너 53 · 림 cap 112.
+
+### 개정으로 폐기·축소되는 기존 항목
+
+| 항목 | 상태 |
+|---|---|
+| `Negative Freeform` 광원 5개 | **제거.** LOS 전파가 정확히 대신한다 |
+| 34×20 열린 평면 랩 방 | **폐기.** 굴착 구조로 재작성 |
+| 벽 서/동 측면(`westSide`/`eastSide`) 스프라이트 | **소비 중단.** 코어키퍼에 해당 레이어 없음(기획서 §8.6.1) |
+| 코너 4방위 아트 발주 | **취소.** 상단면 오토타일의 경계·내부코너로 해결 |
+| 미탐색 고체용 벽 상단 변형 추가 발주 | **중단.** 검정으로 덮인다 |
+| `AtmosphereDirector` 포그·깊이분리·비네트 이중 적용 | **정리 대상** |
+| 5단계 "Ori 방향" 채널 라이팅 | **격하.** 드러난 영역 안에서만 유효. 6단계 후로 순서 이동 |
+| 프리셋 랩의 앰비언트 무드 축 | **거의 고정값화** |
+
+### 값이 올라가는 기존 항목
+
+- `SurfaceMask.Buried` 컬링 — 미탐색 고체가 통째로 평면 검정이 되므로 이득이 급증
+- 경계면 3종(`FrontFace` · `TopRim` · `ContactAo`) — **보이는 벽면이 굴착 경계에만 남으므로
+  이 3종이 룩 전체를 짊어진다.** 특히 `TopRim` 이 1순위 발주(현재 절차적 림은 사용 불가 상태)
+- URP Bloom · 톤매핑 — 검정 배경 위 밝은 광원이 룩의 전부
+- 코옵 시야 합산 — 원본에 이미 구현. 동료가 비춘 곳을 팀 전체가 본다
+
+---
+
 ## 0. 무엇을 하는가
 
 `VisualLab`(승인 아트 `TestRoomV01` 기반)이 들고 있는 비주얼 스택을 **레퍼런스 직결 아트
 (`ReferenceCalibrationV1`) 기반으로 옮긴다.** 본편(`Run.unity`) 이식은 아트 오버홀 완료까지 보류.
+
+> 개정 R2: 이주 자체는 1~5단계로 완료됐다. 잔여 목표는 §0-0 의 6단계다.
 
 ### 확정된 결정 (2026-09-09)
 

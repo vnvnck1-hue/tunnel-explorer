@@ -35,6 +35,8 @@ namespace TunnelCrew.Presentation.Visual
 
         [Tooltip("비어 있으면 씬에서 lightType == Global 인 Light2D 를 찾는다.")]
         [SerializeField] Light2D _globalLight;
+        /// <summary>벽 윗면·전경 cap 만 비추는 두 번째 전역광(개정 R2). Collect 가 대상 레이어로 찾는다.</summary>
+        Light2D _globalTopLight;
 
         [Tooltip("비어 있으면 씬에서 찾는다. 없으면 후처리 축만 동작하지 않는다.")]
         [SerializeField] AtmosphereDirector _atmosphere;
@@ -75,8 +77,17 @@ namespace TunnelCrew.Presentation.Visual
         readonly List<GameObject> _testLights = new();
         LightSocketRenderer _socketRenderer;
         VisualOptionsController _options;
-        LightingLabPawn _pawn;
+        LabPlayer _pawn;
         LabEnvironment _labEnv;
+
+        /// <summary>HUD 용 — 지금 보이는 칸 수. 드러남 반경이 실제로 잡히는지 숫자로 확인한다(§7.6.4).</summary>
+        static int CountVisible(TunnelCrew.Sim.LosService los)
+        {
+            int n = 0;
+            var v = los.Visible;
+            for (int i = 0; i < v.Length; i++) if (v[i] != 0) n++;
+            return n;
+        }
         float _lightScale = 1f;
 
         // 이주 1단계에서 들어온 정식 시스템. 전부 같은 프로파일 복제본을 본다.
@@ -144,13 +155,18 @@ namespace TunnelCrew.Presentation.Visual
             _sockets.Clear();
             _socketRenderer = FindAnyObjectByType<LightSocketRenderer>();
             _options = FindAnyObjectByType<VisualOptionsController>();
-            _pawn = FindAnyObjectByType<LightingLabPawn>();
+            _pawn = FindAnyObjectByType<LabPlayer>();
 
             foreach (var light in FindObjectsByType<Light2D>(FindObjectsSortMode.None))
             {
                 if (light.lightType == Light2D.LightType.Global)
                 {
-                    if (_globalLight == null) _globalLight = light;
+                    // 윗면 전역광은 WallTop 을 비추고 GroundBase 는 비추지 않는다 — 그걸로 구분한다.
+                    var ids = light.targetSortingLayers;
+                    bool wallTop = ids != null && System.Array.IndexOf(ids, SortingLayer.NameToID(VisualLayers.WallTop)) >= 0;
+                    bool ground = ids != null && System.Array.IndexOf(ids, SortingLayer.NameToID(VisualLayers.GroundBase)) >= 0;
+                    if (wallTop && !ground) { if (_globalTopLight == null) _globalTopLight = light; }
+                    else if (_globalLight == null) _globalLight = light;
                     continue;
                 }
 
@@ -190,6 +206,9 @@ namespace TunnelCrew.Presentation.Visual
             }
         }
 
+        /// <summary>현재 프리셋을 다시 민다 — 나중에 생긴 대상(어둠 쿼드)이 값을 받게.</summary>
+        public void Reapply() => Apply(_current);
+
         public void Apply(int index)
         {
             if (_presets == null || _presets.Length == 0) return;
@@ -203,6 +222,11 @@ namespace TunnelCrew.Presentation.Visual
             {
                 _globalLight.color = preset.ambientColor;
                 _globalLight.intensity = preset.ambientIntensity;
+            }
+            if (_globalTopLight != null)
+            {
+                _globalTopLight.color = preset.ambientColor;
+                _globalTopLight.intensity = preset.ambientIntensity * preset.wallTopAmbientScale;
             }
 
             _lightScale = preset.lightScale;
@@ -239,6 +263,7 @@ namespace TunnelCrew.Presentation.Visual
             }
 
             ApplyPost(preset);
+            ApplyLosDarkness(preset);
             ApplyVolume(preset);
         }
 
@@ -246,6 +271,19 @@ namespace TunnelCrew.Presentation.Visual
         /// 대기 프로파일의 <b>세기만</b> 배율한다. 색(안개·근/원 틴트·비네트)은 프로파일이 정한다 —
         /// 프리셋이 다른 지층 프로파일을 고르면 그 색이 곧 팔레트다(Rain World 식).
         /// </summary>
+        /// <summary>
+        /// 타일 LOS 어둠 축(개정 R2, 기획서 §7.6.5). 프리셋이 어둠 색·기억 색·경계 날카로움을 바꾼다 —
+        /// 퍼플이 사는 자리가 앰비언트에서 여기로 옮겨 왔으므로 이 축이 곧 "컬러감" 축이다.
+        /// </summary>
+        void ApplyLosDarkness(LightingPreset preset)
+        {
+            _labEnv ??= FindAnyObjectByType<LabEnvironment>();
+            var dark = _labEnv != null ? _labEnv.Darkness : null;
+            if (dark == null) return;
+            dark.SetColors(preset.losDarkColor, preset.losMemoryColor, preset.losMaxDarkness);
+            if (preset.losEdgeSoftness > 0f) dark.SetEdgeSoftness(preset.losEdgeSoftness);
+        }
+
         void ApplyPost(LightingPreset preset)
         {
             if (_atmosphere == null) return;
@@ -267,6 +305,13 @@ namespace TunnelCrew.Presentation.Visual
             clone.depthSeparation = Mathf.Clamp(source.depthSeparation * scale, 0f, 0.5f);
             clone.vignetteStrength = Mathf.Clamp01(source.vignetteStrength * scale);
             clone.grainStrength = Mathf.Clamp(source.grainStrength * scale, 0f, 0.2f);
+
+            // 비네트 이중 적용 정리(개정 R2) — URP Volume 프로파일이 Vignette 를 켜고 있으면 대기 패스의
+            // 비네트는 끈다. 둘이 겹치면 가장자리가 두 번 어두워져 LOS 어둠과 구분이 안 된다.
+            var vp = preset.volumeProfile != null ? preset.volumeProfile : _defaultVolumeProfile;
+            if (vp != null && vp.TryGet(out Vignette urpVignette) && urpVignette.active
+                && urpVignette.intensity.value > 0.001f)
+                clone.vignetteStrength = 0f;
 
             // Profile 세터가 Apply() 를 부른다 — 같은 인스턴스를 다시 넣어도 값이 반영된다.
             _atmosphere.Profile = clone;
@@ -328,6 +373,33 @@ namespace TunnelCrew.Presentation.Visual
             if (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame) WriteChoice();
 
             // 2단계 검증용 — 예산 초과까지 작업등을 늘려도 그림자 개수가 지켜지는지 눈으로 본다.
+            // 벽 드롭섀도우 A/B — 이게 켜지고 꺼지는 차이가 곧 "벽에 높이가 있나" 다.
+            if (kb.vKey.wasPressedThisFrame)
+            {
+                _labEnv ??= FindAnyObjectByType<LabEnvironment>();
+                var drop = _labEnv != null ? _labEnv.DropShadow : null;
+                if (drop != null) drop.Active = !drop.Active;
+            }
+            // 상단 림 A/B — 드롭섀도우와 짝이다. 둘 다 꺼야 "면만 있는" 예전 화면이 된다.
+            if (kb.bKey.wasPressedThisFrame)
+            {
+                _labEnv ??= FindAnyObjectByType<LabEnvironment>();
+                var drop = _labEnv != null ? _labEnv.DropShadow : null;
+                if (drop != null) drop.RimActive = !drop.RimActive;
+            }
+            // 벽 콜라이더 토글 — 벽을 통과해 반대편 조명을 보고 싶을 때.
+            if (kb.nKey.wasPressedThisFrame)
+            {
+                _labEnv ??= FindAnyObjectByType<LabEnvironment>();
+                var col = _labEnv != null ? _labEnv.Collision : null;
+                if (col != null) col.Active = !col.Active;
+            }
+            // 타일 LOS 어둠 토글(개정 R2) — 끄면 R1 처럼 방 전체가 보인다. 전환 전후를 같은 자리에서 비교하는 키.
+            if (kb.oKey.wasPressedThisFrame)
+            {
+                _labEnv ??= FindAnyObjectByType<LabEnvironment>();
+                if (_labEnv != null) _labEnv.LosEnabled = !_labEnv.LosEnabled;
+            }
             if (kb.lKey.wasPressedThisFrame) SpawnTestWorklamp();
             if (kb.kKey.wasPressedThisFrame) RemoveTestWorklamp();
             if (kb.tKey.wasPressedThisFrame && _options != null) _options.CycleTier();
@@ -359,7 +431,7 @@ namespace TunnelCrew.Presentation.Visual
         /// </summary>
         void SpawnTestWorklamp()
         {
-            var at = _pawn != null ? (Vector2)_pawn.transform.position : Vector2.zero;
+            var at = _pawn != null ? (Vector2)_pawn.FollowTarget.position : Vector2.zero;
             var go = new GameObject($"Test Worklamp {_testLights.Count + 1}");
             go.transform.position = new Vector3(at.x + 0.6f, at.y + 0.4f, -0.1f);
 
@@ -529,9 +601,16 @@ namespace TunnelCrew.Presentation.Visual
 
             _labEnv ??= FindAnyObjectByType<LabEnvironment>();
             if (_labEnv != null && _labEnv.Field != null)
+            {
+                var drop = _labEnv.DropShadow;
                 GUILayout.Label(
                     $"환경 렌더러 {_labEnv.Cols}×{_labEnv.Rows} 셀 · 벽 윤곽 캐스터 {_labEnv.CasterCount}" +
-                    $" · 파괴 편집 {_labEnv.Edits}  (X 앞 칸 파괴 · C 복구)", _wrap);
+                    $" · 파괴 편집 {_labEnv.Edits}  (마우스 왼쪽 채굴 · 오른쪽 메우기 · X/C 앞 칸)\n" +
+                    $"타일 LOS 어둠  {(_labEnv.Los == null ? "없음" : (_labEnv.LosEnabled ? $"켜짐 · 보이는 칸 {CountVisible(_labEnv.Los)}" : "꺼짐(R1 비교)"))}   (O 토글)\n" +
+                    $"벽 드롭섀도우  {(drop == null ? "없음" : (drop.Active ? $"켜짐 · {drop.Cells}셀" : "꺼짐"))}   (V 토글)\n" +
+                    $"벽 상단 림     {(drop == null ? "없음" : (drop.RimActive ? $"켜짐 · {drop.RimCells}셀" : "꺼짐"))}   (B 토글)\n" +
+                    $"벽 콜라이더    {(_labEnv.Collision == null ? "없음" : (_labEnv.Collision.Active ? $"켜짐 · {_labEnv.Collision.Cells}셀" : "꺼짐"))}   (N 토글)", _wrap);
+            }
 
             if (_globalLight == null)
                 GUILayout.Label("⚠ 전역광(Light2D Global)을 찾지 못했다 — 어둠 축이 동작하지 않는다.", _wrap);

@@ -25,6 +25,17 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("깜빡임 위상. 같은 종류의 램프가 한꺼번에 흔들리지 않게 한다.")]
         public float phase;
 
+        /// <summary>
+        /// 광원의 설치 높이(셀). 0 = 바닥·낮은 소품. 벽 lift(<see cref="SurfaceRules.MinLiftCells"/>,
+        /// 0.75셀) 이상이면 벽 윗면을 비춘다 — 천장·기둥 상단·높이 매단 램프.
+        /// 조명 소팅 정밀화(2026-09-10): 이 값 하나가 "어느 레이어를 비추는가"를 정한다.
+        /// </summary>
+        [Tooltip("설치 높이(셀). 0.75 이상이면 벽 윗면·전경 cap 까지 비춘다.")]
+        public float mountHeightCells = 0f;
+
+        /// <summary>벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추는가.</summary>
+        public bool LightsWallTops => mountHeightCells >= SurfaceRules.MinLiftCells;
+
         Light2D _light;
         public Light2D Light => _light != null ? _light : _light = GetComponent<Light2D>();
 
@@ -134,10 +145,13 @@ namespace TunnelCrew.Presentation.Visual
         /// 전역광은 URP 가 레이어별로 따로 관리하므로(주석: "If we need to update this at
         /// runtime make sure we add code to update global lights") 값이 실제로 달라질 때만 쓴다.
         /// </summary>
-        internal static void ApplyLitLayers(Light2D light)
+        internal static void ApplyLitLayers(Light2D light, bool lightsWallTops = true)
         {
             if (light == null) return;
-            var want = VisualLayers.LitLayerIds();
+            // 지면 높이 광원은 벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추지 않는다 —
+            // 비추면 벽에 높이가 없다는 뜻이 된다(2026-09-10, 조명 소팅 정밀화). 윗면은 전역광과
+            // 높이 있는 광원(LightSocket.mountHeightCells ≥ 벽 lift)의 몫이다.
+            var want = lightsWallTops ? VisualLayers.LitLayerIds() : VisualLayers.LitGroundLevelLayerIds();
             if (want.Length == 0) return;
 
             var have = light.targetSortingLayers;
@@ -229,7 +243,7 @@ namespace TunnelCrew.Presentation.Visual
                     VisualQualityRules.FlashScale(_reducePhotosensitivity));
                 light.intensity = Mathf.Max(0f, s.baseIntensity * k);
                 ApplyNormalQuality(light, s.lightClass);
-                ApplyLitLayers(light);
+                ApplyLitLayers(light, s.LightsWallTops);
 
                 s.ShadowOn = false;
                 _ordered.Add(s);
@@ -256,6 +270,8 @@ namespace TunnelCrew.Presentation.Visual
 
                 s.ShadowOn = on;
                 s.Light.shadowIntensity = on ? LightClassRules.ShadowIntensity(s.lightClass) : 0f;
+                // 반그림자 폭도 분류가 정한다 — 랜턴은 넓고 손전등은 좁다(2026-09-10, "그림자가 너무 딱딱하다").
+                s.Light.shadowSoftness = LightClassRules.ShadowSoftness(s.lightClass);
             }
 
             ShadowCount = used;

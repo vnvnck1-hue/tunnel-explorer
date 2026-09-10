@@ -29,6 +29,11 @@ namespace TunnelCrew.Presentation
         [SerializeField, Range(0f, 1f)] float _maxDarkness = 1f;
         [SerializeField, Range(0.001f, 1f)] float _edgeSoftness = 0.35f;
 
+        [Header("경계 해상도")]
+        [Tooltip("셀당 텍셀 수. 1 = 셀 해상도(경계가 한 칸 폭으로 번진다). 4 면 경계가 1/4칸 폭으로 죄어져 " +
+                 "코어키퍼처럼 벽 가장자리에서 딱 끊긴다(2026-09-10). 값은 Bind 에서 확정된다.")]
+        [SerializeField, Range(1, 8)] int _supersample = 1;
+
         LosService _los;
         Camera _camera;
 
@@ -50,28 +55,40 @@ namespace TunnelCrew.Presentation
         static readonly int EdgeSoftnessId = Shader.PropertyToID("_EdgeSoftness");
         static readonly int InvProjId = Shader.PropertyToID("_InvProj");
 
-        public void Bind(LosService los, int cols, int rows, Camera cam)
+        /// <param name="supersample">셀당 텍셀 수. 1 이면 본편 그대로(셀 해상도 + 바이리니어 = 한 칸 폭 번짐).
+        /// 조명 랩은 4 — 경계가 벽 가장자리에서 1/4칸 안에 끊긴다.</param>
+        public void Bind(LosService los, int cols, int rows, Camera cam, int supersample = 1)
         {
             _los = los;
             _cols = cols;
             _rows = rows;
             _camera = cam;
+            _supersample = Mathf.Clamp(supersample, 1, 8);
 
             BuildTexture();
             BuildQuad();
+        }
+
+        /// <summary>시야 경계 smoothstep 폭. 작을수록 날카롭다.</summary>
+        public void SetEdgeSoftness(float softness)
+        {
+            _edgeSoftness = Mathf.Clamp(softness, 0.001f, 1f);
+            ApplyColors();
         }
 
         void BuildTexture()
         {
             if (_losTex != null) DestroyImmediate(_losTex);
 
-            _losTex = new Texture2D(_cols, _rows, TextureFormat.RGBA32, false)
+            int tw = _cols * _supersample, th = _rows * _supersample;
+            _losTex = new Texture2D(tw, th, TextureFormat.RGBA32, false)
             {
                 name = "LosTexture",
                 filterMode = FilterMode.Bilinear,   // 셀 경계를 부드럽게 — 원본과 같은 이유
                 wrapMode = TextureWrapMode.Clamp,
             };
-            _pixels = new Color32[_cols * _rows];
+            _pixels = new Color32[tw * th];
+            // 시간 보간은 셀 단위로 한다 — 텍셀은 셀 값을 복제해 채운다.
             _visSmooth = new float[_cols * _rows];
             _memSmooth = new float[_cols * _rows];
         }
@@ -106,6 +123,27 @@ namespace TunnelCrew.Presentation
             _renderer.sharedMaterial = _material;
             _material.SetTexture(LosTexId, _losTex);
             _material.SetVector(WorldSizeId, new Vector4(_cols, _rows, 0, 0));
+            ApplyColors();
+        }
+
+        /// <summary>
+        /// 정렬 레이어를 바꾼다. 본편은 <c>Default:1000</c> 로 충분하지만, 12종 소팅 레이어를 쓰는
+        /// 씬(조명 랩)에서는 <c>Default</c> 가 가장 뒤라 어둠이 타일 밑에 깔린다 — 그쪽은
+        /// <c>VisionAndGrade</c> 로 올려야 한다(2026-09-10).
+        /// </summary>
+        public void SetSorting(string layerName, int order)
+        {
+            if (_renderer == null) return;
+            _renderer.sortingLayerName = layerName;
+            _renderer.sortingOrder = order;
+        }
+
+        /// <summary>랩 프리셋이 어둠·기억 색을 즉시 바꿀 수 있게.</summary>
+        public void SetColors(Color dark, Color memory, float maxDarkness = -1f)
+        {
+            _darkColor = dark;
+            _memoryColor = memory;
+            if (maxDarkness >= 0f) _maxDarkness = maxDarkness;
             ApplyColors();
         }
 
@@ -177,10 +215,20 @@ namespace TunnelCrew.Presentation
                     _memSmooth[k] = Mathf.Lerp(_memSmooth[k], memTarget,
                         memTarget > _memSmooth[k] ? riseK : fallK);
 
-                    _pixels[k] = new Color32(
+                    var px = new Color32(
                         (byte)(Mathf.Clamp01(_visSmooth[k]) * 255f),
                         (byte)(Mathf.Clamp01(_memSmooth[k]) * 255f),
                         0, 255);
+
+                    // 셀 값을 supersample×supersample 텍셀에 복제한다. 바이리니어는 텍셀 경계에서만
+                    // 섞이므로 경계 폭이 1/supersample 칸으로 죄어진다 — 셀 안쪽은 딱 떨어진다.
+                    int ss = _supersample, tw = _cols * ss;
+                    int x0 = c * ss, y0 = r * ss;
+                    for (int dy = 0; dy < ss; dy++)
+                    {
+                        int row = (y0 + dy) * tw + x0;
+                        for (int dx = 0; dx < ss; dx++) _pixels[row + dx] = px;
+                    }
                 }
 
             _losTex.SetPixels32(_pixels);

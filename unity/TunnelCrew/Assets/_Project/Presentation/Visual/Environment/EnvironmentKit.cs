@@ -39,6 +39,20 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("오목 모서리.")]
         public Sprite[] innerCorner;
 
+        [Header("상시 드롭섀도 (3차 아트 요청 ②)")]
+        [Tooltip("순수 알파 마스크 4장. 인덱스가 계약이다 — 0 center · 1 edge(남쪽 페이드) · 2 corner_outer(남동) · 3 corner_inner. " +
+                 "4장이 다 있을 때만 쓰고, 아니면 LabWallDropShadow 가 단색 셀로 되돌아간다.")]
+        public Sprite[] wallShadow;
+
+        [Header("벽 정면 균열 (3차 아트 요청 ③ · 채굴 피드백)")]
+        [Tooltip("정면 위에 얹는 투명 오버레이 3단계. 인덱스 = 타격 단계-1. 피벗 하단 중앙(정면과 같다).")]
+        public Sprite[] wallCrack;
+
+        /// <summary><see cref="wallShadow"/> 인덱스 계약.</summary>
+        public const int ShadowCenter = 0, ShadowEdge = 1, ShadowCornerOuter = 2, ShadowCornerInner = 3;
+        public bool HasShadowSet => wallShadow != null && wallShadow.Length == 4
+            && wallShadow[0] != null && wallShadow[1] != null && wallShadow[2] != null && wallShadow[3] != null;
+
         /// <summary>모듈 번호로 스프라이트를 고른다. 배열이 비면 null.</summary>
         public static Sprite Pick(Sprite[] a, int module)
         {

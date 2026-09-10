@@ -80,9 +80,18 @@ namespace TunnelCrew.Presentation.Visual
                     || field.IsSolid(c - 1, r + 1) || field.IsSolid(c + 1, r + 1))
                     s.Surfaces |= SurfaceMask.FloorEdge;
 
-                // 북쪽에 벽이 서 있으면 그 발밑에 접촉 AO 를 깐다. 광원이 꺼져도
-                // 바닥과 벽의 경계가 읽혀야 한다(§8.5 마지막 항, §15.1).
-                if (n) s.Surfaces |= SurfaceMask.ContactAo;
+                // 벽에 붙은 바닥에 접촉 AO 를 깐다. 광원이 꺼져도 바닥과 벽의 경계가
+                // 읽혀야 한다(§8.5 마지막 항, §15.1).
+                //
+                // 2026-09-10: 북쪽 한 방향만 깔던 것을 <b>네 방향</b>으로 넓혔다. 아트가 n/e/s/w
+                // 네 장을 납품했는데(manifest r19) 북쪽만 소비하고 있었다. 한 셀이 두 방향에서
+                // 벽을 만나면 층을 더 쌓지 않고 우선순위로 하나만 고른다 —
+                // 북(가장 크게 보이는 벽면) > 남 > 동 > 서.
+                if (n || so || e || w)
+                {
+                    s.Surfaces |= SurfaceMask.ContactAo;
+                    s.AoDir = n ? (byte)0 : so ? (byte)2 : e ? (byte)1 : (byte)3;
+                }
 
                 s.FloorModule = Pick(rules.FloorVariants, MacroHash(c, r, rules.FloorMacroCells, rules.Salt), seed);
                 s.HeightQ = 0;

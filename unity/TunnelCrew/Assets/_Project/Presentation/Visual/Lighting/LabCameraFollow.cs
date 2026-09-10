@@ -15,7 +15,7 @@ namespace TunnelCrew.Presentation.Visual
     /// </summary>
     public sealed class LabCameraFollow : MonoBehaviour
     {
-        [Tooltip("따라갈 대상. 비면 LightingLabPawn 을 찾는다.")]
+        [Tooltip("따라갈 대상. 비면 LabPlayer 의 물리 몸통을 찾는다.")]
         [SerializeField] Transform _target;
 
         [Tooltip("이 반경(칸) 안에서는 카메라가 움직이지 않는다. 걸음마다 화면이 흔들리는 것을 막는다.")]
@@ -43,8 +43,8 @@ namespace TunnelCrew.Presentation.Visual
             _camera = GetComponent<Camera>();
             if (_target == null)
             {
-                var pawn = FindAnyObjectByType<LightingLabPawn>();
-                if (pawn != null) _target = pawn.transform;
+                var player = FindAnyObjectByType<LabPlayer>();
+                if (player != null) _target = player.FollowTarget;
             }
             SnapToTarget();
         }

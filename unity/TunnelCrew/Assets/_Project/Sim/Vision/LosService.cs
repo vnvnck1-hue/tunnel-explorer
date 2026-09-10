@@ -31,7 +31,10 @@ namespace TunnelCrew.Sim
     /// </summary>
     public sealed class LosService
     {
-        readonly WorldGrid _world;
+        // 격자 접근은 델리게이트로 받는다 — 본편은 WorldGrid, 조명 랩은 손으로 만든 격자를 넣는다
+        // (2026-09-10, 랩에 LOS 를 이식하면서). WorldGrid 를 직접 잡던 코드는 아래 생성자가 그대로 감싼다.
+        readonly Func<int, int, bool> _isSolid;
+        readonly Func<int> _version;
         readonly int _w, _h;
 
         /// <summary>이번 프레임에 보이는 칸. 0 또는 1.</summary>
@@ -54,13 +57,24 @@ namespace TunnelCrew.Sim
         bool _visibleOnly;
 
         public LosService(WorldGrid world)
+            : this(world.Cols, world.Rows, world.IsSolid, () => world.Version) { }
+
+        /// <summary>
+        /// 임의 격자용. <paramref name="isSolid"/> 는 범위 밖을 고체로 답해야 하고,
+        /// <paramref name="version"/> 은 타일이 바뀔 때마다 커져야 캐시가 풀린다.
+        /// </summary>
+        public LosService(int cols, int rows, Func<int, int, bool> isSolid, Func<int> version)
         {
-            _world = world;
-            _w = world.Cols;
-            _h = world.Rows;
+            _w = cols;
+            _h = rows;
+            _isSolid = isSolid ?? throw new ArgumentNullException(nameof(isSolid));
+            _version = version ?? (() => 0);
             Visible = new byte[_w * _h];
             Explored = new byte[_w * _h];
         }
+
+        bool InBounds(int c, int r) => c >= 0 && r >= 0 && c < _w && r < _h;
+        int Index(int c, int r) => r * _w + c;
 
         /// <summary>타일이 바뀌면 호출. 원본 LOS.markDirty().</summary>
         public void MarkDirty() => _dirty = true;
@@ -76,7 +90,7 @@ namespace TunnelCrew.Sim
             string key = BuildSourceKey(extraSources);
 
             if (!_dirty && HasComputed && pc == LastCol && pr == LastRow
-                && _world.Version == _lastWorldVersion && key == _lastSourceKey)
+                && _version() == _lastWorldVersion && key == _lastSourceKey)
                 return;
 
             Array.Clear(Visible, 0, Visible.Length);
@@ -96,7 +110,7 @@ namespace TunnelCrew.Sim
                 foreach (var s in extraSources)
                 {
                     var (sc, sr) = WorldGrid.ToCell(s.Position);
-                    if (!_world.InBounds(sc, sr)) continue;
+                    if (!InBounds(sc, sr)) continue;
 
                     _visibleOnly = s.VisibleOnly;
                     See(sc, sr);
@@ -107,7 +121,7 @@ namespace TunnelCrew.Sim
 
             LastCol = pc;
             LastRow = pr;
-            _lastWorldVersion = _world.Version;
+            _lastWorldVersion = _version();
             _lastSourceKey = key;
             _dirty = false;
             HasComputed = true;
@@ -138,7 +152,7 @@ namespace TunnelCrew.Sim
             for (int s = 0; s < maxStep; s++)
             {
                 See(x, y);
-                if (_world.IsSolid(x, y) && (x != c0 || y != r0)) return;
+                if (_isSolid(x, y) && (x != c0 || y != r0)) return;
                 if (x == c1 && y == r1) return;
 
                 int e2 = err * 2;
@@ -149,8 +163,8 @@ namespace TunnelCrew.Sim
 
         void See(int c, int r)
         {
-            if (!_world.InBounds(c, r)) return;
-            int k = _world.Index(c, r);
+            if (!InBounds(c, r)) return;
+            int k = Index(c, r);
             Visible[k] = 1;
             if (!_visibleOnly) Explored[k] = 1;
         }
@@ -169,10 +183,10 @@ namespace TunnelCrew.Sim
 
         // ───────────────────────────── 조회
         public bool IsVisible(int c, int r)
-            => _world.InBounds(c, r) && Visible[_world.Index(c, r)] != 0;
+            => InBounds(c, r) && Visible[Index(c, r)] != 0;
 
         public bool IsExplored(int c, int r)
-            => _world.InBounds(c, r) && Explored[_world.Index(c, r)] != 0;
+            => InBounds(c, r) && Explored[Index(c, r)] != 0;
 
         /// <summary>원본 inMemory() — 기억 반경 안인가.</summary>
         public bool InMemory(int c, int r)
@@ -184,8 +198,8 @@ namespace TunnelCrew.Sim
         /// <summary>원본 seenTile() — 지금 보이거나, 기억 반경 안의 탐색 지역.</summary>
         public bool IsSeen(int c, int r)
         {
-            if (!_world.InBounds(c, r)) return false;
-            int k = _world.Index(c, r);
+            if (!InBounds(c, r)) return false;
+            int k = Index(c, r);
             if (Visible[k] != 0) return true;
             return Explored[k] != 0 && InMemory(c, r);
         }

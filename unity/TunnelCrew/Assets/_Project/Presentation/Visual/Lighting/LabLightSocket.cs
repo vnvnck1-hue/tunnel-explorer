@@ -22,6 +22,8 @@ namespace TunnelCrew.Presentation.Visual
         [SerializeField] float _rangeCells = 1f;
         [Tooltip("깜빡임 시드. 소켓마다 다르게 두어 한 박자로 숨쉬지 않게 한다.")]
         [SerializeField] float _phase;
+        [Tooltip("설치 높이(셀). 0.75 이상이면 벽 윗면·전경 cap 까지 비춘다(조명 소팅 정밀화).")]
+        [SerializeField] float _mountHeightCells;
 
         void Awake()
         {
@@ -31,6 +33,7 @@ namespace TunnelCrew.Presentation.Visual
             socket.baseIntensity = _baseIntensity;
             socket.rangeCells = _rangeCells;
             socket.phase = _phase;
+            socket.mountHeightCells = _mountHeightCells;
         }
     }
 }

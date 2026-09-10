@@ -51,6 +51,13 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("전역광 세기. 0.62 = 레퍼런스 캘리브레이션 씬, 0.35 = 본편 지층1, 0.16 = 짙음.")]
         [Range(0f, 2f)] public float ambientIntensity = 0.35f;
 
+        /// <summary>
+        /// 벽 윗면·전경 cap 전역광 = ambientIntensity × 이 값(개정 R2). 윗면은 빛이 옆(방)에서 오므로
+        /// 바닥·정면보다 훨씬 어두워야 폐쇄감이 난다. 0 이면 윗면은 램프(설치 높이 ≥0.75)만 받는다.
+        /// </summary>
+        [Tooltip("벽 윗면 전역광 배율. 바닥 전역광 × 이 값. 0.2~0.35 권장.")]
+        [Range(0f, 1f)] public float wallTopAmbientScale = 0.25f;
+
         [Header("광원")]
         [Tooltip("작업등·탐색광·광물광의 세기 배율. 어둠을 낮출 때 광원을 같이 올려 초점을 유지한다.")]
         [Range(0f, 3f)] public float lightScale = 1f;
@@ -85,5 +92,18 @@ namespace TunnelCrew.Presentation.Visual
 
         [Tooltip("Bloom.threshold 오버라이드. 음수면 프로파일 값(지층1 0.70). 낮추면 광원 주변이 더 넓게 번진다.")]
         [Range(-1f, 2f)] public float bloomThreshold = -1f;
+
+        // ── 타일 LOS 어둠 축(개정 R2, 2026-09-10 · 기획서 §7.6.5). 기본값 = ⑬ 코어키퍼 기준선.
+        // 기존 프리셋 자산은 이 필드가 없었으므로 기본값을 그대로 받는다 — 즉 어둠 축은 모든 프리셋에서
+        // 같고, 숫자키로 바꾸는 것은 앰비언트·광원·후처리 축이다. 어둠 색을 바꾸려면 자산에서 편집한다.
+        [Header("타일 LOS 어둠 (R2)")]
+        [Tooltip("미탐색 영역 색. 지층 주조색(퍼플)이 사는 자리.")]
+        public Color losDarkColor = new Color(0.020f, 0.010f, 0.045f, 1f);
+        [Tooltip("탐색했지만 지금 안 보이는 영역 색.")]
+        public Color losMemoryColor = new Color(0.16f, 0.09f, 0.30f, 1f);
+        [Tooltip("미탐색 영역을 얼마나 완전히 가리는가. 1 = 완전 암흑.")]
+        [Range(0f, 1f)] public float losMaxDarkness = 1f;
+        [Tooltip("시야 경계의 날카로움(smoothstep 폭). 작을수록 날카롭다. 0 = 오버레이 기본값 유지.")]
+        [Range(0f, 1f)] public float losEdgeSoftness = 0.35f;
     }
 }

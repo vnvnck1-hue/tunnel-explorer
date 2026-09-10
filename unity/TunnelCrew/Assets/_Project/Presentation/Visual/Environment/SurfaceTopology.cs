@@ -81,6 +81,13 @@ namespace TunnelCrew.Presentation.Visual
         public byte FrontModule;
         public byte CornerModule;
 
+        /// <summary>
+        /// 접촉 AO 의 방향. 0=N · 1=E · 2=S · 3=W. <see cref="EnvironmentKit.contactAo"/> 의
+        /// 배열 순서가 이 인덱스와 같은 것이 계약이다(BuildReferenceEnvironmentKit 의
+        /// ContactAoByDirection 참고).
+        /// </summary>
+        public byte AoDir;
+
         public bool IsSolid => (Surfaces & (SurfaceMask.WallTop | SurfaceMask.Buried)) != 0;
         public bool IsFloor => (Surfaces & SurfaceMask.FloorBase) != 0;
         public bool IsForegroundOccluder => (Surfaces & SurfaceMask.ForegroundTop) != 0;

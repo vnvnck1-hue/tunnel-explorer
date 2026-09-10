@@ -76,36 +76,39 @@ namespace TunnelCrew.EditorTools
         static Vector2 G(float x, float y) => new Vector2(x + O.x, y + O.y);
 
         /// <summary>
-        /// 랩의 방 — 34×20 (2026-09-09, 요청으로 17×10 에서 <b>면적 4배</b>).
+        /// 랩의 방 — 34×20, <b>고체 채움 + 굴착 통로</b> 구조(개정 R2, 2026-09-10).
         ///
-        /// 테두리 1칸은 고체다. 내부에는 벽 뭉치·복도·작은 방을 넣었다 — 빈 바닥만 넓히면
-        /// 걸어도 볼 것이 없고, 4단계 검증 항목인 <b>cap/front 접합</b>·모서리·접점 AO 가
-        /// 화면에 들어오지 않는다.
+        /// 예전 방은 바닥 평면에 벽 블록을 섬처럼 올린 구조였다(438/680 = 64% 바닥). 어느 구석에
+        /// 서도 방 전체가 동시에 읽혀 공간감이 나오지 않았다 — 기획서 §0.2 의 실패 원인.
+        /// 이제 기본 상태가 암반이고 바닥은 파낸 결과다: 223/680 = 33% 바닥, 나머지는 고체.
+        /// 중앙 챔버(12~20, 7~11) 에서 네 방향으로 1~2칸 통로가 나가고, 통로 끝에 작은 방이 있다.
+        /// 굴착 실루엣 자체가 화면 구성이 된다(§3.4).
         ///
-        /// 방이 커져서 화면(약 14×8칸)이 방의 1/6 밖에 안 되므로 카메라가 폰을 따라간다
-        /// (<see cref="LabCameraFollow"/>). 폰 이동 범위와 카메라 클램프는 이 배열에서 계산한다.
+        /// 연결성은 빌드 전 flood fill 로 확인했다: 바닥 223칸 전부 스폰(16,9)에서 도달, 고립 0.
+        /// 소품·광원 좌표도 전부 바닥 칸 위에 있다(아래 <see cref="AddSatellites"/>).
+        /// 방 크기는 유지한다 — 작은 규모에서 확인하는 목적은 그대로 유효하다(§0.2).
         /// </summary>
         static readonly string[] Room =
         {
             "##################################",
-            "#................................#",
-            "#...####......######......####...#",
-            "#...####......#....#......####...#",
-            "#.............#....#.............#",
-            "#....######...#....#...######....#",
-            "#....#....#...######...#....#....#",
-            "#....#....#............#....#....#",
-            "#....#....#....######..#....#....#",
-            "#....######....#....#..######....#",
-            "#..............#....#............#",
-            "#....####......#....#......####..#",
-            "#....####......######......####..#",
-            "#................................#",
-            "#...######....########....######.#",
-            "#........#....#......#....#......#",
-            "#........#....#......#....#......#",
-            "#................................#",
-            "#................................#",
+            "##################################",
+            "##.....#####################.....#",
+            "##.###.###############.......###.#",
+            "##.###.#######.......#.#####.###.#",
+            "##.....#######.#####.#.#....#....#",
+            "######.#.......#####.#.#.##.######",
+            "######.#.#####.#####.#.#.##......#",
+            "#......#.#####.......#.#.####.####",
+            "#.####.#.###.........#...####.####",
+            "#.####...###.........########.####",
+            "#.######.###.........#........####",
+            "#.######.####.......##.######.####",
+            "#.######.#####.....###.######.####",
+            "#........######.######.######....#",
+            "#.######.......#######........##.#",
+            "#.############.##############.##.#",
+            "#.............................##.#",
+            "##################################",
             "##################################",
         };
 
@@ -227,6 +230,14 @@ namespace TunnelCrew.EditorTools
             new Spec("LP12_AbyssPalette", "⑫ 이상지대 팔레트", 0.24f, 1.25f, LabShadowMode.BlobAndNegative, 0.65f, 0.55f, 1.5f,
                 "이상지대(Abyss: 대비 12·채도 −12 / 안개 .46·비네트 .58·그레인 .044). 색이 거의 빠지고 그레인이 화면 정체성이 된다 — Katana ZERO·SIGNALIS 대역.",
                 volumePath: AbyssVolumePath, atmospherePath: AtmosphereDir + "/AtmosphereProfile_Abyss.asset"),
+
+            // ── 개정 R2 (2026-09-10) — 코어키퍼 룩 기준선. 어둠은 타일 LOS 가 만들므로 네거티브 축은 끈다.
+            // 환경광 0.14 는 "드러났지만 조명이 닿지 않는" 영역의 밝기다 — 이걸 0 으로 내리면 LOS 가
+            // 드러낸 19칸 반경이 보이지 않게 되어 드러남/밝음 비율(§7.6.4)이 사라진다. 광원은 1.3배 —
+            // 검정 배경 위 밝은 광원이 룩의 전부라 대비를 올린다. 블룸도 함께.
+            new Spec("LP13_CoreKeeper", "⑬ 코어키퍼 기준 (R2)", 0.14f, 1.30f, LabShadowMode.Blob, 0.55f, 0f, 1.5f,
+                "개정 R2 기준선. 벽 너머 완전 암흑(타일 LOS) + 탐색 잔상 0.29 + 드러남 19칸 대 밝음 ~2칸. 퍼플은 어둠 색에 있다. O 로 LOS 를 꺼서 R1 과 비교.",
+                bloomIntensity: 1.2f, bloomThreshold: 0.6f),
         };
 
         /// <summary>
@@ -479,6 +490,8 @@ namespace TunnelCrew.EditorTools
             // 방 내부(x 1..16, y 1..9)의 중심. 세로 8셀 = ortho 4 와 정확히 맞는다.
             cameraGo.transform.position = new Vector3(O.x, O.y, -10f);
             cameraGo.AddComponent<AudioListener>();
+            // PlayerView·조준이 Camera.main 을 쓴다. 태그가 없으면 조준이 죽는다.
+            cameraGo.tag = "MainCamera";
             // URP 후처리(Bloom 등)는 카메라마다 켜야 한다. 이게 없으면 Volume 이 있어도 아무것도 안 보인다.
             var camData = cameraGo.AddComponent<UniversalAdditionalCameraData>();
             camData.renderPostProcessing = true;
@@ -521,8 +534,21 @@ namespace TunnelCrew.EditorTools
             // 벽 윤곽 캐스터(§7.4-3) — 런타임에 LabEnvironment 가 env.IsWallCell 로 바인드한다.
             var wallShadows = shadowGo.AddComponent<ShadowGeometryBuilder>();
 
+            // 벽 덩어리의 상시 드롭섀도우 — 톱다운에서 높이를 파는 것은 이것이다.
+            // 지층1 광원이 좌상단 35°(아트 계약 §5-1) 이므로 우하단으로 진다.
+            var dropGo = NewObject(scene, "Wall Drop Shadow");
+            var dropShadow = dropGo.AddComponent<LabWallDropShadow>();
+            // opacity 0.75 (2026-09-10): 3차 아트 ②(페이드 있는 알파 마스크 4장, center 215/255)가 도착해
+            // 아트가 밀도를 정한다. 이 값은 그 위의 배율 — 단색 셀로 되돌아가는 경우(키트에 4장이 없을 때)에도
+            // 0.85 보다는 부드럽게.
+            dropShadow.EditorAssign(env, new Vector2(0.50f, -0.46f), 0.75f);
+
+            // 벽 물리 콜라이더 — 랩 전용. 본편은 Sim 이 충돌을 계산하므로 Collider2D 가 없다.
+            var colGo = NewObject(scene, "Wall Collision");
+            var wallCollision = colGo.AddComponent<LabWallCollision>();
+
             var labEnv = envGo.AddComponent<LabEnvironment>();
-            labEnv.EditorAssign(Room, env, wallShadows);
+            labEnv.EditorAssign(Room, env, wallShadows, dropShadow, wallCollision);
 
             // ── 프롭. 앵커가 발 위치를 잡는다 — 좌표는 groundPosition 에 둔다(트랜스폼은 앵커가 쓴다).
             var propRoot = NewObject(scene, "Props").transform;
@@ -537,36 +563,38 @@ namespace TunnelCrew.EditorTools
 
             AddAnchored(propRoot, "Reference Crystal", art.Crystal, G(-4.15f, 0.7f),
                 VisualLayers.BackStructure, new Vector2(1.2f, 1f), 0.6f);
-            AddAnchored(propRoot, "Reference Lamp", art.Lamp, G(4.65f, -2.55f),
+            // 램프는 중앙 챔버 남동쪽 바닥 칸(19,7). 예전 G(4.65,-2.55) 는 굴착 방에서 암반 안이었다.
+            AddAnchored(propRoot, "Reference Lamp", art.Lamp, new Vector2(19.6f, 7.4f),
                 VisualLayers.BackStructure, new Vector2(0.4f, 1f), 0.25f);
 
-            // ── 움직이는 드릴러 — 관심 캐릭터. 광원이 움직여야 바닥이 어떻게 밝아지는지 보인다.
-            var pawn = AddAnchored(propRoot, "Driller Pawn", art.Driller, G(-0.75f, -0.75f),
-                VisualLayers.WorldEntity, Vector2.one, 0.45f,
-                LabAnchoredEntity.Silhouette.Interest, new Color(0.42f, 0.82f, 1f));
-            pawn.isLocalInterest = true;
-            pawn.wantsSilhouette = true;
-            var mover = pawn.gameObject.AddComponent<LightingLabPawn>();
-            // 이동 범위 = 방 내부(테두리 1칸 안쪽). X/C 파괴는 앞 칸이므로 위쪽 여유를 둔다.
-            var mso = new SerializedObject(mover);
-            mso.FindProperty("_bounds").rectValue = RoomInterior();
-            mso.ApplyModifiedPropertiesWithoutUndo();
+            // ── 본편 캐릭터 그대로(2026-09-10). 임시 스프라이트 판때기를 걷어내고 실제
+            // PlayerView · PlayerState · 본편 수치의 손전등(원뿔 40/56°, 반경 9.36, 그림자 0.9)과
+            // 후광(360°, 반경 2.6)을 가져온다. 조명을 판단하려면 대상이 진짜여야 한다 —
+            // 8방향 시트·걸음 들썩임·발밑 그림자 캐스터·손전등 원뿔이 전부 화면의 빛을 바꾼다.
+            // 탐색광 소켓은 없앤다. 손전등이 그 역할을 본편 값으로 대신한다.
+            var playerGo = NewObject(scene, "Lab Player");
+            var labPlayer = playerGo.AddComponent<LabPlayer>();
+            // 스폰은 <b>절대 셀</b>로 준다. G() 오프셋으로 주면 방을 고칠 때마다 벽 안으로 들어간다 —
+            // 실제로 12칸짜리 밀폐 주머니에 갇혀 있었다(2026-09-10). (16,9) 는 중앙 챔버 한가운데다
+            // (Room 주석의 flood fill 기준점).
+            labPlayer.EditorAssign(new Vector2(16.5f, 9.5f));
+            EditorUtility.SetDirty(labPlayer);
 
-            // 방이 화면보다 훨씬 커졌으므로 카메라가 폰을 따라간다(2026-09-09).
-            // 방 경계로 클램프해 방 밖의 빈 공간을 비추지 않는다.
+            // ── 크루 손전등(본선 대조에서 빠져 있던 항목, 2026-09-10). 서 있는 동료 둘 — 챔버 서쪽·동쪽 바닥 칸.
+            // 본선 수치 그대로(40/56° · r 8.4 · I 2.0). 시야원으로도 합산되어 동료가 비춘 곳을 팀이 함께 본다.
+            var crewGo = NewObject(scene, "Crew Lights");
+            var crew = crewGo.AddComponent<LabCrewLights>();
+            crew.EditorAssign(new[]
+            {
+                new LabCrewLights.Member { cell = new Vector2(15.5f, 8.5f), aimDegrees = 20f },
+                new LabCrewLights.Member { cell = new Vector2(19.5f, 10.5f), aimDegrees = 200f },
+            });
+            EditorUtility.SetDirty(crew);
+
+            // 방이 화면보다 훨씬 크므로 카메라가 캐릭터를 따라간다. 방 경계로 클램프한다.
             var follow = cameraGo.AddComponent<LabCameraFollow>();
-            follow.EditorAssign(pawn.transform, RoomBounds());
+            follow.EditorAssign(playerGo.transform, RoomBounds());
             EditorUtility.SetDirty(follow);
-
-            // 탐색광 — 드릴러가 파는 쪽(오른쪽) 앞. 콘 각도의 방향 규약에 기대지 않고도
-            // 헤드램프가 앞을 비추는 것으로 읽힌다. 앵커의 자식이라 함께 움직인다.
-            var scout = AddLight(pawn.transform, "Scout (LightClass.Scout)",
-                Light2D.LightType.Point, new Vector3(1.10f, 0.45f, -0.1f),
-                new Color(1f, 0.94f, 0.86f, 1f), 1.45f, local: true);
-            scout.pointLightInnerRadius = 0.25f;
-            scout.pointLightOuterRadius = 3.1f;
-            scout.falloffIntensity = 0.55f;
-            AddSocket(scout, LightClass.Scout, 1.45f, 3.1f, 0.00f);
 
             // ── 위협 더미 — 관심 대상이 아니다. 벽 뒤에 두어 "적은 완전 투명 처리하지 않고 위협
             // 실루엣만 보장"(§6.6) 을 보는 대조군. 그 앞의 벽은 페이드하지 않으므로 실루엣이
@@ -587,14 +615,25 @@ namespace TunnelCrew.EditorTools
 
             var global = AddLight(lightRoot, "Global (ambient)", Light2D.LightType.Global,
                 Vector3.zero, AmbientHue, 0.35f);
+            // 전역광을 둘로 나눈다(개정 R2, 2026-09-10). 바닥 전역광은 지면 레이어만, 윗면 전역광은
+            // WallTop·FrontStructure 만 비추고 훨씬 어둡다(프리셋 wallTopAmbientScale × 앰비언트).
+            // 하나의 전역광이 윗면까지 같은 밝기로 칠하면 방에 붙은 벽 윗면이 통째로 드러나
+            // "벽 너머 암흑"이 있어도 폐쇄감이 안 난다 — 사용자 지적. 두 전역광의 레이어가 겹치지 않아
+            // URP 의 "같은 레이어에 전역광 둘" 경고가 나지 않는다.
+            global.targetSortingLayers = VisualLayers.LitGroundLevelLayerIds();
+            var globalTop = AddLight(lightRoot, "Global (wall tops)", Light2D.LightType.Global,
+                Vector3.zero, AmbientHue, 0.35f * 0.25f);
+            globalTop.targetSortingLayers = VisualLayers.LitElevatedLayerIds();
 
             var worklamp = AddLight(lightRoot, "Worklamp (LightClass.Worklamp)",
-                Light2D.LightType.Point, W(4.65f, -1.52f, -0.1f),
+                Light2D.LightType.Point, new Vector3(19.6f, 8.4f, -0.1f),   // 램프 위 1칸, 바닥 칸(19,8)
                 new Color(0.92f, 0.16f, 1f, 1f), 2.35f);
             worklamp.pointLightInnerRadius = 0.18f;
             worklamp.pointLightOuterRadius = 2.4f;
             worklamp.falloffIntensity = 0.48f;
-            AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.31f);
+            // 설치 높이 0.5 — 벽 lift(0.75) 아래라 <b>지면 광원</b>이다. 1.0 으로 두면 램프 옆 벽 윗면이 램프 빛을 받아
+            // 방에 붙은 벽 기둥이 통째로 밝게 드러났다(2026-09-10 사용자 캡처, 동쪽 벽). 윗면은 윗면 전역광(0.035)만 받는다.
+            AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.31f, mountHeight: 0.5f);
 
             // 광물광은 <b>마스크 애디티브(슬롯 3 = B 습윤·결정)</b> — 마스크 채널 규약 확정(2026-09-09).
             // 라이트 하나가 화면 전체의 광맥·수정만 골라 발광시킨다. Katana ZERO 의 글로우 부품이고
@@ -619,22 +658,14 @@ namespace TunnelCrew.EditorTools
             indicator.blendStyleIndex = 1;
             AddSocket(indicator, LightClass.Indicator, 0.38f, 0.6f, 0.89f);
 
-            // ── 네거티브 라이팅 — 아직 정식 시스템이 없는 격차(§B-2). 임시 블롭이 맡는다.
-            // 접촉 그림자 블롭은 1단계에서 ContactShadowRenderer 로 대체되어 여기 없다.
-            var negRoot = NewObject(scene, "Negative Lighting (freeform)").transform;
-            // 사각형 암부 — 전과 같은 자리, 이제 다각형이다.
-            AddNegativeVolume(negRoot, "Negative TopLeft", W(-5.6f, 3.0f),
-                NegativeLightVolume.Rect(new Vector2(6.0f, 3.2f)));
-            AddNegativeVolume(negRoot, "Negative TopRight", W(6.0f, 2.9f),
-                NegativeLightVolume.Rect(new Vector2(5.4f, 3.4f)));
-            // 갱도 입구 — 위로 좁아지는 사다리꼴. 타원 블롭으로는 만들 수 없던 형태이고,
-            // 이 컴포넌트가 왜 있는지를 화면에서 보여 주는 자리다(§B-2).
-            AddNegativeVolume(negRoot, "Negative Mouth BottomLeft", W(-6.2f, -3.0f),
-                NegativeLightVolume.Mouth(5.2f, 2.8f, 0.42f));
+            // ── 네거티브 라이팅은 <b>폐기</b>했다(개정 R2, 기획서 §0.2·§5.4 "어둠을 손으로 칠하지 않는다").
+            // 어둠은 이제 타일 LOS 전파의 결과다(LabEnvironment 가 본편 LosService·DarknessOverlay 를
+            // 묶는다). Negative Freeform 5개가 하던 "복도 중간 암부"는 벽 너머 완전 암흑이 대신한다.
+            // AddNegativeVolume/AddNegative 헬퍼는 LightingPresetSwitcher 의 negative 축 호환을 위해 남겨 둔다.
 
-            // 방을 4배로 키우면 중앙 리그만으로는 방의 5/6 이 빈 암석이다 — 걸어 나가면
-            // 볼 것이 없다. 좌우 복도와 위아래 넓은 띠에 같은 계열의 소품·광원을 흩는다.
-            AddSatellites(propRoot, lightRoot, negRoot, art);
+            // 통로 끝 작은 방들에 같은 계열의 소품·광원을 흩는다 — 굴착 구조에서는 광원이 곧
+            // "가 볼 이유"다. 좌표는 전부 굴착된 바닥 칸 위다(Room 주석의 검사 기준).
+            AddSatellites(propRoot, lightRoot, art);
 
             // ── 대기 원근. 카메라 자식이어야 Bind 가 카메라를 잡는다.
             var atmoGo = new GameObject("Atmosphere");
@@ -686,7 +717,7 @@ namespace TunnelCrew.EditorTools
             var switcher = labGo.AddComponent<LightingPresetSwitcher>();
             var volumeForSwitcher = AssetDatabase.LoadAssetAtPath<VolumeProfile>(DefaultVolumePath);
             switcher.EditorAssign(presets, global, atmosphere, atmoForSwitcher, worldForSwitcher,
-                startIndex: 1, volume: volume, defaultVolumeProfile: volumeForSwitcher); // ② 본편 기준으로 시작
+                startIndex: 12, volume: volume, defaultVolumeProfile: volumeForSwitcher); // ⑬ 코어키퍼 기준(R2)으로 시작
             EditorUtility.SetDirty(switcher);
 
             // 직렬화가 실제로 붙었는지 확인한다. 참조가 null 로 박히면 UI 가 아무것도 그리지
@@ -814,13 +845,14 @@ namespace TunnelCrew.EditorTools
         /// 분류·소켓 값은 중앙 리그와 같은 대역으로 둔다 — 위성이 다른 값을 쓰면 프리셋을 비교할 때
         /// 무엇 때문에 달라졌는지 알 수 없다.
         /// </summary>
-        static void AddSatellites(Transform propRoot, Transform lightRoot, Transform negRoot, Sprites art)
+        static void AddSatellites(Transform propRoot, Transform lightRoot, Sprites art)
         {
             // 결정 + 광물광(마스크 애디티브). 마스크가 골라내므로 반경이 넓어도 암석은 밝아지지 않는다.
+            // 좌표는 굴착 방의 바닥 칸(개정 R2). 서쪽 아래 방 · 동쪽 위 복도 끝 · 북서 방 · 남쪽 긴 통로.
             var crystals = new[]
             {
-                new Vector2(2.5f, 4.5f), new Vector2(32.5f, 15.0f),
-                new Vector2(10.5f, 18.5f), new Vector2(24.5f, 1.5f),
+                new Vector2(2.5f, 5.5f), new Vector2(32.5f, 15.0f),
+                new Vector2(4.5f, 17.5f), new Vector2(24.5f, 2.5f),
             };
             for (int i = 0; i < crystals.Length; i++)
             {
@@ -835,12 +867,12 @@ namespace TunnelCrew.EditorTools
                 mineral.pointLightOuterRadius = 3.2f;
                 mineral.falloffIntensity = 0.6f;
                 mineral.blendStyleIndex = MaskAdditiveSlot;
-                AddSocket(mineral, LightClass.MineralGlow, 1.6f, 3.2f, 0.13f + i * 0.21f);
+                AddSocket(mineral, LightClass.MineralGlow, 1.6f, 3.2f, 0.13f + i * 0.21f, mountHeight: 0.35f);
             }
 
             // 작업등 + 램프. 그림자 예산(§13)이 걸리는 분류라, 방을 키운 뒤에도 예산이 도는지가
             // 여기서 드러난다 — 중앙 1개로는 예산 경쟁이 일어나지 않았다.
-            var lamps = new[] { new Vector2(2.5f, 15.5f), new Vector2(32.5f, 5.5f) };
+            var lamps = new[] { new Vector2(2.5f, 15.5f), new Vector2(30.5f, 4.5f) };
             for (int i = 0; i < lamps.Length; i++)
             {
                 var at = lamps[i];
@@ -853,11 +885,11 @@ namespace TunnelCrew.EditorTools
                 worklamp.pointLightInnerRadius = 0.18f;
                 worklamp.pointLightOuterRadius = 2.4f;
                 worklamp.falloffIntensity = 0.48f;
-                AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.44f + i * 0.27f);
+                AddSocket(worklamp, LightClass.Worklamp, 2.35f, 2.4f, 0.44f + i * 0.27f, mountHeight: 0.5f);
             }
 
             // 표시등 — 예산 제외 분류. 먼 구석에서도 방향을 잡을 표식이 된다.
-            var marks = new[] { new Vector2(10.5f, 1.5f), new Vector2(24.5f, 18.5f) };
+            var marks = new[] { new Vector2(10.5f, 2.5f), new Vector2(25.5f, 16.5f) };
             for (int i = 0; i < marks.Length; i++)
             {
                 var indicator = AddLight(lightRoot, $"Satellite Indicator {i + 1}",
@@ -868,12 +900,6 @@ namespace TunnelCrew.EditorTools
                 indicator.blendStyleIndex = 1;
                 AddSocket(indicator, LightClass.Indicator, 0.38f, 0.6f, 0.72f + i * 0.15f);
             }
-
-            // 넓어진 통로 중간의 암부. 광원 사이를 지날 때 밝기가 오르내리게 만든다.
-            AddNegativeVolume(negRoot, "Negative Corridor Left", new Vector3(8f, 10f, 0f),
-                NegativeLightVolume.Rect(new Vector2(5.0f, 6.0f)));
-            AddNegativeVolume(negRoot, "Negative Corridor Right", new Vector3(26f, 10f, 0f),
-                NegativeLightVolume.Mouth(5.0f, 6.0f, 0.5f));
         }
 
         static Light2D AddLight(Transform parent, string name, Light2D.LightType type,
@@ -899,8 +925,10 @@ namespace TunnelCrew.EditorTools
         /// <see cref="LightSocket"/> 을 직접 붙이지 않는다 — 파일명과 다른 클래스라 씬에 직렬화하면
         /// missing script 가 된다. <see cref="LabLightSocket"/> 이 Awake 에서 붙인다.
         /// </summary>
+        /// <param name="mountHeight">설치 높이(셀). 0.75 이상이면 벽 윗면까지 비춘다 — 기둥 램프(1.0)만 그렇다.
+        /// 바닥 결정(0.35)·표시등(0)은 지면 광원이라 윗면을 건드리지 않는다(조명 소팅 정밀화, 2026-09-10).</param>
         static void AddSocket(Light2D light, LightClass lightClass, float baseIntensity,
-                              float rangeCells, float phase)
+                              float rangeCells, float phase, float mountHeight = 0f)
         {
             var lab = light.gameObject.AddComponent<LabLightSocket>();
             var so = new SerializedObject(lab);
@@ -908,6 +936,7 @@ namespace TunnelCrew.EditorTools
             so.FindProperty("_baseIntensity").floatValue = baseIntensity;
             so.FindProperty("_rangeCells").floatValue = rangeCells;
             so.FindProperty("_phase").floatValue = phase;
+            so.FindProperty("_mountHeightCells").floatValue = mountHeight;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

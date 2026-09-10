@@ -1,14 +1,15 @@
 {
-  "label": "⑧ 광원 강조 (Ori 방향)",
-  "asset": "LP8_LightForward",
+  "label": "⑬ 코어키퍼 기준 (R2)",
+  "asset": "LP13_CoreKeeper",
   "ambientColor": [0.62, 0.5, 0.76],
   "ambientColorHex": "#9E80C2",
-  "ambientIntensity": 0.3,
-  "lightScale": 1.7,
-  "shadowMode": "BlobAndNegative",
+  "ambientIntensity": 0.14,
+  "lightScale": 1.3,
+  "shadowMode": "Blob",
   "blobStrength": 0.55,
-  "negativeStrength": 0.35,
-  "postScale": 2,
+  "negativeStrength": 0,
+  "postScale": 1.5,
   "baseProfile": "AtmosphereProfile_Stratum1",
-  "note": "광원을 세게. 손칠 라이팅 없이 광원만으로 어디까지 가는지 확인하는 대조군."
+  "worldProfile": "WorldVisualProfile_Stratum1",
+  "note": "개정 R2 기준선. 벽 너머 완전 암흑(타일 LOS) + 탐색 잔상 0.29 + 드러남 19칸 대 밝음 ~2칸. 퍼플은 어둠 색에 있다. O 로 LOS 를 꺼서 R1 과 비교."
 }

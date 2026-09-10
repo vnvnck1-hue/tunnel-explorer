@@ -58,7 +58,7 @@ namespace TunnelCrew.Presentation.Visual
         // URP 17.3 의 ShadowCaster2D 는 형태를 넣는 API 가 전부 internal 이고, 콜라이더
         // 자동 감지는 #if UNITY_EDITOR 안에 있어 런타임에서 동작하지 않는다.
         // 필드 이름이 바뀌면 Available 이 false 가 되고 그림자만 조용히 빠진다.
-        static FieldInfo _fShapePath, _fShapePathHash, _fCastingSource, _fForceRebuild;
+        static FieldInfo _fShapePath, _fShapePathHash, _fCastingSource, _fForceRebuild, _fApplyLayers;
         static Type _castingSourceType;
         static bool _probed;
 
@@ -77,6 +77,8 @@ namespace TunnelCrew.Presentation.Visual
             _fShapePathHash = t.GetField("m_ShapePathHash", F);
             _fCastingSource = t.GetField("m_ShadowCastingSource", F);
             _fForceRebuild = t.GetField("m_ForceShadowMeshRebuild", F);
+            // 그림자가 떨어지는 레이어. 공개 API 가 없어(URP 17.3) 직렬화 필드에 쓴다 — 기존 필드들과 같은 이유.
+            _fApplyLayers = t.GetField("m_ApplyToSortingLayers", F);
             _castingSourceType = _fCastingSource?.FieldType;
 
             if (_fShapePath == null || _fCastingSource == null)
@@ -321,6 +323,13 @@ namespace TunnelCrew.Presentation.Visual
             }
 
             _fShapePath.SetValue(caster, path);
+            // 벽 그림자는 바닥·벽 정면에만 떨어진다 — 캐릭터(WorldEntity)·벽 윗면은 받지 않는다
+            // (VisualLayers.ShadowReceivers 주석, 2026-09-10). null 로 두면 URP 가 "전 레이어"로 채운다.
+            if (_fApplyLayers != null)
+            {
+                var receivers = VisualLayers.ShadowReceiverLayerIds();
+                if (receivers.Length > 0) _fApplyLayers.SetValue(caster, receivers);
+            }
             // 내용 해시를 그대로 넣는다 — 같은 형태면 같은 값이어야 한다.
             _fShapePathHash?.SetValue(caster, contour.ContentHash);
             // ShadowCastingSources.ShapeEditor == 1

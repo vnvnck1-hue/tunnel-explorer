@@ -108,6 +108,78 @@ namespace TunnelCrew.Presentation.Visual
         /// 레이어가 추가·삭제되면 <see cref="SortingLayer.layers"/> 가 바뀌므로 매번 다시 만든다
         /// (호출 지점이 프레임마다 도는 곳이 아니다).
         /// </summary>
+        /// <summary>
+        /// <b>지면 높이</b> 광원이 비추는 레이어. <see cref="Lit"/> 에서 <see cref="WallTop"/> 과
+        /// <see cref="FrontStructure"/> 를 뺀 것이다.
+        ///
+        /// <b>왜 빼는가</b> — 그 둘은 벽의 <b>윗면</b>이다. 바닥에 서 있는 캐릭터의 손전등이
+        /// 수평으로 비추는데 벽 윗면이 밝아지면 벽에 높이가 없다는 뜻이 된다(2026-09-10 지적).
+        /// 지면 광원은 바닥·벽 <b>정면</b>(BackStructure)·개체만 비춘다. 윗면을 밝히는 것은
+        /// 전역광과 천장·공중 광원의 몫이다.
+        /// </summary>
+        public static readonly string[] LitGroundLevel =
+        {
+            UnlayeredDefault,
+            GroundBase,
+            GroundDetail,
+            GroundDecal,
+            BackStructure,
+            WorldEntity,
+        };
+
+        /// <summary><see cref="LitGroundLevel"/> 의 Sorting Layer ID.</summary>
+        public static int[] LitGroundLevelLayerIds() => IdsOf(LitGroundLevel);
+
+        /// <summary>
+        /// <b>높이가 있는 면</b> — 벽 윗면과 전경 cap. <see cref="Lit"/> 에서 <see cref="LitGroundLevel"/> 을 뺀 나머지다.
+        ///
+        /// 개정 R2(2026-09-10): 전역광을 둘로 나눈다. 바닥용 전역광과 <b>윗면용 전역광</b>이 서로 다른
+        /// 레이어를 비추고, 윗면 쪽은 훨씬 어둡다(기획서 §7.2 "벽 상단·정면·바닥에 서로 다른 최소광 계수").
+        /// 그러지 않으면 방에 인접한 벽 윗면이 바닥과 같은 밝기로 통째로 드러나 폐쇄감이 사라진다 —
+        /// 코어키퍼에서 윗면은 빛이 옆(방)에서 오기 때문에 정면보다 훨씬 어둡다.
+        /// </summary>
+        public static readonly string[] LitElevated =
+        {
+            WallTop,
+            FrontStructure,
+        };
+
+        /// <summary><see cref="LitElevated"/> 의 Sorting Layer ID.</summary>
+        public static int[] LitElevatedLayerIds() => IdsOf(LitElevated);
+
+        /// <summary>
+        /// 벽 그림자(<c>ShadowCaster2D</c>)가 <b>떨어지는</b> 레이어. <see cref="LitGroundLevel"/> 에서
+        /// <see cref="WorldEntity"/> 를 뺀 것이다.
+        ///
+        /// <b>왜 빼는가</b> — URP 2D 그림자는 광원이 비추는 모든 레이어에 드리운다. 캐릭터가 벽 옆에 서면
+        /// 벽 그림자가 캐릭터를 통째로 덮어 "벽 뒤에 있다"고 읽힌다(2026-09-10 지적). 벽 그림자는
+        /// 바닥·벽 정면에만 떨어지고, 개체는 자기 접촉 그림자(ContactShadow)로만 바닥에 붙는다.
+        /// 벽 윗면·전경 cap 도 제외 — 옆 벽의 그림자가 윗면에 떨어지면 높이 관계가 뒤집혀 읽힌다.
+        /// </summary>
+        public static readonly string[] ShadowReceivers =
+        {
+            UnlayeredDefault,
+            GroundBase,
+            GroundDetail,
+            GroundDecal,
+            BackStructure,
+        };
+
+        /// <summary><see cref="ShadowReceivers"/> 의 Sorting Layer ID.</summary>
+        public static int[] ShadowReceiverLayerIds() => IdsOf(ShadowReceivers);
+
+        /// <summary>이름 목록을 Sorting Layer ID 로 바꾼다. 없는 레이어는 건너뛴다.</summary>
+        static int[] IdsOf(string[] names)
+        {
+            var ids = new System.Collections.Generic.List<int>(names.Length);
+            for (int i = 0; i < names.Length; i++)
+            {
+                if (!Exists(names[i])) continue;
+                ids.Add(UnityEngine.SortingLayer.NameToID(names[i]));
+            }
+            return ids.ToArray();
+        }
+
         public static int[] LitLayerIds()
         {
             var ids = new System.Collections.Generic.List<int>(Lit.Length);

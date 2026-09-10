@@ -53,11 +53,45 @@ namespace TunnelCrew.EditorTools
         const string WallTopPattern = "tr01_reference_wall_top_{0}_albedo.png";
         const string WallTopRimPattern = "tr01_reference_wall_top_rim_{0}_albedo.png";
         const string WallFrontPattern = "tr01_reference_wall_front_{0}_albedo.png";
-        const string ContactAoPattern = "tr01_reference_contact_ao_{0}.png";
+        const string WestSidePattern = "tr01_reference_wall_side_west_{0}_albedo.png";
+        const string EastSidePattern = "tr01_reference_wall_side_east_{0}_albedo.png";
         const string OuterCornerPattern = "tr01_reference_wall_outer_corner_{0}_albedo.png";
         const string InnerCornerPattern = "tr01_reference_wall_inner_corner_{0}_albedo.png";
         const string FloorEdgePattern = "tr01_reference_floor_edge_{0}_albedo.png";
         static readonly string[] Variants = { "a", "b", "c", "d", "e", "f" };
+
+        /// <summary>
+        /// 상시 드롭섀도 타일셋(3차 요청 ②). 변형이 아니라 <b>역할</b>이고 순서가 계약이다 —
+        /// <c>EnvironmentKit.ShadowCenter/Edge/CornerOuter/CornerInner</c>. 순수 알파 마스크.
+        /// </summary>
+        /// <summary>벽 정면 균열 3단계(3차 요청 ③). 순서 = 타격 단계. 투명 오버레이, 피벗 하단 중앙.</summary>
+        static readonly string[] WallCrackByStage =
+        {
+            "tr01_reference_wall_crack_1_albedo.png",
+            "tr01_reference_wall_crack_2_albedo.png",
+            "tr01_reference_wall_crack_3_albedo.png",
+        };
+
+        static readonly string[] WallShadowByRole =
+        {
+            "tr01_reference_wall_shadow_center.png",
+            "tr01_reference_wall_shadow_edge.png",
+            "tr01_reference_wall_shadow_corner_outer.png",
+            "tr01_reference_wall_shadow_corner_inner.png",
+        };
+
+        /// <summary>
+        /// 접점 AO 는 <b>변형이 아니라 방향</b>이다 — n/e/s/w 각각이 그 방향 접점의 음영이다.
+        /// 변형 패턴(a..f)으로 긁으면 <c>_e</c> 가 "변형 e" 로 잡히고 <c>_s</c>·<c>_w</c> 는
+        /// 목록에 없어 빠진다(2026-09-10). 방향은 순서가 계약이다 — N,E,S,W.
+        /// </summary>
+        static readonly string[] ContactAoByDirection =
+        {
+            "tr01_reference_contact_ao_a.png",   // N (1차 납품, 북쪽 접점)
+            "tr01_reference_contact_ao_e.png",   // E
+            "tr01_reference_contact_ao_s.png",   // S
+            "tr01_reference_contact_ao_w.png",   // W
+        };
 
         [MenuItem("Tunnel Crew/비주얼 · 레퍼런스 환경 키트 생성 (3단계)", priority = 27)]
         public static void Run()
@@ -89,10 +123,46 @@ namespace TunnelCrew.EditorTools
             var wallTop = Collect(WallTopPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var wallTopRim = Collect(WallTopRimPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var wallFront = Collect(WallFrontPattern, new Vector2(0.5f, 0.0f), alpha: false);   // 하단 중앙
-            var contactAo = Collect(ContactAoPattern, new Vector2(0.5f, 0.5f), alpha: true);
+            var westSide = Collect(WestSidePattern, new Vector2(0.5f, 0.0f), alpha: false);   // 하단 중앙
+            var eastSide = Collect(EastSidePattern, new Vector2(0.5f, 0.0f), alpha: false);
             var outerCorner = Collect(OuterCornerPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var innerCorner = Collect(InnerCornerPattern, new Vector2(0.5f, 0.5f), alpha: false);
             var floorEdge = Collect(FloorEdgePattern, new Vector2(0.5f, 0.5f), alpha: false);
+
+            // 접점 AO — 방향 순서(N,E,S,W)가 계약이다. 빠진 방향은 N 으로 메워 배열 길이를 4로 유지한다
+            // (렌더러가 방향을 인덱스로 찾으므로 길이가 줄면 방향이 어긋난다).
+            var contactAo = new List<Sprite>(4);
+            foreach (string file in ContactAoByDirection)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) { report.Append($"  ⚠ 접점 AO 누락: {file}\n"); continue; }
+                EnsureSprite(path, new Vector2(0.5f, 0.5f), alpha: true);
+                var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sp != null) contactAo.Add(sp);
+            }
+
+            // 드롭섀도 4장 — 역할 순서가 계약. 하나라도 빠지면 배열을 비워 렌더러가 단색 셀로 되돌아가게 한다.
+            var wallShadow = new List<Sprite>(4);
+            foreach (string file in WallShadowByRole)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) { report.Append($"  ⚠ 드롭섀도 누락: {file}\n"); continue; }
+                EnsureSprite(path, new Vector2(0.5f, 0.5f), alpha: true);
+                var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sp != null) wallShadow.Add(sp);
+            }
+            if (wallShadow.Count != WallShadowByRole.Length) wallShadow.Clear();
+
+            // 균열 3단계 — 순서 = 단계. 정면과 같은 피벗(하단 중앙).
+            var wallCrack = new List<Sprite>(3);
+            foreach (string file in WallCrackByStage)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) { report.Append($"  ⚠ 균열 누락: {file}\n"); continue; }
+                EnsureSprite(path, new Vector2(0.5f, 0.0f), alpha: true);
+                var sp = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sp != null) wallCrack.Add(sp);
+            }
 
             // ── 키트. 없으면 만들고, 스프라이트 목록은 도구가 갈아치운다.
             var kit = AssetDatabase.LoadAssetAtPath<EnvironmentKit>(KitPath);
@@ -112,8 +182,12 @@ namespace TunnelCrew.EditorTools
             Replace(ref kit.wallTop, wallTop, "wallTop", report);
             Replace(ref kit.wallTopRim, wallTopRim, "wallTopRim", report);
             Replace(ref kit.wallFront, wallFront, "wallFront", report);
+            Replace(ref kit.westSide, westSide, "westSide", report);
+            Replace(ref kit.eastSide, eastSide, "eastSide", report);
             Replace(ref kit.outerCorner, outerCorner, "outerCorner", report);
             Replace(ref kit.innerCorner, innerCorner, "innerCorner", report);
+            Replace(ref kit.wallShadow, wallShadow, "wallShadow(center/edge/outer/inner)", report);
+            Replace(ref kit.wallCrack, wallCrack, "wallCrack(1/2/3)", report);
             EditorUtility.SetDirty(kit);
             AssetDatabase.SaveAssets();
 
@@ -189,7 +263,8 @@ namespace TunnelCrew.EditorTools
                 (WallTopPattern, new Vector2(0.5f, 0.5f), false),
                 (WallTopRimPattern, new Vector2(0.5f, 0.5f), false),
                 (WallFrontPattern, new Vector2(0.5f, 0.0f), false),   // 하단 중앙
-                (ContactAoPattern, new Vector2(0.5f, 0.5f), true),
+                (WestSidePattern, new Vector2(0.5f, 0.0f), false),
+                (EastSidePattern, new Vector2(0.5f, 0.0f), false),
                 (OuterCornerPattern, new Vector2(0.5f, 0.5f), false),
                 (InnerCornerPattern, new Vector2(0.5f, 0.5f), false),
                 (FloorEdgePattern, new Vector2(0.5f, 0.5f), false),
@@ -204,6 +279,30 @@ namespace TunnelCrew.EditorTools
                     EnsureSprite(path, pivot, alpha);
                     touched = true;
                 }
+
+            // 접점 AO 는 방향 파일명이라 변형 패턴 루프를 타지 않는다.
+            foreach (string file in ContactAoByDirection)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) continue;
+                EnsureSprite(path, new Vector2(0.5f, 0.5f), alpha: true);
+                touched = true;
+            }
+
+            foreach (string file in WallShadowByRole)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) continue;
+                EnsureSprite(path, new Vector2(0.5f, 0.5f), alpha: true);
+                touched = true;
+            }
+            foreach (string file in WallCrackByStage)
+            {
+                string path = $"{ArtDir}/{file}";
+                if (!File.Exists(AbsolutePath(path))) continue;
+                EnsureSprite(path, new Vector2(0.5f, 0.0f), alpha: true);
+                touched = true;
+            }
 
             if (touched) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         }

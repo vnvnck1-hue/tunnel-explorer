@@ -1,6 +1,6 @@
 {
   "packageId": "tunnel-crew-test-room-v01",
-  "revision": 18,
+  "revision": 20,
   "productionProjection": "ReferenceTopDown",
   "sourcePixelsPerCell": 256,
   "deliveryPixelsPerCell": 128,
@@ -1475,6 +1475,342 @@
         "wallEdge": 150,
         "fadeEndPixel": 54,
         "farEdge": 0
+      }
+    },
+    {
+      "assetId": "TR01-REF-WSW-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "repeatEdges": "ew",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_side_west_a_albedo.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-REF-WSE-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "repeatEdges": "ew",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_side_east_a_albedo.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-REF-WOC-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 1,
+      "repeatEdges": null,
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_outer_corner_a_albedo.png"
+      }
+    },
+    {
+      "assetId": "TR01-REF-WIC-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 1,
+      "repeatEdges": null,
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_inner_corner_a_albedo.png"
+      }
+    },
+    {
+      "assetId": "TR01-REF-WTR-A",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 1,
+      "repeatEdges": "ew",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_a_albedo.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-REF-AO-CONTACT-E",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "repeatEdges": null,
+      "channels": {
+        "ao": "approved/ao/tr01_reference_contact_ao_e_ao.png"
+      },
+      "alphaInspection": {
+        "wallEdge": 150,
+        "fadeEndPixel": 54,
+        "farEdge": 0
+      }
+    },
+    {
+      "assetId": "TR01-REF-AO-CONTACT-S",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "repeatEdges": null,
+      "channels": {
+        "ao": "approved/ao/tr01_reference_contact_ao_s_ao.png"
+      },
+      "alphaInspection": {
+        "wallEdge": 150,
+        "fadeEndPixel": 54,
+        "farEdge": 0
+      }
+    },
+    {
+      "assetId": "TR01-REF-AO-CONTACT-W",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "repeatEdges": null,
+      "channels": {
+        "ao": "approved/ao/tr01_reference_contact_ao_w_ao.png"
+      },
+      "alphaInspection": {
+        "wallEdge": 150,
+        "fadeEndPixel": 54,
+        "farEdge": 0
+      }
+    },
+    {
+      "assetId": "TR01-REF-WTR-B",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 1,
+      "repeatEdges": "ew",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_b_albedo.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-REF-WTR-C",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 0,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 1,
+      "repeatEdges": "ew",
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_top_rim_c_albedo.png"
+      },
+      "tileability": {
+        "seamLockedPixels": 4,
+        "oppositeEdgesIdentical": true
+      }
+    },
+    {
+      "assetId": "TR01-REF-SHADOW-CENTER",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "channels": {
+        "ao": "approved/ao/tr01_reference_wall_shadow_center_ao.png"
+      },
+      "alphaInspection": {"constant": 215}
+    },
+    {
+      "assetId": "TR01-REF-SHADOW-EDGE",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "channels": {
+        "ao": "approved/ao/tr01_reference_wall_shadow_edge_ao.png"
+      },
+      "alphaInspection": {"inside": 215, "fadePixels": 40, "outside": 0}
+    },
+    {
+      "assetId": "TR01-REF-SHADOW-CORNER-OUTER",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "channels": {
+        "ao": "approved/ao/tr01_reference_wall_shadow_corner_outer_ao.png"
+      },
+      "alphaInspection": {"inside": 215, "fadePixels": 40, "outside": 0}
+    },
+    {
+      "assetId": "TR01-REF-SHADOW-CORNER-INNER",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["ao"],
+      "footprintCells": [1, 1],
+      "pivotNormalized": [0.5, 0.5],
+      "pivotPixels": [64, 64],
+      "dimensionsPixels": [128, 128],
+      "sortingLayerHint": "GroundAO",
+      "channels": {
+        "ao": "approved/ao/tr01_reference_wall_shadow_corner_inner_ao.png"
+      },
+      "alphaInspection": {"inside": 215, "fadePixels": 40, "outside": 0}
+    },
+    {
+      "assetId": "TR01-REF-WCR-1",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 2,
+      "repeatEdges": null,
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_crack_1_albedo.png"
+      }
+    },
+    {
+      "assetId": "TR01-REF-WCR-2",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 2,
+      "repeatEdges": null,
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_crack_2_albedo.png"
+      }
+    },
+    {
+      "assetId": "TR01-REF-WCR-3",
+      "revision": 1,
+      "status": "approved",
+      "requiredChannels": ["albedo"],
+      "footprintCells": [1, 1],
+      "footprintWidth": 1,
+      "footprintHeight": 1,
+      "pivotNormalized": [0.5, 0],
+      "pivotPixels": [64, 128],
+      "dimensionsPixels": [128, 128],
+      "visualHeightCells": 1,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 2,
+      "repeatEdges": null,
+      "channels": {
+        "albedo": "approved/albedo/tr01_reference_wall_crack_3_albedo.png"
       }
     }
   ]

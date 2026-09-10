@@ -1,0 +1,163 @@
+{
+  "deliveryPixelsPerCell": 128,
+  "paddingPixels": 8,
+  "rims": {
+    "a": {
+      "meanLuma": 89.38,
+      "leftRightEdgeMse": 0.0
+    },
+    "b": {
+      "meanLuma": 87.78,
+      "leftRightEdgeMse": 0.0
+    },
+    "c": {
+      "meanLuma": 87.77,
+      "leftRightEdgeMse": 0.0
+    }
+  },
+  "shadows": {
+    "center": {
+      "alphaMax": 215,
+      "alphaMin": 215,
+      "rgbExtrema": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "alphaAtRows": {
+        "0": 215,
+        "63": 215,
+        "64": 215,
+        "84": 215,
+        "103": 215,
+        "104": 215,
+        "127": 215
+      }
+    },
+    "edge": {
+      "alphaMax": 215,
+      "alphaMin": 0,
+      "rgbExtrema": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "alphaAtRows": {
+        "0": 215,
+        "63": 215,
+        "64": 215,
+        "84": 108,
+        "103": 5,
+        "104": 0,
+        "127": 0
+      }
+    },
+    "corner_outer": {
+      "alphaMax": 215,
+      "alphaMin": 0,
+      "rgbExtrema": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "alphaAtRows": {
+        "0": 215,
+        "63": 215,
+        "64": 215,
+        "84": 108,
+        "103": 5,
+        "104": 0,
+        "127": 0
+      }
+    },
+    "corner_inner": {
+      "alphaMax": 215,
+      "alphaMin": 0,
+      "rgbExtrema": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "alphaAtRows": {
+        "0": 215,
+        "63": 215,
+        "64": 215,
+        "84": 215,
+        "103": 215,
+        "104": 215,
+        "127": 215
+      }
+    }
+  },
+  "cracks": {
+    "1": {
+      "opaquePixelCount": 318,
+      "alphaSum": 56700,
+      "bbox": [
+        36,
+        55,
+        96,
+        106
+      ],
+      "transparentBorderPixels": 8
+    },
+    "2": {
+      "opaquePixelCount": 656,
+      "alphaSum": 125405,
+      "bbox": [
+        31,
+        51,
+        101,
+        111
+      ],
+      "transparentBorderPixels": 8
+    },
+    "3": {
+      "opaquePixelCount": 1131,
+      "alphaSum": 224681,
+      "bbox": [
+        27,
+        48,
+        105,
+        113
+      ],
+      "transparentBorderPixels": 8
+    }
+  }
+}

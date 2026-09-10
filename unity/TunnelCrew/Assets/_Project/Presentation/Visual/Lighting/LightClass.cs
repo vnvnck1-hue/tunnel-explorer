@@ -66,10 +66,26 @@ namespace TunnelCrew.Presentation.Visual
         /// </summary>
         public static float ShadowIntensity(LightClass c)
         {
+            // 2026-09-10 하향(0.85/0.6 → 0.70/0.45): 개정 R2 에서 벽 너머 암흑은 LOS 가 맡으므로 동적
+            // 그림자는 "빛이 어디서 오는가"만 말하면 된다. 진하게 두면 딱딱한 검정 띠가 바닥을 가른다.
             switch (c)
             {
-                case LightClass.Scout: return 0.85f;
-                case LightClass.Worklamp: return 0.6f;
+                case LightClass.Scout: return 0.70f;
+                case LightClass.Worklamp: return 0.45f;
+                default: return 0f;
+            }
+        }
+
+        /// <summary>
+        /// 그림자 가장자리의 부드러움(URP <c>Light2D.shadowSoftness</c>, 0~1). 광원이 넓고 가까울수록
+        /// 반그림자가 넓어야 한다 — 랜턴이 손전등보다 부드럽다. 0 이면 코어키퍼 `Simple` 그림자처럼 딱 끊긴다.
+        /// </summary>
+        public static float ShadowSoftness(LightClass c)
+        {
+            switch (c)
+            {
+                case LightClass.Scout: return 0.55f;
+                case LightClass.Worklamp: return 0.75f;
                 default: return 0f;
             }
         }
