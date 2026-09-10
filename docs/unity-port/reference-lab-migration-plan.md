@@ -165,7 +165,28 @@
 
 레이어가 없는 체크아웃에서는 `R2Layers=false` 로 떨어져 A(미리보기 값만)로 동작한다.
 
-**남은 B**: 7 `WorldRenderer`→`EnvironmentChunkRenderer`(지층 1 키트) · 8 `WorldLit` 채널 재질 · 9 `ShadowGeometryBuilder` 윤곽 캐스터 · 10 램프 소켓 · 12 회귀.
+#### 본선 B 7단계(+8) — 환경 렌더러 이식 (2026-09-10) ✅
+
+`RunBootstrap._r2Environment`(기본 켬). 씬의 `RunBootstrap` 에 키트·프로파일·규칙·재질 세트 6개를 직렬화했다
+(`EnvironmentKit_ReferenceV1` · `WorldVisualProfile_Stratum1` · `SurfaceRuleSet_Stratum1` · `SurfaceMaterialSet_Reference_{floor,walltop,wallfront}`).
+하나라도 비면 구 `WorldRenderer` 로 떨어진다.
+
+| 항목 | 본선 적용 |
+|---|---|
+| 월드 그리기 | `BuildEnvironment()` — `EnvironmentChunkRenderer.Assign(...)` + `Bind(new WorldGridSolidField(Sim.World))`. `WorldRenderer`·Floor/Walls/CoreTop 타일맵은 만들지 않음 |
+| **8단계 동시 완료** | 렌더러가 `SurfaceMaterialSet` → `WorldLit` 채널 재질을 스스로 만든다 — 별도 작업 없음 |
+| 타일 변경 | `WorldGrid.TileBroken/TileChanged` → `MarkCellDirty` · `TileDamaged` → 균열 단계 · 드롭섀도는 프레임 끝 1회 Resync |
+| 상시 드롭섀도 | `LabWallDropShadow`(랩 확정값 0.50/−0.46 · 0.75, 아트 타일셋) 재사용 |
+| 정면 균열 | 신설 `WallCrackOverlay` — `WorldGrid.DamageStage`(0~3) → `EnvironmentKit.wallCrack`. 정면 재질 공유(마스크 white 함정 회피) |
+| 보스 소환 벽 | 키트에 전용 타일이 없어 cap 위(WallTop +2) 붉은 반투명 셀(`Boss Wall Tint`)로 표시. 키트 보스 벽 아트 오면 교체 |
+| 투영 | `BuildEnvironment` 가 `authoredProjection`(ReferenceTopDown) 을 강제 — `ProjectionSwitcher` 의 저장값(기본 2:1 마름모)을 덮는다. F9 로 바꾸면 환경 그리드는 안 돌아간다(디버그 도구 한정) |
+| 층 전환 | `RebindWorld` → `BindEnvironment()`. 렌더러가 Bind 마다 자식을 전부 파괴하므로 드롭섀도·균열·틴트는 **형제**(`Environment Root`)에 둔다 — 자식으로 두면 `MissingReferenceException`(실제로 났다) |
+
+`EnvironmentChunkRenderer.EditorAssign` 의 에디터 가드를 빼고 `Assign` 으로 일반화, `FrontFaceRenderer` · `WallTopRenderer` · `GridRoot` 접근자 추가.
+실측(런 시작 직후): GroundBase 1711 · WallTop 1107 · WallCorner 614 · BackStructure(정면) 379 · 림 cap 379 · GroundDecal(AO) 1062 · 드롭섀도 1486 · FrontStructure 25청크.
+
+**남은 B**: 9 `WallShadowBuilder`→`ShadowGeometryBuilder` 윤곽 캐스터(지금은 청크 사각 캐스터가 새 렌더러 위에서 그대로 돈다) · 10 램프 소켓 · 12 회귀(채굴·폭발·보스 지형 변경, 성능 예산, EditMode).
+**아트 대기**: 지층 2·3·이상지대 키트 — 지금은 모든 층이 지층 1 키트로 그려진다.
 
 **결론.** 랩은 본선의 복제가 아니라 본선의 <b>다음 버전</b>이다(계획 §0: 본편 이식은 오버홀 완료 후). 그래도 본선에서
 가져와야 할 두 가지가 빠져 있다 — ① **크루 손전등**(코옵에서 화면 빛의 절반) ② **램프의 본선 정의**(넓고 약한 주황)

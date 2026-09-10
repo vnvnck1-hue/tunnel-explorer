@@ -54,6 +54,25 @@ namespace TunnelCrew.Presentation
         const float R2WallTopAmbientScale = 0.25f;
         Light2D _globalTopLight;
 
+        // ── 이주 B 7단계(2026-09-10): 50px 타일 WorldRenderer → 레퍼런스 키트 EnvironmentChunkRenderer.
+        // 벽이 상단/정면/림/모서리/접촉 AO 로 분해되고, 상시 드롭섀도·정면 균열이 붙는다. 자산은 씬의 이 컴포넌트에
+        // 직렬화한다(Resources 밖). 하나라도 비면 WorldRenderer 경로로 떨어져 게임은 그대로 돈다.
+        [Header("환경 렌더러 (R2 · 이주 B 7단계)")]
+        [Tooltip("켜면 레퍼런스 키트로 월드를 그린다. 자산이 비어 있으면 자동으로 구 WorldRenderer.")]
+        [SerializeField] bool _r2Environment = true;
+        [SerializeField] TunnelCrew.Presentation.Visual.EnvironmentKit _envKit;
+        [SerializeField] TunnelCrew.Presentation.Visual.WorldVisualProfile _envProfile;
+        [SerializeField] TunnelCrew.Presentation.Visual.SurfaceRuleSet _envRules;
+        [SerializeField] TunnelCrew.Presentation.Visual.SurfaceMaterialSet _envFloorSet, _envWallTopSet, _envWallFrontSet;
+        TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer _env;
+        TunnelCrew.Presentation.Visual.LabWallDropShadow _envDropShadow;
+        TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
+        Tilemap _bossTint;
+        Tile _bossTintTile;
+        Transform _envRoot;
+        bool _envDropDirty;
+        bool UseEnvironmentRenderer => _r2Environment && R2Layers && _envKit != null && _envRules != null;
+
         /// <summary>
         /// R2 이고 비주얼 소팅 레이어가 프로젝트에 있으면 true — 타일맵·광원·그림자를 레이어로 나눈다(이주 B 6단계).
         /// 레이어가 없으면(다른 체크아웃) R2 값만 얹는 미리보기로 떨어진다.
@@ -401,6 +420,8 @@ namespace TunnelCrew.Presentation
 
         void BuildWorld()
         {
+            if (UseEnvironmentRenderer) { BuildEnvironment(); return; }
+
             var gridGo = new GameObject("Grid");
             var grid = gridGo.AddComponent<Grid>();
             grid.cellSize = new Vector3(1, 1, 0);   // 1셀 = 1유닛
@@ -453,6 +474,101 @@ namespace TunnelCrew.Presentation
             _worldRenderer.Bind(Sim.World);
             // 보스 소환 벽 붉은 전용 타일 (원본 INF.bossWallCells → BOSS_WALL_TILES)
             _worldRenderer.IsBossWall = k => Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k);
+        }
+
+        /// <summary>
+        /// 레퍼런스 키트 환경 렌더러(이주 B 7단계). 랩 <c>LabEnvironment</c> 와 같은 배선을 본선 <see cref="WorldGrid"/> 에 건다:
+        /// 표면 생성기 + 상시 드롭섀도 + 정면 균열 + 보스 벽 틴트. 타일 변경 이벤트가 셀 dirty 로 이어져 같은 프레임에 갱신된다.
+        /// </summary>
+        void BuildEnvironment()
+        {
+            // 키트는 프로파일의 authoredProjection(ReferenceTopDown · 회전·압축 없음)으로 그려졌다. 다른 프리셋(2:1 마름모 등)은
+            // 벽 정면·lift 가 화면과 어긋나므로 랩 스위처와 같은 방식으로 프리셋을 강제한다. 프로덕션 인증 대상도 이것 하나다(WorldVisualProfile 주석).
+            IsometricProjection.SetPreset(_envProfile != null ? _envProfile.authoredProjection : ProjectionPreset.ReferenceTopDown);
+
+            // 렌더러는 Bind 마다 <b>자기 자식을 전부 파괴</b>하고 타일맵을 다시 세운다(BuildLayers). 드롭섀도·균열·보스 틴트를
+            // 그 아래에 두면 층 전환에서 같이 사라진다(실제로 MissingReferenceException) — 형제로 둔다.
+            _envRoot = new GameObject("Environment Root").transform;
+            var envGo = new GameObject("Environment");
+            envGo.transform.SetParent(_envRoot, false);
+            _env = envGo.AddComponent<TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer>();
+            _env.Assign(_envProfile, _envRules, _envKit, _envFloorSet, _envWallTopSet, _envWallFrontSet);
+
+            var dropGo = new GameObject("Wall Drop Shadow");
+            dropGo.transform.SetParent(_envRoot, false);
+            _envDropShadow = dropGo.AddComponent<TunnelCrew.Presentation.Visual.LabWallDropShadow>();
+            _envDropShadow.EditorAssign(_env, new Vector2(0.50f, -0.46f), 0.75f);   // 랩 확정값
+
+            var crackGo = new GameObject("Wall Cracks");
+            crackGo.transform.SetParent(_envRoot, false);
+            _envCrack = crackGo.AddComponent<TunnelCrew.Presentation.Visual.WallCrackOverlay>();
+
+            BindEnvironment();
+        }
+
+        void BindEnvironment()
+        {
+            var world = Sim.World;
+            _env.Bind(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
+            _envDropShadow.Resync(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
+            _envCrack.Bind(_envKit, _env.FrontFaceRenderer);
+            BuildBossTint();
+
+            // 층마다 WorldGrid 가 새로 만들어지므로 이벤트도 새 인스턴스에 건다.
+            world.TileBroken += e => OnEnvCellChanged(e.Col, e.Row);
+            world.TileChanged += k => OnEnvCellChanged(k % world.Cols, k / world.Cols);
+            world.TileDamaged += e => _envCrack.SetStage(e.Col, e.Row, world.DamageStage(world.Index(e.Col, e.Row)));
+        }
+
+        void OnEnvCellChanged(int c, int r)
+        {
+            var world = Sim.World;
+            _env.MarkCellDirty(c, r);
+            _envCrack.SetStage(c, r, world.IsSolid(c, r) ? world.DamageStage(world.Index(c, r)) : 0);
+            _envDropDirty = true;   // 셀마다 전체 Resync 는 비싸다 — 프레임 끝에 한 번
+            RefreshBossTint(c, r);
+        }
+
+        /// <summary>
+        /// 보스 소환 벽(원본 INF.bossWallCells) — 구 WorldRenderer 는 전용 붉은 타일 2종으로 그렸다. 키트에는 그 타일이 없으므로
+        /// cap 위(WallTop, order 2)에 붉은 반투명 셀을 얹어 "이 벽은 다르다"를 유지한다. 키트 보스 벽 아트가 오면 교체.
+        /// </summary>
+        void BuildBossTint()
+        {
+            if (_bossTint == null)
+            {
+                var go = new GameObject("Boss Wall Tint");
+                go.transform.SetParent(_envRoot, false);   // 렌더러 그리드 아래에 두면 Bind 때 파괴된다
+                go.AddComponent<Grid>().cellSize = new Vector3(1f, 1f, 0f);
+                _bossTint = go.AddComponent<Tilemap>();
+                var tr = go.AddComponent<TilemapRenderer>();
+                tr.mode = TilemapRenderer.Mode.Chunk;
+                var top = _env.WallTopRenderer;
+                if (top != null) { tr.sortingLayerName = top.sortingLayerName; tr.sortingOrder = top.sortingOrder + 2; }
+                var unlit = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+                if (unlit != null) tr.sharedMaterial = new Material(unlit) { name = "BossWallTint" };
+                _bossTintTile = ScriptableObject.CreateInstance<Tile>();
+                _bossTintTile.sprite = TunnelCrew.Presentation.Visual.LabWallDropShadow.SolidCellSprite();
+                _bossTintTile.colliderType = Tile.ColliderType.None;
+                _bossTint.color = new Color(1f, 0.30f, 0.32f, 0.42f);
+            }
+            _bossTint.ClearAllTiles();
+            // cap 은 lift 만큼 올려 그린다 — 같은 만큼 올린다.
+            var topTr = _env.WallTopRenderer;
+            if (topTr != null) _bossTint.transform.localPosition = topTr.transform.localPosition;
+            var world = Sim.World;
+            for (int r = 0; r < world.Rows; r++)
+                for (int c = 0; c < world.Cols; c++)
+                    RefreshBossTint(c, r);
+        }
+
+        void RefreshBossTint(int c, int r)
+        {
+            if (_bossTint == null) return;
+            var world = Sim.World;
+            int k = world.Index(c, r);
+            bool boss = world.IsSolid(c, r) && Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k);
+            _bossTint.SetTile(new Vector3Int(c, r, 0), boss ? _bossTintTile : null);
         }
 
         void BuildPlayer()
@@ -819,7 +935,7 @@ namespace TunnelCrew.Presentation
 
         void RebindWorld()
         {
-            _worldRenderer.Bind(Sim.World);
+            if (_env != null) BindEnvironment(); else _worldRenderer.Bind(Sim.World);
             BindDarkness();
             _wallShadows.Bind(Sim.World);
             RebuildLamps();
@@ -845,6 +961,9 @@ namespace TunnelCrew.Presentation
         // ───────────────────────────── 루프
         void Update()
         {
+            // 드롭섀도는 셀 단위 dirty 가 없어 전체 Resync 다 — 타일이 여러 개 바뀐 프레임에도 한 번만.
+            if (_envDropDirty && _envDropShadow != null) { _envDropDirty = false; _envDropShadow.Resync(null); }
+
             if (Sim?.World == null || !RunActive) return;
             var kbEsc = Keyboard.current;
             bool obs = _observer != null && _observer.Active;

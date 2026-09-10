@@ -426,13 +426,27 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>표면 배열이 다시 만들어질 때마다 오르는 값. 그림자 쪽이 갱신 시점을 안다.</summary>
         public int SurfaceVersion { get; private set; }
 
-#if UNITY_EDITOR
-        public void EditorAssign(WorldVisualProfile profile, SurfaceRuleSet rules, EnvironmentKit kit,
+        /// <summary>
+        /// 참조를 직접 넣는다. 랩 빌더(에디터)와 본선 <c>RunBootstrap</c>(런타임, 이주 B 7단계) 둘 다 쓰므로
+        /// 에디터 전용 가드를 뺐다(2026-09-10). <see cref="Bind"/> 전에 불러야 한다.
+        /// </summary>
+        public void Assign(WorldVisualProfile profile, SurfaceRuleSet rules, EnvironmentKit kit,
             SurfaceMaterialSet floor = null, SurfaceMaterialSet wallTop = null, SurfaceMaterialSet wallFront = null)
         {
             _profile = profile; _ruleSet = rules; _kit = kit;
             _floorMaterials = floor; _wallTopMaterials = wallTop; _wallFrontMaterials = wallFront;
         }
-#endif
+
+        /// <summary>기존 호출 이름 유지.</summary>
+        public void EditorAssign(WorldVisualProfile profile, SurfaceRuleSet rules, EnvironmentKit kit,
+            SurfaceMaterialSet floor = null, SurfaceMaterialSet wallTop = null, SurfaceMaterialSet wallFront = null)
+            => Assign(profile, rules, kit, floor, wallTop, wallFront);
+
+        /// <summary>정면(BackStructure) 타일맵 렌더러 — 균열 오버레이가 레이어·재질을 빌린다.</summary>
+        public TilemapRenderer FrontFaceRenderer => _backStructure != null ? _backStructure.GetComponent<TilemapRenderer>() : null;
+        /// <summary>벽 상단(WallTop) 타일맵 렌더러 — 보스 벽 틴트 오버레이가 레이어를 빌린다.</summary>
+        public TilemapRenderer WallTopRenderer => _wallTop != null ? _wallTop.GetComponent<TilemapRenderer>() : null;
+        /// <summary>타일맵들이 매달린 그리드.</summary>
+        public Transform GridRoot => _grid != null ? _grid.transform : transform;
     }
 }

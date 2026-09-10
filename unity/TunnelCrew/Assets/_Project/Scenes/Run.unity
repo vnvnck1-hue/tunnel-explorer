@@ -149,8 +149,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.RunBootstrap
   _tileSet: {fileID: 0}
-  _drillerSheets: {fileID: 0}
+  _monsterSheets: {fileID: 0}
   _depth: 1
+  _role: 0
+  _prespawnEnemies: 4
+  _ambientIntensity: 0.16
+  _flashlightOn: 1
+  _r2Look: 1
+  _r2Environment: 1
+  _envKit: {fileID: 11400000, guid: f61efae80c0ae1146802ec1eac825167, type: 2}
+  _envProfile: {fileID: 11400000, guid: 587ef804535f7ff4e9bc483f39a3075b, type: 2}
+  _envRules: {fileID: 11400000, guid: 2c2e3e5535006ae4d83c1247efab7991, type: 2}
+  _envFloorSet: {fileID: 11400000, guid: a55bce0a8a8bf8d4da5151977b93dd4a, type: 2}
+  _envWallTopSet: {fileID: 11400000, guid: b9f7ab0ca8fc5024e9f444eacea6e462, type: 2}
+  _envWallFrontSet: {fileID: 11400000, guid: 31c1020ebd8ec1b499a43df31e50d3bb, type: 2}
   _showHud: 1
 --- !u!4 &1525295235
 Transform:
