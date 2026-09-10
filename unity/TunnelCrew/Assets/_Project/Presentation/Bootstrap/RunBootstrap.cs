@@ -38,6 +38,19 @@ namespace TunnelCrew.Presentation
         [SerializeField, Range(0f, 1f)] float _ambientIntensity = 0.16f;
         [SerializeField] bool _flashlightOn = true;
 
+        /// <summary>
+        /// 개정 R2 미리보기(2026-09-10) — 조명 랩에서 확정한 코어키퍼 룩의 <b>레이어 무관</b> 항목만 본선에 얹는다:
+        /// 어둠 오버레이 퍼플 색 + 4× 초해상 경계, 보이는 벽 칸 가시도 0.5(윗면 어둡게), 손전등·램프 그림자를
+        /// 분류 규칙(부드럽고 덜 진하게)으로. 소팅 레이어 12종·환경 렌더러·채널 재질은 이주 계획 B(6~10단계)다.
+        /// 끄면 R1 본선 그대로 — 같은 씬에서 A/B 하는 스위치.
+        /// </summary>
+        [Tooltip("코어키퍼 룩 미리보기(R2). 끄면 R1 본선 그대로.")]
+        [SerializeField] bool _r2Look = true;
+        static readonly Color R2AmbientColor = new Color(0.62f, 0.50f, 0.76f);   // 랩 AmbientHue. 본선 구값 (0.62, 0.58, 0.80)
+        static readonly Color R2DarkColor = new Color(0.020f, 0.010f, 0.045f, 1f);
+        static readonly Color R2MemoryColor = new Color(0.16f, 0.09f, 0.30f, 1f);
+        const float R2SolidVisibility = 0.5f;
+
         [Header("디버그")]
         [SerializeField] bool _showHud = true;
 
@@ -480,7 +493,7 @@ namespace TunnelCrew.Presentation
             _globalLight = globalGo.AddComponent<Light2D>();
             _globalLight.lightType = Light2D.LightType.Global;
             _globalLight.intensity = _ambientIntensity;
-            _globalLight.color = new Color(0.62f, 0.58f, 0.80f);
+            _globalLight.color = _r2Look ? R2AmbientColor : new Color(0.62f, 0.58f, 0.80f);
 
             // 손전등 — 원본 halfAngle 28°, flashRange 468px = 9.36셀. F 로 켜고 끈다.
             var flashGo = new GameObject("Flashlight");
@@ -496,6 +509,11 @@ namespace TunnelCrew.Presentation
             _flashlight.color = new Color(1f, 0.94f, 0.80f);
             // 손전등 그림자는 완전 차단 — 캐릭터 발밑 캐스터(PlayerView)가 벽처럼 또렷한 그림자를 드리운다 (기본 .75 는 앰비언트에 묻혀 거의 안 보였다)
             _flashlight.shadowIntensity = 0.9f; _flashlight.shadowSoftness = 0.35f;   // 1.0 은 경계가 완전 검정 직선이 된다
+            if (_r2Look)
+            {   // R2: 벽 너머 암흑은 LOS 가 맡으므로 그림자는 방향만 말한다 — 랩과 같은 분류 규칙
+                _flashlight.shadowIntensity = TunnelCrew.Presentation.Visual.LightClassRules.ShadowIntensity(TunnelCrew.Presentation.Visual.LightClass.Scout);
+                _flashlight.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Scout);
+            }
             UseNormalMaps(_flashlight);
 
             // 플레이어를 감싸는 약한 원 — 손전등을 꺼도 발밑은 보인다
@@ -520,13 +538,27 @@ namespace TunnelCrew.Presentation
             darkGo.transform.SetParent(_cam.transform, false);
             darkGo.transform.localPosition = new Vector3(0, 0, 1f);
             _darkness = darkGo.AddComponent<DarknessOverlay>();
-            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+            BindDarkness();
 
             BuildVolume(root);
 
             // 벽이 빛을 가리게 한다. 리플렉션이 안 되면 조용히 건너뛴다.
             _wallShadows = root.AddComponent<WallShadowBuilder>();
             _wallShadows.Bind(Sim.World);
+        }
+
+        /// <summary>
+        /// 어둠 오버레이 바인드. R2 미리보기면 랩 확정값 — 퍼플 어둠·기억 색, 4× 초해상 경계(셀 해상도 번짐 1칸 → 1/4칸),
+        /// 보이는 벽 칸 가시도 0.5. 층 전환(RebindWorld)에서도 같은 값으로 다시 묶는다.
+        /// </summary>
+        void BindDarkness()
+        {
+            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam, supersample: _r2Look ? 4 : 1);
+            if (_r2Look)
+            {
+                _darkness.SetColors(R2DarkColor, R2MemoryColor);
+                _darkness.SetSolidVisibility(R2SolidVisibility);
+            }
         }
 
         /// <summary>지층별 Volume 프로파일. 원본 LX 4레이어(contrast · zone · core)를 대신한다.</summary>
@@ -736,6 +768,11 @@ namespace TunnelCrew.Presentation
                 l.pointLightOuterRadius = 5.2f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 더 넓게 퍼진다.
                 l.intensity = 1.1f;
                 l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
+                if (_r2Look)
+                {   // R2: 랜턴 그림자는 넓은 반그림자로(작업등 분류 규칙). 색·반경·세기(본선 정의)는 그대로 둔다.
+                    l.shadowIntensity = TunnelCrew.Presentation.Visual.LightClassRules.ShadowIntensity(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
+                    l.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
+                }
                 UseNormalMaps(l);
                 _lamps.Add(l);
             }
@@ -744,7 +781,7 @@ namespace TunnelCrew.Presentation
         void RebindWorld()
         {
             _worldRenderer.Bind(Sim.World);
-            _darkness.Bind(Sim.Los, Sim.World.Cols, Sim.World.Rows, _cam);
+            BindDarkness();
             _wallShadows.Bind(Sim.World);
             RebuildLamps();
             _enemyView?.ClearDying();

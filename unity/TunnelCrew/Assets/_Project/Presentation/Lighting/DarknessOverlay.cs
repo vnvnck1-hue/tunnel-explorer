@@ -34,6 +34,14 @@ namespace TunnelCrew.Presentation
                  "코어키퍼처럼 벽 가장자리에서 딱 끊긴다(2026-09-10). 값은 Bind 에서 확정된다.")]
         [SerializeField, Range(1, 8)] int _supersample = 1;
 
+        [Tooltip("보이는 <b>벽 칸</b>의 가시도. 1 = 바닥과 같게(기본). 0.5 면 LOS 가 벽 타일까지 표시해도 그 칸은 절반만 " +
+                 "드러나 암반이 어둡게 읽힌다 — 코어키퍼의 '윗면은 빛을 못 받는다' 를 소팅 레이어 없는 본선에서 흉내내는 값(2026-09-10). " +
+                 "랩은 정면·윗면을 레이어로 나누므로 1 을 쓴다.")]
+        [SerializeField, Range(0f, 1f)] float _solidVisibility = 1f;
+
+        /// <summary>보이는 벽 칸의 가시도(위 필드 주석).</summary>
+        public void SetSolidVisibility(float v) => _solidVisibility = Mathf.Clamp01(v);
+
         LosService _los;
         Camera _camera;
 
@@ -207,7 +215,9 @@ namespace TunnelCrew.Presentation
                 {
                     int k = r * _cols + c;
 
-                    float visTarget = _los.Visible[k] != 0 ? 1f : 0f;
+                    float visTarget = _los.Visible[k] != 0
+                        ? (_solidVisibility < 1f && _los.IsSolid(c, r) ? _solidVisibility : 1f)
+                        : 0f;
                     float memTarget = _los.MemoryValue(c, r) / 255f;
 
                     _visSmooth[k] = Mathf.Lerp(_visSmooth[k], visTarget,

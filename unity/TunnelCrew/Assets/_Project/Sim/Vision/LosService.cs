@@ -76,6 +76,9 @@ namespace TunnelCrew.Sim
         bool InBounds(int c, int r) => c >= 0 && r >= 0 && c < _w && r < _h;
         int Index(int c, int r) => r * _w + c;
 
+        /// <summary>격자의 고체 여부(범위 밖은 고체). 어둠 오버레이가 "보이는 벽 칸"을 따로 다룰 때 읽는다.</summary>
+        public bool IsSolid(int c, int r) => _isSolid(c, r);
+
         /// <summary>타일이 바뀌면 호출. 원본 LOS.markDirty().</summary>
         public void MarkDirty() => _dirty = true;
 
