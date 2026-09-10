@@ -99,6 +99,12 @@ namespace TunnelCrew.Presentation
             // 시간 보간은 셀 단위로 한다 — 텍셀은 셀 값을 복제해 채운다.
             _visSmooth = new float[_cols * _rows];
             _memSmooth = new float[_cols * _rows];
+
+            // LOS 가 아직 한 번도 계산되지 않은 동안(메뉴 배경·층 전환 직후)은 <b>전부 어둠</b>이어야 한다.
+            // new Texture2D 의 내용은 미정의(실측 0.8 회색)라 그대로 두면 R=0.8 → 맵 전체가 드러난다(2026-09-10, Run 직접 실행).
+            for (int i = 0; i < _pixels.Length; i++) _pixels[i] = new Color32(0, 0, 0, 255);
+            _losTex.SetPixels32(_pixels);
+            _losTex.Apply(false);
         }
 
         void BuildQuad()
