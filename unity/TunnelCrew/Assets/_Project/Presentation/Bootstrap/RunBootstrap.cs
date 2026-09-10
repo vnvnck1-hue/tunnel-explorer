@@ -67,6 +67,21 @@ namespace TunnelCrew.Presentation
         TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer _env;
         TunnelCrew.Presentation.Visual.LabWallDropShadow _envDropShadow;
         TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
+        TunnelCrew.Presentation.Visual.ShadowGeometryBuilder _envShadows;
+        TunnelCrew.Presentation.Visual.LightSocketRenderer _lightSockets;
+
+        /// <summary>
+        /// 광원을 소켓으로 등록한다(이주 B 10단계). 소켓 렌더러가 없으면(R1) 아무것도 하지 않는다.
+        /// <paramref name="mountHeight"/> 0 = 지면 광원(벽 윗면을 비추지 않는다). 세기는 이제 <c>baseIntensity</c> 가 진짜 값이다 —
+        /// 이후 <c>light.intensity</c> 를 직접 쓰면 다음 LateUpdate 에 덮어써진다.
+        /// </summary>
+        void AddSocket(Light2D light, TunnelCrew.Presentation.Visual.LightClass cls, float baseIntensity, float rangeCells, float phase, float mountHeight = 0f)
+        {
+            if (_lightSockets == null || light == null) return;
+            if (light.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out _)) return;
+            var s = light.gameObject.AddComponent<TunnelCrew.Presentation.Visual.LightSocket>();
+            s.lightClass = cls; s.baseIntensity = baseIntensity; s.rangeCells = rangeCells; s.phase = phase; s.mountHeightCells = mountHeight;
+        }
         Tilemap _bossTint;
         Tile _bossTintTile;
         Transform _envRoot;
@@ -508,6 +523,12 @@ namespace TunnelCrew.Presentation
             // 깊이 시스템(§6.5·§6.6) — 랩의 "Depth" 와 같다. 북쪽이 열린 벽의 cap 은 lift 만큼 올라가 그 바닥의 캐릭터를
             // 덮는 전경 오클루더(FrontStructure)다. 이 셋이 없으면 캐릭터가 cap 뒤로 그냥 사라진다(2026-09-10 캡처).
             // 관심 캐릭터가 겹치면 그 청크의 cap 이 페이드하고, 가려진 몸은 실루엣으로 보정된다.
+            // 벽 그림자 — 표면 생성기가 "벽"으로 보는 셀의 윤곽을 추적해 캐스터를 만든다(§7.4-3, 이주 B 9단계).
+            // 청크 사각 분할(WallShadowBuilder)과 달리 표면과 그림자가 항상 같은 판정을 쓰고, 수신 레이어는 바닥 4종으로 제한된다.
+            var shadowGo = new GameObject("Wall Shadows (contour)");
+            shadowGo.transform.SetParent(_envRoot, false);
+            _envShadows = shadowGo.AddComponent<TunnelCrew.Presentation.Visual.ShadowGeometryBuilder>();
+
             var depthGo = new GameObject("Depth");
             depthGo.transform.SetParent(_envRoot, false);
             depthGo.AddComponent<TunnelCrew.Presentation.Visual.FootpointSorter>().Profile = _envProfile;
@@ -543,6 +564,7 @@ namespace TunnelCrew.Presentation
         {
             var world = Sim.World;
             _env.Bind(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
+            if (_envShadows != null) { _envShadows.Bind(_env.IsWallCell, _env.Cols, _env.Rows); _envShadows.FlushPending(); }
             _envDropShadow.Resync(new TunnelCrew.Presentation.Visual.WorldGridSolidField(world));
             _envCrack.Bind(_envKit, _env.FrontFaceRenderer);
             BuildBossTint();
@@ -557,6 +579,7 @@ namespace TunnelCrew.Presentation
         {
             var world = Sim.World;
             _env.MarkCellDirty(c, r);
+            _envShadows?.MarkDirty();   // 표면 dirty 와 같은 프레임에 윤곽 재추적(LateUpdate)
             _envCrack.SetStage(c, r, world.IsSolid(c, r) ? world.DamageStage(world.Index(c, r)) : 0);
             _envDropDirty = true;   // 셀마다 전체 Resync 는 비싸다 — 프레임 끝에 한 번
             RefreshBossTint(c, r);
@@ -659,6 +682,15 @@ namespace TunnelCrew.Presentation
             // 이 아래에서 만드는 점광원 전부(손전등·후광·램프·크루·보스·플레어)가 UseNormalMaps 를 지난다 — 레이어 정책을 먼저 정한다.
             s_groundLevelLights = R2Layers;
 
+            // 이주 B 10단계(2026-09-10): 광원 소켓 파이프라인. 손전등·크루 손전등(Scout)·램프(Worklamp)를 소켓으로 등록하면
+            // LightSocketRenderer 가 매 프레임 분류별 깜빡임·노멀 품질·비추는 레이어·그림자 예산(§13)을 집행한다.
+            // 후광(그림자 0·무깜빡임)과 세기를 코드가 애니메이션하는 플레어·보스 광원은 소켓 밖에 둔다 — 소켓은 intensity 를 덮어쓴다.
+            if (R2Layers)
+            {
+                _lightSockets = root.AddComponent<TunnelCrew.Presentation.Visual.LightSocketRenderer>();
+                _lightSockets.FreezeFlicker = false;
+            }
+
             // 전역광 — 원본 TE.ambient. 아무것도 없는 곳도 완전 검정은 아니다.
             var globalGo = new GameObject("Global Light 2D");
             globalGo.transform.SetParent(root.transform, false);
@@ -700,6 +732,7 @@ namespace TunnelCrew.Presentation
                 _flashlight.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Scout);
             }
             UseNormalMaps(_flashlight);
+            AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.6f, 9.36f, 0.31f);
 
             // 플레이어를 감싸는 약한 원 — 손전등을 꺼도 발밑은 보인다
             var haloGo = new GameObject("Player Halo");
@@ -728,8 +761,13 @@ namespace TunnelCrew.Presentation
             BuildVolume(root);
 
             // 벽이 빛을 가리게 한다. 리플렉션이 안 되면 조용히 건너뛴다.
-            _wallShadows = root.AddComponent<WallShadowBuilder>();
-            _wallShadows.Bind(Sim.World);
+            // 이주 B 9단계(2026-09-10): 환경 렌더러 모드에서는 청크 사각 캐스터(WallShadowBuilder) 대신 표면 생성기의 벽 판정으로
+            // 윤곽을 추적하는 ShadowGeometryBuilder 를 쓴다(BuildEnvironment). 둘을 같이 두면 그림자가 두 겹이 된다.
+            if (!UseEnvironmentRenderer)
+            {
+                _wallShadows = root.AddComponent<WallShadowBuilder>();
+                _wallShadows.Bind(Sim.World);
+            }
         }
 
         /// <summary>
@@ -802,6 +840,7 @@ namespace TunnelCrew.Presentation
                 l.color = new Color(1f, 0.94f, 0.80f);
                 l.shadowIntensity = 0.9f; l.shadowSoftness = 0.35f;   // 서로의 손전등이 캐릭터 그림자를 만든다
                 UseNormalMaps(l);
+                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.0f, 8.4f, 0.5f + 0.17f * _crewLights.Count);
                 _crewLights.Add(l);
             }
             for (int i = 0; i < _crewLights.Count; i++)
@@ -969,6 +1008,7 @@ namespace TunnelCrew.Presentation
                     l.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
                 }
                 UseNormalMaps(l);
+                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, 1.1f, 5.2f, 0.13f + 0.21f * (_lamps.Count % 7));
                 _lamps.Add(l);
             }
         }
@@ -977,7 +1017,7 @@ namespace TunnelCrew.Presentation
         {
             if (_env != null) BindEnvironment(); else _worldRenderer.Bind(Sim.World);
             BindDarkness();
-            _wallShadows.Bind(Sim.World);
+            if (_wallShadows != null) _wallShadows.Bind(Sim.World);   // 환경 렌더러 모드에서는 BindEnvironment 가 윤곽 캐스터를 묶는다
             RebuildLamps();
             _enemyView?.ClearDying();
             _rig.Bind(Sim.World, () => Sim.Player);
