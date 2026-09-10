@@ -96,6 +96,15 @@ namespace TunnelCrew.Presentation.Visual
         // ── 타일 LOS 어둠 축(개정 R2, 2026-09-10 · 기획서 §7.6.5). 기본값 = ⑬ 코어키퍼 기준선.
         // 기존 프리셋 자산은 이 필드가 없었으므로 기본값을 그대로 받는다 — 즉 어둠 축은 모든 프리셋에서
         // 같고, 숫자키로 바꾸는 것은 앰비언트·광원·후처리 축이다. 어둠 색을 바꾸려면 자산에서 편집한다.
+        /// <summary>
+        /// 노멀맵 다이나믹 라이팅 강도 축(2026-09-10). 환경 렌더러가 만든 WorldLit 재질(바닥·cap·정면)의
+        /// <c>_NormalStrength</c> 를 덮는다. 0 = 노멀 끔(평면), 1.6 = 현재 재질 세트 값, 3 = 강조. 음수 = 건드리지 않음.
+        /// "2D 리소스가 입체로 보이는" 그 기술이 우리 화면에서 얼마나 값을 하는지 손전등을 돌리며 A/B 하는 축이다.
+        /// </summary>
+        [Header("노멀맵 라이팅")]
+        [Tooltip("WorldLit _NormalStrength 오버라이드. 음수 = 재질 값 유지.")]
+        [Range(-1f, 3f)] public float normalStrength = -1f;
+
         [Header("타일 LOS 어둠 (R2)")]
         [Tooltip("미탐색 영역 색. 지층 주조색(퍼플)이 사는 자리.")]
         public Color losDarkColor = new Color(0.020f, 0.010f, 0.045f, 1f);

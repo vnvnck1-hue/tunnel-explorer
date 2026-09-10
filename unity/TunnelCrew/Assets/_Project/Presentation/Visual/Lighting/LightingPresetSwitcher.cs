@@ -264,6 +264,7 @@ namespace TunnelCrew.Presentation.Visual
 
             ApplyPost(preset);
             ApplyLosDarkness(preset);
+            ApplyNormalStrength(preset);
             ApplyVolume(preset);
         }
 
@@ -282,6 +283,33 @@ namespace TunnelCrew.Presentation.Visual
             if (dark == null) return;
             dark.SetColors(preset.losDarkColor, preset.losMemoryColor, preset.losMaxDarkness);
             if (preset.losEdgeSoftness > 0f) dark.SetEdgeSoftness(preset.losEdgeSoftness);
+        }
+
+        static readonly int NormalStrengthId = Shader.PropertyToID("_NormalStrength");
+        /// <summary>HUD 표시용 — 마지막으로 적용한 노멀 강도(음수 = 재질 값).</summary>
+        public float AppliedNormalStrength { get; private set; } = -1f;
+
+        /// <summary>
+        /// 노멀맵 라이팅 강도 축. 환경 렌더러의 타일맵 재질(WorldLit, 런타임 인스턴스)과 캐릭터 재질(CharacterLit)의
+        /// <c>_NormalStrength</c> 를 덮는다. 디스크 재질 자산은 건드리지 않는다 — 렌더러가 만든 사본만.
+        /// </summary>
+        void ApplyNormalStrength(LightingPreset preset)
+        {
+            AppliedNormalStrength = preset.normalStrength;
+            if (preset.normalStrength < 0f) return;
+            var env = FindAnyObjectByType<EnvironmentChunkRenderer>();
+            if (env != null)
+                foreach (var r in env.GetComponentsInChildren<Renderer>(true))
+                {
+                    var m = r.sharedMaterial;
+                    if (m != null && m.HasProperty(NormalStrengthId)) m.SetFloat(NormalStrengthId, preset.normalStrength);
+                }
+            foreach (var sr in FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+            {
+                var m = sr.sharedMaterial;
+                if (m != null && m.shader != null && m.shader.name == SurfaceMaterialSet.CharacterShaderName && m.HasProperty(NormalStrengthId))
+                    m.SetFloat(NormalStrengthId, preset.normalStrength);
+            }
         }
 
         void ApplyPost(LightingPreset preset)

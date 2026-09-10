@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 47bd5a5808122a444b2e73006f00f5a9, type: 3}
-  m_Name: LP13_CoreKeeper
+  m_Name: LP16_NormalStrong
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.LightingPreset
-  label: "\u246C \uCF54\uC5B4\uD0A4\uD37C \uAE30\uC900 (R2)"
-  note: "\uAC1C\uC815 R2 \uAE30\uC900\uC120. \uBCBD \uB108\uBA38 \uC644\uC804 \uC554\uD751(\uD0C0\uC77C
-    LOS) + \uD0D0\uC0C9 \uC794\uC0C1 0.29 + \uB4DC\uB7EC\uB0A8 19\uCE78 \uB300 \uBC1D\uC74C
-    ~2\uCE78. \uD37C\uD50C\uC740 \uC5B4\uB460 \uC0C9\uC5D0 \uC788\uB2E4. O \uB85C
-    LOS \uB97C \uAEBC\uC11C R1 \uACFC \uBE44\uAD50."
+  label: "\u246F \uB178\uBA40 \uAC15\uC870 (3.0)"
+  note: "\u246C \uADF8\uB300\uB85C, _NormalStrength 3.0 \u2014 \uC694\uCCA0 \uACFC\uC7A5.
+    \uC5EC\uAE30\uC11C '\uBE44\uB2D0 \uB290\uB08C'\uC774 \uB098\uBA74 \uB178\uBA40
+    \uC18C\uC2A4\uAC00 \uC790\uB3D9 \uC0DD\uC131\uC774\uB77C\uB294 \uB73B(Ori \uD300\uC758
+    \uD3D0\uAE30 \uC0AC\uC720)."
   ambientColor: {r: 0.62, g: 0.5, b: 0.76, a: 1}
   ambientIntensity: 0.14
   wallTopAmbientScale: 0.25
@@ -29,7 +29,7 @@ MonoBehaviour:
   volumeProfile: {fileID: 0}
   bloomIntensity: 1.2
   bloomThreshold: 0.6
-  normalStrength: 1.6
+  normalStrength: 3
   losDarkColor: {r: 0.02, g: 0.01, b: 0.045, a: 1}
   losMemoryColor: {r: 0.16, g: 0.09, b: 0.3, a: 1}
   losMaxDarkness: 1

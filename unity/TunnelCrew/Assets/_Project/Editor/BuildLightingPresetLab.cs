@@ -182,16 +182,18 @@ namespace TunnelCrew.EditorTools
             public readonly string VolumePath;
             /// <summary>지층 팔레트용 대기 프로파일 자산 경로. null = 기본(Stratum1).</summary>
             public readonly string AtmospherePath;
+            /// <summary>노멀맵 라이팅 강도 오버라이드. 음수 = 재질 값 유지.</summary>
+            public readonly float NormalStrength;
 
             public Spec(string file, string label, float ambient, float lightScale,
                         LabShadowMode shadow, float blob, float negative, float post, string note,
                         float bloomIntensity = -1f, float bloomThreshold = -1f, string volumePath = null,
-                        string atmospherePath = null)
+                        string atmospherePath = null, float normalStrength = -1f)
             {
                 File = file; Label = label; Ambient = ambient; LightScale = lightScale;
                 Shadow = shadow; Blob = blob; Negative = negative; Post = post; Note = note;
                 BloomIntensity = bloomIntensity; BloomThreshold = bloomThreshold;
-                VolumePath = volumePath; AtmospherePath = atmospherePath;
+                VolumePath = volumePath; AtmospherePath = atmospherePath; NormalStrength = normalStrength;
             }
         }
 
@@ -237,7 +239,19 @@ namespace TunnelCrew.EditorTools
             // 검정 배경 위 밝은 광원이 룩의 전부라 대비를 올린다. 블룸도 함께.
             new Spec("LP13_CoreKeeper", "⑬ 코어키퍼 기준 (R2)", 0.14f, 1.30f, LabShadowMode.Blob, 0.55f, 0f, 1.5f,
                 "개정 R2 기준선. 벽 너머 완전 암흑(타일 LOS) + 탐색 잔상 0.29 + 드러남 19칸 대 밝음 ~2칸. 퍼플은 어둠 색에 있다. O 로 LOS 를 꺼서 R1 과 비교.",
-                bloomIntensity: 1.2f, bloomThreshold: 0.6f),
+                bloomIntensity: 1.2f, bloomThreshold: 0.6f, normalStrength: 1.6f),
+
+            // ── 노멀맵 다이나믹 라이팅 축 (2026-09-10). ⑬ 과 모든 값이 같고 _NormalStrength 만 다르다.
+            // 손전등을 돌리며 ←→ 로 셋을 오가면 "2D 리소스가 입체로 보이는" 기술이 우리 화면에서 얼마나 값을 하는지 갈린다.
+            new Spec("LP14_NormalOff", "⑭ 노멀 끔 (0)", 0.14f, 1.30f, LabShadowMode.Blob, 0.55f, 0f, 1.5f,
+                "⑬ 그대로, WorldLit _NormalStrength 0 — 평면. 노멀맵이 없는 화면이 어떤지 보는 대조군.",
+                bloomIntensity: 1.2f, bloomThreshold: 0.6f, normalStrength: 0f),
+            new Spec("LP15_NormalMid", "⑮ 노멀 현재 (1.6)", 0.14f, 1.30f, LabShadowMode.Blob, 0.55f, 0f, 1.5f,
+                "⑬ 그대로, _NormalStrength 1.6 — 재질 세트 현재 값. 손전등이 벽 정면 베벨을 마주보면 림이 선다.",
+                bloomIntensity: 1.2f, bloomThreshold: 0.6f, normalStrength: 1.6f),
+            new Spec("LP16_NormalStrong", "⑯ 노멀 강조 (3.0)", 0.14f, 1.30f, LabShadowMode.Blob, 0.55f, 0f, 1.5f,
+                "⑬ 그대로, _NormalStrength 3.0 — 요철 과장. 여기서 '비닐 느낌'이 나면 노멀 소스가 자동 생성이라는 뜻(Ori 팀의 폐기 사유).",
+                bloomIntensity: 1.2f, bloomThreshold: 0.6f, normalStrength: 3f),
         };
 
         /// <summary>
@@ -276,6 +290,7 @@ namespace TunnelCrew.EditorTools
                     preset.postScale = spec.Post;
                     preset.bloomIntensity = spec.BloomIntensity;
                     preset.bloomThreshold = spec.BloomThreshold;
+                    preset.normalStrength = spec.NormalStrength;
                     if (!string.IsNullOrEmpty(spec.VolumePath))
                     {
                         preset.volumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(spec.VolumePath);
