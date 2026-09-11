@@ -19,3 +19,4 @@ unity/.crt-validation/
 
 # Lossless CRT verification frames stay local; commit lightweight review JPGs and measurement reports.
 docs/ui-crt/img/runtime/**/*.png
+docs/ui-crt/img/runtime-six-effects/**/*.png

@@ -25,7 +25,7 @@ namespace TunnelCrew.Tests
             // RuntimeInitialize runs once per play session, not for every scene loaded by NUnit.
             if(c==null)c=new GameObject("CRT Display (test fixture)").AddComponent<CRTDisplayController>();
             Assert.That(c,Is.Not.Null);c.SetEnabled(true);c.SetAccessibility(CrtAccessibility.Standard);c.SetProfile(0);c.SetUiFocus(false);
-            c.SetCaptureMode(false);c.SettingsOpen=false;
+            c.SetCaptureMode(false);c.SetCurvatureProfile(0);c.SettingsOpen=false;
             c.Strength=c.Scanlines=c.Curvature=c.Noise=c.Aberration=c.Vignette=1;
         }
         [UnityTearDown]
@@ -55,7 +55,7 @@ namespace TunnelCrew.Tests
             _pad=InputSystem.AddDevice<Gamepad>();var c=CRTDisplayController.Instance;
             yield return Pad(GamepadButton.Select,GamepadButton.Start);Assert.That(c.SettingsOpen,Is.True);
             yield return Pad(GamepadButton.DpadDown);yield return Pad(GamepadButton.South);Assert.That(c.ProfileIndex,Is.EqualTo(1));
-            for(int i=0;i<4;i++)yield return Pad(GamepadButton.DpadDown);
+            for(int i=0;i<10;i++)yield return Pad(GamepadButton.DpadDown);
             yield return Pad(GamepadButton.DpadLeft);Assert.That(c.Strength,Is.EqualTo(.95f).Within(.001));
             Assert.That(c.UsingGamepad,Is.True);yield return Pad(GamepadButton.East);Assert.That(c.SettingsOpen,Is.False);
             yield return Press(Key.LeftArrow);Assert.That(c.UsingGamepad,Is.False);
@@ -66,7 +66,7 @@ namespace TunnelCrew.Tests
         [UnityTest]
         public IEnumerator WarpedPointerSelectsVisiblePresetWithoutChangingWorldProjection()
         {
-            var c=CRTDisplayController.Instance;c.SetProfile(2);c.SettingsOpen=true;yield return null;yield return null;
+            var c=CRTDisplayController.Instance;c.SetProfile(2);c.SetCurvatureProfile(2);c.SettingsOpen=true;yield return null;yield return null;
             var text=Object.FindObjectsByType<UnityEngine.UI.Text>(FindObjectsSortMode.None).Single(t=>t.text.StartsWith("02   "));
             var screen=RectTransformUtility.WorldToScreenPoint(CrtCameraStack.UiCamera,text.rectTransform.TransformPoint(text.rectTransform.rect.center));
             // Invert the glass map to physically click the visible (curved) label, not its unwarped rectangle.
@@ -92,6 +92,42 @@ namespace TunnelCrew.Tests
             yield return Press(Key.Escape);Assert.That(c.SettingsOpen,Is.False);
             Assert.That(IsometricProjection.Preset,Is.EqualTo(projection));
             Assert.That(PlayerPrefs.GetInt("tc.crt.enabled"),Is.EqualTo(1));
+        }
+        [UnityTest]
+        public IEnumerator AllThirtyCombinationsPreserveIndependentGeometryAndSurviveReload()
+        {
+            var c=CRTDisplayController.Instance;
+            float[] values={.052f,.018f,.072f,.045f,.058f};
+            Assert.That(c.Profiles.Length,Is.EqualTo(6));Assert.That(c.CurvatureProfiles.Length,Is.EqualTo(5));
+            for(int g=0;g<5;g++)for(int e=0;e<6;e++)
+            {
+                c.SetCurvatureProfile(g);c.SetProfile(e);
+                Assert.That(c.Effective.curvature,Is.EqualTo(values[g]).Within(.00001));
+                Assert.That(c.Profile.effect,Is.EqualTo((CrtEffect)e));
+                c.Strength=0;Assert.That(c.Effective.curvature,Is.EqualTo(values[g]).Within(.00001));c.Strength=1;
+            }
+            c.SetProfile(5);c.SetCurvatureProfile(4);
+            yield return Press(Key.LeftCtrl,Key.F6);
+            Assert.That(c.CurvatureIndex,Is.Zero);Assert.That(c.ProfileIndex,Is.EqualTo(5));
+            yield return Press(Key.LeftCtrl,Key.LeftShift,Key.F6);Assert.That(c.CurvatureIndex,Is.EqualTo(4));
+            yield return Press(Key.F6);Assert.That(c.ProfileIndex,Is.Zero);Assert.That(c.CurvatureIndex,Is.EqualTo(4));
+            c.SetProfile(5);c.Curvature=.7f;c.Save();
+            Object.Destroy(c.gameObject);yield return null;
+            c=new GameObject("CRT reload test").AddComponent<CRTDisplayController>();yield return null;
+            Assert.That(c.ProfileIndex,Is.EqualTo(5));Assert.That(c.CurvatureIndex,Is.EqualTo(4));
+            Assert.That(c.Effective.curvature,Is.EqualTo(.058f*.7f).Within(.00001));
+        }
+        [UnityTest]
+        public IEnumerator LegacyMonitorMigratesToGlassWithoutReinterpretingEffectIndex()
+        {
+            bool hadLegacy=PlayerPrefs.HasKey("tc.crt.monitor");int legacy=PlayerPrefs.GetInt("tc.crt.monitor");
+            PlayerPrefs.DeleteKey("tc.crt.effect");PlayerPrefs.DeleteKey("tc.crt.glass");PlayerPrefs.SetInt("tc.crt.monitor",3);
+            Object.Destroy(CRTDisplayController.Instance.gameObject);yield return null;
+            var c=new GameObject("CRT migration test").AddComponent<CRTDisplayController>();yield return null;
+            if(hadLegacy)PlayerPrefs.SetInt("tc.crt.monitor",legacy);else PlayerPrefs.DeleteKey("tc.crt.monitor");
+            Assert.That(c.CurvatureIndex,Is.EqualTo(3));Assert.That(c.ProfileIndex,Is.EqualTo(5));
+            c.Save();Assert.That(PlayerPrefs.GetInt("tc.crt.glass"),Is.EqualTo(3));
+            Assert.That(PlayerPrefs.GetInt("tc.crt.effect"),Is.EqualTo(5));
         }
         [UnityTest]
         public IEnumerator MonitorButtonClickPausesBeforeWorldInputAndRespectsChatFocus()
@@ -128,7 +164,7 @@ namespace TunnelCrew.Tests
         [UnityTest]
         public IEnumerator AccessibilityAndTextFocusSuppressEventsAndCaptureClockIsStable()
         {
-            var c=CRTDisplayController.Instance;c.SetProfile(4);c.SignalHit(1);
+            var c=CRTDisplayController.Instance;c.SetProfile(1);c.SignalHit(1);
             Assert.That(c.EventAmount,Is.GreaterThan(0));
             c.Strength=0;Assert.That(c.EventAmount,Is.Zero);c.Strength=1;
             c.Noise=0;Assert.That(c.EventAmount,Is.Zero);c.Noise=1;

@@ -3,6 +3,7 @@ using UnityEngine;
 namespace TunnelCrew.Presentation.CRT
 {
     public enum CrtMonitor { Surveyor, Broadcast, Arcade, Relay, Abyss }
+    public enum CrtEffect { RgbSplit, RfStatic, Composite, Phosphor, Afterglow, AfterglowMix }
     public enum CrtAccessibility { Standard, Comfort, Photosensitive }
 
     /// <summary>Monitor construction and signal characteristics, not a ladder of effect strengths.</summary>
@@ -10,9 +11,54 @@ namespace TunnelCrew.Presentation.CRT
     public sealed class CRTDisplayProfile : ScriptableObject
     {
         public CrtMonitor monitor;
+        public CrtEffect effect;
         public string title, subtitle;
         [TextArea] public string description;
         public CrtParameters parameters;
+
+        // Legacy CRT_ assets remain untouched and supply geometry only. FX_ assets supply signal.
+        public static void PopulateEffect(CRTDisplayProfile p, CrtEffect type)
+        {
+            p.effect=type;
+            var v=CrtParameters.Default;
+            v.aberrationPixels=.25f;v.noiseStrength=.002f;v.jitterStrengthPixels=0;
+            v.vignetteStrength=.22f;v.phosphorBloom=.12f;v.scanlineStrength=.12f;
+            v.maskPitch=6;v.edgeBias=0;v.chromaBleedPixels=0;v.allowEventGlitch=false;
+            switch(type)
+            {
+                case CrtEffect.RgbSplit:
+                    p.title="RGB 정렬 불량";p.subtitle="01 / RGB SPLIT";
+                    p.description="선명하게 어긋나는 빨강·청록 윤곽. 중앙 캐릭터와 HUD까지 전자빔 색 정렬이 갈라집니다.";
+                    v.aberrationPixels=4.5f;v.edgeBias=.25f;break;
+                case CrtEffect.RfStatic:
+                    p.title="지하 수신 잡음";p.subtitle="02 / RF STATIC";
+                    p.description="어두운 곳에도 지지직거리는 흑백 잡음과 얇은 수평 동기 불량 띠. 색 번짐과는 다른 수신 장애.";
+                    v.rfSnow=.3f;v.rfTearPixels=4;v.noiseStrength=.018f;v.noiseSpeed=24;
+                    v.scanlineStrength=.08f;v.allowEventGlitch=true;break;
+                case CrtEffect.Composite:
+                    p.title="컴포지트 TV";p.subtitle="03 / COMPOSITE";
+                    p.description="밝기 윤곽보다 늦게 도착하는 컬러 신호. 색이 수평으로 번지고 경계에 미세한 컬러 간섭이 생깁니다.";
+                    v.chromaBleedPixels=13;v.horizontalBleed=.85f;v.edgeBias=.1f;
+                    v.scanlineStrength=.1f;break;
+                case CrtEffect.Phosphor:
+                    p.title="발광 인광 격자";p.subtitle="04 / PHOSPHOR";
+                    p.description="RGB 인광 셀과 어두운 슬롯, 밝은 곳에서 퍼지는 빛. 신호는 안정적이고 발광 입자가 두드러집니다.";
+                    v.maskStyle=1;v.maskStrength=.88f;v.scanlinePeriod=4;v.scanlineStrength=.24f;
+                    v.phosphorBloom=.28f;v.beamWidth=.75f;break;
+                case CrtEffect.Afterglow:
+                    p.title="오래 남는 인광";p.subtitle="05 / AFTERGLOW";
+                    p.description="교차 주사와 느리게 사라지는 빛의 흔적. 움직일 때 직전 화면의 인광이 부드럽게 남습니다.";
+                    v.persistence=.84f;v.afterglowSpreadPixels=.6f;v.interlace=.12f;
+                    v.phosphorBloom=.2f;v.scanlinePeriod=3;v.edgeBias=.15f;break;
+                case CrtEffect.AfterglowMix:
+                    p.title="인광 + 외곽 색 번짐";p.subtitle="06 / AFTERGLOW MIX";
+                    p.description="5번 인광에 3번 색 번짐을 살짝. 중앙은 맑게, 가장자리로 갈수록 잔상과 색 번짐이 강해집니다.";
+                    v.persistence=.84f;v.afterglowSpreadPixels=.6f;v.interlace=.1f;
+                    v.phosphorBloom=.2f;v.chromaBleedPixels=8;v.horizontalBleed=.3f;
+                    v.aberrationPixels=1.4f;v.edgeBias=.94f;v.scanlinePeriod=3;break;
+            }
+            p.parameters=v;
+        }
 
         public static void Populate(CRTDisplayProfile p, CrtMonitor type)
         {
@@ -67,21 +113,28 @@ namespace TunnelCrew.Presentation.CRT
     public struct CrtParameters
     {
         [Range(0, .12f)] public float curvature;
-        [Range(0, 1.8f)] public float aberrationPixels;
+        [Range(0, 6f)] public float aberrationPixels;
         [Range(1.5f, 5)] public float scanlinePeriod;
         [Range(0, .35f)] public float scanlineStrength;
         [Range(0, .06f)] public float noiseStrength;
         [Range(0, 1.5f)] public float jitterStrengthPixels;
         [Range(0, .5f)] public float vignetteStrength;
         [Range(0, .3f)] public float phosphorBloom;
-        [Range(0, .4f)] public float persistence;
-        [Range(0, .4f)] public float horizontalBleed, echoStrength;
+        [Range(0, .92f)] public float persistence;
+        [Range(0, 1f)] public float horizontalBleed;
+        [Range(0, .4f)] public float echoStrength;
         [Range(0, 10)] public float echoOffsetPixels;
         [Range(0, .06f)] public float rollStrength;
         [Range(0, .2f)] public float rollSpeed;
         [Range(0, .2f)] public float interlace;
         [Range(0, 2)] public int maskStyle;
-        [Range(0, .3f)] public float maskStrength;
+        [Range(0, 1f)] public float maskStrength;
+        [Range(0, 1)] public float edgeBias;
+        [Range(0, 18)] public float chromaBleedPixels;
+        [Range(0, .5f)] public float rfSnow;
+        [Range(0, 6)] public float rfTearPixels;
+        [Range(3, 9)] public float maskPitch;
+        [Range(0, 1.5f)] public float afterglowSpreadPixels;
         [Range(0, 1)] public float beamWidth;
         [Range(.01f, .2f)] public float roundness;
         [Range(.001f, .02f)] public float edgeFeather;
@@ -113,17 +166,21 @@ namespace TunnelCrew.Presentation.CRT
             var p = this;
             float s = Unit(strength);
             p.curvature = Clamp(p.curvature, 0, .12f) * s;
-            p.aberrationPixels = Clamp(p.aberrationPixels, 0, 1.8f) * s;
+            p.aberrationPixels = Clamp(p.aberrationPixels, 0, 6f) * s;
             p.scanlinePeriod = Clamp(p.scanlinePeriod, 1.5f, 5);
             p.scanlineStrength = Clamp(p.scanlineStrength, 0, .35f) * s;
             p.noiseStrength = Clamp(p.noiseStrength, 0, .06f) * s;
             p.jitterStrengthPixels = Clamp(p.jitterStrengthPixels, 0, .35f) * s;
             p.vignetteStrength = Clamp(p.vignetteStrength, 0, .5f) * s;
-            p.persistence = Clamp(p.persistence, 0, .4f) * s;
+            p.persistence = Clamp(p.persistence, 0, .92f) * s;
             p.phosphorBloom = Clamp(p.phosphorBloom, 0, .3f) * s;
             p.maskStyle = Clamp(p.maskStyle, 0, 2);
-            p.maskStrength = Clamp(p.maskStrength, 0, .3f) * s;
-            p.horizontalBleed = Clamp(p.horizontalBleed, 0, .4f) * s;
+            p.maskStrength = Unit(p.maskStrength) * s;
+            p.horizontalBleed = Unit(p.horizontalBleed) * s;
+            p.edgeBias=Unit(p.edgeBias);
+            p.chromaBleedPixels=Clamp(p.chromaBleedPixels,0,18);
+            p.rfSnow=Clamp(p.rfSnow,0,.5f)*s;p.rfTearPixels=Clamp(p.rfTearPixels,0,6)*s;
+            p.maskPitch=Clamp(p.maskPitch,3,9);p.afterglowSpreadPixels=Clamp(p.afterglowSpreadPixels,0,1.5f)*s;
             p.echoStrength = Clamp(p.echoStrength, 0, .4f) * s;
             p.echoOffsetPixels = Clamp(p.echoOffsetPixels, 0, 10);
             p.rollStrength = Clamp(p.rollStrength, 0, .06f) * s;
@@ -140,13 +197,15 @@ namespace TunnelCrew.Presentation.CRT
             p.jitterFrequency=Clamp(p.jitterFrequency,3,8);
             p.jitterBandCount=Clamp(p.jitterBandCount,1,3);
             p.scanlineSpeed=Unit(p.scanlineSpeed)*s;
-            if (textFocus) { p.noiseStrength = Mathf.Min(p.noiseStrength, .003f); p.jitterStrengthPixels = 0; }
+            if (textFocus) { p.noiseStrength = Mathf.Min(p.noiseStrength, .003f); p.jitterStrengthPixels = 0;
+                p.rfSnow=p.rfTearPixels=p.persistence=0;p.aberrationPixels=Mathf.Min(p.aberrationPixels,.6f); }
             if (mode == CrtAccessibility.Comfort)
             {
                 p.curvature *= .3f; p.aberrationPixels *= .2f; p.scanlineStrength *= .4f;
                 p.noiseStrength *= .1f; p.jitterStrengthPixels = 0; p.persistence = 0;
                 p.vignetteStrength *= .4f; p.interlace = p.rollStrength = 0; p.echoStrength *= .3f;
                 p.scanlineSpeed=0;p.allowEventGlitch=false;
+                p.rfSnow=p.rfTearPixels=0;p.horizontalBleed*=.25f;p.maskStrength*=.4f;
             }
             if (mode == CrtAccessibility.Photosensitive)
             {
@@ -154,8 +213,18 @@ namespace TunnelCrew.Presentation.CRT
                 p.persistence = p.interlace = p.rollStrength = p.rollSpeed = p.echoStrength = 0;
                 p.scanlineStrength = Mathf.Min(.025f, p.scanlineStrength); p.vignetteStrength *= .2f;
                 p.noiseSpeed=p.scanlineSpeed=0;p.allowEventGlitch=false;
+                p.rfSnow=p.rfTearPixels=p.horizontalBleed=p.afterglowSpreadPixels=0;p.maskStrength*=.25f;
             }
             return p;
+        }
+
+        // Same smooth screen-relative distribution used by the shader; no hard central mask.
+        public float SignalWeight(Vector2 uv)
+        {
+            var c=uv*2-Vector2.one;
+            float radius=Mathf.Max(Mathf.Abs(c.x),Mathf.Abs(c.y));
+            float t=Mathf.Clamp01((radius-.25f)/.7f);
+            return Mathf.Lerp(1,t*t*(3-2*t),Unit(edgeBias));
         }
     }
 }

@@ -8,6 +8,9 @@ namespace TunnelCrew.Presentation.CRT
     {
         public static CRTDisplayController Instance { get; private set; }
         public CRTDisplayProfile[] Profiles { get; private set; }
+        public CRTDisplayProfile[] CurvatureProfiles { get; private set; }
+        public int CurvatureIndex { get; private set; }
+        public const int EffectCount=6, CurvatureCount=5;
         public int ProfileIndex { get; private set; }
         public bool DisplayEnabled { get; private set; } = true;
         public CrtAccessibility Accessibility { get; private set; }
@@ -32,9 +35,16 @@ namespace TunnelCrew.Presentation.CRT
             get
             {
                 var p = Profile.parameters;
-                p.scanlineStrength *= Scanlines; p.curvature *= Curvature; p.noiseStrength *= Noise;
+                var geometry=CurvatureProfiles[CurvatureIndex].parameters;
+                geometry.curvature*=Curvature;
+                geometry=geometry.Resolve(Accessibility,false,1);
+                p.scanlineStrength *= Scanlines; p.noiseStrength *= Noise;
+                p.rfSnow*=Noise;p.rfTearPixels*=Noise;p.horizontalBleed*=Aberration;
                 p.jitterStrengthPixels *= Noise; p.aberrationPixels *= Aberration; p.vignetteStrength *= Vignette;
-                return p.Resolve(Accessibility, TextFocus, Strength);
+                p=p.Resolve(Accessibility, TextFocus, Strength);
+                p.curvature=geometry.curvature;p.roundness=geometry.roundness;
+                p.edgeFeather=geometry.edgeFeather;p.safeAreaInset=geometry.safeAreaInset;
+                return p;
             }
         }
 
@@ -52,18 +62,30 @@ namespace TunnelCrew.Presentation.CRT
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this; DontDestroyOnLoad(gameObject);
             gameObject.AddComponent<CrtCameraStack>();
-            Profiles = new CRTDisplayProfile[5];
-            for (int i = 0; i < 5; i++)
+            CurvatureProfiles = new CRTDisplayProfile[CurvatureCount];
+            for (int i = 0; i < CurvatureCount; i++)
             {
-                Profiles[i] = Resources.Load<CRTDisplayProfile>("CRT/CRT_" + (CrtMonitor)i);
-                if (Profiles[i] == null)
+                CurvatureProfiles[i] = Resources.Load<CRTDisplayProfile>("CRT/CRT_" + (CrtMonitor)i);
+                if (CurvatureProfiles[i] == null)
                 {
-                    Profiles[i] = ScriptableObject.CreateInstance<CRTDisplayProfile>();
-                    Profiles[i].hideFlags = HideFlags.DontSave;
-                    CRTDisplayProfile.Populate(Profiles[i], (CrtMonitor)i);
+                    CurvatureProfiles[i] = ScriptableObject.CreateInstance<CRTDisplayProfile>();
+                    CurvatureProfiles[i].hideFlags = HideFlags.DontSave;
+                    CRTDisplayProfile.Populate(CurvatureProfiles[i], (CrtMonitor)i);
                 }
             }
-            ProfileIndex = Mathf.Clamp(PlayerPrefs.GetInt("tc.crt.monitor", 0), 0, 4);
+            Profiles=new CRTDisplayProfile[EffectCount];
+            for(int i=0;i<EffectCount;i++)
+            {
+                Profiles[i]=Resources.Load<CRTDisplayProfile>("CRT/FX_"+(CrtEffect)i);
+                if(Profiles[i]==null)
+                {
+                    Profiles[i]=ScriptableObject.CreateInstance<CRTDisplayProfile>();
+                    Profiles[i].hideFlags=HideFlags.DontSave;CRTDisplayProfile.PopulateEffect(Profiles[i],(CrtEffect)i);
+                }
+            }
+            // Preserve the old chosen glass, but never reinterpret its index as a new effect.
+            CurvatureIndex=Mathf.Clamp(PlayerPrefs.GetInt("tc.crt.glass",PlayerPrefs.GetInt("tc.crt.monitor",0)),0,CurvatureCount-1);
+            ProfileIndex = Mathf.Clamp(PlayerPrefs.GetInt("tc.crt.effect", 5), 0, EffectCount-1);
             DisplayEnabled = PlayerPrefs.GetInt("tc.crt.enabled", 1) != 0;
             Accessibility = (CrtAccessibility)Mathf.Clamp(PlayerPrefs.GetInt("tc.crt.accessibility", 0), 0, 2);
             Strength = Load("strength"); Scanlines = Load("scanlines"); Curvature = Load("curvature");
@@ -77,14 +99,16 @@ namespace TunnelCrew.Presentation.CRT
         }
         public void Save()
         {
-            PlayerPrefs.SetInt("tc.crt.monitor", ProfileIndex); PlayerPrefs.SetInt("tc.crt.enabled", DisplayEnabled ? 1 : 0);
+            PlayerPrefs.SetInt("tc.crt.effect", ProfileIndex);PlayerPrefs.SetInt("tc.crt.glass",CurvatureIndex);
+            PlayerPrefs.SetInt("tc.crt.enabled", DisplayEnabled ? 1 : 0);
             PlayerPrefs.SetInt("tc.crt.accessibility", (int)Accessibility);
             PlayerPrefs.SetFloat("tc.crt.strength", Strength); PlayerPrefs.SetFloat("tc.crt.scanlines", Scanlines);
             PlayerPrefs.SetFloat("tc.crt.curvature", Curvature); PlayerPrefs.SetFloat("tc.crt.noise", Noise);
             PlayerPrefs.SetFloat("tc.crt.aberration", Aberration); PlayerPrefs.SetFloat("tc.crt.vignette", Vignette);
             PlayerPrefs.Save();
         }
-        public void SetProfile(int index) { ProfileIndex = (index % 5 + 5) % 5; Revision++; _eventUntil = 0; }
+        public void SetProfile(int index) { ProfileIndex = (index % EffectCount + EffectCount) % EffectCount; Revision++; _eventUntil = 0; }
+        public void SetCurvatureProfile(int index) { CurvatureIndex=(index%CurvatureCount+CurvatureCount)%CurvatureCount;Revision++;_eventUntil=0; }
         public void SetEnabled(bool value) { DisplayEnabled = value; Revision++; }
         public void SetAccessibility(CrtAccessibility mode) { Accessibility = mode; Revision++; _eventUntil = 0; }
         public void SetUiFocus(bool value) => TextFocus = value;
@@ -120,7 +144,12 @@ namespace TunnelCrew.Presentation.CRT
                 UpdateSettingsNavigation(k,pad);
             }
             if(k==null)return;
-            if (k.f6Key.wasPressedThisFrame) { SetProfile(ProfileIndex + (k.shiftKey.isPressed ? -1 : 1)); Save(); }
+            if (k.f6Key.wasPressedThisFrame)
+            {
+                int step=k.shiftKey.isPressed?-1:1;
+                if(k.ctrlKey.isPressed)SetCurvatureProfile(CurvatureIndex+step);else SetProfile(ProfileIndex+step);
+                Save();
+            }
             if (k.f7Key.wasPressedThisFrame) { SetEnabled(!DisplayEnabled); Save(); }
             if (k.f10Key.wasPressedThisFrame) { if(SettingsOpen) CloseSettings(); else SettingsOpen=true; }
         }
@@ -136,6 +165,7 @@ namespace TunnelCrew.Presentation.CRT
             Instance = null;
             UiThemeProfile.ReleaseRuntimeMaterial();
             if (Profiles != null) foreach (var p in Profiles) if (p != null && p.hideFlags == HideFlags.DontSave) Destroy(p);
+            if (CurvatureProfiles != null) foreach (var p in CurvatureProfiles) if (p != null && p.hideFlags == HideFlags.DontSave) Destroy(p);
         }
     }
 }

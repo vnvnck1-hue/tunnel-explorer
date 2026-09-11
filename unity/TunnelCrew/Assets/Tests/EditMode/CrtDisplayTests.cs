@@ -99,8 +99,8 @@ namespace TunnelCrew.Tests
             var p=CrtParameters.Default;p.curvature=8;p.aberrationPixels=8;p.jitterStrengthPixels=8;
             p.noiseStrength=8;p.persistence=8;p.safeAreaInset=-8;p.scanlinePeriod=0;
             var safe=p.Resolve(CrtAccessibility.Standard,false,1);
-            Assert.That(safe.curvature,Is.EqualTo(.12f));Assert.That(safe.aberrationPixels,Is.EqualTo(1.8f));
-            Assert.That(safe.jitterStrengthPixels,Is.EqualTo(.35f));Assert.That(safe.persistence,Is.EqualTo(.4f));
+            Assert.That(safe.curvature,Is.EqualTo(.12f));Assert.That(safe.aberrationPixels,Is.EqualTo(6f));
+            Assert.That(safe.jitterStrengthPixels,Is.EqualTo(.35f));Assert.That(safe.persistence,Is.EqualTo(.92f));
             Assert.That(safe.safeAreaInset,Is.EqualTo(.028f));Assert.That(safe.scanlinePeriod,Is.EqualTo(1.5f));
             var text=p.Resolve(CrtAccessibility.Standard,true,1);
             Assert.That(text.jitterStrengthPixels,Is.Zero);Assert.That(text.noiseStrength,Is.LessThanOrEqualTo(.003f));
@@ -151,6 +151,42 @@ namespace TunnelCrew.Tests
         {
             Assert.That(UiThemeProfile.ThemeText("<color=#ffffff>test</color>"),Does.Contain("#FFD65A"));
             Assert.That(UiThemeProfile.ThemeText("plain 한글"),Is.EqualTo("plain 한글"));
+        }
+
+        [TestCase(CrtEffect.RgbSplit)] [TestCase(CrtEffect.RfStatic)] [TestCase(CrtEffect.Composite)]
+        [TestCase(CrtEffect.Phosphor)] [TestCase(CrtEffect.Afterglow)] [TestCase(CrtEffect.AfterglowMix)]
+        public void SixEffectAssetsMatchDefaultsAndAccessibility(CrtEffect effect)
+        {
+            var p=Resources.Load<CRTDisplayProfile>("CRT/FX_"+effect);
+            Assert.That(p,Is.Not.Null);Assert.That(p.effect,Is.EqualTo(effect));
+            var expected=ScriptableObject.CreateInstance<CRTDisplayProfile>();
+            try
+            {
+                CRTDisplayProfile.PopulateEffect(expected,effect);
+                Assert.That(JsonUtility.ToJson(p.parameters),Is.EqualTo(JsonUtility.ToJson(expected.parameters)));
+                var safe=p.parameters.Resolve(CrtAccessibility.Photosensitive,false,1);
+                Assert.That(safe.rfSnow+safe.rfTearPixels+safe.persistence+safe.interlace+safe.aberrationPixels+safe.horizontalBleed,Is.Zero);
+                var text=p.parameters.Resolve(CrtAccessibility.Standard,true,1);
+                Assert.That(text.rfSnow+text.rfTearPixels+text.persistence,Is.Zero);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(expected); }
+        }
+        [Test]
+        public void SixEffectsHaveVisibleDistinctSignaturesAndMixKeepsCenterClear()
+        {
+            CrtParameters P(CrtEffect e)=>Resources.Load<CRTDisplayProfile>("CRT/FX_"+e).parameters;
+            Assert.That(P(CrtEffect.RgbSplit).aberrationPixels,Is.GreaterThan(3));
+            Assert.That(P(CrtEffect.RfStatic).rfSnow,Is.GreaterThan(.2f));
+            Assert.That(P(CrtEffect.Composite).chromaBleedPixels,Is.GreaterThan(10));
+            Assert.That(P(CrtEffect.Phosphor).maskStrength,Is.GreaterThan(.7f));
+            Assert.That(P(CrtEffect.Afterglow).persistence,Is.GreaterThan(.75f));
+            var mix=P(CrtEffect.AfterglowMix);
+            Assert.That(mix.horizontalBleed,Is.GreaterThan(0).And.LessThan(P(CrtEffect.Composite).horizontalBleed));
+            Assert.That(mix.persistence,Is.EqualTo(P(CrtEffect.Afterglow).persistence));
+            Assert.That(mix.SignalWeight(new Vector2(.5f,.5f)),Is.LessThan(.1f));
+            Assert.That(mix.SignalWeight(new Vector2(.98f,.5f)),Is.GreaterThan(.9f));
+            float previous=0;
+            for(int i=0;i<=100;i++){float w=mix.SignalWeight(new Vector2(.5f+i*.005f,.5f));Assert.That(w,Is.GreaterThanOrEqualTo(previous));previous=w;}
         }
     }
 }

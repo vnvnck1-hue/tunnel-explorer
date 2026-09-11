@@ -1,5 +1,49 @@
 # CRT 모니터 사용 및 구현 안내
 
+## 2026-09-12 재설계: 효과 6종 × 기존 곡률 5종
+
+사용자 선택 시안은 [셰이더 시안 기록](crt-shader-studies.md)이다. 종전 5종이 곡률 외에는 비슷해 보인다는 피드백에 따라, 신호 효과를 아래 6종으로 교체하고 이전 `CRT_*.asset` 5개는 변경하지 않고 유리 형상 프리셋으로 분리했다. 아래의 **이전 구현 기록**에 있는 5종 효과/이전 성능 수치는 새 버전의 검증 결과가 아니다.
+
+| 효과 | 식별 요소 |
+|---|---|
+| 01 RGB SPLIT | 중앙에도 보이는 빨강/청록 전자빔 정렬 오차 |
+| 02 RF STATIC | 암부에도 보이는 흑백 수신 잡음과 얇은 동기 불량 띠 |
+| 03 COMPOSITE | 휘도 윤곽을 유지한 수평 컬러 대역폭 감소와 약한 색 간섭 |
+| 04 PHOSPHOR | RGB 인광 슬롯 격자와 밝기 반응형 빔/빛 번짐 |
+| 05 AFTERGLOW | 느린 인광 감쇠와 교차 주사; 움직임에 따라 남는 실제 history |
+| 06 AFTERGLOW MIX | 5번 + 약한 3번. 중앙은 맑고 외곽으로 갈수록 잔상/색 번짐 증가 |
+
+| 유리 | 기존 곡률 그대로 |
+|---|---:|
+| G1 관제관 / Surveyor | .052 |
+| G2 정밀관 / Broadcast | .018 |
+| G3 오락실 / Arcade | .072 |
+| G4 수신기 / Relay | .045 |
+| G5 심층관 / Abyss | .058 |
+
+각 유리의 모서리 반경·가장자리 feather·safeArea도 원래 자산에서 읽는다. 신호 효과 강도를 바꿔도 유리 곡률은 바뀌지 않으며, 별도 곡률 배율과 접근성 설정만 곡률에 영향을 준다. CRT Off는 둘 다 해제한다.
+
+- **F6 / Shift+F6:** 다음/이전 신호 효과.
+- **Ctrl+F6 / Ctrl+Shift+F6:** 다음/이전 유리 곡률. 기존 F5 역할 재시작과 충돌하지 않는다.
+- **F7:** CRT On/Off. **F10 / 모니터 버튼 / 패드 Select+Start:** 설정.
+- 설정에서 키보드·마우스·패드로 효과 6개와 유리 5개를 각각 선택한다.
+- `tc.crt.effect`와 `tc.crt.glass`를 분리 저장. 처음 갱신할 때 기존 `tc.crt.monitor`는 유리 선택으로 보존하고 새 효과는 06 MIX로 시작한다. 기존 저장 값을 새 효과 인덱스로 잘못 해석하지 않는다.
+- Photosensitive는 새 RF 잡음/tearing, 잔상, 교차 주사, RGB/컴포지트 효과도 비활성화한다. 채팅 중에는 RF 잡음·tearing·잔상을 억제한다.
+
+구현은 Unity 셰이더이며 생성 이미지를 게임 화면 위에 덮지 않는다. 새 효과 자산은 `FX_*.asset`. 비교 캡처는 `CrtRuntimeCapture.Run -crtStudies 1`로 `img/runtime-six-effects`에 따로 저장해 과거 검증 자료와 섞지 않는다.
+
+### 최종 검증 · 2026-09-12
+
+- EditMode **438/438 통과**, 일반 Editor PlayMode **11/11 통과**. 최종 종료 시각 07:11:43 KST. 30조합, 최대 곡률에서 마우스 선택, 독립 단축키/저장, 기존 설정 이관을 검사했다.
+- 1280×720, 1920×1080, 3440×1440, 3840×2160 각 37장, **총 148장** 실제 High/native HDR 캡처. 게임/캡처 오류 0. Unity Search 인덱서 예외는 Editor 이슈로 각 보고서에 별도 보존했다.
+- 고정 30조합 캡처는 시간 고정/history 비활성이다. 잔상은 실제 history와 카메라 이동을 사용하는 별도 `afterglow-motion`, `mix-motion` 캡처로 확인했다.
+- RTX 3050 Ti Laptop / Editor D3D12에서 MIX의 CRT glass+copy 중앙값 합은 720p 약 0.19ms, 1080p 0.44ms, 울트라와이드 1.01ms, 4K 2.00ms. **4K는 이전 1.8ms 목표를 초과한다.** 전체 게임 프레임 시간이나 다른 GPU의 성능을 의미하지 않는다.
+- 새 플레이어 실행 파일 빌드/IME 실기 검증은 이번 검사 범위가 아니다. 엔진 종료/JobTempAlloc 경고가 있어 전체 게임의 무누수를 주장하지 않는다.
+
+[실제 설정 화면](img/runtime-six-effects/settings-six-by-five.jpg) · [MIX 이동 중 실제 화면](img/runtime-six-effects/mix-motion.jpg) · [1080p 측정 원본](img/runtime-six-effects/capture-report.json)
+
+## 이전 구현 기록
+
 대상: Unity 본편. HTML 프로토타입은 변경하지 않았다. 검증 진행 상태와 한계는 [작업 기록](implementation-worklog.md)을 함께 본다.
 
 ## 조작

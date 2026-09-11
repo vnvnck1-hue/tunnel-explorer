@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebdcf6eb1f0112b478b56f359fe554d9, type: 3}
+  m_Name: FX_AfterglowMix
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.CRT.CRTDisplayProfile
+  monitor: 0
+  effect: 5
+  title: "\uC778\uAD11 + \uC678\uACFD \uC0C9 \uBC88\uC9D0"
+  subtitle: 06 / AFTERGLOW MIX
+  description: "5\uBC88 \uC778\uAD11\uC5D0 3\uBC88 \uC0C9 \uBC88\uC9D0\uC744 \uC0B4\uC9DD.
+    \uC911\uC559\uC740 \uB9D1\uAC8C, \uAC00\uC7A5\uC790\uB9AC\uB85C \uAC08\uC218\uB85D
+    \uC794\uC0C1\uACFC \uC0C9 \uBC88\uC9D0\uC774 \uAC15\uD574\uC9D1\uB2C8\uB2E4."
+  parameters:
+    curvature: 0.052
+    aberrationPixels: 1.4
+    scanlinePeriod: 3
+    scanlineStrength: 0.12
+    noiseStrength: 0.002
+    jitterStrengthPixels: 0
+    vignetteStrength: 0.22
+    phosphorBloom: 0.2
+    persistence: 0.84
+    horizontalBleed: 0.3
+    echoStrength: 0
+    echoOffsetPixels: 0
+    rollStrength: 0
+    rollSpeed: 0
+    interlace: 0.1
+    maskStyle: 0
+    maskStrength: 0
+    edgeBias: 0.94
+    chromaBleedPixels: 8
+    rfSnow: 0
+    rfTearPixels: 0
+    maskPitch: 6
+    afterglowSpreadPixels: 0.6
+    beamWidth: 0.2
+    roundness: 0.12
+    edgeFeather: 0.006
+    safeAreaInset: 0.055
+    brightness: 1
+    contrast: 1
+    blackFloor: 0
+    noiseSpeed: 24
+    jitterFrequency: 5.7
+    jitterBandCount: 1
+    scanlineSpeed: 0
+    allowEventGlitch: 0

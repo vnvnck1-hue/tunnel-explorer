@@ -87,6 +87,7 @@ namespace TunnelCrew.Presentation.CRT
                 Phosphor = Shader.PropertyToID("_Phosphor"), Transmission = Shader.PropertyToID("_Transmission"),
                 Timing = Shader.PropertyToID("_Timing"), History = Shader.PropertyToID("_History");
             static readonly int Tone=Shader.PropertyToID("_Tone"),SignalTiming=Shader.PropertyToID("_SignalTiming");
+            static readonly int Effect=Shader.PropertyToID("_Effect"),Spatial=Shader.PropertyToID("_Spatial");
             CrtParameters _p;
             CRTDisplayController _controller;
             public DisplayPass(Material material)
@@ -114,6 +115,8 @@ namespace TunnelCrew.Presentation.CRT
                 _material.SetVector(Timing, new Vector4(controller.Clock, _p.rollStrength, _p.rollSpeed, Mathf.Min(Time.unscaledDeltaTime, .1f)));
                 _material.SetVector(Tone,new Vector4(_p.brightness,_p.contrast,_p.blackFloor,0));
                 _material.SetVector(SignalTiming,new Vector4(_p.noiseSpeed,_p.jitterFrequency,_p.jitterBandCount,_p.scanlineSpeed));
+                _material.SetVector(Effect,new Vector4(_p.chromaBleedPixels,_p.rfSnow,_p.rfTearPixels,_p.maskPitch));
+                _material.SetVector(Spatial,new Vector4(_p.edgeBias,_p.afterglowSpreadPixels,0,0));
                 if(Measure)SetupAllocationBytes=System.GC.GetAllocatedBytesForCurrentThread()-before;
             }
             public override void RecordRenderGraph(RenderGraph graph, ContextContainer frameData)

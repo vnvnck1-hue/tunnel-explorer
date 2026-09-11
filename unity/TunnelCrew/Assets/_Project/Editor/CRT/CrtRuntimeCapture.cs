@@ -31,6 +31,9 @@ namespace TunnelCrew.EditorTools
         static Shader _originalShader;
         static int _width,_height,_profileFrames,_lastProfile;
         static Report _report;
+        static int _studyIndex;
+        static bool _studyMotion;
+        static Vector3 _studyCameraOrigin;
         static readonly Dictionary<string,List<float>> Gpu=new Dictionary<string,List<float>>();
         [Serializable] sealed class CaptureRecord { public string name;public int width,height,amberPixels;public float meanLuma; }
         [Serializable] sealed class TimingRecord { public string monitor;public int samples;public float medianMs,p95Ms; }
@@ -73,6 +76,7 @@ namespace TunnelCrew.EditorTools
                 _step=_errors=0; _next=EditorApplication.timeSinceStartup+4; _deadline=_next+240;
                 _width=SessionState.GetInt(Key+"Width",1920);_height=SessionState.GetInt(Key+"Height",1080);
                 _output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../../docs/ui-crt/img/runtime"));
+                if(Argument("-crtStudies",0)==1)_output=Path.GetFullPath(Path.Combine(Application.dataPath,"../../../docs/ui-crt/img/runtime-six-effects"));
                 if(_width!=1920||_height!=1080)_output=Path.Combine(_output,$"{_width}x{_height}");
                 Directory.CreateDirectory(_output);
                 _report=new Report{gpu=SystemInfo.graphicsDeviceName,unity=Application.unityVersion,renderApi=SystemInfo.graphicsDeviceType.ToString()};Gpu.Clear();_lastProfile=-1;
@@ -80,6 +84,7 @@ namespace TunnelCrew.EditorTools
                 if(high>=0)QualitySettings.SetQualityLevel(high,true);
                 _report.quality=QualitySettings.names[QualitySettings.GetQualityLevel()];
                 CRTDisplayFeature.Measure=true;RenderPipelineManager.endContextRendering+=Sample;
+                _studyIndex=0;_studyMotion=false;RenderPipelineManager.beginContextRendering+=StudyMotion;
                 Application.logMessageReceived+=Log;
                 EditorApplication.update-=Tick; EditorApplication.update+=Tick;
             }
@@ -108,12 +113,12 @@ namespace TunnelCrew.EditorTools
                 _report.historyFormat=CRTDisplayFeature.HistoryFormat.ToString();
             }
             if(CRTDisplayFeature.GpuSamples==0)return;
-            string key=c.Profile.monitor+(c.CaptureMode?" static":" temporal");
+            string key=c.Profile.effect+(c.CaptureMode?" static":" temporal");
             if(!Gpu.TryGetValue(key,out var values)){values=new List<float>(2048);Gpu.Add(key,values);}
             values.Add(CRTDisplayFeature.GpuMilliseconds);
             if(!c.CaptureMode&&c.Effective.persistence>.001f&&CRTDisplayFeature.HistoryGpuSamples>0)
             {
-                string copyKey=c.Profile.monitor+" history copy";
+                string copyKey=c.Profile.effect+" history copy";
                 if(!Gpu.TryGetValue(copyKey,out var copyValues)){copyValues=new List<float>(2048);Gpu.Add(copyKey,copyValues);}
                 copyValues.Add(CRTDisplayFeature.HistoryGpuMilliseconds);
             }
@@ -137,10 +142,14 @@ namespace TunnelCrew.EditorTools
                 var meta=UnityEngine.Object.FindFirstObjectByType<MetaScreens>();
                 var run=UnityEngine.Object.FindFirstObjectByType<RunBootstrap>();
                 if(c==null||meta==null||run==null)throw new InvalidOperationException("Runtime bootstrap missing");
+                if(Argument("-crtStudies",0)==1&&_step>=4)
+                {
+                    TickStudies(c);_next=Math.Max(_next,EditorApplication.timeSinceStartup+1);return;
+                }
                 switch(_step++)
                 {
                     case 0:
-                        c.SetCaptureMode(true);c.SetAccessibility(CrtAccessibility.Standard);c.SetProfile(0);c.SetEnabled(true);
+                        c.SetCaptureMode(true);c.SetAccessibility(CrtAccessibility.Standard);c.SetProfile(0);c.SetCurvatureProfile(0);c.SetEnabled(true);
                         c.Strength=c.Scanlines=c.Curvature=c.Noise=c.Aberration=c.Vignette=1;
                         _camera=Camera.main; _target=CreateCaptureTarget();
                         _report.captureFormat=_target.graphicsFormat.ToString();_report.cameraHdr=_camera.allowHDR;
@@ -205,6 +214,40 @@ namespace TunnelCrew.EditorTools
                 _next=Math.Max(_next,EditorApplication.timeSinceStartup+1);
             }
             catch(Exception e){Debug.LogException(e);Stop();}
+        }
+        static void StudyMotion(ScriptableRenderContext context,List<Camera> cameras)
+        {
+            if(_studyMotion&&_camera!=null&&cameras.Contains(_camera))
+                _camera.transform.position=_studyCameraOrigin+Vector3.right*(Mathf.Sin(Time.unscaledTime*3)*.7f);
+        }
+        static void TickStudies(CRTDisplayController c)
+        {
+            int i=_studyIndex++;
+            if(i==0){c.SetEnabled(false);return;}
+            if(i==1){Capture("00-off");c.SetEnabled(true);c.SetProfile(0);c.SetCurvatureProfile(0);return;}
+            if(i>=2&&i<32)
+            {
+                int combination=i-2;
+                Capture($"{combination/5+1:00}-{(CrtEffect)(combination/5)}-G{combination%5+1}");
+                int next=combination+1;
+                if(next<30){c.SetProfile(next/5);c.SetCurvatureProfile(next%5);}
+                else {c.SetProfile(5);c.SetCurvatureProfile(0);c.SettingsOpen=true;}
+                return;
+            }
+            switch(i)
+            {
+                case 32:Capture("settings-six-by-five");c.SettingsOpen=false;c.SetAccessibility(CrtAccessibility.Photosensitive);break;
+                case 33:Capture("mix-photosensitive");c.SetAccessibility(CrtAccessibility.Standard);c.SetProfile(4);c.SetCaptureMode(false);
+                    _studyCameraOrigin=_camera.transform.position;_studyMotion=true;_next+=3;break;
+                case 34:Capture("afterglow-motion");
+                    if(CRTDisplayFeature.HistoryBytes<=0)throw new InvalidOperationException("Afterglow history missing");
+                    c.SetProfile(5);_next+=3;break;
+                case 35:Capture("mix-motion");_studyMotion=false;_camera.transform.position=_studyCameraOrigin;
+                    c.SetEnabled(false);break;
+                case 36:
+                    if(CRTDisplayFeature.HistoryBytes!=0)throw new InvalidOperationException("Off retained history");
+                    RenderPipelineManager.beginContextRendering-=StudyMotion;Stop();break;
+            }
         }
         static RenderTexture CreateCaptureTarget()
         {
@@ -301,6 +344,7 @@ namespace TunnelCrew.EditorTools
         }
         static void Stop()
         {
+            _studyMotion=false;RenderPipelineManager.beginContextRendering-=StudyMotion;
             RestoreFeature();
             EditorApplication.update-=Tick;
             RenderPipelineManager.endContextRendering-=Sample;CRTDisplayFeature.Measure=false;

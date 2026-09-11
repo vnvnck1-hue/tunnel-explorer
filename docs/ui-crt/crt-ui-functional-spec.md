@@ -1,5 +1,7 @@
 # 땅굴 크루 황색 CRT UI 기능명세서
 
+> 최신 후속 구현: 효과 6종과 기존 곡률 5종을 독립 선택·저장한다. 신호 효과는 F6, 유리 곡률은 Ctrl+F6이며 Shift는 역순이다. 기존 `CRT_*.asset`의 형상은 보존하고 새 `FX_*.asset`이 신호를 담당한다. 아래 초기 상한·프리셋 표는 설계 이력이며 최신 효과 범위와 사용법은 [런타임 안내](crt-display-runtime-guide.md)를 따른다.
+
 대상 프로젝트: `unity/TunnelCrew/`  
 연관 기획: [`crt-ui-art-direction-plan.md`](crt-ui-art-direction-plan.md)  
 기준 구현: Unity 6.3.15f1 / URP 17.3.0 / 2D Renderer

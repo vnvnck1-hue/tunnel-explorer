@@ -8,7 +8,7 @@ namespace TunnelCrew.EditorTools
 {
     public static class BuildCrtAssets
     {
-        [MenuItem("Tunnel Crew/CRT/Install display and five monitor profiles")]
+        [MenuItem("Tunnel Crew/CRT/Install six effects and five glass profiles")]
         public static void Install()
         {
             const string dir = "Assets/_Project/Data/Resources/CRT";
@@ -18,6 +18,13 @@ namespace TunnelCrew.EditorTools
                 var monitor=(CrtMonitor)i; string path=dir+"/CRT_"+monitor+".asset";
                 var p=AssetDatabase.LoadAssetAtPath<CRTDisplayProfile>(path);
                 if(p==null) { p=ScriptableObject.CreateInstance<CRTDisplayProfile>(); CRTDisplayProfile.Populate(p,monitor); AssetDatabase.CreateAsset(p,path); }
+            }
+            for(int i=0;i<CRTDisplayController.EffectCount;i++)
+            {
+                var effect=(CrtEffect)i;string path=dir+"/FX_"+effect+".asset";
+                if(AssetDatabase.LoadAssetAtPath<CRTDisplayProfile>(path)!=null)continue;
+                var p=ScriptableObject.CreateInstance<CRTDisplayProfile>();
+                CRTDisplayProfile.PopulateEffect(p,effect);AssetDatabase.CreateAsset(p,path);
             }
             const string themePath=dir+"/UiTheme.asset";
             if(AssetDatabase.LoadAssetAtPath<UiThemeProfile>(themePath)==null)
@@ -36,7 +43,7 @@ namespace TunnelCrew.EditorTools
             feature.displayShader=AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Presentation/UI/CRT/Shaders/CRTDisplay.shader");
             feature.SetActive(true); feature.Create();
             EditorUtility.SetDirty(feature); EditorUtility.SetDirty(renderer); AssetDatabase.SaveAssets();
-            Debug.Log("[CRT] Five monitor profiles, UI theme, and final renderer feature installed.");
+            Debug.Log("[CRT] Six signal effects, five preserved glass profiles, and final renderer installed.");
         }
     }
 }

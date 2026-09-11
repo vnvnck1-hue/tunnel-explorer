@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebdcf6eb1f0112b478b56f359fe554d9, type: 3}
+  m_Name: FX_RfStatic
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.CRT.CRTDisplayProfile
+  monitor: 0
+  effect: 1
+  title: "\uC9C0\uD558 \uC218\uC2E0 \uC7A1\uC74C"
+  subtitle: 02 / RF STATIC
+  description: "\uC5B4\uB450\uC6B4 \uACF3\uC5D0\uB3C4 \uC9C0\uC9C0\uC9C1\uAC70\uB9AC\uB294
+    \uD751\uBC31 \uC7A1\uC74C\uACFC \uC587\uC740 \uC218\uD3C9 \uB3D9\uAE30 \uBD88\uB7C9
+    \uB760. \uC0C9 \uBC88\uC9D0\uACFC\uB294 \uB2E4\uB978 \uC218\uC2E0 \uC7A5\uC560."
+  parameters:
+    curvature: 0.052
+    aberrationPixels: 0.25
+    scanlinePeriod: 2.5
+    scanlineStrength: 0.08
+    noiseStrength: 0.018
+    jitterStrengthPixels: 0
+    vignetteStrength: 0.22
+    phosphorBloom: 0.12
+    persistence: 0
+    horizontalBleed: 0
+    echoStrength: 0
+    echoOffsetPixels: 0
+    rollStrength: 0
+    rollSpeed: 0
+    interlace: 0
+    maskStyle: 0
+    maskStrength: 0
+    edgeBias: 0
+    chromaBleedPixels: 0
+    rfSnow: 0.3
+    rfTearPixels: 4
+    maskPitch: 6
+    afterglowSpreadPixels: 0
+    beamWidth: 0.2
+    roundness: 0.12
+    edgeFeather: 0.006
+    safeAreaInset: 0.055
+    brightness: 1
+    contrast: 1
+    blackFloor: 0
+    noiseSpeed: 24
+    jitterFrequency: 5.7
+    jitterBandCount: 1
+    scanlineSpeed: 0
+    allowEventGlitch: 1

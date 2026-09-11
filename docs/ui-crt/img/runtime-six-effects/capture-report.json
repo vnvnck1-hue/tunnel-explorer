@@ -1,0 +1,344 @@
+{
+    "gpu": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+    "unity": "6000.3.15f1",
+    "renderApi": "Direct3D12",
+    "quality": "High",
+    "captureMode": "Pipeline native",
+    "pipelineHdrPrecision": "_32Bits",
+    "captureFormat": "B10G11R11_UFloatPack32",
+    "crtSourceFormat": "B10G11R11_UFloatPack32",
+    "historyFormat": "B10G11R11_UFloatPack32",
+    "renderScale": 1.0,
+    "cameraHdr": true,
+    "preserveFramebufferAlpha": false,
+    "captures": [
+        {
+            "name": "title-surveyor",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 7817,
+            "meanLuma": 0.12497028708457947
+        },
+        {
+            "name": "role-select-surveyor",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 5145,
+            "meanLuma": 0.09667474776506424
+        },
+        {
+            "name": "00-off",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1934,
+            "meanLuma": 0.055180612951517108
+        },
+        {
+            "name": "01-RgbSplit-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1346,
+            "meanLuma": 0.05083755776286125
+        },
+        {
+            "name": "01-RgbSplit-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1476,
+            "meanLuma": 0.05185810476541519
+        },
+        {
+            "name": "01-RgbSplit-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1358,
+            "meanLuma": 0.05049796402454376
+        },
+        {
+            "name": "01-RgbSplit-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1379,
+            "meanLuma": 0.05095536261796951
+        },
+        {
+            "name": "01-RgbSplit-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1366,
+            "meanLuma": 0.050795141607522967
+        },
+        {
+            "name": "02-RfStatic-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1947,
+            "meanLuma": 0.09960458427667618
+        },
+        {
+            "name": "02-RfStatic-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 2028,
+            "meanLuma": 0.10167212039232254
+        },
+        {
+            "name": "02-RfStatic-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1906,
+            "meanLuma": 0.09860105812549591
+        },
+        {
+            "name": "02-RfStatic-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1922,
+            "meanLuma": 0.09997620433568955
+        },
+        {
+            "name": "02-RfStatic-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1956,
+            "meanLuma": 0.09930846095085144
+        },
+        {
+            "name": "03-Composite-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1666,
+            "meanLuma": 0.051351916044950488
+        },
+        {
+            "name": "03-Composite-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1798,
+            "meanLuma": 0.05246982350945473
+        },
+        {
+            "name": "03-Composite-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1671,
+            "meanLuma": 0.0510161854326725
+        },
+        {
+            "name": "03-Composite-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1678,
+            "meanLuma": 0.051498331129550937
+        },
+        {
+            "name": "03-Composite-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1695,
+            "meanLuma": 0.05132788047194481
+        },
+        {
+            "name": "04-Phosphor-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1189,
+            "meanLuma": 0.04526558518409729
+        },
+        {
+            "name": "04-Phosphor-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1273,
+            "meanLuma": 0.04618958383798599
+        },
+        {
+            "name": "04-Phosphor-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1205,
+            "meanLuma": 0.04491634666919708
+        },
+        {
+            "name": "04-Phosphor-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1192,
+            "meanLuma": 0.0453999862074852
+        },
+        {
+            "name": "04-Phosphor-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1184,
+            "meanLuma": 0.04525689035654068
+        },
+        {
+            "name": "05-Afterglow-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1861,
+            "meanLuma": 0.046792615205049518
+        },
+        {
+            "name": "05-Afterglow-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1972,
+            "meanLuma": 0.04779551178216934
+        },
+        {
+            "name": "05-Afterglow-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1866,
+            "meanLuma": 0.04648744687438011
+        },
+        {
+            "name": "05-Afterglow-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1852,
+            "meanLuma": 0.04691204056143761
+        },
+        {
+            "name": "05-Afterglow-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1878,
+            "meanLuma": 0.0467943511903286
+        },
+        {
+            "name": "06-AfterglowMix-G1",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1744,
+            "meanLuma": 0.049047138541936877
+        },
+        {
+            "name": "06-AfterglowMix-G2",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1879,
+            "meanLuma": 0.05007369816303253
+        },
+        {
+            "name": "06-AfterglowMix-G3",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1751,
+            "meanLuma": 0.048747289925813678
+        },
+        {
+            "name": "06-AfterglowMix-G4",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1756,
+            "meanLuma": 0.049185097217559817
+        },
+        {
+            "name": "06-AfterglowMix-G5",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1761,
+            "meanLuma": 0.04904967546463013
+        },
+        {
+            "name": "settings-six-by-five",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 6342,
+            "meanLuma": 0.05976187065243721
+        },
+        {
+            "name": "mix-photosensitive",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1924,
+            "meanLuma": 0.054345548152923587
+        },
+        {
+            "name": "afterglow-motion",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 2360,
+            "meanLuma": 0.056547995656728747
+        },
+        {
+            "name": "mix-motion",
+            "width": 1920,
+            "height": 1080,
+            "amberPixels": 1970,
+            "meanLuma": 0.05301748588681221
+        }
+    ],
+    "timings": [
+        {
+            "monitor": "RgbSplit static",
+            "samples": 3213,
+            "medianMs": 0.30617600679397585,
+            "p95Ms": 0.3112959861755371
+        },
+        {
+            "monitor": "RfStatic static",
+            "samples": 1531,
+            "medianMs": 0.3092480003833771,
+            "p95Ms": 0.31539198756217959
+        },
+        {
+            "monitor": "Composite static",
+            "samples": 1645,
+            "medianMs": 0.35020801424980166,
+            "p95Ms": 0.3563520014286041
+        },
+        {
+            "monitor": "Phosphor static",
+            "samples": 1551,
+            "medianMs": 0.31436800956726076,
+            "p95Ms": 0.32051199674606326
+        },
+        {
+            "monitor": "Afterglow static",
+            "samples": 1627,
+            "medianMs": 0.31539198756217959,
+            "p95Ms": 0.32153600454330447
+        },
+        {
+            "monitor": "AfterglowMix static",
+            "samples": 1855,
+            "medianMs": 0.35737600922584536,
+            "p95Ms": 0.3635199964046478
+        },
+        {
+            "monitor": "Afterglow temporal",
+            "samples": 1277,
+            "medianMs": 0.3235839903354645,
+            "p95Ms": 0.3266560137271881
+        },
+        {
+            "monitor": "Afterglow history copy",
+            "samples": 1277,
+            "medianMs": 0.08191999793052674,
+            "p95Ms": 0.08499199897050858
+        },
+        {
+            "monitor": "AfterglowMix temporal",
+            "samples": 1263,
+            "medianMs": 0.36659198999404909,
+            "p95Ms": 0.3696640133857727
+        },
+        {
+            "monitor": "AfterglowMix history copy",
+            "samples": 1263,
+            "medianMs": 0.07577600330114365,
+            "p95Ms": 0.07884799689054489
+        }
+    ],
+    "errors": [],
+    "editorIssues": [
+        "ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index\nSystem.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <41d29b352f6a475ab1bf7c6628b82790>:0)\nUnityEditor.Search.SearchDatabase+<EnumerateAll>d__80.MoveNext () (at <ad876a917af646b587aca50f11e5beba>:0)\nSystem.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) (at <80564d689e48448fa2a7101993ee7201>:0)\nSystem.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) (at <80564d689e48448fa2a7101993ee7201>:0)\nUnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () (at <ad876a917af646b587aca50f11e5beba>:0)\nUnityEditor.Search.SearchInit.IndexationOnStartup () (at <ad876a917af646b587aca50f11e5beba>:0)\nUnityEditor.EditorApplication.Internal_CallDelayFunctions () (at <24e9673f49a94c36a282c67d0a0993d2>:0)\n"
+    ],
+    "maxSetupAllocationBytes": 0,
+    "maxGraphAllocationBytes": 0,
+    "maxHistoryBytes": 8294400
+}

@@ -1,5 +1,7 @@
 # 땅굴 크루 황색 CRT UI 리뉴얼 기획서
 
+> 최신 후속 구현: 사용자 선택 시안 6종(RGB SPLIT / RF STATIC / COMPOSITE / PHOSPHOR / AFTERGLOW / AFTERGLOW MIX)을 **신호 효과**로 제공하고, 이전 5종의 곡률은 별도 **유리 프리셋**으로 보존한다. 총 30개 조합이다. 아래 초기 강도·5종 모니터 내용은 이력이며 현재 조작과 검증은 [런타임 안내](crt-display-runtime-guide.md)를 따른다.
+
 문서 상태: 콘셉트 방향 승인 · 구현 기준 확정  
 대상: `unity/TunnelCrew/`  
 작성 기준: Unity 6.3.15f1, URP 17.3.0, 2D Renderer  
