@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebdcf6eb1f0112b478b56f359fe554d9, type: 3}
+  m_Name: CRT_Broadcast
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.CRT.CRTDisplayProfile
+  monitor: 1
+  title: "\uBC29\uC1A1 \uC815\uBC00\uAD00"
+  subtitle: TC-02 / BROADCAST
+  description: "\uD3C9\uD3C9\uD55C \uAD00 \xB7 \uC218\uC9C1 \uC778\uAD11 \uADF8\uB9B4
+    \xB7 \uC548\uC815\uC801\uC778 \uC2E0\uD638. \uC120\uBA85\uD55C \uBC29\uC1A1\uC6A9
+    \uBAA8\uB2C8\uD130."
+  parameters:
+    curvature: 0.018
+    aberrationPixels: 0.3
+    scanlinePeriod: 2
+    scanlineStrength: 0.065
+    noiseStrength: 0.003
+    jitterStrengthPixels: 0
+    vignetteStrength: 0.17
+    phosphorBloom: 0.045
+    persistence: 0
+    horizontalBleed: 0
+    echoStrength: 0
+    echoOffsetPixels: 0
+    rollStrength: 0
+    rollSpeed: 0
+    interlace: 0
+    maskStyle: 1
+    maskStrength: 0.16
+    beamWidth: 0.2
+    roundness: 0.06
+    edgeFeather: 0.005
+    safeAreaInset: 0.055
+    brightness: 1
+    contrast: 1
+    blackFloor: 0
+    noiseSpeed: 24
+    jitterFrequency: 5.7
+    jitterBandCount: 1
+    scanlineSpeed: 0
+    allowEventGlitch: 1

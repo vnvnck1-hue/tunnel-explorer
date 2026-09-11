@@ -6,6 +6,8 @@
 승인 레퍼런스: [`img/crt-intensity-02-strong.png`](img/crt-intensity-02-strong.png)  
 실제 상시 목표: 승인 레퍼런스의 화면 효과를 약 15~20% 낮춘 `Strong−`
 
+> 2026-09-12 후속 요청: 실제 모니터 선택은 단순 강도 단계 대신 서로 다른 신호/인광 구조의 5종(Surveyor, Broadcast, Arcade, Relay, Abyss)으로 구현한다. Surveyor가 Strong− 기준을 계승하며, Off·Comfort·Photosensitive는 별도 설정이다. 이 문서의 초기 강도 표와 승인 시안은 미술 기준으로 보존한다. 현재 구현 및 검증 상태는 [작업 기록](implementation-worklog.md)을 참조한다.
+
 ## 1. 목표
 
 땅굴 크루의 화면을 “낡은 탐사선/광산 장비의 황색 CRT 관제 화면”으로 재구성한다. UI 장식만 바꾸는 것이 아니라 월드, HUD, 메뉴, 전환 화면에 같은 표시 장치의 규칙을 적용해 하나의 제품처럼 보이게 만든다.

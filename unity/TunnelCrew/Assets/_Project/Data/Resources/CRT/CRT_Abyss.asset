@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebdcf6eb1f0112b478b56f359fe554d9, type: 3}
+  m_Name: CRT_Abyss
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.CRT.CRTDisplayProfile
+  monitor: 4
+  title: "\uC2EC\uCE35 \uC74C\uADF9\uAD00"
+  subtitle: TC-05 / ABYSS
+  description: "\uAD50\uCC28 \uC8FC\uC0AC \xB7 \uAE34 \uC778\uAD11 \uAC10\uC1E0 \xB7
+    \uB450\uAEBC\uC6B4 \uC554\uBD80 \uC720\uB9AC. \uBE5B\uC758 \uD754\uC801\uC774
+    \uB0A8\uB294 \uC2EC\uCE35 \uAD00\uCE21\uAD00."
+  parameters:
+    curvature: 0.058
+    aberrationPixels: 0.5
+    scanlinePeriod: 3
+    scanlineStrength: 0.14
+    noiseStrength: 0.012
+    jitterStrengthPixels: 0.18
+    vignetteStrength: 0.4
+    phosphorBloom: 0.13
+    persistence: 0.24
+    horizontalBleed: 0
+    echoStrength: 0
+    echoOffsetPixels: 0
+    rollStrength: 0.015
+    rollSpeed: 0.03
+    interlace: 0.12
+    maskStyle: 0
+    maskStrength: 0
+    beamWidth: 0.2
+    roundness: 0.15
+    edgeFeather: 0.006
+    safeAreaInset: 0.055
+    brightness: 1
+    contrast: 1
+    blackFloor: 0
+    noiseSpeed: 24
+    jitterFrequency: 5.7
+    jitterBandCount: 1
+    scanlineSpeed: 0
+    allowEventGlitch: 1

@@ -2,6 +2,7 @@ using System;
 using TunnelCrew.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GUI = TunnelCrew.Presentation.CRT.CrtGui;
 
 namespace TunnelCrew.Presentation
 {
@@ -11,7 +12,7 @@ namespace TunnelCrew.Presentation
     /// 구간: dim .55 · pan 1.05 · hold .35 · roar 1.75 · back .95. 클릭/Esc 스킵. 감속 모드면 연출 없이 진행.
     /// 포효 음성은 실전 fireBreath 15프레임(≈1.4s / 1.15 배속)과 같은 시점에 낸다.
     /// </summary>
-    public sealed class BossIntroCinematic : MonoBehaviour
+    public sealed class BossIntroCinematic : MonoBehaviour, CRT.ICrtScreen
     {
         const float SDim = .55f, SPan = 1.05f, SHold = .35f, SRoar = 1.75f, SBack = .95f;
         const float T1 = SDim, T2 = T1 + SPan, T3 = T2 + SHold, T4 = T3 + SRoar, T5 = T4 + SBack;
@@ -24,6 +25,7 @@ namespace TunnelCrew.Presentation
 
         public void Bind(TunnelSim sim, CameraRig rig, Camera cam, Feedback feedback, FxSystem fx)
         {
+            CRT.CrtSurface.Register(this, 25);
             _sim = sim; _rig = rig; _cam = cam; _feedback = feedback; _fx = fx; _white = Texture2D.whiteTexture;
         }
 
@@ -102,10 +104,9 @@ namespace TunnelCrew.Presentation
         }
         static Vector2 V(Vec2 v) => IsometricProjection.ToRender(v);
 
-        void OnGUI()
+        public void DrawCrt()
         {
             if (!Active || _boss == null) return;
-            Fonts.ApplySkin();
             float H = Screen.height, W = Screen.width, k = H / 1080f;
             if (_tier == null)
             {
@@ -120,7 +121,7 @@ namespace TunnelCrew.Presentation
             float vig = barP * .9f * (1 - EaseOut(outP));
             Fill(new Rect(0, 0, W, H), new Color(0, 0, 0, .28f * vig));
             // 플래시 — 포효 순간
-            if (_roared) Fill(new Rect(0, 0, W, H), new Color(1f, .93f, .9f, Mathf.Exp(-(_t - T3) * 4.2f) * .75f));
+            if (_roared && CRT.CRTDisplayController.Instance?.Accessibility != CRT.CrtAccessibility.Photosensitive) Fill(new Rect(0, 0, W, H), new Color(1f, .93f, .9f, Mathf.Exp(-(_t - T3) * 4.2f) * .75f));
             // 이름 플레이트
             float nameIn = EaseOut(Seg(T2 + .05f, T3 + .3f)), nameOut = EaseOut(Seg(T4 - .1f, T4 + .35f));
             float a = nameIn * (1 - nameOut);

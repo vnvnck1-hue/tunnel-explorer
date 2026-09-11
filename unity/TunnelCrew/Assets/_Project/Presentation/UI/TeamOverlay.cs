@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using TunnelCrew.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GUI = TunnelCrew.Presentation.CRT.CrtGui;
+using GUIUtility = TunnelCrew.Presentation.CRT.CrtGuiUtility;
+using Event = TunnelCrew.Presentation.CRT.CrtPointerEvent;
 
 namespace TunnelCrew.Presentation
 {
     /// <summary>
     /// 팀 핑 · 크루 채팅 · 퀵크래프트의 입력과 화면 표현 (원본 TCPING/TCCHAT/TC_CRAFT 의 DOM·캔버스 부분).
     /// 규칙·상태는 Sim(<see cref="PingSystem"/>, <see cref="CrewChat"/>, <see cref="QuickCraftSystem"/>)에 있고, 여기서는
-    /// 키·마우스를 읽어 Sim 을 호출하고 IMGUI(1080p 배율)로 그린다. RunBootstrap 은 <see cref="BlocksMouse"/>·<see cref="ChatOpen"/> 등을 보고 월드 입력을 막는다.
+    /// 키·마우스를 읽어 Sim 을 호출하고 CRT CameraSpace UGUI로 그린다. RunBootstrap 은 <see cref="BlocksMouse"/>·<see cref="ChatOpen"/> 등을 보고 월드 입력을 막는다.
     /// </summary>
-    public sealed class TeamOverlay : MonoBehaviour
+    public sealed class TeamOverlay : MonoBehaviour, CRT.ICrtScreen
     {
         TunnelSim _sim; Camera _cam; Func<bool> _active;
         public Action<string> Log;
@@ -40,6 +43,7 @@ namespace TunnelCrew.Presentation
 
         public void Bind(TunnelSim sim, Camera cam, Func<bool> active)
         {
+            CRT.CrtSurface.Register(this, 10);
             _sim = sim; _cam = cam; _active = active;
             _white = Texture2D.whiteTexture;
             _font = Fonts.UIBold;   // Pretendard (원본 CSS 와 동일)
@@ -78,6 +82,7 @@ namespace TunnelCrew.Presentation
         // ═════════════════════ 입력
         void Update()
         {
+            if (CRT.CRTDisplayController.Instance != null && CRT.CRTDisplayController.Instance.ConsumesInput) return;
             if (_sim == null || _sim.World == null) return;
             var kb = Keyboard.current; var mouse = Mouse.current;
             if (kb == null || mouse == null) return;
@@ -115,7 +120,7 @@ namespace TunnelCrew.Presentation
             {
                 // 마우스 방향으로 60° 슬롯 선택 (데드존 54px)
                 var center = WheelCenterScreen();
-                var d = mp - center;
+                var d = GUI.GlassToContentScreen(mp) - center;
                 if (d.magnitude >= 54 * _k) craft.Select(QuickCraftSystem.Recipes[QuickCraftSystem.SlotFromAngle(Mathf.Atan2(-d.y, d.x))].Id);
                 for (int i = 0; i < 6; i++)
                     if (DigitPressed(kb, i + 1)) { var id = QuickCraftSystem.Recipes[i].Id; if (craft.Selected == id) craft.ConfirmSelection(); else craft.Select(id); }
@@ -165,8 +170,8 @@ namespace TunnelCrew.Presentation
         }
 
         double _chatOpenedAt;
-        void OpenChat() { ChatOpen = true; _input = _draft; _focusPending = true; _chatOpenedAt = Now; }
-        void CloseChat(bool keepDraft) { _draft = keepDraft ? _input : ""; ChatOpen = false; GUI.FocusControl(null); }
+        void OpenChat() { ChatOpen = true; _input = _draft; _focusPending = true; _chatOpenedAt = Now; CRT.CRTDisplayController.Instance?.SetUiFocus(true); }
+        void CloseChat(bool keepDraft) { _draft = keepDraft ? _input : ""; ChatOpen = false; GUI.FocusControl(null); CRT.CRTDisplayController.Instance?.SetUiFocus(false); }
         void SubmitChat()
         {
             var text = _input; _input = "";
@@ -205,10 +210,9 @@ namespace TunnelCrew.Presentation
             return s;
         }
 
-        void OnGUI()
+        public void DrawCrt()
         {
             if (_sim == null || _sim.World == null || !_active()) return;
-            Fonts.ApplySkin();
             _k = Screen.height / 1080f;
             EnsureStyles(); EnsureShapes();
             DrawPingMarkers(); DrawPingLog(); DrawPingWheel();
@@ -337,7 +341,8 @@ namespace TunnelCrew.Presentation
         void DrawChat()
         {
             var C = _sim.Chat; double t = _sim.RunTime;
-            float x = 28 * _k, w = 520 * _k, bottom = Screen.height - 215 * _k, lh = 22 * _k;
+            var safe=CRT.CrtSafeArea.Calculate(Screen.width,Screen.height,Screen.safeArea,CRT.CRTDisplayController.Instance!=null?CRT.CRTDisplayController.Instance.Effective.safeAreaInset:.055f);
+            float x = safe.xMin, w = 600 * _k, bottom = Screen.height-safe.yMin-230*_k, lh = 28 * _k;
             int n = ChatOpen ? CrewChat.OpenLines : CrewChat.IdleLines;
             int start = Math.Max(0, C.Log.Count - n);
             var lines = new List<ChatMessage>(); for (int i = start; i < C.Log.Count; i++) lines.Add(C.Log[i]);
@@ -346,21 +351,31 @@ namespace TunnelCrew.Presentation
                 float h = n * lh + 12 * _k;
                 Fill(new Rect(x, bottom - h - 34 * _k, w, h), new Color(.05f, .03f, .09f, .82f));
                 Fill(new Rect(x, bottom - h - 34 * _k, w, 1), new Color(1f, .83f, .43f, .28f));
-                if (lines.Count == 0) GUI.Label(new Rect(x + 8 * _k, bottom - 34 * _k - lh, w, lh), "<color=#8a8095>아직 대화가 없다. 크루에게 한마디 건네 보자.</color>", Sz(_label, 12));
+                if (lines.Count == 0) GUI.Label(new Rect(x + 8 * _k, bottom - 34 * _k - lh, w-16*_k, lh), "<color=#8a8095>크루에게 한마디 건네 보세요.</color>", Sz(_label, 18));
             }
-            for (int i = 0; i < lines.Count; i++)
+            float chatY=bottom-34*_k;
+            for (int i = lines.Count-1; i >=0; i--)
             {
-                var m = lines[i]; float y = bottom - 34 * _k - (lines.Count - i) * lh;
+                var m = lines[i];
                 float a = ChatOpen ? 1 : Mathf.Clamp01((float)((CrewChat.IdleFadeSec + .9 - (t - m.T)) / .9));
                 if (a <= 0) continue;
                 string txt = $"<color=#{ColorUtility.ToHtmlStringRGB(Hex(CrewChat.SeatColor(m.Seat)))}><b>{m.Name}</b></color>  {m.Text}";
-                var st = Sz(_label, 13, TextAnchor.MiddleLeft, new Color(.96f, .94f, 1f, a));
-                float tw = Mathf.Min(w, st.CalcSize(new GUIContent(txt)).x + 16 * _k);
-                if (!ChatOpen) Fill(new Rect(x, y, tw, lh - 2), new Color(.05f, .03f, .09f, .62f * a));
-                GUI.Label(new Rect(x + 8 * _k, y, w - 16 * _k, lh), txt, st);
+                var st = Sz(_label, 18, TextAnchor.MiddleLeft, new Color(.96f, .94f, 1f, a));st.wordWrap=true;
+                float lineHeight=Mathf.Max(lh,st.CalcHeight(new GUIContent(txt),w-16*_k)+6*_k);
+                chatY-=lineHeight;if(chatY<Screen.height-safe.yMax+90*_k)break;
+                Fill(new Rect(x, chatY, w, lineHeight), new Color(.05f, .03f, .09f, ChatOpen ? .9f : .62f*a));
+                GUI.Label(new Rect(x + 8 * _k, chatY, w - 16 * _k, lineHeight), txt, st);
             }
             if (ChatOpen)
             {
+                // UGUI submits and deactivates during EventSystem.Update, before this LateUpdate
+                // presenter. Preserve the submitted text even though isFocused is already false.
+                if (GUI.TryConsumeTextSubmit("tcChatInput", out var submitted))
+                {
+                    _input=submitted;
+                    if (Now-_chatOpenedAt>.15) { SubmitChat(); return; }
+                    _focusPending=true;
+                }
                 var r = new Rect(x, bottom - 34 * _k, w, 34 * _k);
                 Fill(r, new Color(.05f, .03f, .09f, .88f)); Fill(new Rect(r.x, r.y, r.width, 1), new Color(1f, .83f, .43f, .14f));
                 GUI.Label(new Rect(r.x + 8 * _k, r.y, 44 * _k, r.height), "<color=#ffd36e><b>[팀]</b></color>", Sz(_label, 12));
@@ -468,8 +483,13 @@ namespace TunnelCrew.Presentation
             Fill(new Rect(0, 0, Screen.width, Screen.height), new Color(.02f, .01f, .04f, .28f));
             float size = Mathf.Clamp(Screen.height * .56f, 390 * _k, 560 * _k);
             var c = new Vector2(Screen.width * .5f, Screen.height * .42f);
-            var conn = Tex("ui-wheel-connector");
-            if (conn != null) { GUI.color = new Color(1, 1, 1, .94f); GUI.DrawTexture(new Rect(c.x - size / 2, c.y - size / 2, size, size), conn, ScaleMode.ScaleToFit); GUI.color = Color.white; }
+            for(int i=0;i<6;i++)
+            {
+                var original=GUI.matrix;GUIUtility.RotateAroundPivot(-90+i*60,c);
+                Fill(new Rect(c.x+35*_k,c.y-1*_k,size*.34f-35*_k,2*_k),CRT.UiThemeProfile.Dim);GUI.matrix=original;
+            }
+            GUI.Panel(new Rect(c.x-36*_k,c.y-36*_k,72*_k,72*_k),CRT.UiThemeProfile.Panel,CRT.UiThemeProfile.Frame);
+            GUI.Label(new Rect(c.x-36*_k,c.y-36*_k,72*_k,72*_k),"C",Sz(_bold,26));
             float slot = Mathf.Clamp(Screen.height * .14f, 108 * _k, 132 * _k);
             var sel = QuickCraftSystem.ById(Cf.Selected) ?? QuickCraftSystem.Recipes[0];
             for (int i = 0; i < 6; i++)
@@ -478,7 +498,7 @@ namespace TunnelCrew.Presentation
                 var p = c + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * size * .34f;
                 bool isSel = r.Id == sel.Id, ok = Cf.Can(r); float sc = isSel ? 1.045f : 1f;
                 var rc = new Rect(p.x - slot * sc / 2, p.y - slot * sc / 2, slot * sc, slot * sc);
-                var plate = Tex("ui-wheel-slot"); if (plate != null) GUI.DrawTexture(rc, plate, ScaleMode.ScaleToFit); else Fill(rc, new Color(.1f, .08f, .14f, .9f));
+                GUI.Panel(rc,CRT.UiThemeProfile.Panel,isSel?CRT.UiThemeProfile.Amber:CRT.UiThemeProfile.Dim,isSel?2:1);
                 var icon = Tex(r.Icon);
                 if (icon != null)
                 {
@@ -486,31 +506,37 @@ namespace TunnelCrew.Presentation
                     GUI.DrawTexture(new Rect(rc.x + rc.width * .18f, rc.y + rc.height * .17f, rc.width * .64f, rc.height * .64f), icon, ScaleMode.ScaleToFit);
                     GUI.color = Color.white;
                 }
-                if (isSel) { var selTex = Tex("ui-wheel-selection"); if (selTex != null) GUI.DrawTexture(rc, selTex, ScaleMode.ScaleToFit); }
-                GUI.Label(new Rect(rc.x, rc.yMax - 22 * _k, rc.width, 18 * _k), CostText(r, false), Sz(_small, 10, TextAnchor.MiddleCenter, new Color(.95f, .93f, 1f), FontStyle.Bold));
+                if(isSel)GUI.Panel(new Rect(rc.x+16*_k,rc.y+7*_k,rc.width-32*_k,3*_k),CRT.UiThemeProfile.Amber,Color.clear,0,false);
+                float costX=rc.x+16*_k;
+                void CostIcon(string name,int amount,int owned)
+                {
+                    if(amount<=0)return;var tex=Tex(name);
+                    if(tex!=null)GUI.DrawTexture(new Rect(costX,rc.yMax-26*_k,20*_k,20*_k),tex,ScaleMode.ScaleToFit);
+                    GUI.Label(new Rect(costX+22*_k,rc.yMax-28*_k,36*_k,24*_k),amount.ToString(),Sz(_small,18,TextAnchor.MiddleLeft,owned>=amount?CRT.UiThemeProfile.Amber:CRT.UiThemeProfile.Critical));costX+=56*_k;
+                }
+                CostIcon("currency-pulp",r.Pulp,_sim.Loot.Pulp);CostIcon("currency-bloom",r.Bloom,_sim.Loot.Bloom);
                 GUI.Label(new Rect(rc.x - 20 * _k, rc.y - 2 * _k, 30 * _k, 18 * _k), $"<color=#aaa>{i + 1}</color>", Sz(_small, 11, TextAnchor.MiddleCenter));
             }
             // 상세 카드 — 휠 오른쪽 24px, 280×374
-            float pw = 280 * _k, ph = 374 * _k; var pr = new Rect(c.x + size / 2 + 24 * _k, c.y - ph / 2, pw, ph);
-            if (pr.xMax > Screen.width - 18 * _k) pr.x = Screen.width - 18 * _k - pw;
-            NineSlice(pr, Tex("ui-detail-panel"), 64, .44f * _k);
+            float pw = 380 * _k, ph = 440 * _k; var pr = new Rect(c.x + size / 2 + 24 * _k, c.y - ph / 2, pw, ph);
+            var safe=CRT.CrtSafeArea.Calculate(Screen.width,Screen.height,Screen.safeArea,CRT.CRTDisplayController.Instance!=null?CRT.CRTDisplayController.Instance.Effective.safeAreaInset:.055f);
+            if (pr.xMax > safe.xMax) pr.x = safe.xMax - pw;
+            GUI.Panel(pr,CRT.UiThemeProfile.Panel,CRT.UiThemeProfile.Frame);
             float px = pr.x + 28 * _k, py = pr.y + 26 * _k, iw = pr.width - 56 * _k;
             var dIcon = Tex(sel.Icon); if (dIcon != null) GUI.DrawTexture(new Rect(px, py, 64 * _k, 64 * _k), dIcon, ScaleMode.ScaleToFit);
             GUI.Label(new Rect(px + 72 * _k, py, iw - 72 * _k, 28 * _k), $"<b>{sel.Name}</b>", Sz(_label, 19, TextAnchor.MiddleLeft));
-            var descSt = Sz(_label, 12, TextAnchor.UpperLeft, new Color(.82f, .78f, .88f)); descSt.wordWrap = true;
-            GUI.Label(new Rect(px + 72 * _k, py + 30 * _k, iw - 72 * _k, 40 * _k), sel.Desc, descSt);
-            GUI.Label(new Rect(px, py + 78 * _k, iw, 24 * _k), $"<color=#ffd36e>{sel.Effect}</color>", Sz(_label, 13));
-            GUI.Label(new Rect(px, py + 106 * _k, iw, 24 * _k), CostText(sel, true), Sz(_label, 13, null, null, FontStyle.Bold));
+            var descSt = Sz(_label, 18, TextAnchor.UpperLeft,CRT.UiThemeProfile.Frame); descSt.wordWrap = true;
+            GUI.Label(new Rect(px + 72 * _k, py + 34 * _k, iw - 72 * _k, 96 * _k), sel.Desc, descSt);
+            GUI.Label(new Rect(px, py + 134 * _k, iw, 54 * _k), sel.Effect, descSt);
+            GUI.Label(new Rect(px, py + 194 * _k, iw, 28 * _k), CostText(sel, true), Sz(_label, 18, null, null, FontStyle.Bold));
             string why = Cf.Reason(sel); bool can = why.Length == 0;
-            GUI.Label(new Rect(px, py + 136 * _k, iw, 24 * _k), can ? "<color=#7febd0>제작 가능</color>" : $"<color=#ff8da8>{why}</color>", Sz(_label, 13, null, null, FontStyle.Bold));
-            var br = new Rect(px, pr.yMax - 90 * _k, iw, 52 * _k);
-            GUI.color = can ? Color.white : new Color(1, 1, 1, .45f);
-            NineSlice(br, Tex("ui-craft-button"), 42, .3f * _k);
-            var glyph = Tex("ui-craft-action-glyph"); if (glyph != null) GUI.DrawTexture(new Rect(br.x + 14 * _k, br.y + 12 * _k, 28 * _k, 28 * _k), glyph, ScaleMode.ScaleToFit);
-            GUI.Label(br, sel.Kind == CraftKind.Place ? "배치 준비" : "제작하기", Sz(_bold, 16, TextAnchor.MiddleCenter, new Color(.16f, .1f, .06f)));
+            GUI.Label(new Rect(px, py + 226 * _k, iw, 28 * _k), can ? "<color=#7febd0>제작 가능</color>" : $"<color=#ff8da8>{why}</color>", Sz(_label, 18, null, null, FontStyle.Bold));
+            var br = new Rect(px, pr.yMax - 132 * _k, iw, 52 * _k);
+            GUI.Panel(br,CRT.UiThemeProfile.Panel,can?CRT.UiThemeProfile.Amber:CRT.UiThemeProfile.Dim);
+            GUI.Label(br, sel.Kind == CraftKind.Place ? "배치 준비" : "제작하기", Sz(_bold, 22, TextAnchor.MiddleCenter,can?CRT.UiThemeProfile.Amber:CRT.UiThemeProfile.Dim));
             GUI.color = Color.white;
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && br.Contains(Event.current.mousePosition)) { Cf.ConfirmSelection(); Event.current.Use(); }
-            GUI.Label(new Rect(px, pr.yMax - 34 * _k, iw, 20 * _k), "<color=#9a90ac><b>C</b> 닫기 · 마우스 선택 · 클릭/SPACE 제작 · 1~6</color>", Sz(_small, 11, TextAnchor.MiddleCenter));
+            GUI.Label(new Rect(px, pr.yMax - 64 * _k, iw, 50 * _k), "C 닫기 · 1~6 / 마우스 선택\n클릭 / SPACE 제작", Sz(_small, 18, TextAnchor.MiddleCenter));
         }
 
         void LateUpdate() { if (_craftView != null && _sim != null && _sim.World != null) _craftView.Render(_sim.Craft, _active()); }

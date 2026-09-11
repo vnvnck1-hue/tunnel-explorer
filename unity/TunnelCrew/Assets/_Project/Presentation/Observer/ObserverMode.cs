@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TunnelCrew.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GUI = TunnelCrew.Presentation.CRT.CrtGui;
 using SimInput = TunnelCrew.Sim.PlayerInput;
 
 namespace TunnelCrew.Presentation
@@ -15,7 +16,7 @@ namespace TunnelCrew.Presentation
     /// 진행 자동화(0.3초 틱): 특성 카드 1.5초 뒤 무작위 선택 · 심층 보상 2.1초 뒤 선택 → 3.9초 뒤 하강 · 결과 4.5초 뒤 같은 편성으로 재출격.
     /// 카메라: 리더 시점은 본편 카메라 그대로, 크루 시점은 <see cref="CameraRig.FollowOverride"/> 로 k=dt·5 추종.
     /// </summary>
-    public sealed class ObserverMode : MonoBehaviour
+    public sealed class ObserverMode : MonoBehaviour, CRT.ICrtScreen
     {
         RunBootstrap _run;
         ObserverPilot _pilot;
@@ -37,6 +38,7 @@ namespace TunnelCrew.Presentation
 
         void Awake()
         {
+            CRT.CrtSurface.Register(this, 20, true);
             _run = GetComponent<RunBootstrap>();
             _white = Texture2D.whiteTexture;
         }
@@ -123,6 +125,7 @@ namespace TunnelCrew.Presentation
         // ───────────────────────────── 단축키 · 카메라 · 진행 자동화
         void Update()
         {
+            if (CRT.CRTDisplayController.Instance != null && CRT.CRTDisplayController.Instance.ConsumesInput) return;
             if (Sim == null || Sim.World == null) return;
             var kb = Keyboard.current;
             bool inRun = _run.RunActive;
@@ -213,10 +216,9 @@ namespace TunnelCrew.Presentation
         }
 
         // ───────────────────────────── 배지 (원본 #obsBadge — 상단 중앙 알약)
-        void OnGUI()
+        public void DrawCrt()
         {
             if (!Active || Sim == null || Sim.World == null || !_run.RunActive || _run.CinematicActive) return;
-            Fonts.ApplySkin();
             _k = Screen.height / 1080f;
             if (_badge == null) _badge = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, richText = true, fontStyle = FontStyle.Bold };
             _badge.fontSize = Mathf.RoundToInt(15 * _k);

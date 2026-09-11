@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-451293765428091110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 404222b2e74d37d4c8d64d811270ddb2, type: 3}
+  m_Name: "CRT \xB7 One final glass"
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.CRT.CRTDisplayFeature
+  m_Active: 1
+  displayShader: {fileID: 4800000, guid: d5cd9e0507b9bbc4da684b07158702bd, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24,7 +38,8 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: -3555484719484374845, guid: 57d7c4c16e2765b47a4d2069b311bffe, type: 3}
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures: []
+  m_RendererFeatures:
+  - {fileID: -451293765428091110}
   m_RendererFeatureMap: 
   m_UseNativeRenderPass: 0
   m_LayerMask:

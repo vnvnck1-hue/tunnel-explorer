@@ -4,6 +4,10 @@ using System.Linq;
 using TunnelCrew.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GUI = TunnelCrew.Presentation.CRT.CrtGui;
+using GUILayout = TunnelCrew.Presentation.CRT.CrtLayout;
+using GUIUtility = TunnelCrew.Presentation.CRT.CrtGuiUtility;
+using Event = TunnelCrew.Presentation.CRT.CrtPointerEvent;
 
 namespace TunnelCrew.Presentation
 {
@@ -11,10 +15,10 @@ namespace TunnelCrew.Presentation
     /// 런 바깥 화면 — 메인 메뉴 · 행성 지도 · 직업 선택 · 귀환 정산(요약 · 성장 지도 · 유물 보관고) · 일시정지.
     /// 원본 <c>#mainMenu · #infRoleModal · #infSettlementModal(3-view) · INF_PLANETS</c>. 허브는 메뉴형(§17.3-8).
     ///
-    /// IMGUI 임시 구현 — HUD 와 같은 1080p 배율 규약. 정식 UGUI 배치는 M5 후반. 좌표는 편집기 값이 아니라 앵커 기준
+    /// CRT CameraSpace UGUI 표현 — HUD 와 같은 1080p 배율 규약. 좌표는 편집기 값이 아니라 앵커 기준
     /// 적당한 위치(2026-09-06 결정). 성장 지도는 원본 GRID(1900×1620) 월드 좌표를 팬·줌으로 본다.
     /// </summary>
-    public sealed class MetaScreens : MonoBehaviour
+    public sealed class MetaScreens : MonoBehaviour, CRT.ICrtScreen
     {
         public enum Screen { MainMenu, Starmap, RoleSelect, Run, Settlement, Pause, Settings }
         public enum SettleView { Summary, Map, Relics }
@@ -71,6 +75,7 @@ namespace TunnelCrew.Presentation
 
         void Start()
         {
+            CRT.CrtSurface.Register(this, 30, true);
             if (_run == null) _run = FindFirstObjectByType<RunBootstrap>();
             _white = Texture2D.whiteTexture;
             // 원본 v7.9.2 메인 메뉴가 쓰는 최신 리소스: 키아트 hero-tunnel-crew-keyart-v5(.webp → png 2048) · 로고 title-tunnel-crew-v2.
@@ -146,6 +151,7 @@ namespace TunnelCrew.Presentation
         // ───────────────────────────── 입력
         void Update()
         {
+            if (CRT.CRTDisplayController.Instance != null && CRT.CRTDisplayController.Instance.ConsumesInput) return;
             // 와이프 진행 — 실시간. cover 끝에 화면을 바꾸고, hold 동안 로딩을 보여주고, reveal 로 걷어낸다
             if (_wipeT >= 0)
             {
@@ -239,9 +245,8 @@ namespace TunnelCrew.Presentation
         }
         Rect _hoverRect;
 
-        void OnGUI()
+        public void DrawCrt()
         {
-            Fonts.ApplySkin();   // Pretendard — 스킨 폰트를 바꾸면 라벨·버튼·텍스트필드 전부 따라온다
             if (Current == Screen.Run) { DrawWipe(); return; }
             _k = UnityEngine.Screen.height / 1080f;
             float W = UnityEngine.Screen.width / _k, H = 1080f;
@@ -261,6 +266,7 @@ namespace TunnelCrew.Presentation
         void DrawWipe()
         {
             if (_wipeT < 0) return;
+            var insetMatrix=GUI.matrix;GUI.matrix=Matrix4x4.identity;
             float sw = UnityEngine.Screen.width, sh = UnityEngine.Screen.height, k = sh / 1080f;
             // 시트 앞머리 0→1 (cover) · 1 (hold) · 뒷머리 0→1 (reveal). 뒤로 가기는 좌우 반전
             float head, tail;
@@ -293,6 +299,7 @@ namespace TunnelCrew.Presentation
                 st.normal.textColor = new Color(.9f, .92f, 1f);
                 GUI.Label(new Rect(0, sh * .5f + s * .62f, sw, 44 * k), $"{RoleNames[(int)_selected]} 출격 — 지층 생성 중", st);
             }
+            GUI.matrix=insetMatrix;
         }
         static float Ease(float t) { t = Mathf.Clamp01(t); return t < .5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) * .5f; }
 
@@ -331,7 +338,7 @@ namespace TunnelCrew.Presentation
         {
             DrawBackdrop(_bg, W, H, .6f);
             GUI.Label(R(80, 60, 900, 60), "<b>설정</b>   <color=#aaa>Esc / Enter 저장 후 메뉴</color>", St(34, FontStyle.Bold));
-            float x = 120, y = 170, w = 900;
+            float x = 120, y = 170, remapX = Mathf.Min(1120,W-760), w = Mathf.Min(900,remapX-x-80);
             Panel(R(x - 20, y - 20, w + 40, 540), .7f);
             var cur = _resolutions[Mathf.Clamp(_resIdx, 0, _resolutions.Length - 1)];
             GUI.Label(R(x, y, 260, 50), "해상도", St(22));
@@ -351,10 +358,11 @@ namespace TunnelCrew.Presentation
             GUI.Label(R(x, y, 260, 50), "효과음", St(22));
             _sfx = GUI.HorizontalSlider(R(x + 280, y + 18, 380, 20), _sfx, 0f, 1f); GUI.Label(R(x + 680, y, 80, 50), $"{_sfx:P0}", St(20));
             y += 80;
-            GUI.Label(R(x, y, w, 60), "<color=#aaa>볼륨은 M7 오디오가 읽습니다. 설정: PlayerPrefs · 세이브: " + MetaStore.Path + "</color>", St(14, FontStyle.Normal, TextAnchor.UpperLeft));
+            GUI.Label(R(x, y, w, 60), "음량과 화면 설정은 이 기기에 저장됩니다.", St(18, FontStyle.Normal, TextAnchor.UpperLeft));
             if (Button(R(x, y + 70, 300, 56), "저장 · 메뉴로   <color=#aaa>Enter</color>")) { SaveSettings(); GoMenu(); }
+            if (Button(R(x + 324, y + 70, 396, 56), "CRT 모니터 설정   F10")) CRT.CRTDisplayController.Instance.SettingsOpen = true;
 
-            DrawGamepadRemap(1120, 170, 700);
+            DrawGamepadRemap(remapX, 170, Mathf.Min(700,W-remapX-80));
         }
 
         /// <summary>게임패드 버튼 리매핑 (M7 잔여). 액션 줄을 클릭하면 캡처 모드 → 패드 버튼 하나를 누르면 배정. 같은 버튼을 다른 액션이 쓰고 있으면 그쪽을 기본값으로 되돌린다.</summary>
@@ -405,8 +413,10 @@ namespace TunnelCrew.Presentation
 
         void DrawBackdrop(Texture2D tex, float W, float H, float dim)
         {
+            var insetMatrix=GUI.matrix;GUI.matrix=Matrix4x4.identity;
             if (tex != null) GUI.DrawTexture(new Rect(0, 0, UnityEngine.Screen.width, UnityEngine.Screen.height), tex, ScaleMode.ScaleAndCrop);
-            Fill(new Rect(0, 0, UnityEngine.Screen.width, UnityEngine.Screen.height), new Color(0, 0, 0, dim));
+            GUI.Panel(new Rect(0,0,UnityEngine.Screen.width,UnityEngine.Screen.height),new Color(0,0,0,dim),Color.clear,0,false);
+            GUI.matrix=insetMatrix;
         }
 
         // ── 메인 메뉴 (원본 #mainMenu: 키아트 + 모드 버튼 + 기록 한 줄)
@@ -518,7 +528,7 @@ namespace TunnelCrew.Presentation
         // ── 일시정지
         void DrawPause(float W, float H)
         {
-            Fill(new Rect(0, 0, UnityEngine.Screen.width, UnityEngine.Screen.height), new Color(0, 0, 0, .55f));
+            DrawBackdrop(null,W,H,.55f);
             Panel(R(W * .5f - 300, H * .5f - 160, 600, 320), .8f);
             GUI.Label(R(W * .5f - 280, H * .5f - 140, 560, 50), "<b>일시정지</b>", St(34, FontStyle.Bold, TextAnchor.MiddleCenter));
             if (Button(R(W * .5f - 240, H * .5f - 60, 480, 64), "계속   <color=#aaa>Esc</color>")) { _run.SetPaused(false); Current = Screen.Run; }
@@ -584,7 +594,7 @@ namespace TunnelCrew.Presentation
             Panel(view, .75f);
             GUI.BeginGroup(view);
             var ev = Event.current;
-            var local = new Vector2(ev.mousePosition.x - view.x, ev.mousePosition.y - view.y);
+            var local = ev.mousePosition;
             bool inside = local.x >= 0 && local.y >= 0 && local.x <= view.width && local.y <= view.height;
             // 카메라: 원본 월드 1900×1620 → 뷰. 기본 줌 .62, 드래그 팬, 휠 줌
             float sc = _mapZoom * _k;

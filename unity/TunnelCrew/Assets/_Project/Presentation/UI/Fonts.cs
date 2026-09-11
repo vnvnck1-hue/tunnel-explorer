@@ -10,7 +10,7 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public static class Fonts
     {
-        static Font _ui, _uiBold, _damage; static bool _loaded;
+        static Font _ui, _uiBold, _damage,_mono; static bool _loaded;
 
         static void Load()
         {
@@ -19,6 +19,7 @@ namespace TunnelCrew.Presentation
             _ui = Resources.Load<Font>("Fonts/Pretendard-Regular");
             _uiBold = Resources.Load<Font>("Fonts/Pretendard-Bold");
             _damage = Resources.Load<Font>("Fonts/ARCO");
+            _mono=Resources.Load<Font>("Fonts/IBMPlexMono-Medium");
             var fallback = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (_ui == null) _ui = fallback;
             if (_uiBold == null) _uiBold = _ui;
@@ -31,6 +32,8 @@ namespace TunnelCrew.Presentation
         public static Font UIBold { get { Load(); return _uiBold; } }
         /// <summary>ARCO — 피해 숫자 전용 (숫자·라틴만 있다. 한글 라벨에 쓰지 말 것).</summary>
         public static Font Damage { get { Load(); return _damage; } }
+        /// <summary>IBM Plex Mono Medium, SIL OFL 1.1. Latin/numeric instrument readouts only.</summary>
+        public static Font Mono { get { Load();return _mono!=null?_mono:_ui; } }
 
         /// <summary>OnGUI 첫 줄에서 호출 — 현재 스킨 폰트를 Pretendard 로.</summary>
         public static void ApplySkin()

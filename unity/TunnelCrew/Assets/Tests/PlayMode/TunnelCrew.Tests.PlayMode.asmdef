@@ -5,6 +5,8 @@
         "TunnelCrew.Sim",
         "TunnelCrew.Data",
         "TunnelCrew.Presentation",
+        "Unity.InputSystem",
+        "UnityEngine.UI",
         "UnityEngine.TestRunner"
     ],
     "includePlatforms": [],

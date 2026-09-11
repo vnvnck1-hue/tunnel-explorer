@@ -5,7 +5,7 @@ namespace TunnelCrew.Presentation
 {
     /// <summary>
     /// 플레이 중에 투영 프리셋을 바꿔 손맛·입체감을 눈으로 비교하는 도구.
-    /// F9 다음 / F8 이전 / F7 라벨 숨기기. 고른 값은 PlayerPrefs 에 남아 다음 실행에도 유지된다.
+    /// F9 다음 / F8 이전 / F4 라벨 표시. 고른 값은 PlayerPrefs 에 남아 다음 실행에도 유지된다.
     ///
     /// 시뮬레이션에는 손대지 않는다 — 바뀌는 것은 화면 좌표뿐이라
     /// 이동·충돌·길찾기·리플레이는 프리셋과 무관하게 같은 결과를 낸다.
@@ -14,7 +14,7 @@ namespace TunnelCrew.Presentation
     {
         const string PrefKey = "tc.projectionPreset";
 
-        bool _showLabel = true;
+        bool _showLabel;
         GUIStyle _style;
 
         void Awake()
@@ -32,14 +32,13 @@ namespace TunnelCrew.Presentation
 
             if (kb.f9Key.wasPressedThisFrame) Apply(IsometricProjection.Next(1));
             else if (kb.f8Key.wasPressedThisFrame) Apply(IsometricProjection.Next(-1));
-            else if (kb.f7Key.wasPressedThisFrame) _showLabel = !_showLabel;
+            else if (kb.f4Key.wasPressedThisFrame) _showLabel = !_showLabel;
         }
 
         void Apply(ProjectionPreset p)
         {
             IsometricProjection.SetPreset(p);
             PlayerPrefs.SetInt(PrefKey, (int)p);
-            _showLabel = true;
         }
 
         void OnGUI()
@@ -57,7 +56,7 @@ namespace TunnelCrew.Presentation
             GUI.Label(new Rect(r.x, r.y + 4f * k, r.width - 10f * k, 26f * k),
                 $"<b>투영 {(int)IsometricProjection.Preset + 1}/{IsometricProjection.PresetCount}</b>  {IsometricProjection.Label(IsometricProjection.Preset)}", _style);
             GUI.Label(new Rect(r.x, r.y + 30f * k, r.width - 10f * k, 26f * k),
-                "<color=#aaa>F9 다음 · F8 이전 · F7 이 표시 숨기기</color>", _style);
+                "<color=#aaa>F9 다음 · F8 이전 · F4 디버그 표시</color>", _style);
         }
     }
 }

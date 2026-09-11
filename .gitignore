@@ -13,3 +13,9 @@ unity/TunnelCrew/Assets/Screenshots.meta
 
 # 파이썬 캐시
 tools/art/__pycache__/
+
+# Isolated Unity editor used for CRT compile/capture checks; canonical Assets are shared.
+unity/.crt-validation/
+
+# Lossless CRT verification frames stay local; commit lightweight review JPGs and measurement reports.
+docs/ui-crt/img/runtime/**/*.png

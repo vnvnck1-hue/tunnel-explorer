@@ -4,6 +4,8 @@
 연관 기획: [`crt-ui-art-direction-plan.md`](crt-ui-art-direction-plan.md)  
 기준 구현: Unity 6.3.15f1 / URP 17.3.0 / 2D Renderer
 
+> 2026-09-12 구현 방향 갱신: 사용자 후속 요청에 따라 모니터 프리셋은 강도 단계가 아니라 Surveyor / Broadcast / Arcade / Relay / Abyss의 서로 다른 5종이다. Off와 Standard / Comfort / Photosensitive 접근성은 모니터와 별도 축으로 저장한다. 아래의 기존 강도 표는 초기 승인 강도를 해석하는 참고이며, 현재 선택 목록은 아니다. Surveyor가 Strong−의 기본 수치를 계승한다. §4와 §7의 잔상 초기값 충돌은 §7의 기본 Off를 우선하고 Abyss에서만 선택적 history RT를 사용한다. 진행 및 검증 근거는 [구현 작업 기록](implementation-worklog.md)을 따른다.
+
 ## 1. 범위와 비범위
 
 ### 범위

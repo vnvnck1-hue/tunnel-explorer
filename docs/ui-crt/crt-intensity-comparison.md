@@ -2,6 +2,8 @@
 
 기준: 필드 원색 유지, 황색 인광은 HUD에만 적용, 월드와 HUD를 합친 최종 컬러 버퍼에 동일한 CRT 패스를 적용한다.
 
+> 이 문서는 초기 강도 시안과 승인 이미지를 보존한 레퍼런스다. 2026-09-12 후속 요청으로 실제 게임 선택지는 서로 다른 방식의 모니터 5종으로 바뀌었다. 현재 프리셋·조작·리소스는 [런타임 안내](crt-display-runtime-guide.md)를 따른다. Surveyor가 Strong− 기준을 계승하되 기본 잔상은 Off이며, 잔상은 Abyss에서만 사용한다.
+
 ## 승인 결정
 
 - 디자인 기준 이미지: [`crt-intensity-02-strong.png`](img/crt-intensity-02-strong.png)

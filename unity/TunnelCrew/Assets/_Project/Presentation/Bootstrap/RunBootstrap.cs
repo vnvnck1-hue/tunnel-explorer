@@ -9,6 +9,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 using SimInput = TunnelCrew.Sim.PlayerInput;
+using GUI = TunnelCrew.Presentation.CRT.CrtGui;
+using GUILayout = TunnelCrew.Presentation.CRT.CrtLayout;
 
 namespace TunnelCrew.Presentation
 {
@@ -21,7 +23,7 @@ namespace TunnelCrew.Presentation
     /// M3: 직업 선택(<see cref="_role"/>), Q/E 스킬, 우클릭 사격, R 재장전, 적·투사체 뷰,
     /// <see cref="Feedback"/> 로 히트스톱·킥·스쿼시. 숫자키 1~4 로 직업을 바꾸며 층을 다시 만든다.
     /// </summary>
-    public sealed class RunBootstrap : MonoBehaviour
+    public sealed partial class RunBootstrap : MonoBehaviour, CRT.ICrtScreen
     {
         [Header("데이터")]
         [Tooltip("비워 두면 Resources 에서 찾는다.")]
@@ -185,6 +187,7 @@ namespace TunnelCrew.Presentation
 
         void Start()
         {
+            CRT.CrtSurface.Register(this, 0);
             if (_tileSet == null) _tileSet = Resources.Load<TileSetAsset>("TileSet_purple");
             if (_monsterSheets == null) _monsterSheets = Resources.Load<MonsterSheetAsset>("MonsterSheets");
             foreach (RoleId r in System.Enum.GetValues(typeof(RoleId)))
@@ -271,6 +274,7 @@ namespace TunnelCrew.Presentation
             };
             Sim.PlayerHurt += e =>
             {
+                CRT.CRTDisplayController.Instance?.SignalHit(Mathf.Clamp01((float)(e.Damage / System.Math.Max(1, Sim.Player.HpMax)) * 2));
                 _feedback?.PlayerHurt((float)e.Damage, (float)Sim.Player.Hp, (float)Sim.Player.HpMax, V(e.HitDir));
                 _combatView?.Text(Sim.Player.Position + new Vec2(0, .64), "-" + (int)System.Math.Round(e.Damage), new Color(1f, .33f, .49f), 20);
                 _fx?.PlayerHurt(V(Sim.Player.Position), V(e.HitDir), _feedback != null ? _feedback.HurtLevel : 1);
@@ -415,7 +419,7 @@ namespace TunnelCrew.Presentation
             Sim.TraitPicked += e => _audio?.CardPick();
             Sim.LeveledUp += e => _audio?.Ready();
             Sim.EscapeChanged += e => { if (e.Phase == EscapePhase.Ready) _audio?.Exit(); else if (e.Phase == EscapePhase.Incoming) _audio?.Warn(); };
-            Sim.BossSpawned += e => { _cine?.Begin(e.Boss); _audio?.UseBoss(); };
+            Sim.BossSpawned += e => { CRT.CRTDisplayController.Instance?.SignalDropout(1); _cine?.Begin(e.Boss); _audio?.UseBoss(); };
             Sim.BossDefeated += e => { _outroAt = e.Boss.Body.Position; _outroR = (float)e.Boss.Body.Radius; _outroFxCd = 0; _outroShakeCd = 0; _audio?.Cache(); _audio?.EndBoss(3.0f, 2.6f); };
             Sim.BossPattern += e =>
             {
@@ -1107,6 +1111,7 @@ namespace TunnelCrew.Presentation
         // ───────────────────────────── 루프
         void Update()
         {
+            if (CRT.CRTDisplayController.Instance != null && CRT.CRTDisplayController.Instance.ConsumesInput) return;
             // 드롭섀도는 셀 단위 dirty 가 없어 전체 Resync 다 — 타일이 여러 개 바뀐 프레임에도 한 번만.
             if (_envDropDirty && _envDropShadow != null) { _envDropDirty = false; _envDropShadow.Resync(null); }
 
@@ -1280,19 +1285,26 @@ namespace TunnelCrew.Presentation
         // 우하단 스킬 슬롯, 하단 엣지 XP 바, 좌측 깊이 라벨. 좌표는 편집기 값이 아니라 앵커 기준 적당한 위치(2026-09-06 결정).
         GUIStyle _sBig, _sMid, _sSmall, _sTitle, _sCard, _sCardBody;
         float _k = 1f, _styleK = -1f;
+        readonly Dictionary<(GUIStyle,int,TextAnchor,bool),GUIStyle> _crtStyleCache=new Dictionary<(GUIStyle,int,TextAnchor,bool),GUIStyle>();
         /// <summary>1080p 기준 좌표 → 실제 픽셀. GUI.matrix 로 늘리면 글자가 뭉개져서 폰트를 k 배로 굽고 좌표를 곱한다.</summary>
         Rect R(float x, float y, float w, float h) => new Rect(x * _k, y * _k, w * _k, h * _k);
         GUIStyle Sz(GUIStyle baseStyle, int px1080, TextAnchor? align = null, bool? wrap = null)
         {
-            var st = new GUIStyle(baseStyle) { fontSize = Mathf.RoundToInt(px1080 * _k) };
-            if (align.HasValue) st.alignment = align.Value;
-            if (wrap.HasValue) st.wordWrap = wrap.Value;
+            int size=Mathf.RoundToInt(px1080*_k);
+            var key=(baseStyle,size,align??baseStyle.alignment,wrap??baseStyle.wordWrap);
+            if(!_crtStyleCache.TryGetValue(key,out var st))
+            {
+                st=new GUIStyle(baseStyle){fontSize=size,alignment=key.Item3,wordWrap=key.Item4};
+                _crtStyleCache[key]=st;
+            }
+            st.normal.textColor=baseStyle.normal.textColor;
             return st;
         }
         void EnsureStyles()
         {
             if (_sBig != null && Mathf.Abs(_styleK - _k) < 0.001f) return;
             _styleK = _k;
+            _crtStyleCache.Clear();
             int F(int px) => Mathf.RoundToInt(px * _k);
             _sBig = new GUIStyle(GUI.skin.label) { fontSize = F(34), fontStyle = FontStyle.Bold, richText = true, alignment = TextAnchor.MiddleCenter };
             _sMid = new GUIStyle(GUI.skin.label) { fontSize = F(22), richText = true, alignment = TextAnchor.MiddleLeft };
@@ -1339,10 +1351,9 @@ namespace TunnelCrew.Presentation
 
         void Panel(Rect r, float alpha = .55f) { GUI.color = new Color(.05f, .04f, .09f, alpha); GUI.DrawTexture(r, _white); GUI.color = Color.white; }
 
-        void OnGUI()
+        public void DrawCrt()
         {
             if (!_showHud || Sim?.World == null || !RunActive || CinematicActive) return;
-            Fonts.ApplySkin();
             // 1920×1080 기준 좌표계 — 창 크기가 달라도 비율이 유지된다. R()/Sz() 가 k 를 곱한다.
             _k = Screen.height / 1080f;
             EnsureStyles();
@@ -1350,123 +1361,12 @@ namespace TunnelCrew.Presentation
 
             var p = Sim.Player; var b = Sim.Build; var roles = Sim.Roles;
 
-            // ── 상단 중앙: 장악도 레일 (원본 #infDomRail) — 크루 아이콘이 보스 아이콘으로 접근
+            if(CRT.CrtSurface.LegacyHud)
             {
-                float railW = 640, railH = 18, x = W * .5f - railW * .5f, y = 34;
-                Panel(R(x - 70, y - 22, railW + 140, 80), .5f);
-                float frac = (float)(Sim.Run.Dominance / Sim.Run.DominanceTarget);
-                Bar(R(x, y, railW, railH), Mathf.Clamp01(frac), new Color(.2f, .16f, .28f), new Color(.78f, .63f, 1f), new Color(.35f, .3f, .5f));
-                // 크루 아이콘 — 원본 dom-crew-icon (비어 있으면 역할 배지로 대체)
-                {
-                    var ico = _crewRailIcon != null ? _crewRailIcon : (_badges.TryGetValue(b.Role, out var bd) ? bd : null);
-                    float px = x + railW * Mathf.Clamp01(frac);
-                    if (ico != null) GUI.DrawTexture(R(px - 26, y - 20, 52, 52), ico, ScaleMode.ScaleToFit);
-                }
-                if (_bossIcon != null)
-                {
-                    GUI.color = Sim.Bosses.Active ? new Color(1f, .33f, .49f) : new Color(1f, 1f, 1f, .9f);
-                    GUI.DrawTexture(R(x + railW - 4, y - 30, 64, 64), _bossIcon, ScaleMode.ScaleToFit);
-                    GUI.color = Color.white;
-                }
-                GUI.Label(R(x - 60, y + 22, railW + 120, 30), $"<b>장악도 {Sim.Run.Dominance:P1}</b> / {Sim.Run.DominanceTarget:P0}   ·   위협 {Sim.Run.Threat:F2}   ·   {Planet.DepthLabel(Sim.Depth)}", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
-                if (Sim.Bosses.Active)
-                {
-                    var bb = Sim.Bosses.Boss;
-                    Bar(R(x, y + 58, railW, 14), (float)bb.HpRatio, new Color(.25f, .08f, .12f), new Color(1f, .33f, .49f));
-                    GUI.Label(R(x, y + 72, railW, 26), $"<color=#ff557d><b>{bb.Def.Name}</b></color>  {bb.Body.Hp:F0} / {bb.Body.HpMax:F0}   장갑 {Sim.Bosses.ArmorAlive()}", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
-                }
+                GUI.OriginalPalette=true;
+                try{DrawLegacyHud(W,H);}finally{GUI.OriginalPalette=false;}
             }
-
-            // ── 좌하단: 바이탈 — 초상화 · HP · 탄창 · 드릴 열
-            {
-                float x = 28, y = H - 200, w = 520, h = 170;
-                Panel(R(x, y, w, h));
-                // 원본 #infVitalsBadge 는 역할 배지(role-badge-*)를 쓴다 — 없을 때만 초상화
-                if (_badges.TryGetValue(b.Role, out var vb)) GUI.DrawTexture(R(x + 12, y + 12, 146, 146), vb, ScaleMode.ScaleToFit);
-                else if (_portraits.TryGetValue(b.Role, out var por)) GUI.DrawTexture(R(x + 12, y + 12, 146, 146), por, ScaleMode.ScaleToFit);
-                float cx = x + 172, cw = w - 190;
-                GUI.Label(R(cx, y + 10, cw, 30), $"<b>{RoleName(b.Role)}</b>  <color=#aaa>Lv {Sim.Xp.Level}</color>{(p.Downed ? "  <color=#ff6060>다운</color>" : p.StunTime > 0 ? "  <color=#ffd36e>기절</color>" : "")}", _sMid);
-                Bar(R(cx, y + 46, cw, 22), (float)(p.Hp / p.HpMax), new Color(.25f, .08f, .1f), p.Hp / p.HpMax < .22 ? new Color(1f, .3f, .3f) : new Color(.95f, .45f, .45f));
-                GUI.Label(R(cx, y + 44, cw, 26), $"  HP {p.Hp:F0} / {p.HpMax:F0}", _sSmall);
-                if (b.RoleHasGun)
-                {
-                    float af = b.IsReloading ? 1f - (float)(b.ReloadLeft / b.ReloadTime) : (float)b.Ammo / b.MagSize;
-                    Bar(R(cx, y + 78, cw, 16), af, new Color(.1f, .18f, .2f), b.IsReloading ? new Color(.5f, .92f, .82f) : new Color(1f, .83f, .43f));
-                    GUI.Label(R(cx, y + 74, cw, 24), b.IsReloading ? $"  재장전 {b.ReloadLeft:F1}s" : $"  탄 {b.Ammo} / {b.MagSize}", _sSmall);
-                }
-                if (b.RoleDigMul > 0)
-                {
-                    Bar(R(cx, y + 104, cw, 12), (float)p.DrillHeat, new Color(.15f, .12f, .12f), p.DrillHeatLock > 0 ? new Color(1f, .3f, .2f) : Color.Lerp(new Color(.9f, .7f, .3f), new Color(1f, .35f, .2f), (float)p.DrillHeat));
-                    GUI.Label(R(cx, y + 118, cw, 24), $"드릴 열 {p.DrillHeat:P0}{(p.DrillHeatLock > 0 ? $"  <color=#ff6060>과열 {p.DrillHeatLock:F1}s</color>" : "")}   예열 {p.DrillWarm:P0}", _sSmall);
-                }
-                GUI.Label(R(cx, y + 140, cw, 24), $"코어 <b>{Sim.Loot.Core}</b>   PULP {Sim.Loot.Pulp}   BLOOM {Sim.Loot.Bloom}", _sSmall);
-            }
-
-            // ── 우하단: 스킬 슬롯 Q / E / Space
-            {
-                float slot = 96, gap = 14, n = 3;
-                float x = W - 28 - (slot * n + gap * (n - 1)), y = H - 200;
-                Panel(R(x - 14, y, slot * n + gap * (n - 1) + 28, 170));
-                void Slot(int i, string key, string name, double cd, double cdMax, bool available)
-                {
-                    float sx = x + i * (slot + gap), sy = y + 14;
-                    var r = R(sx, sy, slot, slot);
-                    GUI.color = available ? new Color(.16f, .14f, .24f) : new Color(.1f, .1f, .12f); GUI.DrawTexture(r, _white);
-                    if (cd > 0 && cdMax > 0) { GUI.color = new Color(0, 0, 0, .6f); GUI.DrawTexture(new Rect(r.x, r.y, r.width, r.height * (float)Math.Min(1, cd / cdMax)), _white); }
-                    GUI.color = Color.white;
-                    GUI.Label(R(sx + 6, sy + 2, 40, 28), $"<b>{key}</b>", _sMid);
-                    GUI.Label(R(sx, sy + slot - 30, slot, 28), cd > 0 ? $"{cd:F1}s" : available ? "준비" : "—", Sz(_sSmall, 17, TextAnchor.MiddleCenter));
-                    GUI.Label(R(sx, sy + slot + 4, slot, 44), name, Sz(_sSmall, 15, TextAnchor.UpperCenter, true));
-                }
-                Slot(0, "Q", QName(b.Role), roles.QCooldown, RoleSystem.QCooldownFor(b.Role), true);
-                Slot(1, "E", EName(b.Role), roles.ECooldown, Math.Max(0.2, RoleSystem.ECooldownFor(b.Role)), RoleSystem.HasE(b.Role));
-                Slot(2, "␣", "대시", p.DashCooldown, SimTuning.DashCooldown, true);
-            }
-
-            // ── 하단 엣지: XP 바
-            {
-                Bar(R(0, H - 8, W, 8), (float)Sim.Xp.Xp / Math.Max(1, Sim.Xp.XpNeed), new Color(.1f, .1f, .14f), new Color(1f, .83f, .43f));
-                GUI.Label(R(W * .5f - 200, H - 40, 400, 28), $"XP {Sim.Xp.Xp} / {Sim.Xp.XpNeed}", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
-            }
-
-            // ── 좌상단: 로그 · 탈출 · 키 가이드
-            {
-                float x = 28, y = 28;
-                Panel(R(x, y, 560, 40 + _log.Count * 26 + (Sim.Escape.Active ? 30 : 0)), .4f);
-                GUI.Label(R(x + 12, y + 6, 540, 28), "WASD 이동 · 좌클릭 드릴 · 우클릭 사격 · R 재장전 · Q/E 스킬 · Space 대시 · X 탈출 · F 손전등 · G 핑 · V 위험 · C 제작 · Enter 채팅", new GUIStyle(_sSmall) { fontSize = Mathf.RoundToInt(14 * _k), normal = { textColor = new Color(.7f, .68f, .75f) } });
-                float ly = y + 34;
-                if (Sim.Escape.Active)
-                {
-                    string esc = Sim.Escape.Phase switch
-                    {
-                        EscapePhase.Placing => "탈출 지점 지정 중 — 좌클릭 확정 · 우클릭 취소",
-                        EscapePhase.Incoming => $"탈출 포트 도착까지 {Mathf.CeilToInt((float)(Sim.Escape.Need - Sim.Escape.Elapsed))}초 — 지점을 사수하세요",
-                        EscapePhase.Ready => $"탈출 포트 도착 — 탑승 {Sim.Escape.BoardProgress:P0}" + (Sim.Crew.EscapeCount() is var ec && ec.HasValue ? $"   생존자 탑승 {ec.Value.boarded + (Sim.Escape.BoardProgress >= 1 ? 1 : 0)} / {ec.Value.total}" : ""),
-                        _ => "탑승 완료",
-                    };
-                    GUI.Label(R(x + 12, ly, 540, 28), $"<color=#ff8da8><b>{esc}</b></color>", _sSmall); ly += 30;
-                }
-                foreach (var line in _log) { GUI.Label(R(x + 12, ly, 540, 26), "<color=#ffd080>· " + line + "</color>", _sSmall); ly += 26; }
-            }
-
-            // ── 우상단: AI 크루 — 각 AI 가 지금 뭘 하는지 (원본 .aiHud). 플레이테스트에서 이게 제일 중요하다
-            if (Sim.Crew.Members.Count > 0)
-            {
-                float rw = 420, rh = 44, x = W - rw - 28, y = 130;
-                for (int i = 0; i < Sim.Crew.Members.Count; i++)
-                {
-                    var m = Sim.Crew.Members[i];
-                    var col = Hex(AiCrewSystem.ColorOf(m.Role));
-                    var rc = R(x, y + i * (rh + 6), rw, rh);
-                    Panel(rc, .62f);
-                    GUI.color = col; GUI.DrawTexture(R(x + 12, y + i * (rh + 6) + 16, 12, 12), _white); GUI.color = Color.white;
-                    GUI.Label(R(x + 32, y + i * (rh + 6), 110, rh), $"<b><color=#{ColorUtility.ToHtmlStringRGB(col)}>{AiCrewSystem.NameOf(m.Role)}</color></b> <color=#ffd36e>Lv{m.Level}</color>", _sSmall);
-                    float hp = Mathf.Clamp01((float)(m.Hp / m.HpMax));
-                    Bar(R(x + 150, y + i * (rh + 6) + 12, 70, 10), hp, new Color(.2f, .12f, .16f), m.Down ? new Color(1f, .33f, .49f) : hp > .5f ? new Color(.5f, .92f, .82f) : hp > .25f ? new Color(1f, .83f, .43f) : new Color(1f, .55f, .66f));
-                    Bar(R(x + 150, y + i * (rh + 6) + 26, 70, 5), Mathf.Clamp01((float)m.Xp / Mathf.Max(1, m.XpNeed)), new Color(.16f, .14f, .22f), new Color(.78f, .63f, 1f));
-                    GUI.Label(R(x + 232, y + i * (rh + 6), rw - 244, rh), m.Down ? "<color=#ff8da8>다운 · 구조 필요</color>" : $"<color=#b8a9d4>{m.StateLabel}</color>", Sz(_sSmall, 15, TextAnchor.MiddleLeft));
-                }
-            }
+            else DrawCrtHud(W, H);
 
             // ── 기절 — 동료의 구조를 기다린다 (원본 playerEnterDowned · infDownedTick)
             if (Sim.PlayerDownedWaiting)
@@ -1541,7 +1441,7 @@ namespace TunnelCrew.Presentation
             }
 
             // 피격 비네트 — Feedback.HurtLevel
-            if (_feedback != null && _feedback.HurtLevel > 0)
+            if (_feedback != null && _feedback.HurtLevel > 0 && CRT.CRTDisplayController.Instance?.Accessibility != CRT.CrtAccessibility.Photosensitive)
             {
                 float a = 0.12f * _feedback.HurtLevel * _feedback.HurtProgress;
                 GUI.color = new Color(1f, 0.15f, 0.1f, a);

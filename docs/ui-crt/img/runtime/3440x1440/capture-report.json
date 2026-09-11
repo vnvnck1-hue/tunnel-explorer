@@ -1,0 +1,277 @@
+{
+    "gpu": "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+    "unity": "6000.3.15f1",
+    "renderApi": "Direct3D12",
+    "quality": "High",
+    "captureMode": "Pipeline native",
+    "pipelineHdrPrecision": "_32Bits",
+    "captureFormat": "B10G11R11_UFloatPack32",
+    "crtSourceFormat": "B10G11R11_UFloatPack32",
+    "historyFormat": "B10G11R11_UFloatPack32",
+    "renderScale": 1.0,
+    "cameraHdr": true,
+    "preserveFramebufferAlpha": false,
+    "captures": [
+        {
+            "name": "title-surveyor",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 21138,
+            "meanLuma": 0.13355140388011933
+        },
+        {
+            "name": "role-select-surveyor",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 13452,
+            "meanLuma": 0.09447801113128662
+        },
+        {
+            "name": "run-01-surveyor",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2636,
+            "meanLuma": 0.04264470562338829
+        },
+        {
+            "name": "run-02-broadcast",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3111,
+            "meanLuma": 0.04552697390317917
+        },
+        {
+            "name": "run-03-arcade",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2616,
+            "meanLuma": 0.04089700058102608
+        },
+        {
+            "name": "run-04-relay",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2967,
+            "meanLuma": 0.043475307524204257
+        },
+        {
+            "name": "run-05-abyss",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2601,
+            "meanLuma": 0.037794820964336398
+        },
+        {
+            "name": "run-00-off",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3160,
+            "meanLuma": 0.04854581877589226
+        },
+        {
+            "name": "crt-settings",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 8810,
+            "meanLuma": 0.047277793288230899
+        },
+        {
+            "name": "run-photosensitive",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3136,
+            "meanLuma": 0.047370873391628268
+        },
+        {
+            "name": "game-settings",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 9193,
+            "meanLuma": 0.08890455961227417
+        },
+        {
+            "name": "craft-wheel",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 4227,
+            "meanLuma": 0.040350738912820819
+        },
+        {
+            "name": "chat-korean",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3695,
+            "meanLuma": 0.044429078698158267
+        },
+        {
+            "name": "trait-choice",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 5701,
+            "meanLuma": 0.04812014847993851
+        },
+        {
+            "name": "boss-intro",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 151,
+            "meanLuma": 0.01948315091431141
+        },
+        {
+            "name": "boss-rail",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3137,
+            "meanLuma": 0.044012170284986499
+        },
+        {
+            "name": "run-result",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 984,
+            "meanLuma": 0.014787289313971997
+        },
+        {
+            "name": "settlement",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 1627,
+            "meanLuma": 0.055550746619701388
+        },
+        {
+            "name": "role-gunner",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2663,
+            "meanLuma": 0.04313166067004204
+        },
+        {
+            "name": "role-scout",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2695,
+            "meanLuma": 0.043073758482933047
+        },
+        {
+            "name": "role-engineer",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2595,
+            "meanLuma": 0.04326571524143219
+        },
+        {
+            "name": "critical-cooldowns",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2266,
+            "meanLuma": 0.0434967577457428
+        },
+        {
+            "name": "abyss-temporal",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2388,
+            "meanLuma": 0.040304847061634067
+        },
+        {
+            "name": "observer-crew",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 3085,
+            "meanLuma": 0.051176879554986957
+        },
+        {
+            "name": "legacy-hud-comparison",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2916,
+            "meanLuma": 0.054119981825351718
+        },
+        {
+            "name": "starmap",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 15406,
+            "meanLuma": 0.0994984358549118
+        },
+        {
+            "name": "growth-map",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 1549,
+            "meanLuma": 0.054644759744405749
+        },
+        {
+            "name": "relic-vault",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 12281,
+            "meanLuma": 0.0708882063627243
+        },
+        {
+            "name": "settlement-summary",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 1627,
+            "meanLuma": 0.05555088073015213
+        },
+        {
+            "name": "pause-menu",
+            "width": 3440,
+            "height": 1440,
+            "amberPixels": 2682,
+            "meanLuma": 0.026963870972394944
+        }
+    ],
+    "timings": [
+        {
+            "monitor": "Surveyor static",
+            "samples": 5677,
+            "medianMs": 0.8079360127449036,
+            "p95Ms": 0.9267200231552124
+        },
+        {
+            "monitor": "Broadcast static",
+            "samples": 253,
+            "medianMs": 0.7813119888305664,
+            "p95Ms": 1.1089919805526734
+        },
+        {
+            "monitor": "Arcade static",
+            "samples": 233,
+            "medianMs": 0.8970239758491516,
+            "p95Ms": 1.0496000051498414
+        },
+        {
+            "monitor": "Relay static",
+            "samples": 239,
+            "medianMs": 0.8529919981956482,
+            "p95Ms": 1.0895359516143799
+        },
+        {
+            "monitor": "Abyss static",
+            "samples": 233,
+            "medianMs": 0.814079999923706,
+            "p95Ms": 1.018880009651184
+        },
+        {
+            "monitor": "Abyss temporal",
+            "samples": 873,
+            "medianMs": 0.8232960104942322,
+            "p95Ms": 0.9062399864196777
+        },
+        {
+            "monitor": "Abyss history copy",
+            "samples": 873,
+            "medianMs": 0.15360000729560853,
+            "p95Ms": 0.16076800227165223
+        }
+    ],
+    "errors": [],
+    "editorIssues": [
+        "ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index\nSystem.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <41d29b352f6a475ab1bf7c6628b82790>:0)\nUnityEditor.Search.SearchDatabase+<EnumerateAll>d__80.MoveNext () (at <ad876a917af646b587aca50f11e5beba>:0)\nSystem.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) (at <80564d689e48448fa2a7101993ee7201>:0)\nSystem.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) (at <80564d689e48448fa2a7101993ee7201>:0)\nUnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () (at <ad876a917af646b587aca50f11e5beba>:0)\nUnityEditor.Search.SearchInit.IndexationOnStartup () (at <ad876a917af646b587aca50f11e5beba>:0)\nUnityEditor.EditorApplication.Internal_CallDelayFunctions () (at <24e9673f49a94c36a282c67d0a0993d2>:0)\n"
+    ],
+    "maxSetupAllocationBytes": 0,
+    "maxGraphAllocationBytes": 0,
+    "maxHistoryBytes": 4953600
+}
