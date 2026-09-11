@@ -28,6 +28,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
 
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/Core2D.hlsl"
+            #include "TunnelCrewImpact.hlsl"
 
             #pragma vertex LitVertex
             #pragma fragment LitFragment
@@ -64,6 +65,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 input.positionOS = UnityFlipSprite(input.positionOS, unity_SpriteProps.xy);
+                input.positionOS = TCApplyImpact(input.positionOS, 1.0);
 
                 Varyings o = CommonLitVertex(input);
                 o.color = input.color * _Color * unity_SpriteColor;
@@ -84,6 +86,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
 
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/Core2D.hlsl"
+            #include "TunnelCrewImpact.hlsl"
 
             #pragma vertex NormalsRenderingVertex
             #pragma fragment NormalsRenderingFragment
@@ -117,6 +120,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 input.positionOS = UnityFlipSprite(input.positionOS, unity_SpriteProps.xy);
+                input.positionOS = TCApplyImpact(input.positionOS, 1.0);
 
                 // 타일맵 청크 메시에는 NORMAL/TANGENT 가 없어 TBN 이 0 이 된다(모든 타일이 어두워지고 노멀맵이 무시됨).
                 // 스프라이트와 같은 기준으로 강제: 카메라를 향한 노멀 · +X 탄젠트 · 바이탄젠트 +Y (w = -1).
@@ -141,6 +145,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
 
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/Core2D.hlsl"
+            #include "TunnelCrewImpact.hlsl"
 
             #pragma vertex UnlitVertex
             #pragma fragment UnlitFragment
@@ -174,6 +179,7 @@ Shader "Tunnel Crew/Tilemap-Lit-Normal"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 input.positionOS = UnityFlipSprite(input.positionOS, unity_SpriteProps.xy);
+                input.positionOS = TCApplyImpact(input.positionOS, 1.0);
 
                 Varyings o = CommonUnlitVertex(input);
                 o.color = input.color *_Color * unity_SpriteColor;

@@ -149,7 +149,9 @@ namespace TunnelCrew.Presentation
         /// <summary>블록 파괴 킥. 원본 brkKickSoft/Hard/Ore.</summary>
         public void BlockBroken(bool ore, bool hard, Vector2 dir)
         {
-            Kick(ore ? 7.6f : hard ? 6.2f : 18.2f, dir);
+            // 카메라 킥을 걸지 않는다. 화면 전체가 흔들리면 캐릭터·바닥까지 같이 움직여
+            // "벽이 맞았다" 가 아니라 "화면이 흔들린다" 로 읽힌다 — 타격감은 벽만 출렁이는
+            // 충격파(ImpactWaveDirector)가 맡는다(2026-09-11 사용자 지적).
             Hitstop(ore ? 78f : hard ? 56f : 40f);
         }
 

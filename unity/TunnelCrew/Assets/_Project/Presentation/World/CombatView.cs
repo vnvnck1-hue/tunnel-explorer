@@ -316,10 +316,10 @@ namespace TunnelCrew.Presentation
                 sh.transform.localPosition = new Vector3(0.18f, -0.18f, 0.01f);   // 외곽선 대용 그림자
                 var tmS = sh.AddComponent<TextMesh>();
                 tmS.anchor = TextAnchor.MiddleCenter; tmS.fontSize = 64; tmS.characterSize = 1f;
-                sh.GetComponent<MeshRenderer>().sortingOrder = 59;
+                TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(sh.GetComponent<MeshRenderer>(), 59);
                 var tm = go.AddComponent<TextMesh>();
                 tm.anchor = TextAnchor.MiddleCenter; tm.fontSize = 64; tm.characterSize = 1f;
-                go.GetComponent<MeshRenderer>().sortingOrder = 60;
+                TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(go.GetComponent<MeshRenderer>(), 60);
                 return new DamageText { Go = go, Mesh = tm, Shadow = tmS };
             }
         }

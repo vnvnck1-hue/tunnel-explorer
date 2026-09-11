@@ -69,13 +69,13 @@ namespace TunnelCrew.Presentation
         {
             var go = new GameObject("t"); go.transform.SetParent(parent, false); go.transform.localPosition = new Vector3(0, y, 0);
             var tm = go.AddComponent<TextMesh>(); tm.font = _font; tm.fontSize = 48; tm.characterSize = size * .1f; tm.anchor = TextAnchor.MiddleCenter; tm.alignment = TextAlignment.Center; tm.fontStyle = FontStyle.Bold;
-            var r = go.GetComponent<MeshRenderer>(); r.sortingOrder = order; if (_font != null) r.sharedMaterial = _font.material;
+            var r = go.GetComponent<MeshRenderer>(); TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(r, order); if (_font != null) r.sharedMaterial = _font.material;
             return tm;
         }
         static SpriteRenderer MakeSprite(Transform parent, Sprite s, Color c, float y, float w, float h, int order)
         {
             var go = new GameObject("s"); go.transform.SetParent(parent, false); go.transform.localPosition = new Vector3(0, y, 0); go.transform.localScale = new Vector3(w, h, 1);
-            var sr = go.AddComponent<SpriteRenderer>(); sr.sprite = s; sr.color = c; sr.sortingOrder = order; return sr;
+            var sr = go.AddComponent<SpriteRenderer>(); sr.sprite = s; sr.color = c; TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(sr, order); return sr;
         }
 
         void Draw(CrewMember m, Item it, float dt)

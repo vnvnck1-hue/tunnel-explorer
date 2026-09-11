@@ -74,6 +74,7 @@ namespace TunnelCrew.Presentation.Visual
         static readonly int IdEmissionColor = Shader.PropertyToID("_EmissionColor");
         static readonly int IdEmissionIntensity = Shader.PropertyToID("_EmissionIntensity");
         static readonly int IdMinLight = Shader.PropertyToID("_MinLight");
+        static readonly int IdImpactWobble = Shader.PropertyToID("_ImpactWobble");
 
         /// <summary>
         /// 이 채널 묶음으로 머티리얼을 만든다. 셰이더를 찾지 못하면 null 을 돌려주고
@@ -115,7 +116,14 @@ namespace TunnelCrew.Presentation.Visual
             m.SetColor(IdEmissionColor, emissionTint);
             m.SetFloat(IdEmissionIntensity, emissionIntensity);
             m.SetFloat(IdMinLight, MinLightFor(profile));
+            // 벽 파괴 충격파는 <b>암반 덩어리만</b> 출렁이게 한다. 바닥·소품·캐릭터가 같이 흔들리면
+            // "화면이 흔들린다" 로 읽히고, "벽이 맞았다" 는 신호가 사라진다(2026-09-11 사용자 지적).
+            m.SetFloat(IdImpactWobble, ImpactWobbleFor());
         }
+
+        /// <summary>이 표면이 충격파를 따라가는가. 벽 윗면·정면만 1, 나머지는 0.</summary>
+        public float ImpactWobbleFor() =>
+            minLightSlot == MinLightSlot.WallTop || minLightSlot == MinLightSlot.WallFront ? 1f : 0f;
 
         public float MinLightFor(WorldVisualProfile profile)
         {

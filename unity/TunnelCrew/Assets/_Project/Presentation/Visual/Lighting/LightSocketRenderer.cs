@@ -41,6 +41,9 @@ namespace TunnelCrew.Presentation.Visual
         public float normalMapHeightCells = -1f;
 
         /// <summary>벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추는가.</summary>
+        [Tooltip("월드 표면만 비춘다(개체 대역 제외). 캐릭터가 든 광원 — 손전등·헤드램프.")]
+        public bool worldSurfacesOnly;
+
         public bool LightsWallTops => mountHeightCells >= SurfaceRules.MinLiftCells;
 
         Light2D _light;
@@ -152,13 +155,16 @@ namespace TunnelCrew.Presentation.Visual
         /// 전역광은 URP 가 레이어별로 따로 관리하므로(주석: "If we need to update this at
         /// runtime make sure we add code to update global lights") 값이 실제로 달라질 때만 쓴다.
         /// </summary>
-        internal static void ApplyLitLayers(Light2D light, bool lightsWallTops = true)
+        internal static void ApplyLitLayers(Light2D light, bool lightsWallTops = true, bool worldSurfacesOnly = false)
         {
             if (light == null) return;
             // 지면 높이 광원은 벽 윗면(WallTop)·전경 cap(FrontStructure)을 비추지 않는다 —
             // 비추면 벽에 높이가 없다는 뜻이 된다(2026-09-10, 조명 소팅 정밀화). 윗면은 전역광과
             // 높이 있는 광원(LightSocket.mountHeightCells ≥ 벽 lift)의 몫이다.
-            var want = lightsWallTops ? VisualLayers.LitLayerIds() : VisualLayers.LitGroundLevelLayerIds();
+            // 캐릭터가 든 광원은 개체 대역을 뺀다 — 그러지 않으면 빛이 캐릭터 위에 얹혀 실루엣이 사라진다.
+            var want = worldSurfacesOnly
+                ? (lightsWallTops ? VisualLayers.LitWorldOnlyLayerIds() : VisualLayers.LitGroundWorldOnlyLayerIds())
+                : (lightsWallTops ? VisualLayers.LitLayerIds() : VisualLayers.LitGroundLevelLayerIds());
             if (want.Length == 0) return;
 
             var have = light.targetSortingLayers;
@@ -251,7 +257,7 @@ namespace TunnelCrew.Presentation.Visual
                     VisualQualityRules.FlashScale(_reducePhotosensitivity));
                 light.intensity = Mathf.Max(0f, s.baseIntensity * k);
                 ApplyNormalQuality(light, s.lightClass, s.normalMapHeightCells);
-                ApplyLitLayers(light, s.LightsWallTops);
+                ApplyLitLayers(light, s.LightsWallTops, s.worldSurfacesOnly);
 
                 s.ShadowOn = false;
                 _ordered.Add(s);

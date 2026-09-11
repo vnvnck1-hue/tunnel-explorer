@@ -35,7 +35,7 @@ namespace TunnelCrew.Presentation
         [SerializeField] int _prespawnEnemies = 4;
 
         [Header("조명")]
-        [SerializeField, Range(0f, 1f)] float _ambientIntensity = 0.16f;
+        [SerializeField, Range(0f, 1f)] float _ambientIntensity = 0.075f;
         [SerializeField] bool _flashlightOn = true;
 
         /// <summary>
@@ -46,10 +46,18 @@ namespace TunnelCrew.Presentation
         /// </summary>
         [Tooltip("코어키퍼 룩 미리보기(R2). 끄면 R1 본선 그대로.")]
         [SerializeField] bool _r2Look = true;
-        static readonly Color R2AmbientColor = new Color(0.62f, 0.50f, 0.76f);   // 랩 AmbientHue. 본선 구값 (0.62, 0.58, 0.80)
-        static readonly Color R2DarkColor = new Color(0.020f, 0.010f, 0.045f, 1f);
-        static readonly Color R2MemoryColor = new Color(0.16f, 0.09f, 0.30f, 1f);
-        const float R2SolidVisibility = 0.5f;
+        static readonly Color R2AmbientColor = new Color(0.45f, 0.52f, 0.92f);   // 차가운 청색. 퍼플은 어둠 오버레이가 든다(2026-09-11)
+        static readonly Color R2DarkColor = new Color(0.040f, 0.018f, 0.095f, 1f);
+        static readonly Color R2MemoryColor = new Color(0.13f, 0.065f, 0.26f, 1f);
+        /// <summary>
+        /// 보이는 <b>고체 칸</b>의 가시도. 어둠 오버레이가 이 값만큼만 걷어내므로 벽 윗면(cap)이
+        /// 어둠에 잠긴다. 정면(front)은 아래 열린 칸 위에 그려지므로 그대로 밝게 남는다 —
+        /// 굴착 경계의 수직면만 읽히는 코어키퍼식 구도가 여기서 나온다.
+        ///
+        /// 레이어 이주 후 이 값을 1 로 우회하고 윗면 전역광(×0.25)에 맡겼는데, 전역광만으로는
+        /// 캐릭터 바로 옆 벽의 윗면까지 또렷하게 읽혀 공간이 납작해졌다(사용자 지적 2026-09-11).
+        /// </summary>
+        const float R2SolidVisibility = 0.22f;
         /// <summary>벽 윗면 전역광 = 앰비언트 × 이 값(랩 프리셋 ⑬ wallTopAmbientScale).</summary>
         const float R2WallTopAmbientScale = 0.25f;
         Light2D _globalTopLight;
@@ -93,12 +101,13 @@ namespace TunnelCrew.Presentation
         /// <paramref name="mountHeight"/> 0 = 지면 광원(벽 윗면을 비추지 않는다). 세기는 이제 <c>baseIntensity</c> 가 진짜 값이다 —
         /// 이후 <c>light.intensity</c> 를 직접 쓰면 다음 LateUpdate 에 덮어써진다.
         /// </summary>
-        void AddSocket(Light2D light, TunnelCrew.Presentation.Visual.LightClass cls, float baseIntensity, float rangeCells, float phase, float mountHeight = 0f)
+        void AddSocket(Light2D light, TunnelCrew.Presentation.Visual.LightClass cls, float baseIntensity, float rangeCells, float phase, float mountHeight = 0f, bool worldOnly = false)
         {
             if (_lightSockets == null || light == null) return;
             if (light.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out _)) return;
             var s = light.gameObject.AddComponent<TunnelCrew.Presentation.Visual.LightSocket>();
             s.lightClass = cls; s.baseIntensity = baseIntensity; s.rangeCells = rangeCells; s.phase = phase; s.mountHeightCells = mountHeight;
+            s.worldSurfacesOnly = worldOnly;
         }
         Transform _envRoot;
         /// <summary>플레이어의 발 위치 앵커(관심 캐릭터). 전경 cap 페이드·가림 실루엣이 이걸 기준으로 동작한다(§6.6).</summary>
@@ -157,6 +166,7 @@ namespace TunnelCrew.Presentation
         CombatView _combatView;
         Feedback _feedback;
         FxSystem _fx;
+        TunnelCrew.Presentation.Juice.ImpactWaveDirector _impactWaves;
         Texture2D _bossIcon, _crewRailIcon; readonly Dictionary<RoleId, Texture2D> _portraits = new Dictionary<RoleId, Texture2D>(), _badges = new Dictionary<RoleId, Texture2D>();
         Texture2D _white;
         Light2D _globalLight, _flashlight, _playerHalo;
@@ -234,6 +244,10 @@ namespace TunnelCrew.Presentation
                 bool hard = e.Type == TileType.Stone || e.Type == TileType.Core;
                 _feedback?.BlockBroken(ore, hard, V(e.HitDir));
                 _fx?.TileBroken(V(WorldGrid.CellCenter(e.Col, e.Row)), e.Type, V(e.HitDir));
+                // 주변 벽이 함께 출렁인다. 원석은 무르게, 암반·코어는 묵직하게.
+                _impactWaves?.Add(
+                    TunnelCrew.Presentation.IsometricProjection.ToRender(V(WorldGrid.CellCenter(e.Col, e.Row))),
+                    hard ? 1.35f : (ore ? 0.8f : 1f));
                 if (e.OpenedExit) { _fx?.BigRing(V(WorldGrid.CellCenter(e.Col, e.Row)), new Color(.78f, .63f, 1f), 2.4f); _combatView?.Text(WorldGrid.CellCenter(e.Col, e.Row) + new Vec2(0, .7), "출구 개방", new Color(.78f, .63f, 1f), 22); }
                 if (e.HadBuriedRelic) _combatView?.Text(WorldGrid.CellCenter(e.Col, e.Row) + new Vec2(0, .46), "묻힌 유물!", new Color(.5f, .92f, .82f), 19);
             };
@@ -678,6 +692,8 @@ namespace TunnelCrew.Presentation
             _enemyView.BossAnimInfo = e => { var b = Sim.Bosses?.Boss; return b != null && b.Body == e ? (b.FireBreathT > 0, b.AnimRate) : (false, 1.0); };
             _combatView = new GameObject("Combat").AddComponent<CombatView>();
             _fx = new GameObject("Fx").AddComponent<FxSystem>();
+            // 벽 파괴 충격파(셰이더 정점 변위). 전역값이라 인스턴스 하나면 모든 벽 재질에 걸린다.
+            _impactWaves = _fx.gameObject.AddComponent<TunnelCrew.Presentation.Juice.ImpactWaveDirector>();
         }
 
         void BuildLighting()
@@ -727,9 +743,9 @@ namespace TunnelCrew.Presentation
             _flashlight.pointLightInnerAngle = 40f;
             _flashlight.pointLightOuterAngle = 56f;
             _flashlight.pointLightInnerRadius = 0.6f;
-            _flashlight.pointLightOuterRadius = 9.36f;
+            _flashlight.pointLightOuterRadius = 4.8f;
             // 노멀맵 조명 모드에서는 평평한 면의 N·L 이 0.3 안팎으로 떨어져 같은 세기면 어둡다 → 1.35 → 2.6. 빛을 마주보는 벽 베벨은 N·L≈1 로 4배 가까이 밝아 림이 선다.
-            _flashlight.intensity = 2.6f;
+            _flashlight.intensity = 5.0f;
             _flashlight.color = new Color(1f, 0.94f, 0.80f);
             // 손전등 그림자는 완전 차단 — 캐릭터 발밑 캐스터(PlayerView)가 벽처럼 또렷한 그림자를 드리운다 (기본 .75 는 앰비언트에 묻혀 거의 안 보였다)
             _flashlight.shadowIntensity = 0.9f; _flashlight.shadowSoftness = 0.35f;   // 1.0 은 경계가 완전 검정 직선이 된다
@@ -739,7 +755,8 @@ namespace TunnelCrew.Presentation
                 _flashlight.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Scout);
             }
             UseNormalMaps(_flashlight, PlayerLightNormalHeightCells);
-            AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.6f, 9.36f, 0.31f);
+            // worldOnly: 손전등 빛이 캐릭터를 덮지 않게 개체 대역을 뺀다 — 빛이 캐릭터 아래로 깔린다.
+            AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 5.0f, 4.8f, 0.31f, 0f, true);
             // 소켓 렌더러가 매 프레임 높이를 되돌리므로 소켓에도 같은 값을 준다.
             if (_flashlight.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out var flashSocket)) flashSocket.normalMapHeightCells = PlayerLightNormalHeightCells;
 
@@ -751,8 +768,8 @@ namespace TunnelCrew.Presentation
             _playerHalo.pointLightInnerAngle = 360f;
             _playerHalo.pointLightOuterAngle = 360f;
             _playerHalo.pointLightInnerRadius = 0.2f;
-            _playerHalo.pointLightOuterRadius = 2.6f;
-            _playerHalo.intensity = 1.4f;   // 노멀맵 모드 보정 (0.9 →)
+            _playerHalo.pointLightOuterRadius = 1.9f;
+            _playerHalo.intensity = 2.4f;   // 노멀맵 모드 보정 (0.9 →) · 반경 축소분 보상(2026-09-11)
             _playerHalo.color = new Color(0.95f, 0.88f, 0.78f);
             // 헤일로는 그림자를 만들지 않는다 — 캐릭터 중심(발 위 0.5칸)에서 발밑 캐스터를 늘 위에서 비춰 "아래로 고정된 마름모 그림자"가 생기던 원인
             _playerHalo.shadowIntensity = 0f;
@@ -791,8 +808,9 @@ namespace TunnelCrew.Presentation
             if (_r2Look)
             {
                 _darkness.SetColors(R2DarkColor, R2MemoryColor);
-                // 레이어가 있으면 벽 윗면 어둡기는 윗면 전역광(×0.25)이 맡는다 — 가시도 흉내는 끈다. 없으면 흉내값.
-                _darkness.SetSolidVisibility(R2Layers ? 1f : R2SolidVisibility);
+                // 벽 윗면 어둡기는 윗면 전역광(×0.25)과 이 가시도가 함께 맡는다.
+                // 전역광만으로는 가까운 벽의 윗면이 또렷하게 남는다(2026-09-11).
+                _darkness.SetSolidVisibility(R2SolidVisibility);
                 if (R2Layers) _darkness.SetSorting(TunnelCrew.Presentation.Visual.VisualLayers.VisionAndGrade, 0);
             }
         }
@@ -846,12 +864,12 @@ namespace TunnelCrew.Presentation
                 var l = go.AddComponent<Light2D>();
                 l.lightType = Light2D.LightType.Point;
                 l.pointLightInnerAngle = 40f; l.pointLightOuterAngle = 56f;
-                l.pointLightInnerRadius = 0.6f; l.pointLightOuterRadius = 8.4f;
+                l.pointLightInnerRadius = 0.6f; l.pointLightOuterRadius = 4.2f;
                 l.intensity = 2.0f;   // 노멀맵 모드 보정 (1.1 →)
                 l.color = new Color(1f, 0.94f, 0.80f);
                 l.shadowIntensity = 0.9f; l.shadowSoftness = 0.35f;   // 서로의 손전등이 캐릭터 그림자를 만든다
                 UseNormalMaps(l);
-                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.0f, 8.4f, 0.5f + 0.17f * _crewLights.Count);
+                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Scout, 3.6f, 4.2f, 0.5f + 0.17f * _crewLights.Count, 0f, true);
                 _crewLights.Add(l);
             }
             for (int i = 0; i < _crewLights.Count; i++)
@@ -1046,7 +1064,7 @@ namespace TunnelCrew.Presentation
                 l.pointLightInnerAngle = 360f;
                 l.pointLightOuterAngle = 360f;
                 l.pointLightInnerRadius = 0.4f;
-                l.pointLightOuterRadius = 5.2f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 빛은 더 넓게 퍼진다.
+                l.pointLightOuterRadius = 3.0f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 넓히면 "드러난 반경 : 밝은 반경" 비율이 무너진다(2026-09-11).
                 l.intensity = 1.1f;
                 l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
                 if (_r2Look)
@@ -1055,7 +1073,7 @@ namespace TunnelCrew.Presentation
                     l.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
                 }
                 UseNormalMaps(l);
-                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, 1.1f, 5.2f, 0.13f + 0.21f * (_lamps.Count % 7));
+                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, 3.0f, 3.0f, 0.13f + 0.21f * (_lamps.Count % 7));
                 _lamps.Add(l);
                 AttachTorch(go.transform);
             }

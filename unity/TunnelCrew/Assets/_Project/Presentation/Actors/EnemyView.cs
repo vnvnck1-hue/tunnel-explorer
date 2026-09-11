@@ -214,6 +214,9 @@ namespace TunnelCrew.Presentation
             it.Body = Make("Body", 29, null, Color.white);
             it.HpBg = Make("HpBg", 31, MakeSquare(), new Color(0, 0, 0, 0.6f));
             it.HpBar = Make("HpBar", 32, MakeSquare(), new Color(0.95f, 0.35f, 0.35f));
+            // 체력바만 정보 층으로 올린다 — 몸체·그림자는 개체 대역에 남아야 벽과의 앞뒤가 맞다.
+            TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(it.HpBg, 31);
+            TunnelCrew.Presentation.Visual.VisualLayers.ApplyInfoSorting(it.HpBar, 32);
             var lg = new GameObject("Windup"); lg.transform.SetParent(go.transform, false);
             it.Windup = lg.AddComponent<LineRenderer>();
             it.Windup.positionCount = 2; it.Windup.useWorldSpace = true;

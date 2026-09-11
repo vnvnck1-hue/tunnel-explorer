@@ -37,6 +37,8 @@ CBUFFER_START(UnityPerMaterial)
     half _DarkStrength;
     half _DarkKnee;
     half _DarkCurve;
+    // 벽 파괴 충격파를 이 표면이 얼마나 따라가는가(0 = 고정). 벽 1, 바닥은 낮게.
+    half _ImpactWobble;
 CBUFFER_END
 
 #endif // TUNNEL_CREW_LIT_2D_PROPS_INCLUDED

@@ -127,6 +127,43 @@ namespace TunnelCrew.Presentation.Visual
             WorldEntity,
         };
 
+        /// <summary>
+        /// 빛이 닿아야 하는 <b>월드 표면만</b> — 개체 대역(<see cref="UnlayeredDefault"/> ·
+        /// <see cref="WorldEntity"/>)을 뺀 것이다.
+        ///
+        /// 손전등처럼 <b>캐릭터가 들고 있는</b> 광원에 쓴다. 개체 대역까지 비추면 자기를 든 캐릭터가
+        /// 빛에 씻겨 실루엣이 사라지고, 빛이 캐릭터 위에 얹힌 것처럼 보인다. 월드만 비추면 빛이
+        /// 캐릭터 <b>아래로</b> 깔려 "내가 비추고 있다" 로 읽힌다(2026-09-11 사용자 지적).
+        /// </summary>
+        public static readonly string[] LitWorldOnly =
+        {
+            GroundBase,
+            GroundDetail,
+            GroundDecal,
+            BackStructure,
+            WallTop,
+            FrontStructure,
+        };
+
+        /// <summary><see cref="LitWorldOnly"/> 의 Sorting Layer ID.</summary>
+        public static int[] LitWorldOnlyLayerIds() => IdsOf(LitWorldOnly);
+
+        /// <summary>
+        /// <see cref="LitWorldOnly"/> 에서 높이 있는 면까지 뺀 것 — <b>지면 높이 광원이 월드만</b> 비출 때.
+        /// 손전등이 여기 해당한다: 벽 윗면을 비추면 벽에 높이가 없다는 뜻이 되고, 개체 대역을 비추면
+        /// 든 캐릭터가 씻긴다.
+        /// </summary>
+        public static readonly string[] LitGroundWorldOnly =
+        {
+            GroundBase,
+            GroundDetail,
+            GroundDecal,
+            BackStructure,
+        };
+
+        /// <summary><see cref="LitGroundWorldOnly"/> 의 Sorting Layer ID.</summary>
+        public static int[] LitGroundWorldOnlyLayerIds() => IdsOf(LitGroundWorldOnly);
+
         /// <summary><see cref="LitGroundLevel"/> 의 Sorting Layer ID.</summary>
         public static int[] LitGroundLevelLayerIds() => IdsOf(LitGroundLevel);
 
@@ -199,6 +236,26 @@ namespace TunnelCrew.Presentation.Visual
         /// <c>SortingLayer.NameToID</c> 로 판정하지 않는다 — 그 함수는 인덱스가 아니라
         /// uniqueID 를 돌려주므로, "없음"과 "ID 가 0 인 레이어"를 구분할 수 없다.
         /// </summary>
+        /// <summary>
+        /// 정보 표시(데미지 숫자 · 이름표 · 체력바)를 월드 위에 올린다.
+        ///
+        /// 이 요소들은 <c>sortingOrder</c> 만 주고 레이어를 지정하지 않아 <c>Default</c> 에 남아 있었다.
+        /// <c>Default</c> 는 개체 대역이라 <see cref="FrontStructure"/> 로 그려지는 벽 캡보다 아래이고,
+        /// 어둠 오버레이(<see cref="VisionAndGrade"/>)보다도 아래다. 그래서 벽 윗면에 가려지고 어둠에
+        /// 눌렸다(2026-09-11 사용자 지적). 정보는 언제나 월드 위에 있어야 한다.
+        ///
+        /// 화면 UI 는 <see cref="UI"/> 가 따로 쓰므로 여기는 <see cref="WorldOverlay"/> 다 —
+        /// 월드 좌표를 따라가되 무엇에도 가리지 않는 층.
+        /// </summary>
+        /// <param name="renderer">대상 렌더러. null 이면 아무 것도 하지 않는다.</param>
+        /// <param name="order">같은 층 안에서의 순서.</param>
+        public static void ApplyInfoSorting(UnityEngine.Renderer renderer, int order)
+        {
+            if (renderer == null) return;
+            if (Exists(WorldOverlay)) renderer.sortingLayerName = WorldOverlay;
+            renderer.sortingOrder = order;
+        }
+
         public static bool Exists(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;

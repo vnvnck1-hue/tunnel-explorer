@@ -40,6 +40,16 @@ namespace TunnelCrew.Presentation
                  "랩은 정면·윗면을 레이어로 나누므로 1 을 쓴다.")]
         [SerializeField, Range(0f, 1f)] float _solidVisibility = 1f;
 
+        /// <summary>
+        /// 굴착 경계에 <b>맞닿은</b> 고체 칸의 가시도 배율. 벽면과 이어지는 윗면이 여기에 해당한다.
+        /// 1 보다 크면 경계 쪽 윗면이 안쪽보다 밝아져, 평평한 검정이 아니라 <b>면이 꺾이는 그라데이션</b>
+        /// 으로 읽힌다. 남쪽(우리가 정면을 보는 방향)이 열린 칸은 더 크게 받는다.
+        /// </summary>
+        [SerializeField, Range(1f, 6f)] float _solidEdgeBoost = 2.6f;
+
+        /// <summary>경계에 닿지 않은 안쪽 고체 칸의 배율. 깊을수록 검게 잠긴다.</summary>
+        [SerializeField, Range(0f, 1f)] float _solidInteriorScale = 0.35f;
+
         /// <summary>보이는 벽 칸의 가시도(위 필드 주석).</summary>
         public void SetSolidVisibility(float v) => _solidVisibility = Mathf.Clamp01(v);
 
@@ -208,6 +218,28 @@ namespace TunnelCrew.Presentation
         }
 
         /// <summary>
+        /// 고체 칸이 굴착 경계에 얼마나 가까운가. 경계에 닿으면 &gt;1(밝게), 아니면 안쪽 배율.
+        ///
+        /// 남쪽이 열린 칸을 가장 크게 본다 — 탑다운에서 우리가 마주 보는 면이 그쪽이고,
+        /// 그 위의 윗면이 정면과 이어지는 부분이라 여기서 밝기가 풀려야 입체로 읽힌다.
+        /// </summary>
+        float SolidEdgeFactor(int c, int r)
+        {
+            if (_solidEdgeBoost <= 1f) return 1f;
+            bool south = !SolidAt(c, r - 1);
+            if (south) return _solidEdgeBoost;
+            if (!SolidAt(c, r + 1) || !SolidAt(c - 1, r) || !SolidAt(c + 1, r))
+                return 1f + (_solidEdgeBoost - 1f) * 0.55f;
+            return _solidInteriorScale;
+        }
+
+        bool SolidAt(int c, int r)
+        {
+            if (c < 0 || r < 0 || c >= _cols || r >= _rows) return true;   // 맵 밖은 고체로 본다
+            return _los.IsSolid(c, r);
+        }
+
+        /// <summary>
         /// 원본 updateLosVisual() — 지수 보간. 나타나는 쪽이 빠르고 사라지는 쪽이 느리다.
         /// </summary>
         void UpdateTexture(float dt)
@@ -222,10 +254,16 @@ namespace TunnelCrew.Presentation
                 {
                     int k = r * _cols + c;
 
-                    float visTarget = _los.Visible[k] != 0
-                        ? (_solidVisibility < 1f && _los.IsSolid(c, r) ? _solidVisibility : 1f)
-                        : 0f;
+                    // 고체 칸(벽)은 시야·기억 <b>양쪽</b>에서 감쇠한다. 기억에만 감쇠가 없으면
+                    // 한 번 지나간 벽의 윗면이 탐색 잔상으로 계속 또렷하게 읽혀, 파낸 통로가
+                    // 아니라 지형도처럼 보인다(2026-09-11 사용자 지적).
+                    bool solid = _solidVisibility < 1f && _los.IsSolid(c, r);
+                    // 경계에 닿은 윗면은 밝게, 안쪽은 검게 — 셀 단위 두 단계를 만들고
+                    // 셰이더의 1.35칸 9탭 필터가 이를 부드러운 그라데이션으로 푼다.
+                    float solidVis = solid ? _solidVisibility * SolidEdgeFactor(c, r) : 0f;
+                    float visTarget = _los.Visible[k] != 0 ? (solid ? solidVis : 1f) : 0f;
                     float memTarget = _los.MemoryValue(c, r) / 255f;
+                    if (solid) memTarget *= solidVis;
 
                     _visSmooth[k] = Mathf.Lerp(_visSmooth[k], visTarget,
                         visTarget > _visSmooth[k] ? riseK : fallK);
