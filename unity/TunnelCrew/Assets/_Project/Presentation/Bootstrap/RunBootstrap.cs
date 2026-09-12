@@ -143,6 +143,45 @@ namespace TunnelCrew.Presentation
 
         /// <summary>메뉴에서 출격. 층을 만들고 HUD 를 켠다.</summary>
         public void LaunchRun(RoleId role, ExpeditionObjectiveId objective = ExpeditionObjectiveId.Breach, EquipmentVariant equipment = EquipmentVariant.Standard, RiskContractId contract = RiskContractId.None) { _objective = objective; _equipment = equipment; _contract = contract; SwitchRole(role); RunActive = true; Paused = false; _audio?.UseTunnel(); _audio?.RunStart(); }
+        /// <summary>처음 실행하는 플레이어를 「응답 없는 4번 갱도」로 보낸다.</summary>
+        public void LaunchFtue()
+        {
+            RunActive = true;
+            Paused = false;
+            Time.timeScale = 1f;
+            _observer?.Exit("FTUE 시작");
+            _audio?.StopAll();
+            _ftue?.Begin();
+        }
+
+        /// <summary>역할 선택 직후 본편 Sim을 FTUE용 고정 갱도로 재구성한다.</summary>
+        public FtueDirector.WorldLayout PrepareFtueRole(RoleId role)
+        {
+            _objective = ExpeditionObjectiveId.Breach;
+            _equipment = EquipmentVariant.Standard;
+            _contract = RiskContractId.None;
+            SwitchRole(role);
+            Sim.Enemies.Clear();
+            Sim.Enemies.Cap = 0;
+            Sim.Enemies.SpawnInterval = 999;
+            Sim.Crew.Clear();
+            Sim.Enemies.IncomingDamageMul = () => .45;
+            var layout = FtueDirector.BuildAuthoredWorld(Sim);
+            RebindWorld();
+            RunActive = true;
+            Paused = false;
+            _audio?.UseTunnel();
+            return layout;
+        }
+
+        /// <summary>마지막 컷 뒤 결과를 확정하고 정산 화면으로 이어 준다.</summary>
+        public void FinishFtue()
+        {
+            Sim.Enemies.Clear();
+            Sim.EndRun(true, "응답 없는 4번 갱도 생환");
+            if (ResultDismissed != null) ResultDismissed.Invoke();
+            else SuspendRun();
+        }
         /// <summary>런을 내려놓고 메뉴로 — Sim 은 남겨 두고(배경으로 보인다) 틱과 HUD 만 멈춘다.</summary>
         public void SuspendRun() { RunActive = false; Paused = false; Time.timeScale = 1f; _audio?.UseLobby(); _audio?.DrillKill(); _cine?.Stop(); }
         public void SetPaused(bool on) { Paused = on; }
@@ -162,6 +201,7 @@ namespace TunnelCrew.Presentation
         TeamOverlay _team;
         AudioDirector _audio;
         BossIntroCinematic _cine;
+        FtueDirector _ftue;
         CeilingFx _ceiling;
         float _stepAcc; bool _wasDigging, _wasLocked; Vec2 _outroAt; float _outroR, _outroFxCd, _outroShakeCd;
         float _bossShakeCd, _bossDustCd;   // 보스 이동/돌진 흔들림·먼지 주기 (원본 bossMovementShake · bossSpawnDashDust)
@@ -238,6 +278,8 @@ namespace TunnelCrew.Presentation
 
             _rig.Bind(Sim.World, () => Sim.Player);
             Prespawn();
+            _ftue = GetComponent<FtueDirector>() ?? gameObject.AddComponent<FtueDirector>();
+            _ftue.Bind(this);
         }
 
         void OnDestroy() { Time.timeScale = 1f; }
@@ -1142,7 +1184,7 @@ namespace TunnelCrew.Presentation
             bool obs = _observer != null && _observer.Active;
             if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && _team != null && _team.HandleEscape()) { }
             else if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && obs && _observer.HandleEscape()) { }   // 관전 중 Esc = 이 캐릭터 조종
-            else if (kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
+            else if ((_ftue == null || !_ftue.Active) && kbEsc != null && kbEsc.escapeKey.wasPressedThisFrame && Sim.Phase == GamePhase.Playing && !Sim.Traits.HasOffer)
             {
                 Paused = !Paused;
                 if (Paused) PauseMenuRequested?.Invoke();
@@ -1158,7 +1200,7 @@ namespace TunnelCrew.Presentation
                 else if (kb.digit3Key.wasPressedThisFrame) Sim.PickTrait(2);
                 else if (kb.tabKey.wasPressedThisFrame && Sim.RerollTraits()) Log($"다시 뽑기 (남은 {Sim.Traits.Rerolls})");
             }
-            else if (kb != null && !obs && !Sim.Traits.HasOffer)
+            else if (kb != null && !obs && !Sim.Traits.HasOffer && (_ftue == null || !_ftue.Active))
             {
                 if (kb.digit1Key.wasPressedThisFrame) SwitchRole(RoleId.Driller);
                 else if (kb.digit2Key.wasPressedThisFrame) SwitchRole(RoleId.Gunner);
@@ -1193,7 +1235,10 @@ namespace TunnelCrew.Presentation
                 if (ResultDismissed != null) ResultDismissed.Invoke(); else SwitchRole(_role);
             }
 
-            if (!CinematicActive) Sim.Advance(Time.deltaTime, _observer != null ? _observer.Drive(ReadInput(), Time.deltaTime) : ReadInput());
+            var frameInput = ReadInput();
+            if (_ftue != null && _ftue.Active) frameInput = _ftue.FilterInput(frameInput);
+            if (!CinematicActive && (_ftue == null || !_ftue.BlocksSimulation))
+                Sim.Advance(Time.deltaTime, _ftue != null && _ftue.Active ? frameInput : (_observer != null ? _observer.Drive(frameInput, Time.deltaTime) : frameInput));
             else Sim.RefreshVision();   // 월드는 멈춰도 보스 시야원은 열어야 카메라가 보스를 비춘다 (원본은 렌더 루프가 LOS 를 돌렸다)
             TickBossShake(Time.deltaTime);
             TickAudioState();
@@ -1375,7 +1420,7 @@ namespace TunnelCrew.Presentation
 
         public void DrawCrt()
         {
-            if (!_showHud || Sim?.World == null || !RunActive || CinematicActive) return;
+            if (!_showHud || Sim?.World == null || !RunActive || CinematicActive || (_ftue != null && _ftue.Active)) return;
             // 1920×1080 기준 좌표계 — 창 크기가 달라도 비율이 유지된다. R()/Sz() 가 k 를 곱한다.
             _k = Screen.height / 1080f;
             EnsureStyles();

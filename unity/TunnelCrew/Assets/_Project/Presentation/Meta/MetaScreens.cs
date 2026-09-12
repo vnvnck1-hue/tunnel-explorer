@@ -131,6 +131,7 @@ namespace TunnelCrew.Presentation
         void GoRoleSelect() => Wipe(() => Current = Screen.RoleSelect);
         void GoSettings() => Wipe(() => Current = Screen.Settings);
         void Launch() => Wipe(() => { AudioDirector.Instance?.Deploy(); _run.LaunchRun(_selected, (ExpeditionObjectiveId)_missionIdx, _equipment[(int)_selected], (RiskContractId)_contractIdx); Current = Screen.Run; }, loading: true);
+        void LaunchFtue() => Wipe(() => { _run.LaunchFtue(); Current = Screen.Run; }, loading: true);
         /// <summary>관전 출격 — 선택 직업이 AI 리더, 나머지 3직업이 AI 크루 (원본 OBS.enter → infLaunchFromRoleSelect).</summary>
         void LaunchObserver() => LaunchObserver(_selected);
         /// <summary>리더 직업을 지정해 관전 출격 (스모크·외부 진입용). 출격은 항상 이 직업으로 나가야 편성(나머지 3직업)과 어긋나지 않는다.</summary>
@@ -174,10 +175,14 @@ namespace TunnelCrew.Presentation
             switch (Current)
             {
                 case Screen.MainMenu:
-                    if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA) GoStarmap();
-                    else if (kb.digit2Key.wasPressedThisFrame) GoRoleSelect();   // 무한 모드 직행
-                    else if (kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
-                    else if (kb.digit4Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
+                    bool ftueDone = FtueDirector.HasCompleted;
+                    if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA)
+                    {
+                        if (ftueDone) GoStarmap(); else LaunchFtue();
+                    }
+                    else if (ftueDone && kb.digit2Key.wasPressedThisFrame) GoRoleSelect();   // 무한 모드 직행
+                    else if (ftueDone && kb.digit3Key.wasPressedThisFrame) OpenSettlement(fromMenu: true);
+                    else if (ftueDone && kb.digit4Key.wasPressedThisFrame) OpenSettlement(fromMenu: true, SettleView.Relics);
                     else if (kb.digit5Key.wasPressedThisFrame) GoSettings();
                     break;
                 case Screen.Settings:
@@ -450,14 +455,21 @@ namespace TunnelCrew.Presentation
             GUI.Label(R(84, 296, 900, 36), "DIG · DESCEND · RETURN   <color=#aaa>4직업 크루 · 지층 돌파 · 이상지대 무한 하강</color>", St(18, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(.8f, .78f, .85f)));
             float x = 80, y = 346, w = 560, h = 64, gap = 12;   // 7개 버튼이 하단 기록 패널(H-120) 위에서 끝나도록
             string N(int n) => "<size=" + Mathf.RoundToInt(15 * _k) + ">" + n.ToString("00") + "</size>   ";
-            if (Button(R(x, y, w, h), N(1) + "출격 — 행성 지도   <color=#aaa>Enter</color>")) GoStarmap(); y += h + gap;
+            bool ftueDone = FtueDirector.HasCompleted;
+            string firstRun = ftueDone ? "출격 — 행성 지도" : "첫 원정 — 응답 없는 4번 갱도";
+            if (Button(R(x, y, w, h), N(1) + firstRun + "   <color=#aaa>Enter</color>"))
+            {
+                if (ftueDone) GoStarmap(); else LaunchFtue();
+            }
+            y += h + gap;
             // 무한 모드 직행 — 원본 #menuInfinite (tcLaunchInfScene → 직업 선택 → 바로 런). 행성 지도를 건너뛴다는 점만 다르고 규칙은 같다
-            if (Button(R(x, y, w, h), N(2) + "무한 모드 — 바로 출격   <color=#aaa>2</color>")) GoRoleSelect(); y += h + gap;
-            if (Button(R(x, y, w, h), N(3) + "성장 지도 · 영구 노드   <color=#aaa>3</color>")) OpenSettlement(true); y += h + gap;
-            if (Button(R(x, y, w, h), N(4) + "유물 보관고   <color=#aaa>4</color>")) { OpenSettlement(true); _view = SettleView.Relics; } y += h + gap;
+            string locked = "   <color=#777>첫 원정 완료 후</color>";
+            if (Button(R(x, y, w, h), N(2) + "무한 모드 — 바로 출격   <color=#aaa>2</color>" + (ftueDone ? "" : locked), ftueDone)) GoRoleSelect(); y += h + gap;
+            if (Button(R(x, y, w, h), N(3) + "성장 지도 · 영구 노드   <color=#aaa>3</color>" + (ftueDone ? "" : locked), ftueDone)) OpenSettlement(true); y += h + gap;
+            if (Button(R(x, y, w, h), N(4) + "유물 보관고   <color=#aaa>4</color>" + (ftueDone ? "" : locked), ftueDone)) { OpenSettlement(true); _view = SettleView.Relics; } y += h + gap;
             if (Button(R(x, y, w, h), N(5) + "설정   <color=#aaa>5</color>")) GoSettings(); y += h + gap;
             // 관전 모드 — 원본 #menuObserver (observer.js 가 .modeGrid 에 주입, 원클릭 출격). 리더는 마지막으로 고른 직업(기본 드릴러)
-            if (Button(R(x, y, w, h), N(6) + "관전 모드   <color=#7febd0>4직업 완전 자동</color>", true, new Color(.22f, .45f, .4f))) LaunchObserver(); y += h + gap;
+            if (Button(R(x, y, w, h), N(6) + "관전 모드   <color=#7febd0>4직업 완전 자동</color>" + (ftueDone ? "" : locked), ftueDone, new Color(.22f, .45f, .4f))) LaunchObserver(); y += h + gap;
             if (Button(R(x, y, w, h), N(7) + "종료", true, new Color(.6f, .6f, .65f))) Application.Quit(); y += h + gap;
             Panel(R(x, H - 120, 900, 70), .55f);
             int nodes = PermanentNodes.All.Count(n => meta.RankOf(n.Id) > 0);

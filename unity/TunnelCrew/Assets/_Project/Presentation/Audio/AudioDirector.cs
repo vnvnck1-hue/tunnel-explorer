@@ -173,6 +173,56 @@ namespace TunnelCrew.Presentation
         public void Rumble() => Proc("rumble", () => new[] { T(41, 1.5f, .13f, "sfx", W.Sine, 33, 190), T(63, 1.2f, .07f, "sfx", W.Triangle, 47, 300) });
         public void Roar() { if (_roar == null || Muted) return; var s = Free(); s.clip = _roar; s.pitch = 1; s.volume = Mathf.Clamp01(SfxBus); s.Play(); }
 
+        /// <summary>
+        /// FTUE 컷만화 전용 음형. 의미를 담은 음성이 아니라 발신자의 리듬·음역만
+        /// 구분하는 비언어 무전음이다. 각 컷의 첫 프레임에 한 번만 호출한다.
+        /// </summary>
+        public void FtueCue(string cue)
+        {
+            switch (cue)
+            {
+                case "panel":
+                    Proc("ftue_panel", () => new[] { H(.09f, 1700, 430, .075f, "ui", 1.2f, 1.15f, F.Bandpass), T(92, .12f, .045f, "ui", W.Triangle, 58, 420) });
+                    break;
+                case "impact":
+                    Proc("ftue_impact", () => new[] { H(.75f, 520, 38, .32f, "sfx", .42f, .36f, F.Lowpass), T(39, .95f, .22f, "sfx", W.Sine, 28, 150), H(.24f, 3200, 620, .11f, "sfx", 1.4f, 1.25f, F.Bandpass, .035f) });
+                    break;
+                case "control":
+                    Proc("ftue_control", () => new[] { H(.14f, 3300, 640, .035f, "ui", 1.5f, 1, F.Bandpass), T(690, .105f, .06f, "ui", W.Sine, 0, 2500, .004f, .025f), T(870, .11f, .05f, "ui", W.Sine, 0, 2900, .004f, .16f) });
+                    break;
+                case "morae":
+                    Proc("ftue_morae", () => new[] { H(.12f, 2400, 390, .03f, "ui", 1.1f, 1, F.Bandpass), T(238, .09f, .065f, "ui", W.Triangle, 0, 1200, .006f, .018f), T(204, .085f, .055f, "ui", W.Triangle, 0, 1100, .006f, .13f), T(264, .12f, .05f, "ui", W.Triangle, 0, 1300, .006f, .24f) });
+                    break;
+                case "captain":
+                    Proc("ftue_captain", () => new[] { H(.24f, 1850, 240, .055f, "ui", .72f, .8f, F.Bandpass), T(146, .18f, .07f, "ui", W.Sawtooth, 112, 720, .015f, .025f), T(174, .16f, .05f, "ui", W.Triangle, 126, 820, .012f, .19f) });
+                    break;
+                case "mimic":
+                    Proc("ftue_mimic", () => new[] { H(.52f, 2200, 120, .08f, "alert", .5f, .55f, F.Bandpass), T(132, .5f, .065f, "alert", W.Sawtooth, 238, 680, .08f), T(198, .65f, .045f, "alert", W.Triangle, 109, 760, .12f, .11f), T(49, .8f, .1f, "sfx", W.Sine, 37, 170) });
+                    break;
+                case "beacon":
+                    Proc("ftue_beacon", () => new[] { T(740, .19f, .075f, "alert", W.Sine, 0, 2600), T(740, .13f, .065f, "alert", W.Sine, 0, 2600, .006f, .32f), T(920, .28f, .075f, "alert", W.Sine, 0, 3000, .006f, .53f), H(.82f, 2800, 500, .025f, "alert", 1.2f, 1, F.Bandpass) });
+                    break;
+                case "knock":
+                    Proc("ftue_knock", () => new[] { H(.13f, 310, 54, .13f, "brk", .5f, .48f, F.Lowpass), T(68, .18f, .08f, "brk", W.Sine, 45, 220), H(.12f, 290, 48, .1f, "brk", .45f, .43f, F.Lowpass, .34f), T(63, .16f, .065f, "brk", W.Sine, 42, 210, .006f, .34f) });
+                    break;
+                case "scan":
+                    Proc("ftue_scan", () => new[] { T(420, .28f, .055f, "ui", W.Sine, 930, 2400), T(210, .32f, .04f, "ui", W.Triangle, 465, 1300, .006f, .08f), H(.3f, 2600, 700, .035f, "ui", 1.8f, 1, F.Bandpass) });
+                    break;
+                case "collapse":
+                    Proc("ftue_collapse", () => new[] { H(1.25f, 460, 32, .25f, "sfx", .36f, .3f, F.Lowpass), T(34, 1.4f, .17f, "sfx", W.Sine, 25, 130), H(.55f, 2400, 180, .075f, "sfx", .65f, .68f, F.Bandpass, .08f) });
+                    break;
+                case "door":
+                    Proc("ftue_door", () => new[] { H(.46f, 820, 65, .19f, "sfx", .55f, .55f, F.Lowpass), T(72, .52f, .13f, "sfx", W.Sine, 38, 240), H(.1f, 2500, 500, .08f, "sfx", 1.5f, 1.2f, F.Bandpass, .4f) });
+                    break;
+                case "title":
+                    Proc("ftue_title", () => new[] { T(55, 1.35f, .13f, "sfx", W.Sine, 0, 260), T(110, 1.1f, .08f, "sfx", W.Triangle, 0, 620, .035f, .18f), T(165, 1f, .065f, "sfx", W.Sine, 0, 900, .04f, .34f), T(220, .9f, .05f, "sfx", W.Triangle, 0, 1200, .04f, .5f), H(.7f, 1800, 180, .07f, "sfx", .8f, .8f, F.Bandpass, .2f) });
+                    break;
+                default:
+                    FtueCue("panel");
+                    break;
+            }
+        }
+
         /// <summary>팀 핑 음형 (원본 tc-ping sound()) — 거리와 무관한 2D UI 음, g .14.</summary>
         public void Ping(PingType type)
         {
@@ -256,6 +306,7 @@ namespace TunnelCrew.Presentation
         public Route Current { get; private set; } = Route.None;
         sealed class Track { public AudioSource Src; public float Gain, Target, Level, FadeIn, FadeOut; }
         Track _lobby, _tun1, _tun2, _boss; Route _prevRoute; float _bossBackTimer = -1;
+        float _narrativeDuck = 1f, _narrativeDuckTarget = 1f;
         const float AmbFadeIn = 1.4f, AmbFadeOut = .9f, BossFadeIn = .55f, BossFadeOut = 2.8f;
 
         void BuildMusic()
@@ -312,17 +363,21 @@ namespace TunnelCrew.Presentation
         }
         public void StopAll() { Current = Route.None; _bossBackTimer = -1; Apply(Route.None); }
 
+        /// <summary>FTUE 말풍선·블랙박스 자막이 나올 때 BGM 만 -6 dB 억제한다.</summary>
+        public void NarrativeDuck(bool on) => _narrativeDuckTarget = on ? .5f : 1f;
+
         void Update()
         {
             float dt = Time.unscaledDeltaTime;
             SfxVolume = MetaScreens.SfxVolume; BgmVolume = MetaScreens.BgmVolume;
+            _narrativeDuck = Mathf.MoveTowards(_narrativeDuck, _narrativeDuckTarget, dt / (_narrativeDuckTarget < _narrativeDuck ? .12f : .35f));
             if (_bossBackTimer >= 0) { _bossBackTimer -= dt; if (_bossBackTimer < 0) { Current = _prevRoute; Apply(Current); } }
             foreach (var t in new[] { _lobby, _tun1, _tun2, _boss })
             {
                 if (t == null) continue;
                 float rate = t.Target > t.Level ? dt / Mathf.Max(.05f, t.FadeIn) : dt / Mathf.Max(.05f, t.FadeOut);
                 t.Level = Mathf.MoveTowards(t.Level, t.Target, rate);
-                t.Src.volume = Mathf.Clamp01(t.Level * t.Gain * MusicBus);
+                t.Src.volume = Mathf.Clamp01(t.Level * t.Gain * MusicBus * _narrativeDuck);
                 if (t.Level <= 0 && t.Target <= 0 && t.Src.isPlaying) t.Src.Stop();
             }
             TickDrill(dt);
