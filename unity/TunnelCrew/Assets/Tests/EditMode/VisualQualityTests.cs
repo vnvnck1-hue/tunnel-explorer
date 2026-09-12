@@ -90,6 +90,19 @@ namespace TunnelCrew.Tests
             Assert.IsTrue(VisualQualityRules.AmbientVfxEnabled(VisualQualityTier.Ultra));
         }
 
+        [Test]
+        public void 전투_VFX_예산은_저사양에서만_줄고_가독성은_남는다()
+        {
+            Assert.AreEqual(.5f, VisualQualityRules.CombatParticleScale(VisualQualityTier.Low), 1e-6f);
+            Assert.AreEqual(.75f, VisualQualityRules.CombatParticleScale(VisualQualityTier.Medium), 1e-6f);
+            Assert.AreEqual(1f, VisualQualityRules.CombatParticleScale(VisualQualityTier.High), 1e-6f);
+            Assert.GreaterOrEqual(VisualQualityRules.ProjectileVisualBudget(VisualQualityTier.Low), 64,
+                "저사양에서도 탄막 판독에 필요한 투사체는 충분히 남긴다");
+            Assert.Less(VisualQualityRules.ProjectileVisualBudget(VisualQualityTier.Low),
+                        VisualQualityRules.ProjectileVisualBudget(VisualQualityTier.High));
+            Assert.LessOrEqual(VisualQualityRules.ProjectileVisualBudget(VisualQualityTier.Ultra), 96);
+        }
+
         // ───────────────────────────── 접근성 (§10.3)
 
         [Test]

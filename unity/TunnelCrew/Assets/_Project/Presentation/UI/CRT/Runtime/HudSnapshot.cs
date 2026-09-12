@@ -9,6 +9,7 @@ namespace TunnelCrew.Presentation.CRT
         public readonly RoleId Role;
         public readonly double Hp, HpMax, Heat, AmmoFraction, ReloadSeconds, Dominance, Threat;
         public readonly int Ammo, Level, Xp, XpNeed, Depth;
+        public readonly string Objective, Contract;
         public readonly bool Critical, HasGun, HasDrill, Reloading, Overheated, Downed;
         public HudSnapshot(TunnelSim sim)
         {
@@ -18,7 +19,10 @@ namespace TunnelCrew.Presentation.CRT
             Overheated=p.DrillHeatLock>0;Downed=p.Downed;Critical=Hp/Math.Max(1,HpMax)<.22;
             AmmoFraction=Reloading?1-b.ReloadLeft/Math.Max(.001,b.ReloadTime):Ammo/(double)Math.Max(1,b.MagSize);
             ReloadSeconds=b.ReloadLeft;Level=sim.Xp.Level;Xp=sim.Xp.Xp;XpNeed=sim.Xp.XpNeed;Depth=sim.Depth;
-            Dominance=sim.Run.Dominance/Math.Max(.001,sim.Run.DominanceTarget);Threat=sim.Run.Threat;
+            Dominance=sim.Objective!=null?sim.Objective.ProgressFraction(sim.Run):sim.Run.Dominance/Math.Max(.001,sim.Run.DominanceTarget);
+            Objective=sim.Objective!=null?sim.Objective.HudText(sim.Run):$"암반 장악 {sim.Run.Dominance:P0} / {sim.Run.DominanceTarget:P0}";
+            Contract=sim.Contract?.HudText??"";
+            Threat=sim.Run.Threat;
         }
     }
 }

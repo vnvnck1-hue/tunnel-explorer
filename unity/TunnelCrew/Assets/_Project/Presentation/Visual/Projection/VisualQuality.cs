@@ -123,5 +123,20 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>이 단계에서 주변 VFX(먼지·광선)를 켜는가.</summary>
         public static bool AmbientVfxEnabled(VisualQualityTier tier)
             => tier >= VisualQualityTier.High;
+
+        /// <summary>전투 가독성은 유지하고, 저사양에서는 착탄 파편 수만 줄인다.</summary>
+        public static float CombatParticleScale(VisualQualityTier tier)
+        {
+            switch (tier)
+            {
+                case VisualQualityTier.Low: return .5f;
+                case VisualQualityTier.Medium: return .75f;
+                default: return 1f;
+            }
+        }
+
+        /// <summary>화면에 동시에 그릴 아군 투사체 상한. 판정은 제한하지 않고 표현만 제한한다.</summary>
+        public static int ProjectileVisualBudget(VisualQualityTier tier)
+            => tier == VisualQualityTier.Low ? 64 : tier == VisualQualityTier.Medium ? 80 : 96;
     }
 }

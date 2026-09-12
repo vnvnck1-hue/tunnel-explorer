@@ -36,6 +36,24 @@ namespace TunnelCrew.Sim
         public int[] relicAge = new int[5];
         public int relicSeq;
 
+        // 필드 도감 — 안정적인 문자열 ID. 미래 버전/모드의 알 수 없는 ID도 삭제하지 않는다.
+        public List<string> codexEntries = new List<string>();
+        public List<string> codexCountIds = new List<string>();
+        public List<int> codexCountValues = new List<int>();
+
+        public int CodexCount(string id)
+        {
+            int i = codexCountIds.IndexOf(id);
+            return i < 0 || i >= codexCountValues.Count ? 0 : codexCountValues[i];
+        }
+
+        public int IncrementCodexCount(string id)
+        {
+            int i = codexCountIds.IndexOf(id);
+            if (i < 0) { codexCountIds.Add(id); codexCountValues.Add(1); return 1; }
+            return codexCountValues[i] = Math.Max(0, codexCountValues[i]) + 1;
+        }
+
         public int RankOf(string nodeId)
         {
             int i = rankIds.IndexOf(nodeId);
@@ -60,6 +78,16 @@ namespace TunnelCrew.Sim
             }
             if (relicSockets == null || relicSockets.Length != 5) relicSockets = new string[5];
             if (relicAge == null || relicAge.Length != 5) relicAge = new int[5];
+            if (codexEntries == null) codexEntries = new List<string>();
+            if (codexCountIds == null) codexCountIds = new List<string>();
+            if (codexCountValues == null) codexCountValues = new List<int>();
+            for (int i = codexEntries.Count - 1; i >= 0; i--)
+                if (string.IsNullOrEmpty(codexEntries[i]) || codexEntries.IndexOf(codexEntries[i]) != i) codexEntries.RemoveAt(i);
+            while (codexCountValues.Count > codexCountIds.Count) codexCountValues.RemoveAt(codexCountValues.Count - 1);
+            while (codexCountValues.Count < codexCountIds.Count) codexCountValues.Add(0);
+            for (int i = codexCountIds.Count - 1; i >= 0; i--)
+                if (string.IsNullOrEmpty(codexCountIds[i]) || codexCountIds.IndexOf(codexCountIds[i]) != i)
+                { codexCountIds.RemoveAt(i); codexCountValues.RemoveAt(i); }
             relicOwned.RemoveAll(id => Relics.ById(id) == null);
             for (int i = relicOwned.Count - 1; i >= 0; i--) if (relicOwned.IndexOf(relicOwned[i]) != i) relicOwned.RemoveAt(i);
             var seen = new HashSet<string>();

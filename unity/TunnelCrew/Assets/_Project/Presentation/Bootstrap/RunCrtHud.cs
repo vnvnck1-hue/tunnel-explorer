@@ -42,6 +42,8 @@ namespace TunnelCrew.Presentation
             if(_crewRailIcon!=null)GUI.DrawTexture(R(railX-50,railY-7,38,38),_crewRailIcon,ScaleMode.ScaleToFit);
             else CrtIcon(railX-50,railY-7,38,CrtGlyph.Crew);
             CrtGauge(railX,railY,railWidth,22,h.Dominance,amber,10);
+            CrtText(railX,railY+22,railWidth,24,h.Objective,15,frame,TextAnchor.MiddleCenter);
+            if(!string.IsNullOrEmpty(h.Contract))CrtText(railX,railY+42,railWidth,22,h.Contract,13,new Color(.5f,.92f,.82f),TextAnchor.MiddleCenter);
             CrtIcon(railX+railWidth+15,railY-3,30,CrtGlyph.Depth);
             CrtText(railX+railWidth+53,railY-5,75,32,h.Depth<=3?$"{h.Depth}/3":$"{h.Depth}",24);
             if(_bossIcon!=null)
@@ -52,13 +54,13 @@ namespace TunnelCrew.Presentation
             if(Sim.Bosses.Active)
             {
                 var boss=Sim.Bosses.Boss;
-                CrtGauge(railX,railY+38,railWidth,14,boss.HpRatio,critical,16);
-                CrtText(railX,railY+57,railWidth,30,$"{boss.Def.Name}  {boss.Body.Hp:F0}   ▰ {Sim.Bosses.ArmorAlive()}",20,critical,TextAnchor.MiddleCenter);
+                CrtGauge(railX,railY+66,railWidth,14,boss.HpRatio,critical,16);
+                CrtText(railX,railY+82,railWidth,30,$"{boss.Def.Name}  {boss.Body.Hp:F0}   ▰ {Sim.Bosses.ArmorAlive()}",20,critical,TextAnchor.MiddleCenter);
             }
             else
             {
-                CrtIcon(railX+railWidth-75,railY+30,18,CrtGlyph.Warning,frame);
-                CrtText(railX+railWidth-48,railY+24,48,30,h.Threat.ToString("F1"),18,frame,TextAnchor.MiddleRight);
+                CrtIcon(railX+railWidth+15,railY+35,18,CrtGlyph.Warning,frame);
+                CrtText(railX+railWidth+41,railY+29,48,30,h.Threat.ToString("F1"),18,frame,TextAnchor.MiddleLeft);
             }
 
             // Instrument plate. Large numbers are separate from segmented signal bars.
@@ -171,7 +173,7 @@ namespace TunnelCrew.Presentation
             {
                 float railW = 640, railH = 18, x = W * .5f - railW * .5f, y = 34;
                 Panel(R(x - 70, y - 22, railW + 140, 80), .5f);
-                float frac = (float)(Sim.Run.Dominance / Sim.Run.DominanceTarget);
+                float frac = (float)(Sim.Objective?.ProgressFraction(Sim.Run) ?? Sim.Run.Dominance / Sim.Run.DominanceTarget);
                 Bar(R(x, y, railW, railH), Mathf.Clamp01(frac), new Color(.2f, .16f, .28f), new Color(.78f, .63f, 1f), new Color(.35f, .3f, .5f));
                 // 크루 아이콘 — 원본 dom-crew-icon (비어 있으면 역할 배지로 대체)
                 {
@@ -185,7 +187,8 @@ namespace TunnelCrew.Presentation
                     GUI.DrawTexture(R(x + railW - 4, y - 30, 64, 64), _bossIcon, ScaleMode.ScaleToFit);
                     GUI.color = Color.white;
                 }
-                GUI.Label(R(x - 60, y + 22, railW + 120, 30), $"<b>장악도 {Sim.Run.Dominance:P1}</b> / {Sim.Run.DominanceTarget:P0}   ·   위협 {Sim.Run.Threat:F2}   ·   {Planet.DepthLabel(Sim.Depth)}", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
+                string objective = Sim.Objective?.HudText(Sim.Run) ?? $"암반 장악 {Sim.Run.Dominance:P1} / {Sim.Run.DominanceTarget:P0}";
+                GUI.Label(R(x - 60, y + 22, railW + 120, 30), $"<b>{objective}</b>   ·   위협 {Sim.Run.Threat:F2}   ·   {Planet.DepthLabel(Sim.Depth)}", new GUIStyle(_sSmall) { alignment = TextAnchor.MiddleCenter });
                 if (Sim.Bosses.Active)
                 {
                     var bb = Sim.Bosses.Boss;

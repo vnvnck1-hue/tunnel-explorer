@@ -88,6 +88,14 @@ namespace TunnelCrew.Sim
         public event Action<BreakerExplodedEvent> BreakerExploded;
         public event Action<FoundationBrokenEvent> FoundationBroken;
 
+        /// <summary>플레이어가 살아 있는 전력 노드의 영향권 안에 있는지. 코일 장비의 보상 조건에도 쓴다.</summary>
+        public bool IsInPowerField(Vec2 position)
+        {
+            foreach (var n in Nodes)
+                if (n.Life > 0 && Vec2.Distance(position, n.Position) <= n.Radius) return true;
+            return false;
+        }
+
         double _time;
 
         public RoleSystem(WorldGrid world, EnemySystem enemies, ProjectileSystem projectiles, PlayerBuild build)

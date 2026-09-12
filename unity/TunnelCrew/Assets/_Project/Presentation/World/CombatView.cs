@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TunnelCrew.Sim;
 using UnityEngine;
+using TunnelCrew.Presentation.Visual;
 
 namespace TunnelCrew.Presentation
 {
@@ -10,6 +11,12 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class CombatView : MonoBehaviour
     {
+        public int ProjectileRendererCount => _projPool.Count;
+        public int ActiveProjectileRendererCount
+        {
+            get { int n = 0; foreach (var r in _projPool) if (r != null && r.gameObject.activeSelf) n++; return n; }
+        }
+        public Material SharedProjectileMaterial => _projectileMaterial;
         readonly List<SpriteRenderer> _projPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _shotPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _installPool = new List<SpriteRenderer>();
@@ -18,9 +25,20 @@ namespace TunnelCrew.Presentation
         LineRenderer _dashLine;
         SpriteRenderer _escRange, _escSpot, _escPod;
         readonly List<SpriteRenderer> _auxPool = new List<SpriteRenderer>();
+        readonly List<SpriteRenderer> _objectivePool = new List<SpriteRenderer>();
         readonly List<DamageText> _texts = new List<DamageText>();
         readonly Stack<DamageText> _textPool = new Stack<DamageText>();
-        Sprite _dot, _square;
+        Sprite _dot, _square, _ring;
+        Material _projectileMaterial;
+        Material _dashMaterial;
+        VisualOptionsController _visualOptions;
+
+        struct ProjectileLook
+        {
+            public Color Color;
+            public float Length, Width;
+            public ProjectileLook(Color color, float length, float width) { Color = color; Length = length; Width = width; }
+        }
 
         sealed class DamageText
         {
@@ -32,31 +50,59 @@ namespace TunnelCrew.Presentation
         const float DmgBase = 25f, DmgBig = 34f, DmgPop = 1.45f, DmgPopDec = 3.4f, DmgSquash = .22f, DmgFade = 2.2f;
         const float DmgLifeRate = 1.3f / .56f, DmgRise = 120f, DmgGravity = 980f, DmgDamp = .97f, DmgJx = 12f, DmgJy = 9f, DmgDrift = 40f, Px = 1f / 50f;
 
-        static readonly Dictionary<string, Color> ProjColor = new Dictionary<string, Color>
+        static readonly Dictionary<string, ProjectileLook> ProjectileLooks = new Dictionary<string, ProjectileLook>
         {
-            ["standard"] = new Color(1f, 0.93f, 0.7f), ["multi"] = new Color(1f, 0.85f, 0.6f),
-            ["pierce"] = new Color(0.7f, 0.95f, 1f), ["ricochet"] = new Color(0.9f, 0.8f, 1f),
-            ["explosive"] = new Color(1f, 0.55f, 0.3f), ["rain"] = new Color(1f, 0.5f, 0.25f),
-            ["laser"] = new Color(0.6f, 1f, 0.95f), ["support"] = new Color(0.5f, 0.92f, 0.82f), ["shard"] = new Color(0.5f, 0.92f, 0.82f),
+            ["standard"] = new ProjectileLook(new Color(1f, .74f, .28f, .92f), .48f, .16f),
+            ["multi"] = new ProjectileLook(new Color(1f, .48f, .16f, .94f), .40f, .19f),
+            ["pierce"] = new ProjectileLook(new Color(.22f, .82f, 1f, .94f), .82f, .12f),
+            ["ricochet"] = new ProjectileLook(new Color(.68f, .38f, 1f, .94f), .50f, .18f),
+            ["explosive"] = new ProjectileLook(new Color(1f, .22f, .06f, .96f), .62f, .28f),
+            ["rain"] = new ProjectileLook(new Color(1f, .12f, .03f, .98f), .74f, .30f),
+            ["laser"] = new ProjectileLook(new Color(.05f, 1f, .86f, .96f), 1.18f, .12f),
+            ["support"] = new ProjectileLook(new Color(.20f, 1f, .62f, .88f), .38f, .17f),
+            ["shard"] = new ProjectileLook(new Color(.30f, 1f, .90f, .92f), .56f, .11f),
         };
 
-        void Awake() { _dot = MakeCircle(16); _square = MakeSquare(); }
+        void Awake()
+        {
+            _dot = MakeCircle(16); _square = MakeSquare(); _ring = ProcSprites.Ring(64, .12f);
+            _visualOptions = FindFirstObjectByType<VisualOptionsController>();
+            var shader = Shader.Find("Tunnel Crew/Projectile-Energy");
+            if (shader != null && shader.isSupported)
+                _projectileMaterial = new Material(shader) { name = "Projectile-Energy (shared)", hideFlags = HideFlags.HideAndDontSave };
+        }
+
+        void OnDestroy()
+        {
+            if (_projectileMaterial != null) Destroy(_projectileMaterial);
+            if (_dashMaterial != null) Destroy(_dashMaterial);
+        }
 
         public void Render(TunnelSim sim, float dt)
         {
-            RenderList(_projPool, sim.Projectiles.Projectiles.Count, 40, i =>
+            int budget = VisualQualityRules.ProjectileVisualBudget(_visualOptions != null ? _visualOptions.Tier : VisualQualityTier.High);
+            int visibleProjectiles = Mathf.Min(budget, sim.Projectiles.Projectiles.Count);
+            int projectileStart = sim.Projectiles.Projectiles.Count - visibleProjectiles;
+            EnsurePool(_projPool, visibleProjectiles, 40, _projectileMaterial, transform);
+            for (int i = 0; i < _projPool.Count; i++)
             {
-                var p = sim.Projectiles.Projectiles[i];
+                bool on = i < visibleProjectiles;
                 var sr = _projPool[i];
+                if (sr.gameObject.activeSelf != on) sr.gameObject.SetActive(on);
+                if (!on) continue;
+                var p = sim.Projectiles.Projectiles[projectileStart + i];
                 sr.transform.position = IsometricProjection.ToRender3(p.Position);
-                sr.color = ProjColor.TryGetValue(p.VisualId, out var c) ? c : Color.white;
-                float len = p.Laser ? 0.55f : 0.22f, wid = p.Laser ? 0.08f : 0.12f;
-                sr.transform.localScale = new Vector3(len, wid, 1);
+                var look = ProjectileLooks.TryGetValue(p.VisualId, out var found) ? found : ProjectileLooks["standard"];
+                float pulse = 1f + .08f * Mathf.Sin((float)(p.Age * 38.0 + i * 1.7));
+                sr.color = look.Color;
+                sr.transform.localScale = new Vector3(look.Length * pulse, look.Width / pulse, 1);
                 sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(p.Velocity.Angle) * Mathf.Rad2Deg);
                 sr.sprite = _square;
-            });
+            }
 
-            RenderList(_shotPool, sim.Enemies.Shots.Count, 39, i =>
+            int enemyShots = sim.Enemies.Shots.Count;
+            PreparePool(_shotPool, enemyShots, 39);
+            for (int i = 0; i < enemyShots; i++)
             {
                 var s = sim.Enemies.Shots[i];
                 var sr = _shotPool[i];
@@ -64,18 +110,19 @@ namespace TunnelCrew.Presentation
                 sr.color = new Color(0.55f, 0.95f, 0.5f);
                 sr.transform.localScale = Vector3.one * (float)(s.Radius * 2.2);
                 sr.sprite = _dot;
-            });
+            }
 
             // 설치물: 노드(청록 원) · 센트리(보라 사각) · 파쇄탄(주황 점) · 플레어(노랑)
             var roles = sim.Roles;
             int n = roles.Nodes.Count + roles.Turrets.Count + roles.Breakers.Count + roles.Flares.Count;
-            RenderList(_installPool, n, 28, i =>
+            PreparePool(_installPool, n, 28);
+            for (int i = 0; i < n; i++)
             {
                 var sr = _installPool[i];
                 int k = i;
-                if (k < roles.Nodes.Count) { var o = roles.Nodes[k]; Set(sr, o.Position, _dot, new Color(0.45f, 0.92f, 0.85f), 0.7f); return; }
+                if (k < roles.Nodes.Count) { var o = roles.Nodes[k]; Set(sr, o.Position, _dot, new Color(0.45f, 0.92f, 0.85f), 0.7f); continue; }
                 k -= roles.Nodes.Count;
-                if (k < roles.Turrets.Count) { var o = roles.Turrets[k]; Set(sr, o.Position, _square, o.Powered ? new Color(0.78f, 0.63f, 1f) : new Color(0.4f, 0.35f, 0.5f), 0.55f); sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(o.Aim) * Mathf.Rad2Deg); return; }
+                if (k < roles.Turrets.Count) { var o = roles.Turrets[k]; Set(sr, o.Position, _square, o.Powered ? new Color(0.78f, 0.63f, 1f) : new Color(0.4f, 0.35f, 0.5f), 0.55f); sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(o.Aim) * Mathf.Rad2Deg); continue; }
                 k -= roles.Turrets.Count;
                 if (k < roles.Breakers.Count)
                 {
@@ -83,23 +130,25 @@ namespace TunnelCrew.Presentation
                     float t = o.Stuck ? 1f : 1f - (float)(o.Travel / o.TravelMax);
                     var pos = o.Stuck ? o.Target : Vec2Lerp(o.Start, o.Target, t);
                     float pulse = o.Stuck ? 0.75f + 0.25f * Mathf.Sin(Time.time * 18f) : 1f;
-                    Set(sr, pos, _dot, new Color(1f, 0.55f, 0.3f) * pulse, 0.3f); return;
+                    Set(sr, pos, _dot, new Color(1f, 0.55f, 0.3f) * pulse, 0.3f); continue;
                 }
                 k -= roles.Breakers.Count;
                 var f = roles.Flares[k];
                 Set(sr, f.Position, _dot, new Color(1f, 0.92f, 0.5f, 0.85f), 0.28f);
-            });
+            }
 
             // 보스 예고탄 — 착탄 원(커지며 붉어짐) + 포물선으로 날아가는 점
             var shots = sim.Bosses != null ? sim.Bosses.Shots : null;
             int ns = shots?.Count ?? 0;
-            RenderList(_bossRingPool, ns, 26, i =>
+            PreparePool(_bossRingPool, ns, 26);
+            for (int i = 0; i < ns; i++)
             {
                 var s = shots[i]; var sr = _bossRingPool[i];
                 float p = (float)s.Progress;
                 Set(sr, s.Target, _dot, new Color(1f, 0.33f, 0.49f, 0.18f + 0.42f * p), (float)s.Radius * 2f * (0.55f + 0.45f * p));
-            });
-            RenderList(_bossShotPool, ns, 41, i =>
+            }
+            PreparePool(_bossShotPool, ns, 41);
+            for (int i = 0; i < ns; i++)
             {
                 var s = shots[i]; var sr = _bossShotPool[i];
                 float p = (float)s.Progress;
@@ -110,11 +159,12 @@ namespace TunnelCrew.Presentation
                 sr.transform.rotation = Quaternion.identity;
                 sr.sprite = _dot; sr.color = new Color(1f, 0.45f, 0.35f);
                 sr.transform.localScale = Vector3.one * (0.34f + 0.16f * (float)s.Power);
-            });
+            }
 
             // 보조 드릴 — 플레이어 주위를 도는 작은 드릴 비트 (원본 infDrawMiningTraits, 최대 8)
             int aux = Mathf.Min(8, sim.AuxDrillCount);
-            RenderList(_auxPool, aux, 33, i =>
+            PreparePool(_auxPool, aux, 33);
+            for (int i = 0; i < aux; i++)
             {
                 float a = Time.time * (1.6f + (i % 2) * .28f) + Mathf.PI * 2 * i / aux;
                 float rad = .75f + (i % 2) * .24f;
@@ -124,7 +174,24 @@ namespace TunnelCrew.Presentation
                 sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(a) * Mathf.Rad2Deg + 90f);
                 sr.sprite = _square; sr.color = new Color(1f, .83f, .43f);
                 sr.transform.localScale = new Vector3(.16f, .34f, 1f);
-            });
+            }
+
+            // 임무 표식 — 정확한 위치는 시야에 들어온 뒤에만 선명해진다. 미탐색 표식은 약한 신호로 남겨
+            // 탐색 방향을 잃게 하지는 않되 지형 전체를 미리 공개하지 않는다.
+            int objectives = sim.Objective?.Targets.Count ?? 0;
+            PreparePool(_objectivePool, objectives, 24);
+            for (int i = 0; i < objectives; i++)
+            {
+                int k = sim.Objective.Targets[i], c = k % sim.World.Cols, r = k / sim.World.Cols;
+                bool done = sim.Objective.IsDone(k);
+                bool seen = sim.Los == null || sim.Los.IsSoftSeen(c, r, 2);
+                float pulse = .92f + .10f * Mathf.Sin(Time.time * 4.5f + i * 2.1f);
+                float progress = sim.Objective.Id == ExpeditionObjectiveId.Survey ? (float)sim.Objective.SurveyProgress(k) : 0f;
+                Color col = done ? new Color(.35f, .65f, .55f, .20f)
+                          : sim.Objective.Id == ExpeditionObjectiveId.CoreRecovery ? new Color(.48f, 1f, .85f, seen ? .88f : .20f)
+                          : new Color(1f, .83f, .32f, seen ? .82f : .18f);
+                Set(_objectivePool[i], WorldGrid.CellCenter(c, r), _ring, col, (1.0f + progress * .28f) * pulse);
+            }
 
             // 탈출 포트 — 지정 범위 · 착륙 지점 · 도착한 포트
             var esc = sim.Escape;
@@ -157,7 +224,8 @@ namespace TunnelCrew.Presentation
                 var lg = new GameObject("BossDashTelegraph"); lg.transform.SetParent(transform, false);
                 _dashLine = lg.AddComponent<LineRenderer>();
                 _dashLine.positionCount = 2; _dashLine.useWorldSpace = true;
-                _dashLine.material = new Material(Shader.Find("Sprites/Default"));
+                _dashMaterial = new Material(Shader.Find("Sprites/Default")) { hideFlags = HideFlags.HideAndDontSave };
+                _dashLine.sharedMaterial = _dashMaterial;
                 _dashLine.sortingOrder = 25;
             }
             _dashLine.enabled = dashTele;
@@ -324,7 +392,7 @@ namespace TunnelCrew.Presentation
             }
         }
 
-        void RenderList(List<SpriteRenderer> pool, int count, int order, System.Action<int> draw)
+        void PreparePool(List<SpriteRenderer> pool, int count, int order)
         {
             while (pool.Count < count)
             {
@@ -335,8 +403,20 @@ namespace TunnelCrew.Presentation
             for (int i = 0; i < pool.Count; i++)
             {
                 bool on = i < count;
-                pool[i].gameObject.SetActive(on);
-                if (on) draw(i);
+                if (pool[i].gameObject.activeSelf != on) pool[i].gameObject.SetActive(on);
+            }
+        }
+
+        static void EnsurePool(List<SpriteRenderer> pool, int count, int order, Material material, Transform parent)
+        {
+            while (pool.Count < count)
+            {
+                var go = new GameObject("projectile-fx");
+                go.transform.SetParent(parent, false);
+                var sr = go.AddComponent<SpriteRenderer>();
+                sr.sortingOrder = order;
+                if (material != null) sr.sharedMaterial = material;
+                pool.Add(sr);
             }
         }
 

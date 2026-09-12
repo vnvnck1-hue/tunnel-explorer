@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TunnelCrew.Sim;
 using UnityEngine;
+using TunnelCrew.Presentation.Visual;
 
 namespace TunnelCrew.Presentation
 {
@@ -13,12 +14,16 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class FxSystem : MonoBehaviour
     {
+        public int ActiveShapeCount => _shapes.Count;
         const float Px = 1f / 50f;
 
         ParticleSystem _chunks, _burst, _spikes, _smoke;
         readonly List<Shape> _shapes = new List<Shape>();
         readonly Stack<SpriteRenderer> _shapePool = new Stack<SpriteRenderer>();
+        readonly Stack<Shape> _shapeStatePool = new Stack<Shape>();
+        readonly List<Material> _materials = new List<Material>();
         Sprite _ring, _dot, _square, _star;
+        VisualOptionsController _visualOptions;
 
         sealed class Shape { public SpriteRenderer Sr; public float Life, Decay, R0, R1; public Color Col; public bool Ring; }
 
@@ -31,11 +36,21 @@ namespace TunnelCrew.Presentation
         static readonly Color[] PalRock = { C("#C8B8E8"), C("#F2ECFF"), C("#4A3A68") };
         static readonly Color[] PalDrill = { C("#E8C89A"), C("#C79A6B"), C("#FFF3D6") };
         static readonly Color[] PalBlood = { C("#FF557D"), C("#FFB0B8"), C("#3A0D1A") };
+        static readonly Color[] PalDrillSpark = { C("#E8CBA6"), C("#FFF3D6") };
+        static readonly Color[] PalPlayerHurt = { C("#FF6060"), C("#FFD0D0") };
+        static readonly Color[] PalImpactStandard = { C("#FFCF67"), Color.white };
+        static readonly Color[] PalImpactPierce = { C("#6EDFFF"), Color.white };
+        static readonly Color[] PalImpactRicochet = { C("#B27AFF"), Color.white };
+        static readonly Color[] PalImpactSupport = { C("#58F0BD"), Color.white };
+        static readonly Color[] PalImpactExplosive = { C("#FF8D42"), C("#FFD36E"), Color.white };
+        static readonly Color[] PalImpactRain = { C("#FF5533"), C("#FFD36E"), Color.white };
+        static readonly Color[] PalImpactLaser = { C("#48FFE1"), C("#FFD36E"), Color.white };
 
         static Color C(string hex) { ColorUtility.TryParseHtmlString(hex, out var c); return c; }
 
         void Awake()
         {
+            _visualOptions = FindFirstObjectByType<VisualOptionsController>();
             _dot = ProcSprites.Circle(24, 0.7f);
             _ring = ProcSprites.Ring(64, 0.11f);
             _square = ProcSprites.Square();
@@ -57,7 +72,8 @@ namespace TunnelCrew.Presentation
             var ps = go.AddComponent<ParticleSystem>();
             var main = ps.main;
             // 방출은 Emit() 로만 한다. 시스템은 항상 재생 상태여야 방출된 입자가 시뮬레이션된다.
-            main.loop = true; main.playOnAwake = true; main.maxParticles = 800;
+            main.loop = true; main.playOnAwake = true;
+            main.maxParticles = name == "Chunks" ? 420 : name == "Burst" ? 560 : name == "Spikes" ? 420 : 240;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = gravity;
             main.startLifetime = 0.7f; main.startSpeed = 0f; main.startSize = 0.1f;
@@ -71,7 +87,9 @@ namespace TunnelCrew.Presentation
             col.color = g;
             if (rotate) { var rot = ps.rotationOverLifetime; rot.enabled = true; rot.z = new ParticleSystem.MinMaxCurve(-9f, 9f); }
             var r = go.GetComponent<ParticleSystemRenderer>();
-            r.material = new Material(Shader.Find("Sprites/Default"));
+            var material = new Material(Shader.Find("Sprites/Default")) { hideFlags = HideFlags.HideAndDontSave };
+            _materials.Add(material);
+            r.sharedMaterial = material;
             r.renderMode = stretch ? ParticleSystemRenderMode.Stretch : ParticleSystemRenderMode.Billboard;
             if (stretch) { r.velocityScale = 0.05f; r.lengthScale = 0.6f; }
             r.sortingOrder = order2;
@@ -112,6 +130,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.burst(x,y,n,col,sp) — 사방 점 불꽃.</summary>
         public void Burst(Vector2 at, int n, Color[] cols, float speedPx)
         {
+            n = ScaledCount(n);
             for (int i = 0; i < n; i++)
             {
                 float a = Random.value * 6.283f, s = speedPx * (.4f + Random.value * .9f) * Px;
@@ -145,6 +164,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.smoke — 커지며 사라지는 연기.</summary>
         public void Smoke(Vector2 at, int n, Color col, float speedPx, float life = 1f / 2.2f)
         {
+            n = ScaledCount(n);
             for (int i = 0; i < n; i++)
             {
                 float a = Random.value * 6.283f, s = speedPx * (.3f + Random.value * .8f) * Px;
@@ -169,12 +189,17 @@ namespace TunnelCrew.Presentation
 
         void AddShape(Sprite sp, Vector2 at, Color col, float r0, float r1, float decay, bool ring)
         {
-            var sr = _shapePool.Count > 0 ? _shapePool.Pop() : NewShapeRenderer();
+            Shape state;
+            if (_shapeStatePool.Count > 0) state = _shapeStatePool.Pop();
+            else if (_shapes.Count >= 96) { state = _shapes[0]; _shapes.RemoveAt(0); }
+            else state = new Shape();
+            var sr = state.Sr != null ? state.Sr : _shapePool.Count > 0 ? _shapePool.Pop() : NewShapeRenderer();
             sr.gameObject.SetActive(true);
             sr.sprite = sp; sr.color = col;
             sr.transform.position = new Vector3(at.x, at.y, -0.02f);
             sr.transform.rotation = Quaternion.Euler(0, 0, sp == _square ? Random.value * 90f : 0f);
-            _shapes.Add(new Shape { Sr = sr, Life = 1, Decay = decay, R0 = r0, R1 = r1, Col = col, Ring = ring });
+            state.Sr = sr; state.Life = 1; state.Decay = decay; state.R0 = r0; state.R1 = r1; state.Col = col; state.Ring = ring;
+            _shapes.Add(state);
         }
         SpriteRenderer NewShapeRenderer()
         {
@@ -190,7 +215,7 @@ namespace TunnelCrew.Presentation
             {
                 var s = _shapes[i];
                 s.Life -= dt * s.Decay;
-                if (s.Life <= 0) { s.Sr.gameObject.SetActive(false); _shapePool.Push(s.Sr); _shapes.RemoveAt(i); continue; }
+                if (s.Life <= 0) { s.Sr.gameObject.SetActive(false); _shapes.RemoveAt(i); _shapeStatePool.Push(s); continue; }
                 float u = 1 - s.Life;
                 float r = s.Ring ? Mathf.Lerp(s.R0, s.R1, 1 - (1 - u) * (1 - u)) : Mathf.Lerp(s.R0, s.R1, u);
                 s.Sr.transform.localScale = Vector3.one * (r * 2f);
@@ -209,8 +234,8 @@ namespace TunnelCrew.Presentation
             Flash(at, 1.2f * .5f, ore ? new Color(1, 1, 1, .95f) : new Color(1f, .91f, .77f, .85f));
             Ring(at, ore ? oreCol : new Color(1f, .88f, .71f, .95f), .16f, 1.0f);
             if (ore) Ring(at, new Color(1, 1, 1, .8f), .1f, .66f);
-            Chunks(at, 22, ore ? new[] { oreCol, pal[2], pal[0] } : pal, 320f, hitDir);
-            Burst(at, 26, new[] { pal[1], pal[2], new Color(1f, .92f, .8f, .7f) }, 190f);
+            Chunks(at, 22, pal, 320f, hitDir);
+            Burst(at, 26, pal, 190f);
             Smoke(at, 4, ore ? C("#FFE9C9") : pal[2], 70f);
             Spikes(at, 8, ore ? Color.white : new Color(1f, .89f, .71f, .95f), .52f, hitDir);
             Square(at, ore ? new Color(1, 1, 1, .92f) : new Color(1f, .9f, .73f, .8f), .32f, .9f);
@@ -231,7 +256,7 @@ namespace TunnelCrew.Presentation
         {
             Spikes(tip - n * .30f, 13, new Color(1f, .91f, .75f, .9f), .30f, n);
             Chunks(player + n * (30 * Px), 10, PalDrill, 412f, n);
-            Burst(player + n * (30 * Px), 14, new[] { C("#E8CBA6"), C("#FFF3D6") }, 327f);
+            Burst(player + n * (30 * Px), 14, PalDrillSpark, 327f);
         }
 
         /// <summary>암반 반동 (7257~7262).</summary>
@@ -252,13 +277,39 @@ namespace TunnelCrew.Presentation
         public void PlayerHurt(Vector2 at, Vector2 dir, int level)
         {
             Ring(at, new Color(1f, .3f, .3f, .8f), .3f, .9f + level * .3f);
-            Burst(at, 6 + level * 4, new[] { C("#FF6060"), C("#FFD0D0") }, 180f);
+            Burst(at, 6 + level * 4, PalPlayerHurt, 180f);
         }
 
-        public void ProjectileEnd(Vector2 at, bool exploded)
+        public void ProjectileEnd(Vector2 at, string visualId, bool exploded)
         {
-            if (exploded) { Ring(at, C("#FF8D72"), .2f, 1.6f); Burst(at, 18, new[] { C("#FF8D72"), C("#FFD36E"), Color.white }, 260f); Smoke(at, 3, C("#4A3550"), 80f); }
-            else Burst(at, 3, new[] { C("#FFEBB4"), Color.white }, 120f);
+            if (exploded)
+            {
+                Color hot = visualId == "laser" ? C("#48FFE1") : visualId == "rain" ? C("#FF5533") : C("#FF8D42");
+                Ring(at, hot, .16f, visualId == "laser" ? 2.05f : 1.6f);
+                Flash(at, visualId == "laser" ? .72f : .48f, new Color(hot.r, hot.g, hot.b, .72f));
+                var palette = visualId == "laser" ? PalImpactLaser : visualId == "rain" ? PalImpactRain : PalImpactExplosive;
+                Burst(at, visualId == "laser" ? 14 : 18, palette, 285f);
+                Smoke(at, visualId == "laser" ? 1 : 3, C("#4A3550"), 80f);
+                return;
+            }
+
+            Color c = visualId == "pierce" ? C("#6EDFFF")
+                    : visualId == "ricochet" ? C("#B27AFF")
+                    : visualId == "support" || visualId == "shard" ? C("#58F0BD")
+                    : C("#FFCF67");
+            int sparks = visualId == "pierce" ? 6 : visualId == "support" ? 2 : 4;
+            var impact = visualId == "pierce" ? PalImpactPierce : visualId == "ricochet" ? PalImpactRicochet
+                       : visualId == "support" || visualId == "shard" ? PalImpactSupport : PalImpactStandard;
+            Burst(at, sparks, impact, visualId == "pierce" ? 190f : 135f);
+            if (visualId == "ricochet") Square(at, c, .06f, .46f);
+            else if (visualId == "pierce") { Ring(at, c, .04f, .48f, 7f); Spikes(at, 4, c, .3f, Vector2.zero); }
+            else if (visualId == "support") Ring(at, c, .03f, .30f, 8f);
+        }
+
+        int ScaledCount(int count)
+        {
+            float scale = VisualQualityRules.CombatParticleScale(_visualOptions != null ? _visualOptions.Tier : VisualQualityTier.High);
+            return Mathf.Max(1, Mathf.RoundToInt(count * scale));
         }
 
         public void BossShotImpact(Vector2 at, float radius)
@@ -275,6 +326,11 @@ namespace TunnelCrew.Presentation
         }
 
         public void BigRing(Vector2 at, Color col, float r1) { Ring(at, col, .3f, r1, 2.4f); Burst(at, 30, new[] { col, C("#C7A0FF"), Color.white }, 300f); }
+
+        void OnDestroy()
+        {
+            foreach (var material in _materials) if (material != null) Destroy(material);
+        }
     }
 
     /// <summary>절차 생성 스프라이트 — 연출·그레이박스 공용.</summary>

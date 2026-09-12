@@ -66,6 +66,13 @@ namespace TunnelCrew.Sim
         TraitContext TraitCtx => new TraitContext { Build = Build, Player = Player, Roles = Roles };
         /// <summary>층 진행 — 장악도·위협·스폰 압력.</summary>
         public RunState Run { get; } = new RunState();
+        /// <summary>출격 때 고른 지층 목표. 층마다 접근 가능한 목표 지점으로 다시 배치된다.</summary>
+        public ExpeditionObjectiveSystem Objective { get; private set; }
+        public ExpeditionObjectiveId SelectedObjective { get; private set; } = ExpeditionObjectiveId.Breach;
+        public EquipmentVariant SelectedEquipment { get; private set; } = EquipmentVariant.Standard;
+        public RiskContractSystem Contract { get; private set; }
+        public RiskContractId SelectedContract { get; private set; } = RiskContractId.None;
+        public CodexSystem Codex { get; private set; }
         /// <summary>경험치 단일 관문.</summary>
         public XpGate Xp { get; } = new XpGate();
         /// <summary>런 빌드 — 직업·특성이 바꾸는 수치.</summary>
@@ -101,6 +108,9 @@ namespace TunnelCrew.Sim
         public event Action<LevelUpEvent> LeveledUp;
         /// <summary>장악도 목표 도달 — 보스 소환 시점.</summary>
         public event Action DominanceReached;
+        public event Action<ObjectiveChangedEvent> ObjectiveChanged;
+        public event Action<ContractChangedEvent> ContractChanged;
+        public event Action<CodexDiscoveredEvent> CodexDiscovered;
         public event Action<BossSpawnedEvent> BossSpawned;
         public event Action<BossPatternEvent> BossPattern;
         public event Action<BossWallEvent> BossWallRaised;
@@ -147,6 +157,7 @@ namespace TunnelCrew.Sim
             {
                 // 장악도 목표 → 보스 소환 (원본 12570 → infSpawnBoss). 다음 틱에 소환해 파괴 콜백 안에서 월드를 바꾸지 않는다.
                 _spawnBossPending = true;
+                Objective?.NotifyBreachComplete();
                 DominanceReached?.Invoke();
             };
             Xp.Gained += e => XpGained?.Invoke(e);
@@ -366,13 +377,24 @@ namespace TunnelCrew.Sim
             RunEnded?.Invoke(escaped, reason);
         }
 
-        public void StartRun(RoleId role) => StartRun(role, null);
+        public void StartRun(RoleId role) => StartRun(role, null, ExpeditionObjectiveId.Breach, EquipmentVariant.Standard, RiskContractId.None);
 
         /// <summary>런 시작 — 직업·빌드 초기화 후 영구 노드를 적용한다 (원본 infStartRun → infApplyPermanentNodes).</summary>
-        public void StartRun(RoleId role, MetaState meta)
+        public void StartRun(RoleId role, MetaState meta) => StartRun(role, meta, ExpeditionObjectiveId.Breach, EquipmentVariant.Standard, RiskContractId.None);
+
+        public void StartRun(RoleId role, MetaState meta, ExpeditionObjectiveId objective, EquipmentVariant equipment = EquipmentVariant.Standard, RiskContractId contract = RiskContractId.None)
         {
             _meta = meta;
-            Build.Reset(role);
+            SelectedObjective = objective;
+            SelectedEquipment = equipment;
+            SelectedContract = contract;
+            Build.Reset(role, equipment);
+            Codex = new CodexSystem(meta);
+            Codex.Discovered += e => CodexDiscovered?.Invoke(e);
+            Codex.Discover(FieldCodex.EquipmentId(role, equipment));
+            Contract = new RiskContractSystem(contract);
+            Contract.Changed += e => ContractChanged?.Invoke(e);
+            Contract.CompletedReward += reward => { Loot.Core += reward; Codex?.Discover("record.contract"); };
             Xp.Reset();
             Traits.Reset();
             Player.HpMax = SimTuning.PlayerHp; Player.Hp = Player.HpMax; Player.Downed = false;
@@ -397,7 +419,17 @@ namespace TunnelCrew.Sim
             World = new WorldGrid(gen);
             Los = new LosService(World);
             Enemies = new EnemySystem(World);
-            Run.InitFloor(depth, World);          // 배율·파괴 가능 블록 수 (원본 infInitFloor)
+            Run.InitFloor(depth, World, SelectedObjective == ExpeditionObjectiveId.Breach); // 배율·파괴 가능 블록 수
+            Objective = new ExpeditionObjectiveSystem(World, SelectedObjective, depth);
+            Objective.Changed += e => ObjectiveChanged?.Invoke(e);
+            Objective.CompletedEvent += () =>
+            {
+                Codex?.Discover(FieldCodex.ObjectiveId(SelectedObjective));
+                if (Run.BossSpawned) return;
+                Run.BossSpawned = true;
+                _spawnBossPending = true;
+                DominanceReached?.Invoke(); // 기존 보스 도달 로그·오디오 연결을 유지한다
+            };
             Xp.OnFloorInit();
             Traits.OnFloorInit(depth);
             Enemies.EnemyHpMul = Run.EnemyHpMul;
@@ -415,13 +447,16 @@ namespace TunnelCrew.Sim
                 // 보스 격파 집계(BossesKilled · BossActive)는 BossSystem.OnDefeated 가 맡는다
                 if (e.Killed)
                 {
+                    Contract?.OnEnemyKilled(e.Enemy, Player.Position, Enemies.DamageSource == null);
+                    Codex?.RecordKill(e.Enemy);
+                    if (e.Enemy.IsApex) Codex?.Discover("creature.apex.kill");
                     if (Enemies.DamageSource is CrewMember cm) Crew.AwardKill(cm, e.Enemy, e.ByTurret);   // AI 처치 — AI 개인 XP (§9.6.7)
                     else Xp.OnEnemyKilled(e.Enemy, Build.Role, e.ByTurret);
                 }
                 EnemyHurt?.Invoke(e);
             };
-            Enemies.PlayerHurt += e => PlayerHurt?.Invoke(e);
-            Enemies.Spawned += e => EnemySpawned?.Invoke(e);
+            Enemies.PlayerHurt += e => { Contract?.OnPlayerHurt(e.Damage); PlayerHurt?.Invoke(e); };
+            Enemies.Spawned += e => { Codex?.Discover(FieldCodex.CreatureId(e.Enemy.Kind, false)); EnemySpawned?.Invoke(e); };
             Projectiles = new ProjectileSystem(World, Enemies);
             Projectiles.Fired += e => ProjectileFired?.Invoke(e);
             Projectiles.Ended += e => ProjectileEnded?.Invoke(e);
@@ -434,6 +469,9 @@ namespace TunnelCrew.Sim
             Bosses.ShotHit += e => BossShotHit?.Invoke(e);
             Bosses.Defeated += e =>
             {
+                Contract?.OnBossDefeated();
+                Codex?.Discover("creature.boss.kill");
+                Codex?.Discover("record.boss");
                 Loot.Core += e.CoreReward;
                 RemoteTick(e.CoreReward);
                 RelicFx.BossDrop(e.Boss.Tier, e.Boss.Body.Position);
@@ -463,6 +501,7 @@ namespace TunnelCrew.Sim
             Roles.FoundationBroken += e =>
             {
                 Los?.MarkDirty();
+                Codex?.Discover("geology.core");
                 Xp.OnFoundationBroken(e.Type, Build.Role, WorldGrid.CellCenter(e.Col, e.Row));
                 FoundationBroken?.Invoke(e);
             };
@@ -494,6 +533,7 @@ namespace TunnelCrew.Sim
 
             FloorTime = 0;
             _accumulator = 0;
+            Contract?.OnFloorInit(depth, Player);
 
             if (_crewFresh) { _crewFresh = false; Crew.OnRunStart(); } else { Crew.OnFloorInit(); Craft.OnFloorInit(); }
         }
@@ -503,13 +543,16 @@ namespace TunnelCrew.Sim
             // 벽이 사라지면 시야가 달라진다. 원본은 각 변경 지점이 LOS.markDirty() 를
             // 손으로 불러야 했지만, 여기서는 파괴 이벤트 한 곳에서 처리한다.
             Los?.MarkDirty();
+            Codex?.Discover(FieldCodex.GeologyId(e.Type));
 
             // 층 진행 — 장악도·스폰 압력·굴착 XP (원본 infOnBlockBroken)
             double cdCap = Run.OnBlockBroken();
+            Objective?.OnTileBroken(e.Cell);
             Enemies.ClampSpawnCooldown(cdCap);
             var at = WorldGrid.CellCenter(e.Col, e.Row);
             // AI 크루가 부순 블록: 장악도·코어는 팀에 기여하고 경험치는 그 크루 개인에게 간다. 사람의 특성 발동은 건드리지 않는다 (원본 AI.creditBreak)
             var crewSrc = BreakSource as CrewMember;
+            Contract?.OnTileBroken(Player, crewSrc == null);
             if (crewSrc != null) Crew.CreditBreak(crewSrc, e.Type, at);
             else Xp.OnBlockBroken(e.Type, Build.Role, at);
             if (crewSrc == null)
@@ -622,6 +665,8 @@ namespace TunnelCrew.Sim
             if (Escape.Phase == EscapePhase.Placing) mineInput.DrillHeld = false;
             _drillHeld = mineInput.DrillHeld;
             MovementSystem.Tick(World, Player, input, dt, e => PlayerDashed?.Invoke(e), Build);
+            Objective?.Tick(Player, dt);
+            Contract?.Tick(Depth, Player);
             MiningSystem.Tick(World, Player, mineInput, dt,
                 e => DrillBounced?.Invoke(e),
                 (pos, dmg) => DrillBeat?.Invoke(pos, dmg),
@@ -681,7 +726,13 @@ namespace TunnelCrew.Sim
 
             // 거너 좌클릭은 파쇄탄, 나머지 직업은 드릴. 우클릭은 전원 사격.
             if (Build.Role == RoleId.Gunner && input.DrillHeld && Player.CanMove) Roles.TryFireBreaker(Player);
-            if (input.FireHeld && Player.CanMove) Projectiles.TryFire(Player, Build, input.DrillHeld);
+            if (input.FireHeld && Player.CanMove)
+            {
+                double equipmentPower = 1.0;
+                if (Build.Role == RoleId.Engineer && Build.Equipment == EquipmentVariant.Alternative)
+                    equipmentPower = Roles.IsInPowerField(Player.Position) ? 1.35 : .8;
+                Projectiles.TryFire(Player, Build, input.DrillHeld, equipmentPower);
+            }
 
             Roles.Tick(Player, Build, dt, Depth);
             if (input.ReloadPressed) Projectiles.StartReload(Build, true);

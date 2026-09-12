@@ -12,8 +12,8 @@ using Event = TunnelCrew.Presentation.CRT.CrtPointerEvent;
 namespace TunnelCrew.Presentation
 {
     /// <summary>
-    /// 런 바깥 화면 — 메인 메뉴 · 행성 지도 · 직업 선택 · 귀환 정산(요약 · 성장 지도 · 유물 보관고) · 일시정지.
-    /// 원본 <c>#mainMenu · #infRoleModal · #infSettlementModal(3-view) · INF_PLANETS</c>. 허브는 메뉴형(§17.3-8).
+    /// 런 바깥 화면 — 메인 메뉴 · 행성 지도 · 직업 선택 · 귀환 정산(요약 · 성장 지도 · 유물 보관고 · 필드 도감) · 일시정지.
+    /// 원본 <c>#mainMenu · #infRoleModal · #infSettlementModal · INF_PLANETS</c>. 허브는 메뉴형(§17.3-8).
     ///
     /// CRT CameraSpace UGUI 표현 — HUD 와 같은 1080p 배율 규약. 좌표는 편집기 값이 아니라 앵커 기준
     /// 적당한 위치(2026-09-06 결정). 성장 지도는 원본 GRID(1900×1620) 월드 좌표를 팬·줌으로 본다.
@@ -21,7 +21,7 @@ namespace TunnelCrew.Presentation
     public sealed class MetaScreens : MonoBehaviour, CRT.ICrtScreen
     {
         public enum Screen { MainMenu, Starmap, RoleSelect, Run, Settlement, Pause, Settings }
-        public enum SettleView { Summary, Map, Relics }
+        public enum SettleView { Summary, Map, Relics, Codex }
 
         [SerializeField] RunBootstrap _run;
         [SerializeField] bool _startInMenu = true;
@@ -31,6 +31,9 @@ namespace TunnelCrew.Presentation
         bool _settleFromMenu;
         RoleId _selected = RoleId.Driller;
         int _planetIdx;
+        int _missionIdx;
+        int _contractIdx;
+        readonly EquipmentVariant[] _equipment = new EquipmentVariant[4];
 
         // 성장 지도 카메라 (원본 nodeCamera)
         Vector2 _mapPan; float _mapZoom = 0.62f; bool _mapDragging; Vector2 _dragLast;
@@ -69,7 +72,6 @@ namespace TunnelCrew.Presentation
         static readonly string[] RoleNames = { "드릴러", "거너", "스카우트", "엔지니어" };
         static readonly string[] RoleCodes = { "EXCAVATION", "FIRE SUPPORT", "RECON", "FORTIFICATION" };
         static readonly string[] RoleTags = { "길을 연다 · 기반암 균열 전문가", "적을 지운다 · 중화기와 계획 발파", "어둠을 연다 · 정찰과 기동", "공간을 만든다 · 설치물과 전력망" };
-        static readonly string[] RoleGear = { "고압 중형 드릴 · 리벳 권총", "파쇄 발사기 · 벨트식 중화기", "휴대 절삭기 · 정찰 카빈", "공학 커터·전력 노드 · 센트리·서비스 총기" };
         static readonly (double dig, double gun, double dash)[] RoleStats = { (2, .65, 1), (0, 1.5, .9), (.35, 1, 1.4), (.75, .9, 1) };
         static readonly Color[] RoleColors = { C("#ffd36e"), C("#ff8d72"), C("#7febd0"), C("#c7a0ff") };
 
@@ -128,7 +130,7 @@ namespace TunnelCrew.Presentation
         void GoStarmap() => Wipe(() => { Current = Screen.Starmap; _planetIdx = 0; });
         void GoRoleSelect() => Wipe(() => Current = Screen.RoleSelect);
         void GoSettings() => Wipe(() => Current = Screen.Settings);
-        void Launch() => Wipe(() => { AudioDirector.Instance?.Deploy(); _run.LaunchRun(_selected); Current = Screen.Run; }, loading: true);
+        void Launch() => Wipe(() => { AudioDirector.Instance?.Deploy(); _run.LaunchRun(_selected, (ExpeditionObjectiveId)_missionIdx, _equipment[(int)_selected], (RiskContractId)_contractIdx); Current = Screen.Run; }, loading: true);
         /// <summary>관전 출격 — 선택 직업이 AI 리더, 나머지 3직업이 AI 크루 (원본 OBS.enter → infLaunchFromRoleSelect).</summary>
         void LaunchObserver() => LaunchObserver(_selected);
         /// <summary>리더 직업을 지정해 관전 출격 (스모크·외부 진입용). 출격은 항상 이 직업으로 나가야 편성(나머지 3직업)과 어긋나지 않는다.</summary>
@@ -168,6 +170,7 @@ namespace TunnelCrew.Presentation
             var gp = Gamepad.current;
             bool gA = gp != null && gp.buttonSouth.wasPressedThisFrame, gB = gp != null && gp.buttonEast.wasPressedThisFrame;
             bool gL = gp != null && (gp.dpad.left.wasPressedThisFrame || (gp.leftStick.left.wasPressedThisFrame)), gR = gp != null && (gp.dpad.right.wasPressedThisFrame || gp.leftStick.right.wasPressedThisFrame);
+            bool gU = gp != null && (gp.dpad.up.wasPressedThisFrame || gp.leftStick.up.wasPressedThisFrame), gD = gp != null && (gp.dpad.down.wasPressedThisFrame || gp.leftStick.down.wasPressedThisFrame);
             switch (Current)
             {
                 case Screen.MainMenu:
@@ -185,6 +188,8 @@ namespace TunnelCrew.Presentation
                     else if ((kb.enterKey.wasPressedThisFrame || gA) && !Planets[_planetIdx].locked) GoRoleSelect();
                     else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame || gL) { _planetIdx = (_planetIdx + Planets.Length - 1) % Planets.Length; AudioDirector.Instance?.Tick(); }
                     else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame || gR) { _planetIdx = (_planetIdx + 1) % Planets.Length; AudioDirector.Instance?.Tick(); }
+                    else if (kb.upArrowKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame || gU) { _missionIdx = (_missionIdx + ExpeditionObjectives.All.Length - 1) % ExpeditionObjectives.All.Length; AudioDirector.Instance?.Tick(); }
+                    else if (kb.downArrowKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame || gD) { _missionIdx = (_missionIdx + 1) % ExpeditionObjectives.All.Length; AudioDirector.Instance?.Tick(); }
                     break;
                 case Screen.RoleSelect:
                     if (kb.escapeKey.wasPressedThisFrame || gB) { AudioDirector.Instance?.Back(); GoStarmap(); }
@@ -194,12 +199,16 @@ namespace TunnelCrew.Presentation
                     else if (kb.digit4Key.wasPressedThisFrame) _selected = RoleId.Engineer;
                     else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame || gL) { _selected = (RoleId)(((int)_selected + 3) % 4); AudioDirector.Instance?.Pick(); }
                     else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame || gR) { _selected = (RoleId)(((int)_selected + 1) % 4); AudioDirector.Instance?.Pick(); }
+                    else if (kb.upArrowKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame || kb.sKey.wasPressedThisFrame || gU || gD) { ToggleEquipment(_selected); AudioDirector.Instance?.Tick(); }
+                    else if (kb.qKey.wasPressedThisFrame) { CycleContract(-1); AudioDirector.Instance?.Tick(); }
+                    else if (kb.eKey.wasPressedThisFrame) { CycleContract(1); AudioDirector.Instance?.Tick(); }
                     else if (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame || gA) Launch();
                     break;
                 case Screen.Settlement:
                     if (kb.digit1Key.wasPressedThisFrame) _view = SettleView.Summary;
                     else if (kb.digit2Key.wasPressedThisFrame) _view = SettleView.Map;
                     else if (kb.digit3Key.wasPressedThisFrame) _view = SettleView.Relics;
+                    else if (kb.digit4Key.wasPressedThisFrame) _view = SettleView.Codex;
                     else if (kb.escapeKey.wasPressedThisFrame || gB)
                     {
                         AudioDirector.Instance?.Back();
@@ -219,6 +228,17 @@ namespace TunnelCrew.Presentation
                     else if (gp != null && GamepadMap.Pressed(gp, GamepadMap.Action.Pause) && _run != null && _run.Sim.Phase == GamePhase.Playing) { _run.SetPaused(true); Current = Screen.Pause; }
                     break;
             }
+        }
+
+        void ToggleEquipment(RoleId role)
+        {
+            int i = (int)role;
+            _equipment[i] = _equipment[i] == EquipmentVariant.Standard ? EquipmentVariant.Alternative : EquipmentVariant.Standard;
+        }
+
+        void CycleContract(int delta)
+        {
+            _contractIdx = (_contractIdx + delta + RiskContracts.All.Length) % RiskContracts.All.Length;
         }
 
         // ───────────────────────────── 그리기
@@ -448,7 +468,7 @@ namespace TunnelCrew.Presentation
         void DrawStarmap(float W, float H)
         {
             DrawBackdrop(_bg, W, H, .6f);
-            GUI.Label(R(80, 60, 900, 60), "<b>행성 지도</b>   <color=#aaa>← → 선택 · Enter 출격 · Esc 메뉴</color>", St(34, FontStyle.Bold));
+            GUI.Label(R(80, 60, 1200, 60), "<b>행성 지도</b>   <color=#aaa>← → 행성 · ↑ ↓ 임무 · Enter 계속 · Esc 메뉴</color>", St(34, FontStyle.Bold));
             float cx = W * .5f, cy = H * .52f, rx = W * .38f, ry = 300;
             for (int i = 0; i < Planets.Length; i++)
             {
@@ -465,16 +485,29 @@ namespace TunnelCrew.Presentation
                 if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) { _planetIdx = i; if (!p.locked && Event.current.clickCount >= 2) GoRoleSelect(); }
             }
             var cur = Planets[_planetIdx];
-            Panel(R(cx - 420, H - 190, 840, 130), .7f);
-            GUI.Label(R(cx - 400, H - 184, 800, 44), cur.locked ? $"<color=#999>{cur.name} — 잠김</color>" : $"<b>{cur.name}</b>", St(28, FontStyle.Bold, TextAnchor.MiddleCenter));
-            GUI.Label(R(cx - 400, H - 140, 800, 70), cur.locked ? cur.theme + " · 이후 업데이트에서 열린다" : cur.theme + "\n<color=#ffd36e>Enter</color> 직업 선택으로", St(18, FontStyle.Normal, TextAnchor.MiddleCenter, true));
+            var mission = ExpeditionObjectives.All[_missionIdx];
+            Panel(R(cx - 560, H - 236, 1120, 176), .78f);
+            GUI.Label(R(cx - 535, H - 228, 1070, 38), cur.locked ? $"<color=#999>{cur.name} — 잠김</color>" : $"<b>{cur.name}</b>", St(27, FontStyle.Bold, TextAnchor.MiddleCenter));
+            GUI.Label(R(cx - 530, H - 188, 1060, 36), cur.locked ? cur.theme + " · 이후 업데이트에서 열린다" : cur.theme, St(16, FontStyle.Normal, TextAnchor.MiddleCenter, true));
+            if (!cur.locked)
+            {
+                float mw = 330, mg = 16, mx = cx - (mw * 3 + mg * 2) * .5f;
+                for (int i = 0; i < ExpeditionObjectives.All.Length; i++)
+                {
+                    var m = ExpeditionObjectives.All[i]; bool on = i == _missionIdx;
+                    if (Button(R(mx + i * (mw + mg), H - 142, mw, 46), on ? $"<b>{m.Name}</b>" : m.Name, true, on ? new Color(1f, .83f, .43f) : new Color(.42f, .38f, .54f))) _missionIdx = i;
+                }
+                GUI.Label(R(cx - 520, H - 94, 1040, 30), mission.Description + "   <color=#ffd36e>Enter</color> 직업 선택으로", St(15, FontStyle.Normal, TextAnchor.MiddleCenter, true));
+            }
         }
 
         // ── 직업 선택 (원본 #infRoleModal — 4 카드: 코드 · 일러스트 · 이름 · 태그 · 장비 · 배율)
         void DrawRoleSelect(float W, float H)
         {
             DrawBackdrop(_bg, W, H, .55f);
-            GUI.Label(R(80, 50, 1200, 60), "<b>무한 모드 · 직업 선택</b>   <color=#aaa>기본 장비와 역할 배율이 결정됩니다 · 런 도중 변경 불가</color>", St(30, FontStyle.Bold));
+            GUI.Label(R(80, 50, W - 850, 60), $"<b>{ExpeditionObjectives.All[_missionIdx].Name} · 직업 선택</b>   <color=#aaa>장비는 런 도중 변경 불가</color>", St(30, FontStyle.Bold));
+            var contract = RiskContracts.All[_contractIdx];
+            if (Button(R(W - 740, 46, 660, 68), $"개인 계약　<b>{contract.Name}</b>   <color=#aaa>Q / E</color>\n<color=#aaa>{contract.Condition}{(contract.Reward > 0 ? $" · 성공 시 코어 +{contract.Reward}" : "")}</color>", true, contract.Id == RiskContractId.None ? new Color(.38f, .36f, .46f) : new Color(.62f, .38f, .34f))) CycleContract(1);
             float cw = 400, ch = 760, gap = 26, total = 4 * cw + 3 * gap, x0 = W * .5f - total * .5f, y0 = 140;
             var meta = MetaStore.Load();
             for (int i = 0; i < 4; i++)
@@ -493,7 +526,8 @@ namespace TunnelCrew.Presentation
                 float ty = rc.y + 486 * _k;
                 GUI.Label(new Rect(rc.x + 18 * _k, ty, rc.width - 36 * _k, 40 * _k), $"<b>{RoleNames[i]}</b>", St(30, FontStyle.Bold));
                 GUI.Label(new Rect(rc.x + 18 * _k, ty + 42 * _k, rc.width - 36 * _k, 30 * _k), RoleTags[i], St(15, FontStyle.Normal, TextAnchor.MiddleLeft, true, new Color(.8f, .78f, .85f)));
-                GUI.Label(new Rect(rc.x + 18 * _k, ty + 80 * _k, rc.width - 36 * _k, 54 * _k), $"장비　{RoleGear[i]}", St(14, FontStyle.Normal, TextAnchor.UpperLeft, true));
+                var gear = RoleEquipment.For(role, _equipment[i]);
+                GUI.Label(new Rect(rc.x + 18 * _k, ty + 80 * _k, rc.width - 36 * _k, 54 * _k), $"장비　<b>{gear.Name}</b>\n<color=#aaa>{gear.Summary} · {gear.Tradeoff}</color>", St(14, FontStyle.Normal, TextAnchor.UpperLeft, true));
                 var st = RoleStats[i];
                 GUI.Label(new Rect(rc.x + 18 * _k, ty + 140 * _k, rc.width - 36 * _k, 30 * _k), $"채굴 ×{st.dig:0.00}　전투 ×{st.gun:0.00}　기동 ×{st.dash:0.00}", St(15, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(1f, .93f, .8f)));
                 int ranks = PermanentNodes.All.Where(n => n.Owner == role.ToString().ToLowerInvariant()).Sum(n => meta.RankOf(n.Id));
@@ -506,6 +540,7 @@ namespace TunnelCrew.Presentation
                 GUI.Label(new Rect(chip.x + 42 * _k, chip.y, 30 * _k, chip.height), $"<b>{nAi}</b>", St(16, FontStyle.Bold, TextAnchor.MiddleCenter, false, nAi > 0 ? RoleColors[i] : new Color(.43f, .38f, .5f)));
                 if (Button(new Rect(chip.x + 74 * _k, chip.y, 86 * _k, chip.height), "+ AI", crew.Roster.Count < AiCrewSystem.Max, RoleColors[i])) crew.Add(role);
                 if (rc.Contains(Event.current.mousePosition) && !chip.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) { if (_selected == role && Event.current.clickCount >= 2) Launch(); _selected = role; }
+                if (sel && Button(new Rect(rc.x + 18 * _k, rc.yMax - 132 * _k, rc.width - 36 * _k, 50 * _k), $"장비 전환　{gear.Name}   <color=#aaa>↑↓</color>", true, new Color(.47f, .4f, .62f))) ToggleEquipment(role);
                 if (sel && Button(new Rect(rc.x + 18 * _k, rc.yMax - 70 * _k, rc.width - 36 * _k, 54 * _k), "선택 완료 · 출격   <color=#aaa>Enter</color>", true, RoleColors[i])) Launch();
             }
             // 카드 그리드 아래의 편성 요약 (원본 .aiCrewBar)
@@ -533,17 +568,18 @@ namespace TunnelCrew.Presentation
             GUI.Label(R(W * .5f - 280, H * .5f - 140, 560, 50), "<b>일시정지</b>", St(34, FontStyle.Bold, TextAnchor.MiddleCenter));
             if (Button(R(W * .5f - 240, H * .5f - 60, 480, 64), "계속   <color=#aaa>Esc</color>")) { _run.SetPaused(false); Current = Screen.Run; }
             if (Button(R(W * .5f - 240, H * .5f + 20, 480, 64), "원정 포기 · 결과 화면   <color=#aaa>M</color>", true, new Color(1f, .44f, .54f))) { _run.Sim.EndRun(false, "원정 포기"); _run.SetPaused(false); Current = Screen.Run; }
-            GUI.Label(R(W * .5f - 280, H * .5f + 100, 560, 40), $"<color=#aaa>{Planet.DepthLabel(_run.Sim.Depth)} · 장악도 {_run.Sim.Run.Dominance:P0} · 코어 {_run.Sim.Loot.Core}</color>", St(16, FontStyle.Normal, TextAnchor.MiddleCenter));
+            string objective = _run.Sim.Objective?.HudText(_run.Sim.Run) ?? $"암반 장악 {_run.Sim.Run.Dominance:P0}";
+            GUI.Label(R(W * .5f - 280, H * .5f + 100, 560, 40), $"<color=#aaa>{Planet.DepthLabel(_run.Sim.Depth)} · {objective} · 코어 {_run.Sim.Loot.Core}</color>", St(16, FontStyle.Normal, TextAnchor.MiddleCenter));
         }
 
-        // ── 귀환 정산 (원본 #infSettlementModal 3-view)
+        // ── 귀환 정산 (원본 3-view + 필드 도감)
         void DrawSettlement(float W, float H)
         {
             DrawBackdrop(_bg, W, H, .7f);
             var meta = MetaStore.Load();
             // 탭
-            string[] tabs = { "1 요약", "2 성장 지도", "3 유물 보관고" };
-            for (int i = 0; i < 3; i++)
+            string[] tabs = { "1 요약", "2 성장 지도", "3 유물 보관고", "4 필드 도감" };
+            for (int i = 0; i < tabs.Length; i++)
             {
                 bool on = (int)_view == i;
                 if (Button(R(80 + i * 250, 40, 236, 52), on ? $"<b>{tabs[i]}</b>" : tabs[i], true, on ? new Color(1f, .83f, .43f) : new Color(.4f, .38f, .5f))) _view = (SettleView)i;
@@ -554,6 +590,7 @@ namespace TunnelCrew.Presentation
                 case SettleView.Summary: DrawSummary(W, H, meta); break;
                 case SettleView.Map: DrawNodeMap(W, H, meta); break;
                 case SettleView.Relics: DrawRelicVault(W, H, meta); break;
+                case SettleView.Codex: DrawCodex(W, H, meta); break;
             }
             if (!string.IsNullOrEmpty(_status)) GUI.Label(R(80, H - 50, W - 160, 36), _status, St(16, FontStyle.Normal, TextAnchor.MiddleLeft, false, new Color(1f, .83f, .43f)));
         }
@@ -722,6 +759,39 @@ namespace TunnelCrew.Presentation
                 GUI.Label(new Rect(rc.x + 14 * _k, rc.y + 58 * _k, rc.width - 28 * _k, 58 * _k), owned ? rel.Desc : "<color=#555>광맥·보스·묻힌 유물에서 발굴</color>", St(13, FontStyle.Normal, TextAnchor.UpperLeft, true));
                 if (owned && rc.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown) { Relics.EquipAuto(meta, rel.Id); MetaStore.Save(); _status = $"{rel.Name} {(Array.IndexOf(meta.relicSockets, rel.Id) >= 0 ? "장착" : "해제")}"; }
                 idx++;
+            }
+        }
+
+        void DrawCodex(float W, float H, MetaState meta)
+        {
+            Panel(R(80, 110, W - 160, H - 180), .75f);
+            int known = 0;
+            foreach (var e in FieldCodex.All) if (meta.codexEntries.Contains(e.Id)) known++;
+            GUI.Label(R(120, 132, W - 240, 42), $"<b>필드 도감</b>   <color=#aaa>{known} / {FieldCodex.All.Length} · 발견은 자동 기록되며 화면을 강제로 열지 않습니다</color>", St(28, FontStyle.Bold));
+
+            string[] names = { "생물", "지질", "장비", "원정 기록" };
+            Color[] colors = { new Color(1f, .55f, .45f), new Color(1f, .83f, .43f), new Color(.5f, .92f, .82f), new Color(.78f, .63f, 1f) };
+            float gap = 16, colW = (W - 240 - gap * 3) / 4, x0 = 120, y0 = 194;
+            for (int cat = 0; cat < 4; cat++)
+            {
+                int entries = 0, catKnown = 0;
+                foreach (var e in FieldCodex.All) if ((int)e.Category == cat) { entries++; if (meta.codexEntries.Contains(e.Id)) catKnown++; }
+                var panel = R(x0 + cat * (colW + gap), y0, colW, H - y0 - 100);
+                Fill(panel, new Color(.08f, .07f, .12f, .9f));
+                Fill(new Rect(panel.x, panel.y, panel.width, 5 * _k), colors[cat]);
+                GUI.Label(new Rect(panel.x + 14 * _k, panel.y + 10 * _k, panel.width - 28 * _k, 34 * _k), $"<b>{names[cat]}</b>   <color=#777>{catKnown}/{entries}</color>", St(21, FontStyle.Bold));
+                float y = panel.y + 52 * _k;
+                foreach (var entry in FieldCodex.All)
+                {
+                    if ((int)entry.Category != cat) continue;
+                    bool unlocked = meta.codexEntries.Contains(entry.Id);
+                    float rowH = 62 * _k;
+                    if (y + rowH > panel.yMax - 8 * _k) break;
+                    Fill(new Rect(panel.x + 10 * _k, y, panel.width - 20 * _k, rowH - 6 * _k), unlocked ? new Color(.14f, .12f, .2f) : new Color(.07f, .07f, .09f));
+                    GUI.Label(new Rect(panel.x + 20 * _k, y + 3 * _k, panel.width - 40 * _k, 25 * _k), unlocked ? $"<b>{entry.Name}</b>" : "<color=#555>미확인 기록</color>", St(15, FontStyle.Bold));
+                    GUI.Label(new Rect(panel.x + 20 * _k, y + 27 * _k, panel.width - 40 * _k, 29 * _k), unlocked ? entry.Description : "<color=#444>현장에서 조우·채굴·사용하면 기록됩니다.</color>", St(11, FontStyle.Normal, TextAnchor.UpperLeft, true));
+                    y += rowH;
+                }
             }
         }
         static Color TierColor(int t) => t >= 4 ? new Color(1f, .83f, .43f) : t == 2 ? new Color(.78f, .63f, 1f) : new Color(.75f, .75f, .8f);

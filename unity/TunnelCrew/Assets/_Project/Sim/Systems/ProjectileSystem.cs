@@ -59,7 +59,7 @@ namespace TunnelCrew.Sim
         }
 
         /// <summary>발사 시도. 쿨·탄창·재장전 규칙을 여기서 판정한다.</summary>
-        public bool TryFire(PlayerState player, PlayerBuild build, bool drillHeld)
+        public bool TryFire(PlayerState player, PlayerBuild build, bool drillHeld, double equipmentPower = 1.0)
         {
             if (_gunCd > 0) return false;
             if (!build.RoleHasGun) return false;
@@ -73,9 +73,9 @@ namespace TunnelCrew.Sim
             double sync = build.Role != RoleId.Gunner && drillHeld ? build.SyncMul : 1.0;
             bool laser = build.LaserEvery > 0 && build.ShotCounter % build.LaserEvery == 0;
 
-            double speed = SimTuning.TeCells(laser ? 480 : 280) * (build.RoleGunMul > 1 ? 1.08 : 1.0);
+            double speed = SimTuning.TeCells(laser ? 480 : 280) * (build.RoleGunMul > 1 ? 1.08 : 1.0) * build.ProjectileSpeedMul;
             int shots = Math.Max(1, build.Shots);
-            double spread = shots > 1 ? (laser ? 0.045 : 0.13) : 0;
+            double spread = shots > 1 ? (laser ? 0.045 : build.ProjectileSpread >= 0 ? build.ProjectileSpread : 0.13) : 0;
             string visualId = VisualIdFor(build, laser, shots);
 
             double a = player.Aim;
@@ -87,12 +87,12 @@ namespace TunnelCrew.Sim
                 {
                     Position = player.Position + dir * (SimTuning.PlayerRadius * 0.9),
                     Velocity = dir * speed,
-                    Life = laser ? 0.72 : 1.2,
+                    Life = (laser ? 0.72 : 1.2) * build.ProjectileLifeMul,
                     Pierce = build.Pierce + (laser ? 5 : 0),
                     Bounces = laser ? 0 : build.Bounces,
                     Explosive = build.Explosive || laser,
                     Laser = laser,
-                    Power = sync,
+                    Power = sync * equipmentPower,
                     VisualId = visualId,
                 });
             }

@@ -65,6 +65,7 @@ namespace TunnelCrew.Sim
 
         public bool BossSpawned { get; set; }
         public bool BossActive { get; set; }
+        public bool UsesDominanceObjective { get; private set; } = true;
 
         public double WallHpMul { get; private set; } = 1.0;
         public double EnemyHpMul { get; private set; } = 1.0;
@@ -84,7 +85,7 @@ namespace TunnelCrew.Sim
         public int SpawnBurst => (int)Math.Min(5, 1 + Math.Floor(Math.Max(0, Threat - 1) / 1.75));
 
         /// <summary>원본 infInitFloor — 층 진입. 파괴 가능 블록 수를 세고 배율을 정한다.</summary>
-        public void InitFloor(int depth, WorldGrid world)
+        public void InitFloor(int depth, WorldGrid world, bool usesDominanceObjective = true)
         {
             Depth = depth;
             FloorTime = 0;
@@ -92,6 +93,7 @@ namespace TunnelCrew.Sim
             SpawnDebt = 0;
             BossSpawned = false;
             BossActive = false;
+            UsesDominanceObjective = usesDominanceObjective;
             WallHpMul = Planet.WallHpMulFor(depth);
             EnemyHpMul = Planet.EnemyHpMulFor(depth);
 
@@ -115,7 +117,7 @@ namespace TunnelCrew.Sim
         {
             FloorBroken++;
             SpawnDebt += 0.30 + Math.Min(0.42, FloorBroken * 0.006);
-            if (!BossSpawned && DominanceReached)
+            if (UsesDominanceObjective && !BossSpawned && DominanceReached)
             {
                 BossSpawned = true;
                 DominanceReachedEvent?.Invoke();
