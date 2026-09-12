@@ -241,7 +241,7 @@ namespace TunnelCrew.Sim
                 foreach (var e in _sim.Enemies.Enemies) { if (!e.Alive) continue; double d = Vec2.Distance(e.Position, t.At); if (d < bd) { bd = d; target = e; } }
                 if (target == null) continue;
                 var dir = (target.Position - t.At).Normalized; t.A = dir.Angle;
-                _sim.Projectiles.Emit(new Projectile { Position = t.At + dir * .18, Velocity = dir * SimTuning.TeCells(245), Life = .88, Power = .62, VisualId = "support" }, t.A);
+                _sim.Projectiles.Emit(new Projectile { Position = t.At + dir * .18, Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("support")), Life = ProjectileSystem.BaseLife("support"), Power = .62, VisualId = "support" }, t.A);
                 t.Cd = .48;
             }
             Turrets.RemoveAll(t => t.Life <= 0);

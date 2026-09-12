@@ -123,7 +123,79 @@ namespace TunnelCrew.Presentation
         public void Exit() => Proc("exit", () => new[] { T(110, .85f, .11f, null, W.Sine, 0, 700), T(131, .85f, .11f, null, W.Sine, 0, 700, .006f, .08f), T(98, .85f, .11f, null, W.Sine, 0, 700, .006f, .16f), T(82, .85f, .11f, null, W.Sine, 0, 700, .006f, .24f), H(.55f, 280, 60, .14f, null, .5f, 1, F.Lowpass) });
         public void Descend() => Proc("descend", () => new[] { H(.65f, 480, 55, .22f, null, .55f, .5f, F.Lowpass), T(140, .75f, .14f, null, W.Sine, 48, 320) });
         public void Tick() => Proc("tick", () => new[] { T(380, .07f, .09f, null, W.Triangle, 0, 900), H(.045f, 1700, 520, .05f, null, 1.3f, 1, F.Bandpass) });
-        public void Shot() { if (Sample("shot")) return; Tick(); }
+        public void Shot() => Shot("standard");
+        public void Shot(string visualId)
+        {
+            float pitch = visualId == "laser" ? 1.34f : visualId == "pierce" ? 1.16f
+                        : visualId == "multi" ? .88f : visualId == "explosive" || visualId == "rain" ? .76f
+                        : visualId == "support" ? 1.22f : 1f;
+            float gain = visualId == "support" ? .68f : visualId == "laser" || visualId == "explosive" || visualId == "rain" ? 1.08f : 1f;
+            bool sampled = Sample("shot", gain, 0, pitch);
+            switch (visualId)
+            {
+                case "multi":
+                    Proc("shot_multi", () => new[] { H(.075f, 1700, 210, .10f, "combat", .72f, 1.8f, F.Lowpass), T(92, .10f, .07f, "combat", W.Sine, 55, 260) }, .78f);
+                    break;
+                case "pierce":
+                    Proc("shot_pierce", () => new[] { T(410, .09f, .075f, "combat", W.Sawtooth, 620, 2100), H(.05f, 3200, 1100, .055f, "combat", 2.1f, 1.5f, F.Bandpass) }, .76f);
+                    break;
+                case "ricochet":
+                    Proc("shot_ricochet", () => new[] { T(330, .10f, .07f, "combat", W.Triangle, 180, 1400), T(660, .07f, .045f, "combat", W.Sine, 0, 1900, .004f, .025f) }, .72f);
+                    break;
+                case "explosive":
+                case "rain":
+                    Proc("shot_explosive", () => new[] { H(.13f, 520, 75, .15f, "combat", .55f, .68f, F.Lowpass), T(62, .15f, .14f, "combat", W.Sine, 38, 210) }, .86f);
+                    break;
+                case "laser":
+                    Proc("shot_laser", () => new[] { T(560, .13f, .09f, "combat", W.Sawtooth, 980, 2600, .003f), T(1120, .10f, .055f, "combat", W.Sine, 420, 3200, .002f, .018f) }, .78f);
+                    break;
+                case "support":
+                    Proc("shot_support", () => new[] { T(470, .065f, .052f, "combat", W.Square, 180, 1800), T(705, .07f, .035f, "combat", W.Sine, 0, 2200, .002f, .018f) }, .58f);
+                    break;
+                case "shard":
+                    Proc("shot_shard", () => new[] { T(740, .075f, .052f, "combat", W.Triangle, 310, 2400), H(.045f, 2600, 900, .035f, "combat", 2f, 1.5f, F.Bandpass) }, .65f);
+                    break;
+                default:
+                    if (!sampled) Tick();
+                    break;
+            }
+        }
+
+        public void ProjectileImpact(string visualId, ProjectileImpactKind kind, bool exploded, bool terminal)
+        {
+            if (kind == ProjectileImpactKind.Expire || !Thr(ProjectileImpactThrottleKey(visualId), kind == ProjectileImpactKind.Ricochet ? 18 : 28)) return;
+            if (exploded)
+            {
+                Proc(visualId == "laser" ? "impact_laser_burst" : "impact_explosion", () => new[]
+                {
+                    H(.20f, visualId == "laser" ? 1800 : 620, 65, .18f, "combat", .55f, .70f, F.Lowpass),
+                    T(visualId == "laser" ? 118 : 54, .22f, .14f, "combat", W.Sine, 34, 240),
+                }, .92f);
+                return;
+            }
+            if (kind == ProjectileImpactKind.Ricochet)
+                Proc("impact_ricochet", () => new[] { T(880, .075f, .08f, "combat", W.Triangle, 360, 2600), T(1320, .055f, .04f, "combat", W.Sine, 0, 3000, .002f, .018f) }, .72f);
+            else if (visualId == "pierce" || visualId == "laser")
+                Proc("impact_pierce", () => new[] { H(.065f, 3100, 620, .08f, "combat", 2.3f, 1.4f, F.Bandpass), T(220, .08f, .045f, "combat", W.Sine, 80, 900) }, terminal ? .80f : .55f);
+            else if (kind == ProjectileImpactKind.Bedrock || terminal)
+                Proc("impact_slug", () => new[] { H(.075f, 1250, 130, .08f, "combat", .8f, .85f, F.Lowpass), T(78, .08f, .052f, "combat", W.Sine, 45, 260) }, .62f);
+        }
+
+        static string ProjectileImpactThrottleKey(string visualId)
+        {
+            switch (visualId)
+            {
+                case "multi": return "pi.multi";
+                case "pierce": return "pi.pierce";
+                case "ricochet": return "pi.ricochet";
+                case "explosive": return "pi.explosive";
+                case "rain": return "pi.rain";
+                case "laser": return "pi.laser";
+                case "support": return "pi.support";
+                case "shard": return "pi.shard";
+                default: return "pi.standard";
+            }
+        }
         public void Reload(bool manual)
         {
             if (!Thr("reload", 120)) return;

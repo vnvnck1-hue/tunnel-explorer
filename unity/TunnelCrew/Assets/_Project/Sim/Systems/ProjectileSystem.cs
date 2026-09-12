@@ -3,6 +3,13 @@ using System.Collections.Generic;
 
 namespace TunnelCrew.Sim
 {
+    [Flags]
+    public enum ProjectileStyleFlags : ushort
+    {
+        None = 0, Multi = 1 << 0, Pierce = 1 << 1, Ricochet = 1 << 2,
+        Explosive = 1 << 3, Laser = 1 << 4, Support = 1 << 5, Shard = 1 << 6,
+    }
+
     /// <summary>플레이어 탄 한 발. 원본 <c>G.projectiles[]</c> 의 원소.</summary>
     public sealed class Projectile
     {
@@ -16,6 +23,8 @@ namespace TunnelCrew.Sim
         public int LastCell = -1;
         /// <summary>연출용 분류. standard / multi / pierce / ricochet / explosive / rain / laser.</summary>
         public string VisualId = "standard";
+        /// <summary>효과가 겹치는 빌드의 시각 조합. VisualId 는 대표 형태, 이 값은 보조 문법을 보존한다.</summary>
+        public ProjectileStyleFlags VisualFlags;
         public double Age;
         /// <summary>AI 크루 탄 — 사람의 특성 배율을 타지 않고 AiMul 로만 계산한다 (원본 p.ai/aiMul/aiOwner). null 이면 사람 탄.</summary>
         public object Owner;
@@ -23,8 +32,18 @@ namespace TunnelCrew.Sim
         public bool AiTurret;
     }
 
-    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public int Count; public bool Ai; }
-    public struct ProjectileEndedEvent { public Vec2 Position; public bool Exploded; public string VisualId; }
+    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public ProjectileStyleFlags VisualFlags; public int Count; public bool Ai; }
+    public struct ProjectileEndedEvent { public Vec2 Position; public bool Exploded; public string VisualId; public ProjectileStyleFlags VisualFlags; }
+    public enum ProjectileImpactKind : byte { Expire, Enemy, Wall, Bedrock, Ricochet }
+    public struct ProjectileImpactEvent
+    {
+        public Vec2 Position, Direction;
+        public string VisualId;
+        public ProjectileStyleFlags VisualFlags;
+        public ProjectileImpactKind Kind;
+        public bool Terminal, Exploded, Killed;
+        public double Power;
+    }
     public struct ReloadEvent { public bool Started; public bool Manual; }
 
     /// <summary>
@@ -36,6 +55,7 @@ namespace TunnelCrew.Sim
         public readonly List<Projectile> Projectiles = new List<Projectile>();
 
         public event Action<ProjectileFiredEvent> Fired;
+        public event Action<ProjectileImpactEvent> Impacted;
         public event Action<ProjectileEndedEvent> Ended;
         public event Action<ReloadEvent> Reload;
         /// <summary>AI 탄이 벽을 깎을 때 굴착 크레딧 주인을 TunnelSim 에 알린다.</summary>
@@ -44,8 +64,9 @@ namespace TunnelCrew.Sim
         /// <summary>외부(AI 크루·센트리)가 만든 탄을 넣고 발사 이벤트를 낸다.</summary>
         public void Emit(Projectile p, double angle)
         {
+            if (p.VisualFlags == ProjectileStyleFlags.None) p.VisualFlags = InferStyleFlags(p.VisualId);
             Projectiles.Add(p);
-            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, Count = 1, Ai = p.Owner != null || p.VisualId == "support" });
+            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, VisualFlags = p.VisualFlags, Count = 1, Ai = p.Owner != null || p.VisualId == "support" });
         }
 
         readonly WorldGrid _world;
@@ -73,10 +94,10 @@ namespace TunnelCrew.Sim
             double sync = build.Role != RoleId.Gunner && drillHeld ? build.SyncMul : 1.0;
             bool laser = build.LaserEvery > 0 && build.ShotCounter % build.LaserEvery == 0;
 
-            double speed = SimTuning.TeCells(laser ? 480 : 280) * (build.RoleGunMul > 1 ? 1.08 : 1.0) * build.ProjectileSpeedMul;
             int shots = Math.Max(1, build.Shots);
             double spread = shots > 1 ? (laser ? 0.045 : build.ProjectileSpread >= 0 ? build.ProjectileSpread : 0.13) : 0;
             string visualId = VisualIdFor(build, laser, shots);
+            double speed = SimTuning.TeCells(BaseSpeedPx(visualId)) * (build.RoleGunMul > 1 ? 1.08 : 1.0) * build.ProjectileSpeedMul;
 
             double a = player.Aim;
             for (int i = 0; i < shots; i++)
@@ -87,13 +108,14 @@ namespace TunnelCrew.Sim
                 {
                     Position = player.Position + dir * (SimTuning.PlayerRadius * 0.9),
                     Velocity = dir * speed,
-                    Life = (laser ? 0.72 : 1.2) * build.ProjectileLifeMul,
+                    Life = BaseLife(visualId) * build.ProjectileLifeMul,
                     Pierce = build.Pierce + (laser ? 5 : 0),
                     Bounces = laser ? 0 : build.Bounces,
                     Explosive = build.Explosive || laser,
                     Laser = laser,
                     Power = sync * equipmentPower,
                     VisualId = visualId,
+                    VisualFlags = StyleFlagsFor(build, laser, shots),
                 });
             }
 
@@ -101,7 +123,7 @@ namespace TunnelCrew.Sim
             double cd = build.Role == RoleId.Gunner ? 0.14 : 0.22;
             _gunCd = cd / Math.Max(0.1, build.FireRate);
 
-            Fired?.Invoke(new ProjectileFiredEvent { Position = player.Position, Angle = a, VisualId = visualId, Count = shots });
+            Fired?.Invoke(new ProjectileFiredEvent { Position = player.Position, Angle = a, VisualId = visualId, VisualFlags = StyleFlagsFor(build, laser, shots), Count = shots });
             return true;
         }
 
@@ -113,6 +135,63 @@ namespace TunnelCrew.Sim
             if (b.Pierce > 0) return "pierce";
             if (shots > 1) return "multi";
             return "standard";
+        }
+
+        static ProjectileStyleFlags StyleFlagsFor(PlayerBuild b, bool laser, int shots)
+        {
+            ProjectileStyleFlags flags = shots > 1 ? ProjectileStyleFlags.Multi : ProjectileStyleFlags.None;
+            if (b.Pierce > 0 || laser) flags |= ProjectileStyleFlags.Pierce;
+            if (b.Bounces > 0) flags |= ProjectileStyleFlags.Ricochet;
+            if (b.Explosive || laser) flags |= ProjectileStyleFlags.Explosive;
+            if (laser) flags |= ProjectileStyleFlags.Laser;
+            return flags;
+        }
+
+        public static ProjectileStyleFlags InferStyleFlags(string visualId)
+        {
+            switch (visualId)
+            {
+                case "multi": return ProjectileStyleFlags.Multi;
+                case "pierce": return ProjectileStyleFlags.Pierce;
+                case "ricochet": return ProjectileStyleFlags.Ricochet;
+                case "explosive": return ProjectileStyleFlags.Explosive;
+                case "rain": return ProjectileStyleFlags.Multi | ProjectileStyleFlags.Explosive;
+                case "laser": return ProjectileStyleFlags.Laser | ProjectileStyleFlags.Pierce | ProjectileStyleFlags.Explosive;
+                case "support": return ProjectileStyleFlags.Support;
+                case "shard": return ProjectileStyleFlags.Shard | ProjectileStyleFlags.Pierce;
+                default: return ProjectileStyleFlags.None;
+            }
+        }
+
+        /// <summary>시각적 속도 언어와 실제 이동 속도를 일치시킨다. 값은 원본처럼 px/s, 1셀=50px.</summary>
+        public static double BaseSpeedPx(string visualId)
+        {
+            switch (visualId)
+            {
+                case "multi": return 300;
+                case "pierce": return 500;
+                case "ricochet": return 365;
+                case "explosive": return 250;
+                case "rain": return 315;
+                case "laser": return 640;
+                case "support": return 360;
+                case "shard": return 390;
+                default: return 340;
+            }
+        }
+
+        public static double BaseLife(string visualId)
+        {
+            switch (visualId)
+            {
+                case "multi": return .72;
+                case "pierce": return .86;
+                case "ricochet": return 1.35;
+                case "explosive": return 1.05;
+                case "rain": return .88;
+                case "laser": return .58;
+                default: return 1.05;
+            }
         }
 
         public void StartReload(PlayerBuild build, bool manual)
@@ -148,6 +227,7 @@ namespace TunnelCrew.Sim
 
                 var n = p.Velocity.Normalized;
                 bool hit = false;
+                bool impactEmitted = false;
 
                 // ── 적 충돌
                 foreach (var e in _enemies.Enemies)
@@ -162,7 +242,16 @@ namespace TunnelCrew.Sim
                     _enemies.HurtEnemy(e, dmg, n, p.Owner is ICrewTarget ct ? ct.Pos : player.Position, byTurret: p.AiTurret || p.VisualId == "support");
                     if (ai) _enemies.DamageSource = null;
 
-                    if (p.Pierce > 0) { p.Pierce--; p.Position += n * SimTuning.PxCells(12.0); }
+                    bool terminal = p.Pierce <= 0;
+                    Impacted?.Invoke(new ProjectileImpactEvent
+                    {
+                        Position = p.Position, Direction = n, VisualId = p.VisualId,
+                        VisualFlags = p.VisualFlags == ProjectileStyleFlags.None ? InferStyleFlags(p.VisualId) : p.VisualFlags,
+                        Kind = ProjectileImpactKind.Enemy, Terminal = terminal,
+                        Exploded = p.Explosive && terminal, Killed = !e.Alive, Power = p.Power,
+                    });
+                    impactEmitted = true;
+                    if (!terminal) { p.Pierce--; p.Position += n * SimTuning.PxCells(12.0); }
                     else hit = true;
                     break;
                 }
@@ -187,7 +276,13 @@ namespace TunnelCrew.Sim
                                 p.LastCell = k;
                             }
 
-                            if (p.Pierce > 0) { p.Pierce--; p.Position += n * 0.72; }
+                            bool terminal;
+                            ProjectileImpactKind impactKind;
+                            if (p.Pierce > 0)
+                            {
+                                p.Pierce--; p.Position += n * 0.72;
+                                terminal = false; impactKind = ProjectileImpactKind.Wall;
+                            }
                             else if (p.Bounces > 0)
                             {
                                 // 축 반사: 셀 중심 기준으로 더 많이 벗어난 축을 뒤집는다
@@ -197,10 +292,30 @@ namespace TunnelCrew.Sim
                                 if (Math.Abs(dx) > Math.Abs(dy)) p.Velocity.X *= -1; else p.Velocity.Y *= -1;
                                 p.Position += p.Velocity * (dt * 1.5);
                                 p.LastCell = -1;
+                                terminal = false; impactKind = ProjectileImpactKind.Ricochet;
                             }
-                            else hit = true;
+                            else { hit = true; terminal = true; impactKind = ProjectileImpactKind.Wall; }
+                            Impacted?.Invoke(new ProjectileImpactEvent
+                            {
+                                Position = p.Position, Direction = n, VisualId = p.VisualId,
+                                VisualFlags = p.VisualFlags == ProjectileStyleFlags.None ? InferStyleFlags(p.VisualId) : p.VisualFlags,
+                                Kind = impactKind, Terminal = terminal,
+                                Exploded = p.Explosive && terminal, Power = p.Power,
+                            });
+                            impactEmitted = true;
                         }
-                        else if (TileTypes.IsBedrock(t)) hit = true;
+                        else if (TileTypes.IsBedrock(t))
+                        {
+                            hit = true;
+                            Impacted?.Invoke(new ProjectileImpactEvent
+                            {
+                                Position = p.Position, Direction = n, VisualId = p.VisualId,
+                                VisualFlags = p.VisualFlags == ProjectileStyleFlags.None ? InferStyleFlags(p.VisualId) : p.VisualFlags,
+                                Kind = ProjectileImpactKind.Bedrock, Terminal = true,
+                                Exploded = p.Explosive, Power = p.Power,
+                            });
+                            impactEmitted = true;
+                        }
                     }
                 }
 
@@ -209,8 +324,18 @@ namespace TunnelCrew.Sim
                 bool ended = hit || p.Life <= 0 || outOfWorld;
                 if (!ended) continue;
 
+                if (!impactEmitted)
+                {
+                    Impacted?.Invoke(new ProjectileImpactEvent
+                    {
+                        Position = p.Position, Direction = n, VisualId = p.VisualId,
+                        VisualFlags = p.VisualFlags == ProjectileStyleFlags.None ? InferStyleFlags(p.VisualId) : p.VisualFlags,
+                        Kind = ProjectileImpactKind.Expire, Terminal = true,
+                        Exploded = p.Explosive && !outOfWorld, Power = p.Power,
+                    });
+                }
                 if (p.Explosive) Burst(p.Position, build);
-                Ended?.Invoke(new ProjectileEndedEvent { Position = p.Position, Exploded = p.Explosive, VisualId = p.VisualId });
+                Ended?.Invoke(new ProjectileEndedEvent { Position = p.Position, Exploded = p.Explosive, VisualId = p.VisualId, VisualFlags = p.VisualFlags });
                 Projectiles.RemoveAt(i);
             }
         }

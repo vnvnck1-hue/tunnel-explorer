@@ -24,6 +24,7 @@ namespace TunnelCrew.Presentation
         readonly List<Material> _materials = new List<Material>();
         Sprite _ring, _dot, _square, _star;
         VisualOptionsController _visualOptions;
+        bool _initialized;
 
         sealed class Shape { public SpriteRenderer Sr; public float Life, Decay, R0, R1; public Color Col; public bool Ring; }
 
@@ -50,6 +51,13 @@ namespace TunnelCrew.Presentation
 
         void Awake()
         {
+            EnsureInitialized();
+        }
+
+        public void EnsureInitialized()
+        {
+            if (_initialized) return;
+            _initialized = true;
             _visualOptions = FindFirstObjectByType<VisualOptionsController>();
             _dot = ProcSprites.Circle(24, 0.7f);
             _ring = ProcSprites.Ring(64, 0.11f);
@@ -109,6 +117,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.chunks(x,y,n,cols,sp,dx,dy) — 방향이 있으면 그쪽으로 ±1.0rad 부채꼴.</summary>
         public void Chunks(Vector2 at, int n, Color[] cols, float speedPx, Vector2 dir)
         {
+            EnsureInitialized();
             bool bias = dir.sqrMagnitude > 1e-6f;
             float baseA = bias ? Mathf.Atan2(dir.y, dir.x) : 0f;
             for (int i = 0; i < n; i++)
@@ -130,6 +139,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.burst(x,y,n,col,sp) — 사방 점 불꽃.</summary>
         public void Burst(Vector2 at, int n, Color[] cols, float speedPx)
         {
+            EnsureInitialized();
             n = ScaledCount(n);
             for (int i = 0; i < n; i++)
             {
@@ -147,6 +157,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.spikes(x,y,n,col,len,dx,dy) — 방향으로 뻗는 짧은 선.</summary>
         public void Spikes(Vector2 at, int n, Color col, float lenCells, Vector2 dir)
         {
+            EnsureInitialized();
             float baseA = dir.sqrMagnitude > 1e-6f ? Mathf.Atan2(dir.y, dir.x) : Random.value * 6.283f;
             for (int i = 0; i < n; i++)
             {
@@ -164,6 +175,7 @@ namespace TunnelCrew.Presentation
         /// <summary>J.smoke — 커지며 사라지는 연기.</summary>
         public void Smoke(Vector2 at, int n, Color col, float speedPx, float life = 1f / 2.2f)
         {
+            EnsureInitialized();
             n = ScaledCount(n);
             for (int i = 0; i < n; i++)
             {
@@ -189,6 +201,8 @@ namespace TunnelCrew.Presentation
 
         void AddShape(Sprite sp, Vector2 at, Color col, float r0, float r1, float decay, bool ring)
         {
+            EnsureInitialized();
+            if (sp == null) sp = ring ? _ring : _dot;
             Shape state;
             if (_shapeStatePool.Count > 0) state = _shapeStatePool.Pop();
             else if (_shapes.Count >= 96) { state = _shapes[0]; _shapes.RemoveAt(0); }
@@ -280,31 +294,122 @@ namespace TunnelCrew.Presentation
             Burst(at, 6 + level * 4, PalPlayerHurt, 180f);
         }
 
-        public void ProjectileEnd(Vector2 at, string visualId, bool exploded)
+        /// <summary>무기별 발사 순간. 탄체와 같은 색·실루엣을 사용해 총구에서 비행으로 시선이 이어진다.</summary>
+        public void ProjectileMuzzle(Vector2 origin, Vector2 dir, string visualId, ProjectileStyleFlags flags, int count, bool ai)
         {
-            if (exploded)
+            EnsureInitialized();
+            if (flags == ProjectileStyleFlags.None) flags = ProjectileSystem.InferStyleFlags(visualId);
+            var p = ProjectileVfxProfiles.Compose(visualId, flags);
+            float aiMul = ai ? .62f : 1f;
+            Vector2 at = origin + dir.normalized * (visualId == "laser" ? .58f : .40f);
+            Flash(at, p.Width * 1.75f * aiMul, new Color(p.Body.r, p.Body.g, p.Body.b, .68f));
+
+            switch (visualId)
             {
-                Color hot = visualId == "laser" ? C("#48FFE1") : visualId == "rain" ? C("#FF5533") : C("#FF8D42");
-                Ring(at, hot, .16f, visualId == "laser" ? 2.05f : 1.6f);
-                Flash(at, visualId == "laser" ? .72f : .48f, new Color(hot.r, hot.g, hot.b, .72f));
-                var palette = visualId == "laser" ? PalImpactLaser : visualId == "rain" ? PalImpactRain : PalImpactExplosive;
-                Burst(at, visualId == "laser" ? 14 : 18, palette, 285f);
-                Smoke(at, visualId == "laser" ? 1 : 3, C("#4A3550"), 80f);
+                case "multi":
+                    Spikes(at, Mathf.Min(9, 3 + count), p.Accent, .32f, dir);
+                    Burst(at, 4, PalImpactExplosive, 135f);
+                    break;
+                case "pierce":
+                    Spikes(at, 5, Color.white, .55f, dir);
+                    Ring(at, p.Body, .03f, .42f, 8.5f);
+                    break;
+                case "ricochet":
+                    Square(at, p.Accent, .04f, .38f);
+                    Spikes(at, 4, p.Core, .30f, dir);
+                    break;
+                case "explosive":
+                case "rain":
+                    Ring(at, p.Accent, .05f, .50f, 7f);
+                    Star(at, p.Core, .36f);
+                    Smoke(at - dir * .12f, 2, C("#4A2630"), 55f, .28f);
+                    break;
+                case "laser":
+                    Star(at, Color.white, .52f);
+                    Ring(at, p.Body, .05f, .66f, 9f);
+                    Spikes(at, 7, p.Core, .66f, dir);
+                    break;
+                case "support":
+                    Ring(at, p.Body, .03f, .28f, 9f);
+                    break;
+                case "shard":
+                    Spikes(at, 4, p.Core, .40f, dir);
+                    break;
+                default:
+                    Star(at, p.Core, .25f);
+                    Spikes(at, 3, p.Accent, .24f, dir);
+                    break;
+            }
+        }
+
+        /// <summary>관통·도탄·벽·적·수명 종료를 구분한 착탄. 같은 탄의 머즐/비행 프로필과 색을 공유한다.</summary>
+        public void ProjectileImpact(Vector2 at, Vector2 dir, string visualId, ProjectileImpactKind kind,
+            ProjectileStyleFlags flags, bool terminal, bool exploded, bool killed, float power)
+        {
+            EnsureInitialized();
+            if (flags == ProjectileStyleFlags.None) flags = ProjectileSystem.InferStyleFlags(visualId);
+            var p = ProjectileVfxProfiles.Compose(visualId, flags);
+            power = Mathf.Clamp(power, .55f, 1.65f);
+            if (kind == ProjectileImpactKind.Expire && !exploded)
+            {
+                Flash(at, p.Width * .70f, new Color(p.Body.r, p.Body.g, p.Body.b, .28f));
+                if (visualId == "laser" || visualId == "support") Ring(at, p.Body, .02f, .24f, 10f);
                 return;
             }
 
-            Color c = visualId == "pierce" ? C("#6EDFFF")
-                    : visualId == "ricochet" ? C("#B27AFF")
-                    : visualId == "support" || visualId == "shard" ? C("#58F0BD")
-                    : C("#FFCF67");
-            int sparks = visualId == "pierce" ? 6 : visualId == "support" ? 2 : 4;
-            var impact = visualId == "pierce" ? PalImpactPierce : visualId == "ricochet" ? PalImpactRicochet
-                       : visualId == "support" || visualId == "shard" ? PalImpactSupport : PalImpactStandard;
-            Burst(at, sparks, impact, visualId == "pierce" ? 190f : 135f);
-            if (visualId == "ricochet") Square(at, c, .06f, .46f);
-            else if (visualId == "pierce") { Ring(at, c, .04f, .48f, 7f); Spikes(at, 4, c, .3f, Vector2.zero); }
-            else if (visualId == "support") Ring(at, c, .03f, .30f, 8f);
+            if (exploded)
+            {
+                float radius = (visualId == "laser" ? 2.15f : visualId == "rain" ? 1.85f : 1.65f) * power;
+                var palette = visualId == "laser" ? PalImpactLaser : visualId == "rain" ? PalImpactRain : PalImpactExplosive;
+                Ring(at, p.Body, .14f, radius, 3.1f);
+                Ring(at, p.Core, .06f, radius * .68f, 5.5f);
+                Flash(at, radius * .43f, new Color(p.Core.r, p.Core.g, p.Core.b, .82f));
+                Star(at, p.Accent, radius * .62f);
+                Burst(at, visualId == "laser" ? 19 : 24, palette, 315f * power);
+                Spikes(at, visualId == "laser" ? 12 : 9, p.Core, radius * .45f, dir);
+                Smoke(at, visualId == "laser" ? 1 : 4, C("#432A42"), 90f * power);
+                return;
+            }
+
+            bool hard = kind == ProjectileImpactKind.Bedrock;
+            bool bounce = kind == ProjectileImpactKind.Ricochet;
+            int sparks = visualId == "pierce" || visualId == "laser" ? 9
+                       : visualId == "support" ? 3 : visualId == "multi" ? 5 : 6;
+            var palette2 = visualId == "pierce" || visualId == "laser" ? PalImpactPierce
+                        : visualId == "ricochet" ? PalImpactRicochet
+                        : visualId == "support" || visualId == "shard" ? PalImpactSupport : PalImpactStandard;
+            Burst(at, sparks + (hard ? 3 : 0), palette2, (hard ? 235f : 175f) * power);
+
+            if (bounce)
+            {
+                Square(at, p.Body, .05f, .58f);
+                Ring(at, p.Accent, .03f, .40f, 8f);
+                Spikes(at, 6, p.Core, .42f, -dir);
+            }
+            else if (visualId == "pierce" || visualId == "laser")
+            {
+                Flash(at, .34f * power, new Color(p.Core.r, p.Core.g, p.Core.b, .80f));
+                Ring(at, p.Body, .035f, terminal ? .72f : .46f, 8f);
+                Spikes(at, terminal ? 9 : 5, p.Core, terminal ? .68f : .42f, dir);
+            }
+            else if (visualId == "support" || visualId == "shard")
+            {
+                Ring(at, p.Body, .025f, terminal ? .42f : .26f, 9f);
+                if (visualId == "shard") Spikes(at, 5, p.Core, .38f, dir);
+            }
+            else
+            {
+                Star(at, p.Core, terminal ? .38f : .24f);
+                Spikes(at, hard ? 7 : 4, p.Accent, hard ? .46f : .30f, -dir);
+            }
+
+            if (killed) Ring(at, p.Accent, .10f, .92f, 5.8f);
         }
+
+        /// <summary>구 API 호환. 새 코드는 충돌 종류가 포함된 <see cref="ProjectileImpact"/>를 사용한다.</summary>
+        public void ProjectileEnd(Vector2 at, string visualId, bool exploded)
+            => ProjectileImpact(at, Vector2.zero, visualId, ProjectileImpactKind.Wall,
+                ProjectileSystem.InferStyleFlags(visualId), true, exploded, false, 1f);
 
         int ScaledCount(int count)
         {

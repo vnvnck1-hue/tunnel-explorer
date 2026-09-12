@@ -684,7 +684,7 @@ namespace TunnelCrew.Sim
             var dir = Vec2.FromAngle(a);
             _sim.Projectiles.Emit(new Projectile
             {
-                Position = m.Position + dir * (SimTuning.PlayerRadius * .9), Velocity = dir * SimTuning.TeCells(280), Life = 1.2,
+                Position = m.Position + dir * (SimTuning.PlayerRadius * .9), Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("standard")), Life = ProjectileSystem.BaseLife("standard"),
                 Power = 1, Owner = m, AiMul = m.Kit.GunMul, VisualId = "standard",
             }, a);
             m.GunCd = m.Kit.FireCd;
@@ -916,7 +916,7 @@ namespace TunnelCrew.Sim
                 var dir = Vec2.FromAngle(t.Aim);
                 _sim.Projectiles.Emit(new Projectile
                 {
-                    Position = t.Position + dir * .32, Velocity = dir * SimTuning.TeCells(320), Life = 1.0,
+                    Position = t.Position + dir * .32, Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("support")), Life = ProjectileSystem.BaseLife("support"),
                     Power = 1, Owner = t.Owner, AiMul = t.Power > 0 ? t.Power : .72, AiTurret = true, VisualId = "support",
                 }, t.Aim);
             }

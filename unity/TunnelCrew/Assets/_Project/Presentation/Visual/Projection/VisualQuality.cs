@@ -138,5 +138,21 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>화면에 동시에 그릴 아군 투사체 상한. 판정은 제한하지 않고 표현만 제한한다.</summary>
         public static int ProjectileVisualBudget(VisualQualityTier tier)
             => tier == VisualQualityTier.Low ? 64 : tier == VisualQualityTier.Medium ? 80 : 96;
+
+        /// <summary>
+        /// 궤적은 투사체 본체보다 버텍스 비용이 크다. 최근 탄부터 이 수만큼만 남기고,
+        /// 나머지는 셰이더 내부의 짧은 속도 꼬리로 방향을 읽게 한다.
+        /// </summary>
+        public static int ProjectileTrailBudget(VisualQualityTier tier)
+            => tier == VisualQualityTier.Low ? 20 : tier == VisualQualityTier.Medium ? 40
+             : tier == VisualQualityTier.High ? 64 : 80;
+
+        /// <summary>
+        /// 실제 Light2D 는 가장 강한 탄에만 배정한다. 모든 탄은 언릿 HDR 외곽광이 있으므로
+        /// 저사양에서 조명을 꺼도 탄 자체의 판독성은 사라지지 않는다.
+        /// </summary>
+        public static int ProjectileLightBudget(VisualQualityTier tier)
+            => tier == VisualQualityTier.Low ? 0 : tier == VisualQualityTier.Medium ? 4
+             : tier == VisualQualityTier.High ? 8 : 12;
     }
 }

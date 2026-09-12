@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TunnelCrew.Sim;
 using UnityEngine;
 
 namespace TunnelCrew.Presentation
@@ -112,9 +113,33 @@ namespace TunnelCrew.Presentation
         /// <summary>원본 FEEL.shot — 사격 반동.</summary>
         public void Shot(float angle, string visualId)
         {
-            bool strong = visualId == "laser" || visualId == "explosive" || visualId == "rain";
-            _recoilA = angle; _recoil = strong ? 7f : 4f; _recoilT = strong ? 0.15f : 0.10f;
-            Kick(strong ? 1.4f : 0.65f, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
+            float strength = visualId == "laser" ? 1.75f
+                           : visualId == "explosive" || visualId == "rain" ? 1.55f
+                           : visualId == "pierce" ? 1.20f
+                           : visualId == "multi" ? 1.02f
+                           : visualId == "ricochet" ? .88f
+                           : visualId == "support" ? .35f : .65f;
+            _recoilA = angle; _recoil = 3.4f + strength * 2.6f; _recoilT = .08f + strength * .045f;
+            Kick(strength, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
+        }
+
+        public void ProjectileImpact(ProjectileImpactKind kind, string visualId, bool exploded, bool terminal, Vector2 dir)
+        {
+            if (kind == ProjectileImpactKind.Expire || kind == ProjectileImpactKind.Enemy) return;
+            if (exploded)
+            {
+                Hitstop(visualId == "laser" ? 24f : 20f);
+                Kick(visualId == "laser" ? 2.8f : 2.35f, dir);
+            }
+            else if (kind == ProjectileImpactKind.Ricochet)
+            {
+                Kick(.48f, -dir);
+            }
+            else if (terminal && (visualId == "pierce" || visualId == "laser"))
+            {
+                Hitstop(9f);
+                Kick(.72f, dir);
+            }
         }
 
         /// <summary>원본 FEEL.enemyHit — 피격 플래시·히트스톱·킥.</summary>
