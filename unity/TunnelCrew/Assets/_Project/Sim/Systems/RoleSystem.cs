@@ -460,14 +460,14 @@ namespace TunnelCrew.Sim
                 t.Aim = dir.Angle;
                 t.Ammo--;
                 t.Cooldown = T.EngineerTurretInterval;
-                _projectiles.Projectiles.Add(new Projectile
+                _projectiles.Emit(new Projectile
                 {
                     Position = t.Position + dir * 0.24,
-                    Velocity = dir * SimTuning.TeCells(285),
-                    Life = 1.05,
+                    Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("support")),
+                    Life = ProjectileSystem.BaseLife("support"),
                     Power = T.EngineerTurretPower * (autonomous ? 0.5 : 1),
                     VisualId = "support",
-                });
+                }, t.Aim);
             }
         }
 

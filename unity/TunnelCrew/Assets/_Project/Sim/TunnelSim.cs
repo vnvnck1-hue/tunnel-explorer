@@ -99,6 +99,7 @@ namespace TunnelCrew.Sim
         public event Action<PlayerHurtEvent> PlayerHurt;
         public event Action<EnemySpawnedEvent> EnemySpawned;
         public event Action<ProjectileFiredEvent> ProjectileFired;
+        public event Action<ProjectileImpactEvent> ProjectileImpacted;
         public event Action<ProjectileEndedEvent> ProjectileEnded;
         public event Action<ReloadEvent> ReloadChanged;
         public event Action<SkillEvent> SkillUsed;
@@ -282,7 +283,7 @@ namespace TunnelCrew.Sim
                 double a = Math.PI * 2 * i / count;
                 Projectiles.Projectiles.Add(new Projectile
                 {
-                    Position = at, Velocity = Vec2.FromAngle(a) * SimTuning.TeCells(245), Life = .7, Pierce = 1,
+                    Position = at, Velocity = Vec2.FromAngle(a) * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("shard")), Life = ProjectileSystem.BaseLife("shard"), Pierce = 1,
                     Power = power, VisualId = "shard",
                 });
             }
@@ -459,6 +460,7 @@ namespace TunnelCrew.Sim
             Enemies.Spawned += e => { Codex?.Discover(FieldCodex.CreatureId(e.Enemy.Kind, false)); EnemySpawned?.Invoke(e); };
             Projectiles = new ProjectileSystem(World, Enemies);
             Projectiles.Fired += e => ProjectileFired?.Invoke(e);
+            Projectiles.Impacted += e => ProjectileImpacted?.Invoke(e);
             Projectiles.Ended += e => ProjectileEnded?.Invoke(e);
             Projectiles.Reload += e => ReloadChanged?.Invoke(e);
             Bosses = new BossSystem(World, Enemies, Run);
@@ -494,7 +496,7 @@ namespace TunnelCrew.Sim
             Escape.CrewAllAboard = () => Crew.EscapeAllAboard() != false;
             RelicFx.Bind(World, Enemies, Player, Build,
                 (c, r, rad, pow) => TraitBlast(c, r, rad, pow),
-                (from, angle, vid, power) => Projectiles.Projectiles.Add(new Projectile { Position = from, Velocity = Vec2.FromAngle(angle) * SimTuning.TeCells(300), Life = .9, Power = power, VisualId = vid }));
+                (from, angle, vid, power) => Projectiles.Emit(new Projectile { Position = from, Velocity = Vec2.FromAngle(angle) * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx(vid)), Life = ProjectileSystem.BaseLife(vid), Power = power, VisualId = vid }, angle));
             Enemies.IncomingDamageMul = () => Roles.ShieldTime > 0 ? 0.35 : 1.0;
             Roles.SkillUsed += e => SkillUsed?.Invoke(e);
             Roles.BreakerExploded += e => BreakerExploded?.Invoke(e);

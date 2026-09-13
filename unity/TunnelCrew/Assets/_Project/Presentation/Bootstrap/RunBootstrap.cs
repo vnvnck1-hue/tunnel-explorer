@@ -326,11 +326,18 @@ namespace TunnelCrew.Presentation
                 _fx?.PlayerHurt(V(Sim.Player.Position), V(e.HitDir), _feedback != null ? _feedback.HurtLevel : 1);
                 Log(e.Downed ? "다운!" : $"피격 -{e.Damage:F0}");
             };
-            Sim.ProjectileFired += e => _feedback?.Shot(IsometricProjection.AngleToRender(e.Angle), e.VisualId);
-            Sim.ProjectileEnded += e =>
+            Sim.ProjectileFired += e =>
             {
-                if (e.Exploded) { _feedback?.Kick(2.2f, Vector2.zero); _feedback?.Hitstop(18f); }
-                _fx?.ProjectileEnd(V(e.Position), e.VisualId, e.Exploded);
+                float angle = IsometricProjection.AngleToRender(e.Angle);
+                var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                _feedback?.Shot(angle, e.VisualId);
+                _fx?.ProjectileMuzzle(V(e.Position), dir, e.VisualId, e.VisualFlags, e.Count, e.Ai);
+            };
+            Sim.ProjectileImpacted += e =>
+            {
+                var dir = IsometricProjection.DirectionToRender(e.Direction.Angle);
+                _feedback?.ProjectileImpact(e.Kind, e.VisualId, e.Exploded, e.Terminal, dir);
+                _fx?.ProjectileImpact(V(e.Position), dir, e.VisualId, e.Kind, e.VisualFlags, e.Terminal, e.Exploded, e.Killed, (float)e.Power);
             };
             Sim.TraitFx += e =>
             {
@@ -473,7 +480,8 @@ namespace TunnelCrew.Presentation
             // ── 오디오 (원본 SFX 호출 지점) · 보스 등장 시네마틱 · 천장 붕괴
             Sim.TileBroken += e => { if (e.Type == TileType.Ore || e.Type == TileType.Gem || e.Type == TileType.Crys) _audio?.OreBreak(); else _audio?.Brk(); };
             Sim.DrillBeat += (tip, dmg) => _audio?.Dig();
-            Sim.ProjectileFired += e => { if (!e.Ai) _audio?.Shot(); };
+            Sim.ProjectileFired += e => { if (!e.Ai) _audio?.Shot(e.VisualId); };
+            Sim.ProjectileImpacted += e => _audio?.ProjectileImpact(e.VisualId, e.Kind, e.Exploded, e.Terminal);
             Sim.EnemyHurt += e => { if (e.Killed) _audio?.Kill(); };
             Sim.ResourceCollected += e => _audio?.Res();
             Sim.ReloadChanged += e => { if (e.Started) _audio?.Reload(e.Manual); else _audio?.ReloadDone(); };

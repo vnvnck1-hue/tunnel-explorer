@@ -11,13 +11,11 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class CombatView : MonoBehaviour
     {
-        public int ProjectileRendererCount => _projPool.Count;
-        public int ActiveProjectileRendererCount
-        {
-            get { int n = 0; foreach (var r in _projPool) if (r != null && r.gameObject.activeSelf) n++; return n; }
-        }
-        public Material SharedProjectileMaterial => _projectileMaterial;
-        readonly List<SpriteRenderer> _projPool = new List<SpriteRenderer>();
+        public int ProjectileRendererCount => _projectileVfx != null ? _projectileVfx.RendererCount : 0;
+        public int ActiveProjectileRendererCount => _projectileVfx != null ? _projectileVfx.ActiveRendererCount : 0;
+        public int ActiveProjectileTrailCount => _projectileVfx != null ? _projectileVfx.ActiveTrailCount : 0;
+        public int ActiveProjectileLightCount => _projectileVfx != null ? _projectileVfx.ActiveLightCount : 0;
+        public Material SharedProjectileMaterial => _projectileVfx != null ? _projectileVfx.SharedEnergyMaterial : null;
         readonly List<SpriteRenderer> _shotPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _installPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _bossShotPool = new List<SpriteRenderer>();
@@ -29,16 +27,9 @@ namespace TunnelCrew.Presentation
         readonly List<DamageText> _texts = new List<DamageText>();
         readonly Stack<DamageText> _textPool = new Stack<DamageText>();
         Sprite _dot, _square, _ring;
-        Material _projectileMaterial;
         Material _dashMaterial;
         VisualOptionsController _visualOptions;
-
-        struct ProjectileLook
-        {
-            public Color Color;
-            public float Length, Width;
-            public ProjectileLook(Color color, float length, float width) { Color = color; Length = length; Width = width; }
-        }
+        ProjectileVfxRenderer _projectileVfx;
 
         sealed class DamageText
         {
@@ -50,55 +41,32 @@ namespace TunnelCrew.Presentation
         const float DmgBase = 25f, DmgBig = 34f, DmgPop = 1.45f, DmgPopDec = 3.4f, DmgSquash = .22f, DmgFade = 2.2f;
         const float DmgLifeRate = 1.3f / .56f, DmgRise = 120f, DmgGravity = 980f, DmgDamp = .97f, DmgJx = 12f, DmgJy = 9f, DmgDrift = 40f, Px = 1f / 50f;
 
-        static readonly Dictionary<string, ProjectileLook> ProjectileLooks = new Dictionary<string, ProjectileLook>
-        {
-            ["standard"] = new ProjectileLook(new Color(1f, .74f, .28f, .92f), .48f, .16f),
-            ["multi"] = new ProjectileLook(new Color(1f, .48f, .16f, .94f), .40f, .19f),
-            ["pierce"] = new ProjectileLook(new Color(.22f, .82f, 1f, .94f), .82f, .12f),
-            ["ricochet"] = new ProjectileLook(new Color(.68f, .38f, 1f, .94f), .50f, .18f),
-            ["explosive"] = new ProjectileLook(new Color(1f, .22f, .06f, .96f), .62f, .28f),
-            ["rain"] = new ProjectileLook(new Color(1f, .12f, .03f, .98f), .74f, .30f),
-            ["laser"] = new ProjectileLook(new Color(.05f, 1f, .86f, .96f), 1.18f, .12f),
-            ["support"] = new ProjectileLook(new Color(.20f, 1f, .62f, .88f), .38f, .17f),
-            ["shard"] = new ProjectileLook(new Color(.30f, 1f, .90f, .92f), .56f, .11f),
-        };
-
         void Awake()
         {
-            _dot = MakeCircle(16); _square = MakeSquare(); _ring = ProcSprites.Ring(64, .12f);
-            _visualOptions = FindFirstObjectByType<VisualOptionsController>();
-            var shader = Shader.Find("Tunnel Crew/Projectile-Energy");
-            if (shader != null && shader.isSupported)
-                _projectileMaterial = new Material(shader) { name = "Projectile-Energy (shared)", hideFlags = HideFlags.HideAndDontSave };
+            EnsureInitialized();
+        }
+
+        void EnsureInitialized()
+        {
+            if (_dot == null) _dot = MakeCircle(16);
+            if (_square == null) _square = MakeSquare();
+            if (_ring == null) _ring = ProcSprites.Ring(64, .12f);
+            if (_visualOptions == null) _visualOptions = FindFirstObjectByType<VisualOptionsController>();
+            if (_projectileVfx == null) _projectileVfx = GetComponent<ProjectileVfxRenderer>();
+            if (_projectileVfx == null) _projectileVfx = gameObject.AddComponent<ProjectileVfxRenderer>();
+            _projectileVfx.Initialize(_square);
         }
 
         void OnDestroy()
         {
-            if (_projectileMaterial != null) Destroy(_projectileMaterial);
             if (_dashMaterial != null) Destroy(_dashMaterial);
         }
 
         public void Render(TunnelSim sim, float dt)
         {
-            int budget = VisualQualityRules.ProjectileVisualBudget(_visualOptions != null ? _visualOptions.Tier : VisualQualityTier.High);
-            int visibleProjectiles = Mathf.Min(budget, sim.Projectiles.Projectiles.Count);
-            int projectileStart = sim.Projectiles.Projectiles.Count - visibleProjectiles;
-            EnsurePool(_projPool, visibleProjectiles, 40, _projectileMaterial, transform);
-            for (int i = 0; i < _projPool.Count; i++)
-            {
-                bool on = i < visibleProjectiles;
-                var sr = _projPool[i];
-                if (sr.gameObject.activeSelf != on) sr.gameObject.SetActive(on);
-                if (!on) continue;
-                var p = sim.Projectiles.Projectiles[projectileStart + i];
-                sr.transform.position = IsometricProjection.ToRender3(p.Position);
-                var look = ProjectileLooks.TryGetValue(p.VisualId, out var found) ? found : ProjectileLooks["standard"];
-                float pulse = 1f + .08f * Mathf.Sin((float)(p.Age * 38.0 + i * 1.7));
-                sr.color = look.Color;
-                sr.transform.localScale = new Vector3(look.Length * pulse, look.Width / pulse, 1);
-                sr.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(p.Velocity.Angle) * Mathf.Rad2Deg);
-                sr.sprite = _square;
-            }
+            EnsureInitialized();
+            var quality = _visualOptions != null ? _visualOptions.Tier : VisualQualityTier.High;
+            _projectileVfx.Render(sim.Projectiles.Projectiles, quality);
 
             int enemyShots = sim.Enemies.Shots.Count;
             PreparePool(_shotPool, enemyShots, 39);
@@ -404,19 +372,6 @@ namespace TunnelCrew.Presentation
             {
                 bool on = i < count;
                 if (pool[i].gameObject.activeSelf != on) pool[i].gameObject.SetActive(on);
-            }
-        }
-
-        static void EnsurePool(List<SpriteRenderer> pool, int count, int order, Material material, Transform parent)
-        {
-            while (pool.Count < count)
-            {
-                var go = new GameObject("projectile-fx");
-                go.transform.SetParent(parent, false);
-                var sr = go.AddComponent<SpriteRenderer>();
-                sr.sortingOrder = order;
-                if (material != null) sr.sharedMaterial = material;
-                pool.Add(sr);
             }
         }
 
