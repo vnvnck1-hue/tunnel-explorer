@@ -6,8 +6,6 @@ unity/Build/
 unity/TunnelCrew/Captures/
 unity/TunnelCrew/*.png
 
-# 디버그 캡처는 Assets 안에 두지 않는다 — Unity 가 텍스처로 임포트해 프로젝트가 무거워진다.
-# (2026-09-09: 34장 89MB 가 Assets/Screenshots 에 쌓여 있었다. 문서용 캡처는 docs/unity-port/img/ 로.)
 unity/TunnelCrew/Assets/Screenshots/
 unity/TunnelCrew/Assets/Screenshots.meta
 
@@ -17,6 +15,13 @@ tools/art/__pycache__/
 # Isolated Unity editor used for CRT compile/capture checks; canonical Assets are shared.
 unity/.crt-validation/
 
-# Lossless CRT verification frames stay local; commit lightweight review JPGs and measurement reports.
-docs/ui-crt/img/runtime/**/*.png
-docs/ui-crt/img/runtime-six-effects/**/*.png
+# ─────────────────────────────────────────────────────────────
+# 검증용 스크린샷 — 저장소에 싣지 않는다.
+#
+# 자동 작업 중 "이 변경이 화면에 반영됐는가" 를 확인하려고 찍은 것들이다. 수백 장이 6개
+# 해상도로 쌓이고 4K JPG 한 장이 3~4MB 라, 커밋하면 저장소가 클론할 때마다 그 무게를 진다
+# (2026-09-14 기준 897MB · 827장).
+#
+# 문서가 참조하는 이미지도 여기 있다 — 링크는 이 폴더를 가진 로컬에서만 열린다.
+# 문서에 반드시 남겨야 할 그림이 생기면 그 한 장만 골라 docs/ 아래에 따로 커밋한다.
+/screenshots/
