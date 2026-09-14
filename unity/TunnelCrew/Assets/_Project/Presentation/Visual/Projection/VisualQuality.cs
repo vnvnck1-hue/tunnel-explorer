@@ -147,6 +147,11 @@ namespace TunnelCrew.Presentation.Visual
             => tier == VisualQualityTier.Low ? 20 : tier == VisualQualityTier.Medium ? 40
              : tier == VisualQualityTier.High ? 64 : 80;
 
+        /// <summary>오래 남는 연기 리본 예산. 탄체보다 낮게 잡아 연사 중에도 오버드로우를 제한한다.</summary>
+        public static int ProjectileSmokeTrailBudget(VisualQualityTier tier)
+            => tier == VisualQualityTier.Low ? 10 : tier == VisualQualityTier.Medium ? 24
+             : tier == VisualQualityTier.High ? 40 : 56;
+
         /// <summary>
         /// 실제 Light2D 는 가장 강한 탄에만 배정한다. 모든 탄은 언릿 HDR 외곽광이 있으므로
         /// 저사양에서 조명을 꺼도 탄 자체의 판독성은 사라지지 않는다.

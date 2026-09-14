@@ -22,6 +22,7 @@ namespace TunnelCrew.Presentation.CRT
             public InputField input;
             public CrtShape shape;
             public CrtIcon icon;
+            public DynamicDialogueText dialogue;
             public CanvasGroup opacity;
             public int lastFrame=-2,lastKind=-1;
         }
@@ -105,16 +106,21 @@ namespace TunnelCrew.Presentation.CRT
             if (e.rect.parent != _parents.Peek()) e.rect.SetParent(_parents.Peek(), false);
             Order(e.rect);
             if (e.image != null) e.image.enabled = kind == 0;
-            if (e.text != null) e.text.enabled = kind == 1;
+            if (e.text != null) e.text.enabled = kind == 1 || kind == 5;
+            if (e.dialogue != null) e.dialogue.enabled = kind == 5;
             if (e.input != null) { e.input.enabled = kind == 2; e.input.textComponent.gameObject.SetActive(kind == 2); }
             if (e.shape != null) e.shape.enabled = kind == 3;
             if (e.icon != null) e.icon.enabled = kind == 4;
             if (kind == 0 && e.image == null) { e.image = AddGraphic<RawImage>(e.rect); e.image.raycastTarget = false; }
-            if (kind == 1 && e.text == null)
+            if ((kind == 1 || kind == 5) && e.text == null)
             {
                 e.text = AddGraphic<Text>(e.rect); e.text.raycastTarget = false;
                 e.text.font = Fonts.UI; e.text.supportRichText = true;
                 e.text.verticalOverflow = VerticalWrapMode.Overflow;
+            }
+            if (kind == 5 && e.dialogue == null)
+            {
+                e.dialogue = e.text.gameObject.AddComponent<DynamicDialogueText>();
             }
             if (kind == 3 && e.shape == null) { e.shape = AddGraphic<CrtShape>(e.rect); e.shape.raycastTarget = false; }
             if (kind == 4 && e.icon == null) { e.icon = AddGraphic<CrtIcon>(e.rect); e.icon.raycastTarget = false; }
@@ -153,6 +159,7 @@ namespace TunnelCrew.Presentation.CRT
         {
             if (string.IsNullOrEmpty(value) || r.width <= 0 || r.height <= 0 || tint.a <= 0) return;
             var e = Get(1); Position(e.rect, r);
+            e.text.supportRichText = true;
             e.text.text = UiThemeProfile.ThemeText(value);
             bool instrument=!CrtGui.OriginalPalette&&value.Length<=32;
             if(instrument)foreach(char ch in value)if(ch>126||ch=='<'){instrument=false;break;}
@@ -163,6 +170,20 @@ namespace TunnelCrew.Presentation.CRT
             e.text.alignment = style.alignment;
             e.text.horizontalOverflow = style.wordWrap ? HorizontalWrapMode.Wrap : HorizontalWrapMode.Overflow;
             e.text.color = tint;
+        }
+        public void DynamicLabel(Rect r, DynamicDialogueText.Script script, GUIStyle style, Color tint, float elapsed, bool complete, bool reduced)
+        {
+            if (script == null || string.IsNullOrEmpty(script.PlainText) || r.width <= 0 || r.height <= 0 || tint.a <= 0) return;
+            var e = Get(5); Position(e.rect, r);
+            e.text.text = script.PlainText;
+            e.text.supportRichText = false;
+            e.text.font = style.font ?? Fonts.UI;
+            e.text.fontStyle = style.fontStyle;
+            e.text.fontSize = style.fontSize;
+            e.text.alignment = style.alignment;
+            e.text.horizontalOverflow = style.wordWrap ? HorizontalWrapMode.Wrap : HorizontalWrapMode.Overflow;
+            e.text.color = tint;
+            e.dialogue.Configure(script, elapsed, complete, reduced);
         }
         public void Panel(Rect r, Color fill, Color line, float width = 1.5f, bool cut = true)
         {

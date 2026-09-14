@@ -376,7 +376,8 @@ namespace TunnelCrew.Sim
         /// <summary>
         /// 원본 <c>hurtEnemy()</c> (6294~6334). 넉백 공식과 즉시 각성 규칙을 그대로 옮겼다.
         /// </summary>
-        public void HurtEnemy(EnemyState e, double damage, Vec2 hitDir, Vec2 sourcePosition, bool byTurret = false)
+        public void HurtEnemy(EnemyState e, double damage, Vec2 hitDir, Vec2 sourcePosition,
+            bool byTurret = false, double knockbackMul = 1.0)
         {
             if (!e.Alive) return;
 
@@ -404,7 +405,7 @@ namespace TunnelCrew.Sim
                     SimTuning.TeCells(92.0) * hitPower * rangePower * resist,
                     SimTuning.TeCells(3.0), SimTuning.TeCells(290.0));
 
-                e.Knock += hitDir * (impulse * KnockMul());
+                e.Knock += hitDir * (impulse * KnockMul() * Math.Max(0.0, knockbackMul));
             }
 
             bool killed = e.Hp <= 0;

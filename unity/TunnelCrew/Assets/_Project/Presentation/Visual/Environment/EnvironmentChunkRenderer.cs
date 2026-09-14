@@ -65,6 +65,9 @@ namespace TunnelCrew.Presentation.Visual
         bool _warnedNoArt;
 
         public WorldVisualProfile Profile { get => _profile; set => _profile = value; }
+        /// <summary>Opt-in for the main game; comparison labs retain their original tile baseline.</summary>
+        public bool UseOrganicWalls { get; set; }
+        OrganicEnvironmentRenderer _organic;
 
         // ───────────────────────────── 구성
 
@@ -89,6 +92,18 @@ namespace TunnelCrew.Presentation.Visual
             SurfaceTopologyBuilder.Build(_field, _rules, _surfaces);
             SurfaceVersion++;
             RedrawAll();
+            if (UseOrganicWalls)
+            {
+                var go = new GameObject("Organic environment");
+                go.transform.SetParent(_grid.transform, false);
+                _organic = go.AddComponent<OrganicEnvironmentRenderer>();
+                if (!_organic.Initialize(this, _field, _wallTopMaterials, _wallFrontMaterials, _frontOccluders))
+                {
+                    Destroy(go); _organic = null;
+                    Debug.LogWarning("[비주얼] OrganicEnvironmentStyle unavailable; retaining tile walls.");
+                }
+                else RedrawAll(); // Preserve only boss art in the wall tilemaps; keep masks authoritative.
+            }
         }
 
         /// <summary>한 셀이 바뀌었다. 표면·오클루더·그림자 윤곽이 같은 dirty 단위에서 갱신된다(§6.7).</summary>
@@ -106,7 +121,8 @@ namespace TunnelCrew.Presentation.Visual
 
         void LateUpdate()
         {
-            if (_dirty.Count > 0) ProcessDirty(_chunksPerFrame);
+            // Organic meshes cost more than tile replacement; spread mass destruction over frames.
+            if (_dirty.Count > 0) ProcessDirty(_organic != null ? Mathf.Min(_chunksPerFrame, 2) : _chunksPerFrame);
         }
 
         void ProcessDirty(int budget)
@@ -140,12 +156,14 @@ namespace TunnelCrew.Presentation.Visual
             for (int r = r0; r < r0 + h; r++)
                 for (int c = c0; c < c0 + w; c++)
                     DrawCell(c, r);
+            if (_organic != null) _organic.Rebuild(chunk);
         }
 
         // ───────────────────────────── 타일맵 구성
 
         void BuildLayers()
         {
+            _organic = null;
             // 이전 구성을 지운다 — Visual Lab 이 방을 갈아끼울 때 두 번 쌓이지 않게.
             foreach (var m in _ownedMaterials) if (m != null) DestroyMaterial(m);
             _ownedMaterials.Clear();
@@ -343,6 +361,14 @@ namespace TunnelCrew.Presentation.Visual
                     if (lc >= 0 && lr >= 0 && lc < side && lr < side) mask[lr * side + lc] = placed;
                 }
             }
+            if (_organic != null && (s.Surfaces & SurfaceMask.BossWall) == 0)
+            {
+                _backStructure.SetTile(pos, null);
+                _wallTop.SetTile(pos, null);
+                _wallCorner.SetTile(pos, null);
+                if (chunk >= 0 && chunk < _frontStructure.Length) _frontStructure[chunk].SetTile(pos, null);
+            }
+            if (_organic != null) _groundDecal.SetTile(pos, null);
         }
 
         Tile TileFor(Sprite sprite)

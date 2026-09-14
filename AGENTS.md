@@ -18,6 +18,48 @@
 - 백업 파일은 사용자가 명시적으로 요청한 경우에만 만든다.
 - 기능을 추가하거나 수정한 뒤에는 가능하면 로컬 브라우저에서 핵심 흐름을 확인하고, 변경 파일과 검증 결과를 작업 인계에 남긴다.
 
+## Unity 하이브리드 작업 원칙 (Codex CLI + Unity MCP)
+
+- 기본 역할 분담은 **TunnelCrew는 Codex**, **SlimeForge는 Claude**다. 두 에이전트가 각자의
+  Unity Editor를 동시에 조작할 수 있다고 가정하고 인스턴스 격리 규칙을 항상 적용한다.
+- Codex의 Unity MCP는 전용 STDIO 서버 프로세스를 `--default-instance TunnelCrew`로 시작한다.
+  Claude의 SlimeForge MCP 서버와 session pin을 공유하지 않으며, Codex 서버의 active instance를
+  다른 프로젝트로 변경하지 않는다.
+- 코드 검색·수정, 리팩터링, Git diff, 문서 작업은 **CLI를 우선** 사용한다.
+- 열린 Unity Editor 상태, Scene, GameObject, Component, Prefab을 확인하거나 변경할 때는
+  **Unity MCP를 사용**한다.
+- Unity Editor는 한글 경로의 MCP 상태 파일 인코딩 문제를 피하기 위해 정션
+  `C:\Users\Loadcomplete\TunnelCrew`로 연다. 이 정션은 저장소의
+  `unity/TunnelCrew/`와 같은 프로젝트이므로 CLI는 저장소 원본 경로를 계속 사용한다.
+- 이 PC에서는 TunnelCrew와 SlimeForge Editor가 동시에 실행될 수 있다. 전역 active instance는
+  다른 세션이 바꿀 수 있으므로 신뢰하지 않는다. **모든 Unity MCP 도구 호출에 TunnelCrew의
+  `unity_instance`를 명시**하며, 현재 ID는 `mcpforunity://instances` 또는
+  `~/.unity-mcp/unity-mcp-status-*.json`의 `project_path`가
+  `C:\Users\Loadcomplete\TunnelCrew`인 항목에서 확인한다. 포트 번호는 재시작 시 바뀌므로
+  인스턴스 선택 기준으로 사용하지 않는다.
+- Codex에서는 `.codex/hooks.json`의 `PreToolUse` 훅이 `set_active_instance` 호출과
+  `unity_instance` 누락·오지정을 실행 전에 차단한다. 훅을 우회하거나 비활성화하지 않는다.
+- MCP 작업 전 대상 인스턴스의 Unity 버전이 `6000.3.15f1`이고 프로젝트가 TunnelCrew인지
+  확인한다. SlimeForge(`6000.0.69f1`)를 절대 수정하지 않는다.
+- 스크립트 변경은 가능한 한 CLI에서 논리적인 작업 단위로 묶어서 처리하고, 작은 변경마다
+  MCP를 호출하지 않는다.
+- Unity MCP로 복잡한 작업을 시작하기 전에는 Editor 상태를 확인하고, 컴파일·도메인 리로드가
+  끝나 도구 사용이 가능한 상태에서 진행한다.
+- 스크립트 변경 후에는 Unity 컴파일 완료를 기다린 다음 MCP로 Console 오류를 확인한다.
+  스크립트 생성·수정 도구가 이미 import와 컴파일을 요청한 경우 불필요한 refresh를 반복하지 않는다.
+- UI, 카메라, 투영, 타일 배치, 애니메이션, 파티클, 조명 등 시각적 결과에 영향을 주는 변경은
+  Play Mode와 Game View 또는 Scene View 스크린샷으로 검증한다.
+- MCP 조회는 관련 오브젝트·컴포넌트·오류로 범위를 제한한다. 전체 Hierarchy, 전체 Console,
+  고해상도 또는 다각도 이미지는 실제로 필요한 경우에만 요청한다.
+- 서로 독립적인 Unity MCP 작업은 가능한 경우 batch 실행으로 묶는다.
+- Scene과 Prefab YAML은 CLI에서 직접 편집하지 않는다. Scene·Prefab 변경은 Unity MCP 또는
+  검증 가능한 UnityEditor API를 사용한다.
+- MCP가 연결되지 않았거나 Unity Editor가 준비되지 않은 경우 시각 검증을 추측으로 통과 처리하지
+  않는다. CLI에서 안전하게 진행할 수 있는 작업은 계속하고, 미검증 항목과 필요한 사용자 조치를
+  작업 인계에 명확히 남긴다.
+- 작업 인계에는 CLI 검사·테스트 결과와 Unity MCP의 Console·Play Mode·스크린샷 검증 결과를
+  구분해서 기록한다.
+
 ## 빌드 지침 (HTML — 레거시)
 
 > HTML 빌드는 과거 배포본 재현용으로만 남겨 둔다. 새 배포는 Unity 빌드로 만든다.

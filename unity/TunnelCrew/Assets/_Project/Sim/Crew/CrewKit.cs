@@ -18,7 +18,7 @@ namespace TunnelCrew.Sim
     public sealed class CrewKit
     {
         public RoleId Role;
-        public double DigMul, GunMul, FireCd, Reload, Range;
+        public double DigMul, GunMul, FireCd, Reload, Range, Accuracy = 1.0;
         public int Mag;
         public bool DrillMelee, Crack, BreakerAtk;
         public double BreachCd, BreakerCd, FlareCd, PulseCd, GrappleCd, ExploreCd;
@@ -41,7 +41,7 @@ namespace TunnelCrew.Sim
             },
             RoleId.Gunner => new CrewKit
             {
-                Role = role, DigMul = .10, GunMul = 1.55, FireCd = .15, Mag = 22, Reload = 1.9, Range = 9.5,
+                Role = role, DigMul = .10, GunMul = 1.55, FireCd = .15, Mag = 22, Reload = 1.9, Range = 9.5, Accuracy = .70,
                 PathDigCost = 30, Alert = 20, Intercept = 13, Engage = 5.2, Hp = 240,
                 BreakerCd = 9, BreakerRadius = 1, BreakerAtk = true, Job = "화력 지원",
             },

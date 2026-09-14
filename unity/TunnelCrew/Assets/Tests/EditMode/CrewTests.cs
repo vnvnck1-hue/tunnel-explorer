@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TunnelCrew.Sim;
@@ -42,7 +43,7 @@ namespace TunnelCrew.Tests
         {
             var d = CrewKit.For(RoleId.Driller); var g = CrewKit.For(RoleId.Gunner); var s = CrewKit.For(RoleId.Scout); var e = CrewKit.For(RoleId.Engineer);
             Assert.AreEqual(1.35, d.DigMul); Assert.AreEqual(5, d.PathDigCost); Assert.AreEqual(12, d.Alert); Assert.AreEqual(5, d.Intercept); Assert.IsTrue(d.DrillMelee && d.Crack); Assert.AreEqual(210, d.Hp);
-            Assert.AreEqual(.10, g.DigMul); Assert.AreEqual(1.55, g.GunMul); Assert.AreEqual(30, g.PathDigCost); Assert.AreEqual(20, g.Alert); Assert.AreEqual(13, g.Intercept); Assert.AreEqual(9, g.BreakerCd); Assert.IsTrue(g.BreakerAtk);
+            Assert.AreEqual(.10, g.DigMul); Assert.AreEqual(1.55, g.GunMul); Assert.AreEqual(.70, g.Accuracy); Assert.AreEqual(30, g.PathDigCost); Assert.AreEqual(20, g.Alert); Assert.AreEqual(13, g.Intercept); Assert.AreEqual(9, g.BreakerCd); Assert.IsTrue(g.BreakerAtk);
             Assert.AreEqual(.42, s.DigMul); Assert.AreEqual(17, s.Alert); Assert.AreEqual(7, s.FlareCd); Assert.AreEqual(1.4, s.DashMul);
             Assert.AreEqual(.75, e.DigMul); Assert.AreEqual(2, e.MaxTurrets); Assert.AreEqual(12, e.TurretCd); Assert.AreEqual(14, e.TurretMag); Assert.AreEqual(4.2, e.NodeRadius);
             Assert.AreEqual(30, CrewTraits.All.Length, "AI 특성 풀 30장");
@@ -130,6 +131,41 @@ namespace TunnelCrew.Tests
             sim.Enemies.DamageSource = null;
             Assert.Greater(m.Xp + (m.Level - 1) * 1000, crewXp, "크루 처치 XP");
             Assert.AreEqual(humanXp, sim.Xp.Xp);
+        }
+
+        [Test]
+        public void 관전_거너도_조정된_탄착편차와_서로_다른_탄환시드를_사용한다()
+        {
+            var sim = NewSim(RoleId.Gunner);
+            var m = sim.Crew.Members[0];
+            m.Position = sim.Player.Position + new Vec2(-1.5, 0);
+            var enemy = Spawn(sim, sim.Player.Position + new Vec2(3, 0));
+            enemy.SpeedMul = 0; enemy.FrozenTime = 99;
+            var deviations = new List<double>();
+            var seeds = new HashSet<uint>();
+            var startDistances = new List<double>();
+
+            sim.ProjectileFired += fired =>
+            {
+                if (!fired.Ai || fired.VisualId != "standard") return;
+                var projectile = sim.Projectiles.Projectiles.FirstOrDefault(p => p.Owner == m && p.VisualSeed == fired.VisualSeed);
+                if (projectile == null) return;
+                double targetAngle = (enemy.Position - m.Position).Angle;
+                double delta = Math.Atan2(Math.Sin(fired.Angle - targetAngle), Math.Cos(fired.Angle - targetAngle));
+                deviations.Add(Math.Abs(delta));
+                seeds.Add(fired.VisualSeed);
+                startDistances.Add(Vec2.Distance(projectile.Position, m.Position));
+                Assert.That(Vec2.Distance(fired.Position, m.Position), Is.LessThan(1e-9), "머즐 이벤트 원점은 캐릭터 중심");
+            };
+
+            Run(sim, 2.5);
+
+            Assert.That(deviations.Count, Is.GreaterThanOrEqualTo(6));
+            double maxDeviation = (1.0 - m.Kit.Accuracy) * ProjectileSystem.MaxInaccuracyRadians;
+            double minDeviation = maxDeviation * ProjectileSystem.MinInaccuracyFraction;
+            Assert.That(deviations.All(v => v >= minDeviation - 1e-9 && v <= maxDeviation + 1e-9), Is.True);
+            Assert.That(seeds.Count, Is.EqualTo(deviations.Count), "모든 탄환의 시드가 달라야 한다");
+            Assert.That(startDistances.All(d => Math.Abs(d - ProjectileSystem.CharacterMuzzleOffset) < 1e-9), Is.True);
         }
 
         [Test]

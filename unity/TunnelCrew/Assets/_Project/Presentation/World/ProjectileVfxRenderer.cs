@@ -22,12 +22,22 @@ namespace TunnelCrew.Presentation
             public ProjectileVfxProfile Profile;
             public string ProfileId;
             public ProjectileStyleFlags StyleFlags;
-            public float Seed;
+            public float Seed, LengthJitter, WidthJitter, TrailJitter;
             public int SeenStamp, LightStamp;
             public MaterialPropertyBlock AuraBlock, BodyBlock, CoreBlock, AccentBlock;
             public Gradient TrailGradient;
             public GradientColorKey[] TrailColors;
             public GradientAlphaKey[] TrailAlphas;
+            public SmokeRibbon Smoke;
+        }
+
+        sealed class SmokeRibbon
+        {
+            public GameObject Root;
+            public TrailRenderer Trail;
+            public MaterialPropertyBlock Block;
+            public float Remaining, Duration;
+            public bool Lingering;
         }
 
         static readonly int SecondaryColorId = Shader.PropertyToID("_SecondaryColor");
@@ -36,13 +46,20 @@ namespace TunnelCrew.Presentation
         static readonly int AccentModeId = Shader.PropertyToID("_AccentMode");
         static readonly int SeedId = Shader.PropertyToID("_Seed");
         static readonly int PulseId = Shader.PropertyToID("_Pulse");
+        static readonly int FadeId = Shader.PropertyToID("_Fade");
+        const int MaxSmokeRibbons = 112;
+        /// <summary>탄환별 시드 길이 변주 범위. 기준 길이 대비 75~125%라 전체 차이는 최대 50%다.</summary>
+        public const float MinSeededLengthScale = .75f;
+        public const float MaxSeededLengthScale = 1.25f;
 
         readonly List<Node> _nodes = new List<Node>(96);
         readonly Stack<Node> _free = new Stack<Node>(96);
         readonly Dictionary<Projectile, Node> _active = new Dictionary<Projectile, Node>(96);
         readonly HashSet<Projectile> _visible = new HashSet<Projectile>();
         readonly List<Light2D> _lights = new List<Light2D>(12);
-        Material _energyMaterial, _trailMaterial;
+        readonly List<SmokeRibbon> _smokeRibbons = new List<SmokeRibbon>(MaxSmokeRibbons);
+        readonly Stack<SmokeRibbon> _smokeFree = new Stack<SmokeRibbon>(MaxSmokeRibbons);
+        Material _energyMaterial, _trailMaterial, _smokeMaterial;
         Sprite _square, _circle, _ring, _star;
         int _stamp;
 
@@ -50,6 +67,8 @@ namespace TunnelCrew.Presentation
         public int ActiveRendererCount => _active.Count;
         public int ActiveTrailCount { get; private set; }
         public int ActiveLightCount { get; private set; }
+        public int ActiveSmokeTrailCount { get; private set; }
+        public int SmokeRendererCount => _smokeRibbons.Count;
         public int SpriteLayerCount => _nodes.Count * 4;
         public Material SharedEnergyMaterial => _energyMaterial;
         public Material SharedTrailMaterial => _trailMaterial;
@@ -68,11 +87,15 @@ namespace TunnelCrew.Presentation
             var trail = Shader.Find("Tunnel Crew/Projectile-Trail");
             if (trail != null && trail.isSupported)
                 _trailMaterial = new Material(trail) { name = "Projectile Trail (shared)", hideFlags = HideFlags.HideAndDontSave };
+            var smoke = Shader.Find("Tunnel Crew/Projectile-Smoke-Trail");
+            if (smoke != null && smoke.isSupported)
+                _smokeMaterial = new Material(smoke) { name = "Projectile Smoke Trail (shared)", hideFlags = HideFlags.HideAndDontSave };
         }
 
         public void Render(IReadOnlyList<Projectile> projectiles, VisualQualityTier tier)
         {
             if (_energyMaterial == null) Initialize(_square);
+            UpdateSmokeRibbons(Time.deltaTime);
             _stamp++;
             if (_stamp == int.MaxValue) { _stamp = 1; ResetStamps(); }
 
@@ -80,7 +103,9 @@ namespace TunnelCrew.Presentation
             int count = Mathf.Min(visualBudget, projectiles != null ? projectiles.Count : 0);
             int start = (projectiles != null ? projectiles.Count : 0) - count;
             int trailBudget = Mathf.Min(count, VisualQualityRules.ProjectileTrailBudget(tier));
+            int smokeBudget = Mathf.Min(count, VisualQualityRules.ProjectileSmokeTrailBudget(tier));
             ActiveTrailCount = 0;
+            ActiveSmokeTrailCount = 0;
 
             _visible.Clear();
             for (int i = 0; i < count; i++) _visible.Add(projectiles[start + i]);
@@ -101,8 +126,10 @@ namespace TunnelCrew.Presentation
                 }
                 node.SeenStamp = _stamp;
                 bool trailOn = i >= count - trailBudget && node.Profile.TrailTime > 0f;
-                RenderNode(node, trailOn, tier);
+                bool smokeOn = i >= count - smokeBudget;
+                RenderNode(node, trailOn, smokeOn, tier);
                 if (trailOn) ActiveTrailCount++;
+                if (node.Smoke != null) ActiveSmokeTrailCount++;
             }
 
             AssignLights(tier);
@@ -112,7 +139,11 @@ namespace TunnelCrew.Presentation
         {
             var node = _free.Count > 0 ? _free.Pop() : NewNode();
             node.Projectile = projectile;
-            node.Seed = ((projectile.GetHashCode() & 0xffff) / 65535f) * 19.37f;
+            uint visualSeed = projectile.VisualSeed != 0 ? projectile.VisualSeed : unchecked((uint)projectile.GetHashCode());
+            node.Seed = Seed01(visualSeed) * 19.37f;
+            node.LengthJitter = SeededLengthScale(visualSeed);
+            node.WidthJitter = Mathf.Lerp(.92f, 1.10f, Seed01(visualSeed ^ 0x85EBCA6Bu));
+            node.TrailJitter = Mathf.Lerp(.88f, 1.14f, Seed01(visualSeed ^ 0xC2B2AE35u));
             var pos = IsometricProjection.ToRender3(projectile.Position, -.015f);
             node.Root.transform.position = pos;
             node.Root.SetActive(true);
@@ -122,12 +153,27 @@ namespace TunnelCrew.Presentation
             return node;
         }
 
+        /// <summary>동일한 탄환 시드는 언제나 동일한 길이 배율을 돌려준다.</summary>
+        public static float SeededLengthScale(uint visualSeed) =>
+            Mathf.Lerp(MinSeededLengthScale, MaxSeededLengthScale, Seed01(visualSeed ^ 0x9E3779B9u));
+
+        static float Seed01(uint seed)
+        {
+            seed ^= seed >> 16;
+            seed *= 0x7FEB352Du;
+            seed ^= seed >> 15;
+            seed *= 0x846CA68Bu;
+            seed ^= seed >> 16;
+            return (seed & 0x00FFFFFFu) / 16777215f;
+        }
+
         void Release(Node node)
         {
             if (node.Projectile != null) _active.Remove(node.Projectile);
             node.Projectile = null;
             node.Trail.emitting = false;
             node.Trail.Clear();
+            RetireSmoke(node);
             node.Root.SetActive(false);
             _free.Push(node);
         }
@@ -190,6 +236,8 @@ namespace TunnelCrew.Presentation
                 SetShaderSeed(node.Body, node.BodyBlock, node.Seed);
                 SetShaderSeed(node.Core, node.CoreBlock, node.Seed + 1.9f);
                 SetShaderSeed(node.Accent, node.AccentBlock, node.Seed + 3.1f);
+                node.Trail.time = profile.TrailTime * node.TrailJitter;
+                node.Trail.startWidth = profile.TrailWidth * node.WidthJitter;
                 return;
             }
             node.Profile = profile;
@@ -207,8 +255,8 @@ namespace TunnelCrew.Presentation
             node.AccentBlock.SetFloat(ShapeId, profile.AccentMode == 2 || profile.AccentMode == 3 || profile.AccentMode == 8 ? 3f : 1f);
             node.Accent.SetPropertyBlock(node.AccentBlock);
 
-            node.Trail.time = profile.TrailTime;
-            node.Trail.startWidth = profile.TrailWidth;
+            node.Trail.time = profile.TrailTime * node.TrailJitter;
+            node.Trail.startWidth = profile.TrailWidth * node.WidthJitter;
             node.Trail.endWidth = 0f;
             node.Trail.minVertexDistance = Mathf.Clamp(profile.Length * .16f, .07f, .18f);
             node.TrailColors[0] = new GradientColorKey(profile.Core, 0f);
@@ -248,7 +296,7 @@ namespace TunnelCrew.Presentation
             return _square;
         }
 
-        void RenderNode(Node node, bool trailOn, VisualQualityTier tier)
+        void RenderNode(Node node, bool trailOn, bool smokeOn, VisualQualityTier tier)
         {
             var p = node.Projectile;
             var flags = p.VisualFlags == ProjectileStyleFlags.None ? ProjectileSystem.InferStyleFlags(p.VisualId) : p.VisualFlags;
@@ -267,26 +315,131 @@ namespace TunnelCrew.Presentation
 
             node.Aura.transform.localPosition = Vector3.zero;
             node.Aura.transform.localRotation = Quaternion.identity;
-            node.Aura.transform.localScale = new Vector3(profile.Length * 1.34f * pulse, profile.Width * 1.72f * pulse, 1);
+            float length = profile.Length * node.LengthJitter;
+            float width = profile.Width * node.WidthJitter;
+            node.Aura.transform.localScale = new Vector3(length * 1.34f * pulse, width * 1.72f * pulse, 1);
             node.Body.transform.localPosition = Vector3.zero;
             node.Body.transform.localRotation = Quaternion.identity;
-            node.Body.transform.localScale = new Vector3(profile.Length * pulse, profile.Width / pulse, 1);
-            node.Core.transform.localPosition = new Vector3(profile.Length * .09f, 0, 0);
+            node.Body.transform.localScale = new Vector3(length * pulse, width / pulse, 1);
+            node.Core.transform.localPosition = new Vector3(length * .09f, 0, 0);
             node.Core.transform.localRotation = Quaternion.identity;
-            node.Core.transform.localScale = new Vector3(profile.Length * .64f, profile.Width * .42f, 1);
+            node.Core.transform.localScale = new Vector3(length * .64f, width * .42f, 1);
 
             float orbit = Time.time * profile.Spin + node.Seed * 37f;
             node.Accent.transform.localRotation = Quaternion.Euler(0, 0, orbit);
-            node.Accent.transform.localPosition = profile.AccentMode == 6 ? new Vector3(profile.Length * .43f, 0, 0) : Vector3.zero;
-            float accentSize = profile.AccentMode == 4 || profile.AccentMode == 5 ? profile.Width * 1.55f
-                             : profile.AccentMode == 7 ? profile.Width * 1.15f
-                             : profile.AccentMode == 6 ? profile.Width * 1.45f : profile.Width * .72f;
+            node.Accent.transform.localPosition = profile.AccentMode == 6 ? new Vector3(length * .43f, 0, 0) : Vector3.zero;
+            float accentSize = profile.AccentMode == 4 || profile.AccentMode == 5 ? width * 1.55f
+                             : profile.AccentMode == 7 ? width * 1.15f
+                             : profile.AccentMode == 6 ? width * 1.45f : width * .72f;
             node.Accent.transform.localScale = Vector3.one * accentSize * pulse;
             var accent = profile.Accent;
             accent.a = profile.AccentMode == 0 ? .42f : .82f;
             node.Accent.color = accent;
 
             node.Trail.emitting = trailOn && _trailMaterial != null;
+            if (smokeOn && _smokeMaterial != null)
+            {
+                EnsureSmoke(node);
+                if (node.Smoke != null)
+                {
+                    node.Smoke.Root.transform.position = node.Root.transform.position + new Vector3(0, 0, .012f);
+                    node.Smoke.Block.SetFloat(FadeId, 1f);
+                    node.Smoke.Trail.SetPropertyBlock(node.Smoke.Block);
+                }
+            }
+            else RetireSmoke(node);
+        }
+
+        void EnsureSmoke(Node node)
+        {
+            if (node.Smoke != null) return;
+            var smoke = RentSmoke();
+            if (smoke == null) return;
+            smoke.Root.SetActive(true);
+            smoke.Root.transform.position = node.Root.transform.position + new Vector3(0, 0, .012f);
+            smoke.Trail.Clear();
+            smoke.Trail.emitting = true;
+            smoke.Lingering = false;
+            smoke.Remaining = smoke.Duration = 0f;
+            smoke.Block.SetFloat(FadeId, 1f);
+            smoke.Trail.SetPropertyBlock(smoke.Block);
+            node.Smoke = smoke;
+        }
+
+        void RetireSmoke(Node node)
+        {
+            var smoke = node.Smoke;
+            if (smoke == null) return;
+            smoke.Trail.emitting = false;
+            smoke.Lingering = true;
+            smoke.Duration = smoke.Remaining = smoke.Trail.time + .34f;
+            node.Smoke = null;
+        }
+
+        SmokeRibbon RentSmoke()
+        {
+            if (_smokeFree.Count > 0) return _smokeFree.Pop();
+            if (_smokeRibbons.Count < MaxSmokeRibbons) return NewSmokeRibbon();
+
+            SmokeRibbon oldest = null;
+            for (int i = 0; i < _smokeRibbons.Count; i++)
+            {
+                var candidate = _smokeRibbons[i];
+                if (!candidate.Lingering) continue;
+                if (oldest == null || candidate.Remaining < oldest.Remaining) oldest = candidate;
+            }
+            if (oldest != null)
+            {
+                oldest.Trail.Clear();
+                oldest.Lingering = false;
+            }
+            return oldest;
+        }
+
+        SmokeRibbon NewSmokeRibbon()
+        {
+            var go = new GameObject("projectile-smoke-" + _smokeRibbons.Count);
+            go.transform.SetParent(transform, false);
+            var trail = go.AddComponent<TrailRenderer>();
+            trail.sharedMaterial = _smokeMaterial;
+            trail.autodestruct = false;
+            trail.emitting = false;
+            trail.time = .82f;
+            trail.startWidth = .10f;
+            trail.endWidth = .36f;
+            trail.minVertexDistance = .11f;
+            trail.numCapVertices = 2;
+            trail.numCornerVertices = 2;
+            trail.textureMode = LineTextureMode.Tile;
+            trail.alignment = LineAlignment.View;
+            trail.sortingOrder = 36;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) trail.sortingLayerName = VisualLayers.WorldFX;
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[] { new GradientColorKey(new Color(.40f, .36f, .42f), 0f), new GradientColorKey(new Color(.19f, .17f, .23f), 1f) },
+                new[] { new GradientAlphaKey(.05f, 0f), new GradientAlphaKey(.19f, .18f), new GradientAlphaKey(.10f, .70f), new GradientAlphaKey(0f, 1f) });
+            trail.colorGradient = gradient;
+            var smoke = new SmokeRibbon { Root = go, Trail = trail, Block = new MaterialPropertyBlock() };
+            _smokeRibbons.Add(smoke);
+            return smoke;
+        }
+
+        void UpdateSmokeRibbons(float dt)
+        {
+            for (int i = 0; i < _smokeRibbons.Count; i++)
+            {
+                var smoke = _smokeRibbons[i];
+                if (!smoke.Lingering) continue;
+                smoke.Remaining -= Mathf.Max(0f, dt);
+                float fade = smoke.Duration > 0f ? Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(smoke.Remaining / smoke.Duration)) : 0f;
+                smoke.Block.SetFloat(FadeId, fade);
+                smoke.Trail.SetPropertyBlock(smoke.Block);
+                if (smoke.Remaining > 0f) continue;
+                smoke.Trail.Clear();
+                smoke.Root.SetActive(false);
+                smoke.Lingering = false;
+                _smokeFree.Push(smoke);
+            }
         }
 
         void AssignLights(VisualQualityTier tier)
@@ -312,9 +465,11 @@ namespace TunnelCrew.Presentation
                 light.gameObject.SetActive(true);
                 light.transform.position = best.Root.transform.position + new Vector3(0, 0, .05f);
                 light.color = best.Profile.Body;
-                light.intensity = best.Profile.LightIntensity;
-                light.pointLightInnerRadius = best.Profile.LightRadius * .10f;
-                light.pointLightOuterRadius = best.Profile.LightRadius;
+                // 프로필 값은 탄 자체의 글로우 기준이라 노멀맵 환경에서는 주변광이 너무 약했다.
+                // 실제 필드광은 별도 배율과 조금 넓은 반경을 써 바닥·벽의 방향성이 비행 중에도 읽히게 한다.
+                light.intensity = best.Profile.LightIntensity * 3.4f;
+                light.pointLightInnerRadius = best.Profile.LightRadius * .12f;
+                light.pointLightOuterRadius = best.Profile.LightRadius * 1.18f;
                 ActiveLightCount++;
             }
             for (int i = ActiveLightCount; i < _lights.Count; i++)
@@ -327,7 +482,7 @@ namespace TunnelCrew.Presentation
             go.transform.SetParent(transform, false);
             var light = go.AddComponent<Light2D>();
             light.lightType = Light2D.LightType.Point;
-            light.targetSortingLayers = VisualLayers.LitGroundWorldOnlyLayerIds();
+            light.targetSortingLayers = VisualLayers.LitWorldOnlyLayerIds();
             light.intensity = .5f;
             light.pointLightInnerRadius = .08f;
             light.pointLightOuterRadius = 1.4f;
@@ -343,6 +498,7 @@ namespace TunnelCrew.Presentation
         {
             if (_energyMaterial != null) Destroy(_energyMaterial);
             if (_trailMaterial != null) Destroy(_trailMaterial);
+            if (_smokeMaterial != null) Destroy(_smokeMaterial);
         }
     }
 }

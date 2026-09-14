@@ -30,9 +30,11 @@ namespace TunnelCrew.Sim
         public object Owner;
         public double AiMul;
         public bool AiTurret;
+        /// <summary>탄마다 다른 셰이더 패턴·맥동·실루엣 변주를 만드는 결정론적 시드.</summary>
+        public uint VisualSeed;
     }
 
-    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public ProjectileStyleFlags VisualFlags; public int Count; public bool Ai; }
+    public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public ProjectileStyleFlags VisualFlags; public int Count; public bool Ai; public uint VisualSeed; }
     public struct ProjectileEndedEvent { public Vec2 Position; public bool Exploded; public string VisualId; public ProjectileStyleFlags VisualFlags; }
     public enum ProjectileImpactKind : byte { Expire, Enemy, Wall, Bedrock, Ricochet }
     public struct ProjectileImpactEvent
@@ -52,6 +54,19 @@ namespace TunnelCrew.Sim
     /// </summary>
     public sealed class ProjectileSystem
     {
+        /// <summary>플레이어·크루·설치물이 공유하는 모든 아군 투사체의 전역 속도 배율.</summary>
+        public const double SpeedScale = 4.0;
+        /// <summary>투사체가 적에게 주는 넉백은 기존 충격량의 30%만 적용한다.</summary>
+        public const double EnemyKnockbackScale = 0.30;
+        /// <summary>정확도 0일 때 단발 탄착이 흔들릴 수 있는 최대 각도(라디안).</summary>
+        public const double MaxInaccuracyRadians = 0.24;
+        /// <summary>정확도 페널티가 있는 탄은 중심선 근처로 뭉치지 않도록 최소 편차도 보장한다.</summary>
+        public const double MinInaccuracyFraction = 0.42;
+        /// <summary>고속탄이 한 틱 사이에 적이나 벽을 건너뛰지 않도록 충돌을 검사하는 최대 이동 거리.</summary>
+        public const double MaxCollisionTravel = 0.30;
+        /// <summary>캐릭터 중심에서 실제 탄이 생성되는 거리. 기존 0.45셀에서 몸 바로 앞으로 당겼다.</summary>
+        public const double CharacterMuzzleOffset = 0.18;
+
         public readonly List<Projectile> Projectiles = new List<Projectile>();
 
         public event Action<ProjectileFiredEvent> Fired;
@@ -62,21 +77,47 @@ namespace TunnelCrew.Sim
         public Action<object> BreakSourceSetter;
 
         /// <summary>외부(AI 크루·센트리)가 만든 탄을 넣고 발사 이벤트를 낸다.</summary>
-        public void Emit(Projectile p, double angle)
+        public void Emit(Projectile p, double angle, Vec2? muzzleOrigin = null)
         {
             if (p.VisualFlags == ProjectileStyleFlags.None) p.VisualFlags = InferStyleFlags(p.VisualId);
+            if (p.VisualSeed == 0) p.VisualSeed = NextVisualSeed();
             Projectiles.Add(p);
-            Fired?.Invoke(new ProjectileFiredEvent { Position = p.Position, Angle = angle, VisualId = p.VisualId, VisualFlags = p.VisualFlags, Count = 1, Ai = p.Owner != null || p.VisualId == "support" });
+            Fired?.Invoke(new ProjectileFiredEvent
+            {
+                Position = muzzleOrigin ?? p.Position, Angle = angle, VisualId = p.VisualId,
+                VisualFlags = p.VisualFlags, Count = 1, Ai = p.Owner != null || p.VisualId == "support",
+                VisualSeed = p.VisualSeed,
+            });
         }
 
         readonly WorldGrid _world;
         readonly EnemySystem _enemies;
+        readonly Rng _shotRng = new Rng(0x47554E4Eu);
+        readonly Rng _visualSeedRng = new Rng(0x56465831u);
         double _gunCd;
 
         public ProjectileSystem(WorldGrid world, EnemySystem enemies)
         {
             _world = world;
             _enemies = enemies;
+        }
+
+        uint NextVisualSeed()
+        {
+            _visualSeedRng.NextDouble();
+            uint seed = _visualSeedRng.State;
+            return seed == 0 ? 1u : seed;
+        }
+
+        /// <summary>정확도 페널티를 실제 각도 편차로 바꾼다. 중심선에 다시 뭉치지 않도록 최소 편차를 보장한다.</summary>
+        public static double RollInaccuracy(Rng rng, double accuracy)
+        {
+            double inaccuracy = (1.0 - JsMath.Clamp(accuracy, 0.0, 1.0)) * MaxInaccuracyRadians;
+            if (inaccuracy <= 0 || rng == null) return 0.0;
+            double sign = rng.NextDouble() < .5 ? -1.0 : 1.0;
+            double magnitude = inaccuracy * (MinInaccuracyFraction
+                + (1.0 - MinInaccuracyFraction) * rng.NextDouble());
+            return sign * magnitude;
         }
 
         /// <summary>발사 시도. 쿨·탄창·재장전 규칙을 여기서 판정한다.</summary>
@@ -100,13 +141,17 @@ namespace TunnelCrew.Sim
             double speed = SimTuning.TeCells(BaseSpeedPx(visualId)) * (build.RoleGunMul > 1 ? 1.08 : 1.0) * build.ProjectileSpeedMul;
 
             double a = player.Aim;
+            uint firedVisualSeed = 0;
             for (int i = 0; i < shots; i++)
             {
-                double off = (i - (shots - 1) / 2.0) * spread;
+                double jitter = RollInaccuracy(_shotRng, build.Accuracy);
+                double off = (i - (shots - 1) / 2.0) * spread + jitter;
                 var dir = Vec2.FromAngle(a + off);
+                uint visualSeed = NextVisualSeed();
+                if (firedVisualSeed == 0) firedVisualSeed = visualSeed;
                 Projectiles.Add(new Projectile
                 {
-                    Position = player.Position + dir * (SimTuning.PlayerRadius * 0.9),
+                    Position = player.Position + dir * CharacterMuzzleOffset,
                     Velocity = dir * speed,
                     Life = BaseLife(visualId) * build.ProjectileLifeMul,
                     Pierce = build.Pierce + (laser ? 5 : 0),
@@ -116,6 +161,7 @@ namespace TunnelCrew.Sim
                     Power = sync * equipmentPower,
                     VisualId = visualId,
                     VisualFlags = StyleFlagsFor(build, laser, shots),
+                    VisualSeed = visualSeed,
                 });
             }
 
@@ -123,7 +169,11 @@ namespace TunnelCrew.Sim
             double cd = build.Role == RoleId.Gunner ? 0.14 : 0.22;
             _gunCd = cd / Math.Max(0.1, build.FireRate);
 
-            Fired?.Invoke(new ProjectileFiredEvent { Position = player.Position, Angle = a, VisualId = visualId, VisualFlags = StyleFlagsFor(build, laser, shots), Count = shots });
+            Fired?.Invoke(new ProjectileFiredEvent
+            {
+                Position = player.Position, Angle = a, VisualId = visualId,
+                VisualFlags = StyleFlagsFor(build, laser, shots), Count = shots, VisualSeed = firedVisualSeed,
+            });
             return true;
         }
 
@@ -166,18 +216,20 @@ namespace TunnelCrew.Sim
         /// <summary>시각적 속도 언어와 실제 이동 속도를 일치시킨다. 값은 원본처럼 px/s, 1셀=50px.</summary>
         public static double BaseSpeedPx(string visualId)
         {
+            double speed;
             switch (visualId)
             {
-                case "multi": return 300;
-                case "pierce": return 500;
-                case "ricochet": return 365;
-                case "explosive": return 250;
-                case "rain": return 315;
-                case "laser": return 640;
-                case "support": return 360;
-                case "shard": return 390;
-                default: return 340;
+                case "multi": speed = 300; break;
+                case "pierce": speed = 500; break;
+                case "ricochet": speed = 365; break;
+                case "explosive": speed = 250; break;
+                case "rain": speed = 315; break;
+                case "laser": speed = 640; break;
+                case "support": speed = 360; break;
+                case "shard": speed = 390; break;
+                default: speed = 340; break;
             }
+            return speed * SpeedScale;
         }
 
         public static double BaseLife(string visualId)
@@ -216,6 +268,16 @@ namespace TunnelCrew.Sim
                 }
             }
 
+            double maxSpeed = 0.0;
+            for (int i = 0; i < Projectiles.Count; i++)
+                maxSpeed = Math.Max(maxSpeed, Projectiles[i].Velocity.Length);
+            int steps = Math.Max(1, (int)Math.Ceiling(maxSpeed * Math.Max(0.0, dt) / MaxCollisionTravel));
+            double stepDt = dt / steps;
+            for (int step = 0; step < steps; step++) TickProjectiles(player, build, stepDt);
+        }
+
+        void TickProjectiles(PlayerState player, PlayerBuild build, double dt)
+        {
             double gunMul = build.RoleGunMul * build.GunMul;
 
             for (int i = Projectiles.Count - 1; i >= 0; i--)
@@ -239,7 +301,8 @@ namespace TunnelCrew.Sim
                     double dmg = ai ? SimTuning.EnemyGunDamage * p.AiMul * p.Power
                                     : SimTuning.EnemyGunDamage * gunMul * p.Power * (p.Laser ? 1.65 : 1.0);
                     if (ai) _enemies.DamageSource = p.Owner;
-                    _enemies.HurtEnemy(e, dmg, n, p.Owner is ICrewTarget ct ? ct.Pos : player.Position, byTurret: p.AiTurret || p.VisualId == "support");
+                    _enemies.HurtEnemy(e, dmg, n, p.Owner is ICrewTarget ct ? ct.Pos : player.Position,
+                        byTurret: p.AiTurret || p.VisualId == "support", knockbackMul: EnemyKnockbackScale);
                     if (ai) _enemies.DamageSource = null;
 
                     bool terminal = p.Pierce <= 0;
@@ -360,7 +423,8 @@ namespace TunnelCrew.Sim
                 var d = e.Position - at;
                 double dist = d.Length;
                 if (dist >= 1.35) continue;
-                _enemies.HurtEnemy(e, SimTuning.EnemyGunDamage * 0.7 * gunMul, d / Math.Max(1e-6, dist), at);
+                _enemies.HurtEnemy(e, SimTuning.EnemyGunDamage * 0.7 * gunMul,
+                    d / Math.Max(1e-6, dist), at, knockbackMul: EnemyKnockbackScale);
             }
         }
 

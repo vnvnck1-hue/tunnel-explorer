@@ -6,14 +6,56 @@ namespace TunnelCrew.Tests
     public sealed class ExpeditionContentTests
     {
         [Test]
-        public void 기본_장비는_기존_빌드_수치를_보존한다()
+        public void 거너_기본총은_대용량_저위력_저정확도_프로필이다()
         {
             var b = new PlayerBuild();
             b.Reset(RoleId.Gunner, EquipmentVariant.Standard);
             Assert.That(b.Shots, Is.EqualTo(1));
-            Assert.That(b.MagSize, Is.EqualTo(12));
+            Assert.That(b.MagSize, Is.EqualTo(48));
+            Assert.That(b.Ammo, Is.EqualTo(48));
             Assert.That(b.RoleGunMul, Is.EqualTo(1.5).Within(.0001));
+            Assert.That(b.GunMul, Is.EqualTo(.8).Within(.0001));
+            Assert.That(b.RoleGunMul * b.GunMul, Is.EqualTo(1.2).Within(.0001));
+            Assert.That(b.FireRate, Is.EqualTo(2.0).Within(.0001));
+            Assert.That(b.Accuracy, Is.EqualTo(.7).Within(.0001));
             Assert.That(b.ProjectileLifeMul, Is.EqualTo(1).Within(.0001));
+
+            var alt = new PlayerBuild();
+            alt.Reset(RoleId.Gunner, EquipmentVariant.Alternative);
+            Assert.That(alt.MagSize, Is.EqualTo(8));
+            Assert.That(alt.GunMul, Is.EqualTo(.34).Within(.0001));
+            Assert.That(alt.Accuracy, Is.EqualTo(1).Within(.0001));
+        }
+
+        [Test]
+        public void 관전_교대로_거너를_조작하면_기본총_프로필과_진행중_특성이_함께_적용된다()
+        {
+            var sim = new TunnelSim();
+            sim.StartRun(RoleId.Driller);
+            sim.EnterDepth(1, DungeonConfig.Runtime);
+            sim.Build.GunMul *= 1.25;
+            sim.Build.FireRate *= 1.075;
+            sim.Build.SetMag(2);
+
+            Assert.That(sim.SwitchRoleMidRun(RoleId.Gunner), Is.True);
+            Assert.That(sim.Build.Role, Is.EqualTo(RoleId.Gunner));
+            Assert.That(sim.Build.Equipment, Is.EqualTo(EquipmentVariant.Standard));
+            Assert.That(sim.Build.MagSize, Is.EqualTo(50));
+            Assert.That(sim.Build.Ammo, Is.EqualTo(50));
+            Assert.That(sim.Build.GunMul, Is.EqualTo(1.0).Within(.0001));
+            Assert.That(sim.Build.FireRate, Is.EqualTo(2.15).Within(.0001));
+            Assert.That(sim.Build.Accuracy, Is.EqualTo(.70).Within(.0001));
+
+            Assert.That(sim.SwitchRoleMidRun(RoleId.Scout), Is.True);
+            Assert.That(sim.Build.MagSize, Is.EqualTo(14));
+            Assert.That(sim.Build.GunMul, Is.EqualTo(1.25).Within(.0001));
+            Assert.That(sim.Build.FireRate, Is.EqualTo(1.075).Within(.0001));
+            Assert.That(sim.Build.Accuracy, Is.EqualTo(1.0).Within(.0001));
+
+            Assert.That(sim.SwitchRoleMidRun(RoleId.Gunner), Is.True);
+            Assert.That(sim.Build.MagSize, Is.EqualTo(50));
+            Assert.That(sim.Build.GunMul, Is.EqualTo(1.0).Within(.0001));
+            Assert.That(sim.Build.FireRate, Is.EqualTo(2.15).Within(.0001));
         }
 
         [TestCase(RoleId.Driller)]

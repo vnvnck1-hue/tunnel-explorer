@@ -70,6 +70,8 @@ namespace TunnelCrew.Presentation
         [Header("환경 렌더러 (R2 · 이주 B 7단계)")]
         [Tooltip("켜면 레퍼런스 키트로 월드를 그린다. 자산이 비어 있으면 자동으로 구 WorldRenderer.")]
         [SerializeField] bool _r2Environment = true;
+        [Tooltip("유기적 벽 외곽·월드 재질·암석 장식. 끄면 기존 타일 벽으로 비교한다.")]
+        [SerializeField] bool _organicEnvironment = true;
         [SerializeField] TunnelCrew.Presentation.Visual.EnvironmentKit _envKit;
         [SerializeField] TunnelCrew.Presentation.Visual.WorldVisualProfile _envProfile;
         [SerializeField] TunnelCrew.Presentation.Visual.SurfaceRuleSet _envRules;
@@ -295,7 +297,7 @@ namespace TunnelCrew.Presentation
                 _fx?.TileBroken(V(WorldGrid.CellCenter(e.Col, e.Row)), e.Type, V(e.HitDir));
                 // 주변 벽이 함께 출렁인다. 원석은 무르게, 암반·코어는 묵직하게.
                 _impactWaves?.Add(
-                    TunnelCrew.Presentation.IsometricProjection.ToRender(V(WorldGrid.CellCenter(e.Col, e.Row))),
+                    V(WorldGrid.CellCenter(e.Col, e.Row)),
                     hard ? 1.35f : (ore ? 0.8f : 1f));
                 if (e.OpenedExit) { _fx?.BigRing(V(WorldGrid.CellCenter(e.Col, e.Row)), new Color(.78f, .63f, 1f), 2.4f); _combatView?.Text(WorldGrid.CellCenter(e.Col, e.Row) + new Vec2(0, .7), "출구 개방", new Color(.78f, .63f, 1f), 22); }
                 if (e.HadBuriedRelic) _combatView?.Text(WorldGrid.CellCenter(e.Col, e.Row) + new Vec2(0, .46), "묻힌 유물!", new Color(.5f, .92f, .82f), 19);
@@ -332,12 +334,16 @@ namespace TunnelCrew.Presentation
                 var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
                 _feedback?.Shot(angle, e.VisualId);
                 _fx?.ProjectileMuzzle(V(e.Position), dir, e.VisualId, e.VisualFlags, e.Count, e.Ai);
+                // 총구 압력이 가까운 바닥·벽 표면을 짧게 흔든다. 파괴 파동보다 작아 연사 중에도 지형이 출렁이지 않는다.
+                _impactWaves?.AddShot(V(e.Position) + dir * .16f, e.Ai ? .10f : .20f);
             };
             Sim.ProjectileImpacted += e =>
             {
                 var dir = IsometricProjection.DirectionToRender(e.Direction.Angle);
                 _feedback?.ProjectileImpact(e.Kind, e.VisualId, e.Exploded, e.Terminal, dir);
                 _fx?.ProjectileImpact(V(e.Position), dir, e.VisualId, e.Kind, e.VisualFlags, e.Terminal, e.Exploded, e.Killed, (float)e.Power);
+                if (e.Kind != ProjectileImpactKind.Expire)
+                    _impactWaves?.AddProjectileImpact(V(e.Position), e.Exploded ? .72f : e.Kind == ProjectileImpactKind.Bedrock ? .38f : .24f);
             };
             Sim.TraitFx += e =>
             {
@@ -527,6 +533,9 @@ namespace TunnelCrew.Presentation
             // UnityEngine.Object 에는 `??` 를 쓰면 안 된다. GetComponent 가 돌려주는 "가짜 null"
             // 은 C# 기준으로는 null 이 아니라서 `??` 가 우변으로 넘어가지 않는다.
             if (!camGo.TryGetComponent(out _cam)) _cam = camGo.AddComponent<Camera>();
+            // Run 씬의 카메라는 런타임에 만들어질 수 있으므로 수신기도 함께 보장한다.
+            // AudioDirector 의 모든 소스는 2D지만 활성 AudioListener가 없으면 Unity가 전부 무음 처리한다.
+            if (!camGo.TryGetComponent<AudioListener>(out _)) camGo.AddComponent<AudioListener>();
 
             _cam.orthographic = true;
             _cam.clearFlags = CameraClearFlags.SolidColor;
@@ -614,6 +623,7 @@ namespace TunnelCrew.Presentation
             var envGo = new GameObject("Environment");
             envGo.transform.SetParent(_envRoot, false);
             _env = envGo.AddComponent<TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer>();
+            _env.UseOrganicWalls = _organicEnvironment;
             _env.Assign(_envProfile, _envRules, _envKit, _envFloorSet, _envWallTopSet, _envWallFrontSet);
 
             var dropGo = new GameObject("Wall Drop Shadow");
@@ -1017,6 +1027,7 @@ namespace TunnelCrew.Presentation
         public void ApplyRoleSwap(RoleId role)
         {
             _role = role;
+            _equipment = Sim.Build.Equipment;
             LoadRoleFrames(role);
             Log($"교대 → {role}");
         }

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using TunnelCrew.Presentation;
+using TunnelCrew.Presentation.Juice;
 using TunnelCrew.Sim;
 using UnityEditor;
 using UnityEngine;
@@ -13,10 +14,13 @@ namespace TunnelCrew.Tests
         {
             var shader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Presentation/World/ProjectileEnergy.shader");
             var trail = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Presentation/World/ProjectileTrail.shader");
+            var smoke = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Presentation/World/ProjectileSmokeTrail.shader");
             Assert.That(shader, Is.Not.Null);
             Assert.That(trail, Is.Not.Null);
+            Assert.That(smoke, Is.Not.Null);
             Assert.That(ShaderUtil.ShaderHasError(shader), Is.False);
             Assert.That(ShaderUtil.ShaderHasError(trail), Is.False);
+            Assert.That(ShaderUtil.ShaderHasError(smoke), Is.False);
         }
 
         [Test]
@@ -34,6 +38,46 @@ namespace TunnelCrew.Tests
             }
             Assert.That(shapes.Count, Is.EqualTo(ids.Length));
             Assert.That(proportions.Count, Is.GreaterThanOrEqualTo(7));
+        }
+
+        [Test]
+        public void 모든_투사체는_기본_실루엣보다_세배_길게_그려진다()
+        {
+            var source = ProjectileVfxProfiles.Get("standard");
+            var rendered = ProjectileVfxProfiles.Compose("standard", ProjectileStyleFlags.None);
+            Assert.That(ProjectileVfxProfiles.LengthScale, Is.EqualTo(3f));
+            Assert.That(rendered.Length, Is.EqualTo(source.Length * 3f).Within(.0001f));
+            Assert.That(rendered.Width, Is.EqualTo(source.Width).Within(.0001f));
+        }
+
+        [Test]
+        public void 탄환_길이는_시드마다_최대_오십퍼센트_범위에서_달라진다()
+        {
+            Assert.That(ProjectileVfxRenderer.MaxSeededLengthScale - ProjectileVfxRenderer.MinSeededLengthScale,
+                Is.EqualTo(.50f).Within(.0001f));
+
+            float first = ProjectileVfxRenderer.SeededLengthScale(101u);
+            Assert.That(ProjectileVfxRenderer.SeededLengthScale(101u), Is.EqualTo(first));
+
+            var lengths = new System.Collections.Generic.HashSet<int>();
+            for (uint seed = 1; seed <= 64; seed++)
+            {
+                float length = ProjectileVfxRenderer.SeededLengthScale(seed);
+                Assert.That(length, Is.InRange(ProjectileVfxRenderer.MinSeededLengthScale,
+                    ProjectileVfxRenderer.MaxSeededLengthScale));
+                lengths.Add(Mathf.RoundToInt(length * 10000f));
+            }
+            Assert.That(lengths.Count, Is.GreaterThan(56), "탄환 시드가 눈에 띄게 다양한 길이를 만들어야 한다");
+        }
+
+        [Test]
+        public void 벽과_몬스터_피해_숫자는_밝은_흰색이_아닌_어두운_팔레트를_쓴다()
+        {
+            Assert.That(CombatView.DamageColor.grayscale, Is.LessThan(.4f));
+            Assert.That(CombatView.DamageBigColor.grayscale, Is.LessThan(.4f));
+            Assert.That(CombatView.DamageHotColor.grayscale, Is.LessThan(.4f));
+            Assert.That(CombatView.DamageHotBigColor.grayscale, Is.LessThan(.4f));
+            Assert.That(CombatView.DamageShadowColor.grayscale, Is.LessThan(.1f));
         }
 
         [Test]
@@ -70,6 +114,7 @@ namespace TunnelCrew.Tests
                 Assert.That(view.ActiveProjectileRendererCount, Is.EqualTo(96));
                 Assert.That(view.ActiveProjectileTrailCount, Is.EqualTo(64));
                 Assert.That(view.ActiveProjectileLightCount, Is.EqualTo(8));
+                Assert.That(view.ActiveProjectileSmokeTrailCount, Is.EqualTo(40));
                 Assert.That(view.SharedProjectileMaterial, Is.SameAs(shared));
             }
             finally { Object.DestroyImmediate(go); }
@@ -104,8 +149,36 @@ namespace TunnelCrew.Tests
                 }
                 Assert.That(renderer.RendererCount, Is.EqualTo(96));
                 Assert.That(renderer.ActiveRendererCount, Is.EqualTo(96));
+                Assert.That(renderer.SmokeRendererCount, Is.LessThanOrEqualTo(112));
             }
             finally { Object.DestroyImmediate(go); }
+        }
+
+        [Test]
+        public void 발사와_착탄은_실제_환경광과_탄피를_만든다()
+        {
+            var go = new GameObject("combat-light-casing-test");
+            try
+            {
+                var fx = go.AddComponent<FxSystem>();
+                fx.ProjectileMuzzle(Vector2.zero, Vector2.right, "standard", ProjectileStyleFlags.None, 1, false);
+                Assert.That(fx.ActiveTransientLightCount, Is.EqualTo(1));
+                Assert.That(fx.ActiveCasingCount, Is.EqualTo(1));
+
+                fx.ProjectileImpact(Vector2.right, Vector2.left, "standard", ProjectileImpactKind.Wall,
+                    ProjectileStyleFlags.None, true, false, false, 1f);
+                Assert.That(fx.ActiveTransientLightCount, Is.EqualTo(2));
+            }
+            finally { Object.DestroyImmediate(go); }
+        }
+
+        [Test]
+        public void 발사와_착탄_파동은_짧고_초반_충격이_강하다()
+        {
+            Assert.That(ImpactWaveDirector.ShotDuration, Is.LessThan(.12f));
+            Assert.That(ImpactWaveDirector.ProjectileImpactDuration, Is.LessThanOrEqualTo(.15f));
+            Assert.That(ImpactWaveDirector.ShotStrengthBoost, Is.GreaterThan(1f));
+            Assert.That(ImpactWaveDirector.ProjectileImpactStrengthBoost, Is.GreaterThan(1f));
         }
 
         [Test]

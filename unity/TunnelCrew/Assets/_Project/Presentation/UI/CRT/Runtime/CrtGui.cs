@@ -105,6 +105,11 @@ namespace TunnelCrew.Presentation.CRT
             var c=UiThemeProfile.Map(style.normal.textColor,true)*color;
             CrtSurface.Current?.Label(Transform(r),text,style,c);
         }
+        public static void DynamicLabel(Rect r, DynamicDialogueText.Script script, GUIStyle style, float elapsed, bool complete = false, bool reduced = false)
+        {
+            var c=UiThemeProfile.Map(style.normal.textColor,true)*color;
+            CrtSurface.Current?.DynamicLabel(Transform(r),script,style,c,elapsed,complete,reduced);
+        }
         public static void Panel(Rect r, Color fill, Color line, float width=1.5f, bool cut=true)
             => CrtSurface.Current?.Panel(Transform(r),fill,line,width*Screen.height/1080f*(UiThemeProfile.Active!=null?UiThemeProfile.Active.borderWidth/1.5f:1),cut);
         public static void BeginGroup(Rect r)

@@ -32,6 +32,9 @@ namespace TunnelCrew.Presentation
 
     public static class ProjectileVfxProfiles
     {
+        /// <summary>고속탄의 비행 방향과 궤적을 읽을 수 있도록 모든 탄체를 길이 방향으로 늘린다.</summary>
+        public const float LengthScale = 3f;
+
         static Color C(string hex)
         {
             ColorUtility.TryParseHtmlString(hex, out var color);
@@ -97,7 +100,7 @@ namespace TunnelCrew.Presentation
         {
             var p = Get(id);
             Color body = p.Body, core = p.Core, trail = p.Trail, accent = p.Accent;
-            float length = p.Length, width = p.Width, trailTime = p.TrailTime, trailWidth = p.TrailWidth;
+            float length = p.Length * LengthScale, width = p.Width, trailTime = p.TrailTime, trailWidth = p.TrailWidth;
             float spin = p.Spin, lightRadius = p.LightRadius, lightIntensity = p.LightIntensity;
             int priority = p.LightPriority;
 

@@ -176,7 +176,8 @@ namespace TunnelCrew.Presentation
             {
                 case Screen.MainMenu:
                     bool ftueDone = FtueDirector.HasCompleted;
-                    if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA)
+                    if (kb.f1Key.wasPressedThisFrame) LaunchFtue();
+                    else if (kb.enterKey.wasPressedThisFrame || kb.digit1Key.wasPressedThisFrame || gA)
                     {
                         if (ftueDone) GoStarmap(); else LaunchFtue();
                     }
@@ -462,6 +463,9 @@ namespace TunnelCrew.Presentation
                 if (ftueDone) GoStarmap(); else LaunchFtue();
             }
             y += h + gap;
+            string ftueLabel = ftueDone ? "FTUE  프롤로그 다시 보기" : "FTUE  프롤로그 바로 보기";
+            if (Button(R(x, y, w, 54), ftueLabel + "   <color=#aaa>F1</color>", true, new Color(.46f, .31f, .62f))) LaunchFtue();
+            y += 64;
             // 무한 모드 직행 — 원본 #menuInfinite (tcLaunchInfScene → 직업 선택 → 바로 런). 행성 지도를 건너뛴다는 점만 다르고 규칙은 같다
             string locked = "   <color=#777>첫 원정 완료 후</color>";
             if (Button(R(x, y, w, h), N(2) + "무한 모드 — 바로 출격   <color=#aaa>2</color>" + (ftueDone ? "" : locked), ftueDone)) GoRoleSelect(); y += h + gap;

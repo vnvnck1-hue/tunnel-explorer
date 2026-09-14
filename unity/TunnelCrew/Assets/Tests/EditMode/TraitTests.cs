@@ -171,8 +171,8 @@ namespace TunnelCrew.Tests
             var b = new PlayerBuild();
             b.Reset(RoleId.Gunner);
             b.SetMag(2);
-            Assert.AreEqual(14, b.MagSize); Assert.AreEqual(14, b.Ammo, "늘어난 만큼 즉시 채운다");
-            b.SetMag(100); Assert.AreEqual(40, b.MagSize);
+            Assert.AreEqual(50, b.MagSize); Assert.AreEqual(50, b.Ammo, "늘어난 만큼 즉시 채운다");
+            b.SetMag(100); Assert.AreEqual(80, b.MagSize);
             b.AdjustReload(10); Assert.AreEqual(3.5, b.ReloadTime);
             b.AdjustReload(0.01); Assert.AreEqual(0.42, b.ReloadTime);
         }

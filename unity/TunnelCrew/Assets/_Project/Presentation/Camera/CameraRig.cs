@@ -16,6 +16,8 @@ namespace TunnelCrew.Presentation
     [RequireComponent(typeof(Camera))]
     public sealed class CameraRig : MonoBehaviour
     {
+        // 본편 줌인 +30%: 직교 시야 높이는 확대 배율의 역수다. UI와 Sim 수치는 바꾸지 않는다.
+        public const float GameplayZoomMultiplier = 1.3f;
         [SerializeField] float _zoomLerpRate = (float)SimTuning.ZoomLerpRate;
 
         /// <summary>
@@ -94,6 +96,7 @@ namespace TunnelCrew.Presentation
                 float baseCells = (float)(1080.0 / (SimTuning.BaseZoom * SimTuning.PxPerCell));
                 targetCells = baseCells / (float)SimTuning.ZoomInMul;
             }
+            targetCells /= GameplayZoomMultiplier;
             TargetViewCells = targetCells;
 
             if (!_initialized) _zoom = targetCells;
