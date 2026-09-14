@@ -149,7 +149,7 @@ namespace TunnelCrew.Presentation.Visual
         {
             Mode=Mathf.Clamp(mode,1,3);
             foreach(var r in _tiles.GetComponentsInChildren<TilemapRenderer>(true))
-                if(r.name!="GroundBase"&&r.name!="GroundDetail"&&r.name!="GroundDecal")r.enabled=Mode!=3;
+                if(r.name!="GroundBase"&&r.name!="GroundDetail")r.enabled=Mode!=3;
             _organic.gameObject.SetActive(Mode==3);_dressing.gameObject.SetActive(Mode>=2);
             _atmosphere.gameObject.SetActive(Mode>=2&&_fogOn);
         }
@@ -181,11 +181,13 @@ namespace TunnelCrew.Presentation.Visual
             }
             var fronts=new Dictionary<Vector2Int,OrganicLabGeometry.Surface>();
             var bevels=new Dictionary<Vector2Int,OrganicLabGeometry.Surface>();
+            var contacts=new OrganicLabGeometry.Surface();
             foreach(var loop in geometry.Loops)
             for(int i=0;i<loop.Count;i++)
             {
                 var a=loop[i];var b=loop[(i+1)%loop.Count];var tangent=(b-a).normalized;
                 var inward=new Vector2(-tangent.y,tangent.x);var up=Vector2.up*lift;
+                contacts.Quad(a,b,b-inward*.30f,a-inward*.30f,new Color(.04f,.05f,.09f,.58f),new Color(.04f,.05f,.09f,0));
                 var chunk=new Vector2Int(Mathf.FloorToInt((a.x+b.x)*.125f),Mathf.RoundToInt((a.y+b.y)*.5f));
                 if(b.x>a.x+.01f)
                 {
@@ -200,6 +202,7 @@ namespace TunnelCrew.Presentation.Visual
             }
             foreach(var part in fronts)AddMesh(part.Value,"Front skirt "+part.Key,_frontMaterial,-part.Key.y*100);
             foreach(var part in bevels)AddMesh(part.Value,"Contour bevel "+part.Key,_capMaterial,-part.Key.y*100+2);
+            AddMesh(contacts,"Contour contact shadow",_propMaterial,0,VisualLayers.GroundDecal);
             // Deliberate large shapes: separate crystal and machinery room grammars.
             AddProp(crystal,new Vector2(4.6f,14.8f),2.6f,"Crystal anchor",crystalMaterial);
             AddProp(crystal,new Vector2(7.8f,16.1f),1.6f,"Crystal cluster",crystalMaterial);
@@ -208,16 +211,16 @@ namespace TunnelCrew.Presentation.Visual
             AddProp(pipe,new Vector2(21.8f,13.6f),2.6f,"Pipe anchor",null);
             AddProp(beam,new Vector2(18.8f,15.5f),2.5f,"Support anchor",null);
             AddProp(lamp,new Vector2(20.4f,11.0f),1.3f,"Work lamp",lampMaterial);
-            for(int x=17;x<=21;x+=2)AddProp(rail,new Vector2(x,8.2f),1.9f,"Rail route",null,true);
+            for(int y=8;y<=12;y+=2)AddProp(rail,new Vector2(19.8f,y),1.3f,"Rail route",null,true);
             _lastEdits=Environment.Edits;RebuildCount++;timer.Stop();LastRebuildMs=timer.Elapsed.TotalMilliseconds;
             SetMode(Mode);
         }
-        void AddMesh(OrganicLabGeometry.Surface s,string name,Material material,int order)
+        void AddMesh(OrganicLabGeometry.Surface s,string name,Material material,int order,string layer=VisualLayers.WorldEntity)
         {
             if(s.VertexCount==0)return;
             var go=Child(name,_organic);var mesh=s.CreateMesh(name);_meshes.Add(mesh);VertexCount+=s.VertexCount;
             go.AddComponent<MeshFilter>().sharedMesh=mesh;var r=go.AddComponent<MeshRenderer>();r.sharedMaterial=material;
-            r.sortingLayerName=VisualLayers.WorldEntity;r.sortingOrder=order;_walls.Add(r);
+            r.sortingLayerName=layer;r.sortingOrder=order;if(layer==VisualLayers.WorldEntity)_walls.Add(r);
         }
         SpriteRenderer AddProp(Sprite sprite,Vector2 p,float width,string name,Material mat,bool ground=false)
         {

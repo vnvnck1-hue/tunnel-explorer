@@ -84,7 +84,7 @@ Shader "Tunnel Crew/Background Lab Rock"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 // Mesh vertices are already in authored world coordinates.
-                
+
 
                 Varyings o = CommonLitVertex(input);
                 o.color = input.color * _Color;
@@ -139,7 +139,7 @@ Shader "Tunnel Crew/Background Lab Rock"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 // Mesh vertices are already in authored world coordinates.
-                
+
 
                 // Tilemap 청크 메시에는 NORMAL/TANGENT 가 없어 TBN 이 0 이 된다.
                 // 스프라이트와 같은 기준으로 강제한다: 카메라를 향한 노멀 · +X 탄젠트 ·
@@ -202,7 +202,7 @@ Shader "Tunnel Crew/Background Lab Rock"
                 UNITY_SKINNED_VERTEX_COMPUTE(input);
                 SetUpSpriteInstanceProperties();
                 // Mesh vertices are already in authored world coordinates.
-                
+
 
                 Varyings o = CommonUnlitVertex(input);
                 o.color = input.color * _Color;

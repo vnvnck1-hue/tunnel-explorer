@@ -60,7 +60,8 @@ namespace TunnelCrew.EditorTools
             var volume=new GameObject("Lab Volume").AddComponent<Volume>();volume.isGlobal=true;
             var volumeProfile=ScriptableObject.CreateInstance<VolumeProfile>();
             var bloom=volumeProfile.Add<Bloom>();bloom.intensity.Override(.28f);bloom.threshold.Override(1.1f);
-            AssetDatabase.CreateAsset(volumeProfile,Data+"BackgroundUpgradeLabVolume.asset");volume.sharedProfile=volumeProfile;
+            AssetDatabase.CreateAsset(volumeProfile,Data+"BackgroundUpgradeLabVolume.asset");
+            AssetDatabase.AddObjectToAsset(bloom,volumeProfile);volume.sharedProfile=volumeProfile;
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene,ScenePath);
             AssetDatabase.SaveAssets();
             Debug.Log("[Background Lab] Ready: "+ScenePath+". Play, then WASD to explore; 1/2/3 compare.");

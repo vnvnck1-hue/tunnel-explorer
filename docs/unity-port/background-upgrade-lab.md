@@ -53,4 +53,18 @@
 
 ## 검증 결과
 
-진행 중.
+2026-09-14, TunnelCrew 6000.3.15f1.
+
+- EditMode: `BackgroundUpgradeLabTests` 5/5 통과. 작업 ID `7992d105fb9141899a22d4bd85badadc`.
+- Play 입력 스모크: PASS. 실제 Input System 키보드로 이동 → 벽에 정지 → 마우스 3타 채굴 → contour 재생성 → 열린 칸 통과 → 복구 → 1/2/3 키 전환을 모두 확인했다.
+- 전경 검증: 드릴러를 내부 벽 섬 뒤 `(13.5, 12.5)`에 놓았을 때 관련 메시 2개의 알파가 낮아져 캐릭터가 보이는 것을 캡처로 확인했다.
+- 최종 Play 콘솔 오류 0건. `BackgroundLabRock` ShaderUtil 메시지 0건.
+- 최종 27,160 vertices. 채굴/복구 후 마지막 rebuild 10.07ms(Editor 단일 관측치). 전경 검증 구도의 전체 batches는 181. 생산 환경 성능 보장은 아니다.
+- A/B/C 동일 시작점 캡처와 방 전체·전경 페이드 캡처를 `screenshots/background-upgrade-lab/`에 보관했다. 검증 스크린샷은 저장소 정책에 따라 Git에는 넣지 않는다.
+- CLI: 새 C# 코드·문서 diff 검사. Unity가 자동으로 기록한 YAML의 빈 값 뒤 공백은 그대로 유지한다.
+
+### 작업 분리
+
+공유 작업 폴더에서 FTUE 작업이 다른 브랜치를 사용했으므로, 별도 Git 인덱스로 이번 작업 파일만 `codex/background-upgrade-lab`에 커밋했다. FTUE·투사체 변경은 이 브랜치에 포함하지 않았다. 본편 씬·빌드 설정을 변경하지 않았다.
+
+실행 도중 발견한 보조 수정 두 가지는 배경 브랜치의 파일 범위와 분리했다. `.codex/hooks/require-unity-instance.ps1`의 UTF-8 표준입력 처리를 보정했으며 인스턴스 검사/거부 규칙은 유지했다. 다른 작업의 `DynamicDialogueText.ValueAfterEquals`에는 미할당 `out` 인자 초기값 한 줄을 추가해 그 작업의 컴파일을 복구했다.
