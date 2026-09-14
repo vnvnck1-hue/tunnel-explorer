@@ -48,6 +48,12 @@ namespace TunnelCrew.Sim
         public bool EnsurePath;   // DEMO.ensurePath — 진입점 주변 강제 개방
         public int BandCount;     // P.bands.length — 밴드 구간 수
 
+        // Unity 본편 비주얼 스테이징. 0이면 원본 패리티 경로를 그대로 쓴다.
+        // 모든 난수 소비가 끝난 뒤 진입점 주변만 넓혀, 생성 픽스처와 랜덤 스트림을 건드리지 않는다.
+        public int PresentationEntryHalfWidth;
+        public int PresentationEntryHalfHeight;
+        public bool PresentationEntryLamps;
+
         /// <summary>
         /// v7.9.2 의 실제 런타임 값. `applyDemoToDungen()` 적용 후 기준이며
         /// `tools/unity-export/dump-tuning.mjs` 출력과 대조해 굳혔다.
@@ -83,7 +89,30 @@ namespace TunnelCrew.Sim
 
             EnsurePath = true,
             BandCount = 4,
+
+            PresentationEntryHalfWidth = 0,
+            PresentationEntryHalfHeight = 0,
+            PresentationEntryLamps = false,
         };
+
+        /// <summary>
+        /// Unity 본편용 화면 구성. <see cref="Runtime"/>의 생성 규칙과 난수열은 유지하면서
+        /// 진입부만 16:9에 가까운 넓은 무대로 후처리한다.
+        /// </summary>
+        public static DungeonConfig UnityVisual
+        {
+            get
+            {
+                var cfg = Runtime;
+                // 기본 카메라는 약 20.2×11.4셀을 본다. 카메라 데드존 때문에 진입점이
+                // 화면 왼쪽에 놓여도 우측 끝까지 바닥이 이어지도록 가로를 27셀로 잡는다.
+                // 세로는 9셀을 유지해 위쪽 둘레 벽과 연결 설비가 프레임 안에 남게 한다.
+                cfg.PresentationEntryHalfWidth = 13;
+                cfg.PresentationEntryHalfHeight = 4;
+                cfg.PresentationEntryLamps = true;
+                return cfg;
+            }
+        }
 
         /// <summary>원본 `tunRooms(c,r)` — 내부 셀 68칸당 방 1개.</summary>
         public int RoomTarget => System.Math.Max(5, JsMath.Round((Cols - 2) * (Rows - 2) / 68.0));

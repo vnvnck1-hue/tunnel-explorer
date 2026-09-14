@@ -66,7 +66,7 @@ namespace TunnelCrew.Tests
         [Test]
         public void 관심_캐릭터는_고정_기본값을_쓴다()
         {
-            // 관심 캐릭터 앞의 벽은 이미 페이드했으므로 적 하한과 무관하다.
+            // 관심 캐릭터는 불투명한 벽 위에 외곽 림만 그리므로 적 하한과 무관하다.
             Assert.AreEqual(0.85f,
                 OccludedSilhouetteRenderer.MaxAlphaFor(SilhouetteMode.Interest, 0f, 0.55f), 1e-4f);
             Assert.AreEqual(0.85f,
@@ -81,6 +81,19 @@ namespace TunnelCrew.Tests
             Assert.AreEqual(1f,
                 OccludedSilhouetteRenderer.MaxAlphaFor(SilhouetteMode.Interest, 3f, 0.55f), 1e-4f,
                 "범위 밖 값은 잘린다");
+        }
+
+        [Test]
+        public void 전경_벽은_기본적으로_불투명하다()
+        {
+            var go = new GameObject("OpaqueForegroundPolicy");
+            try
+            {
+                var fade = go.AddComponent<ForegroundFadeController>();
+                Assert.IsFalse(fade.Enabled,
+                    "캐릭터 가시성은 벽 투명화가 아니라 OccludedSilhouetteRenderer가 보장한다");
+            }
+            finally { Object.DestroyImmediate(go); }
         }
 
         // ───────────────────────────── 덮임 판정

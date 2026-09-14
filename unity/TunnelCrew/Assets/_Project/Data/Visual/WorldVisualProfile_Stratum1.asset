@@ -37,7 +37,7 @@ MonoBehaviour:
   ambientIntensity: 0.3
   socketLightRangeScale: 2.5
   socketLightIntensityScale: 3.4
-  minLightBySurface: {x: 0.03, y: 0.09, z: 0.06, w: 0.2}
+  minLightBySurface: {x: 0.2, y: 0.28, z: 0.42, w: 0.3}
   activeLightBudget: {x: 16, y: 24}
   shadowLightBudget: {x: 4, y: 8}
   volumeProfileByStratum:

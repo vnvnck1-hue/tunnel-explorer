@@ -32,6 +32,15 @@ namespace TunnelCrew.Presentation.Visual
         [Tooltip("공중에 뜬 물체는 높이에 따라 그림자가 작고 옅어진다.")]
         public bool scaleWithVisualHeight = true;
 
+        [Tooltip("발밑 AO 뒤로 뻗는 짧은 투사 그림자 길이(셀). 0이면 접촉 AO만 그린다.")]
+        public float castLength;
+
+        [Tooltip("화면 좌표 기준 투사 방향. 최상위 레퍼런스의 공통 키라이트는 우하향 그림자를 만든다.")]
+        public Vector2 castDirection = new Vector2(0.72f, -0.38f);
+
+        [Tooltip("접촉 AO 대비 투사 그림자 불투명도 배율.")]
+        [Range(0f, 1f)] public float castOpacity = 0.58f;
+
         VisualHeightAnchor _anchor;
         public VisualHeightAnchor Anchor => _anchor != null ? _anchor : _anchor = GetComponent<VisualHeightAnchor>();
 
@@ -64,6 +73,9 @@ namespace TunnelCrew.Presentation.Visual
 
         [Tooltip("타원을 만들 때의 텍스처 한 변. 접촉 AO 는 부드러운 그라디언트라 작아도 된다.")]
         [SerializeField, Range(16, 256)] int _generatedSize = 64;
+
+        [Tooltip("Neutral black flattens the characters against the purple mine. A very dark plum keeps the shadow inside the environment palette.")]
+        [SerializeField] Color _shadowColor = new Color(0.055f, 0.012f, 0.075f, 0.45f);
 
         readonly List<SpriteRenderer> _pool = new List<SpriteRenderer>(64);
         Sprite _defaultSprite;
@@ -116,6 +128,8 @@ namespace TunnelCrew.Presentation.Visual
                 var sr = Take(used++);
                 if (sr == null) { used--; continue; }
 
+                sr.gameObject.name = $"Contact AO {i}";
+
                 sr.sprite = want.sprite != null ? want.sprite : DefaultSprite();
 
                 float radius = want.radius > 0f ? want.radius : defRadius;
@@ -134,19 +148,48 @@ namespace TunnelCrew.Presentation.Visual
                 var p = IsometricProjection.ToRender(ground);
                 var t = sr.transform;
                 t.position = new Vector3(p.x, p.y, 0f);
+                t.rotation = Quaternion.identity;
 
                 // 스프라이트는 1유닛 정사각형으로 만든다. 반지름 → 지름으로 스케일.
                 // 세로는 투영의 납작함을 함께 반영한다(마름모 프리셋 비교용).
                 float squashY = squash * Mathf.Max(0.05f, IsometricProjection.ShadowSquash * 2f);
                 t.localScale = new Vector3(radius * 2f, radius * 2f * squashY, 1f);
 
-                var c = sr.color;
+                var c = _shadowColor;
                 c.a = Mathf.Clamp01(opacity);
                 sr.color = c;
 
                 // 발 위치 Y 로 정렬한다. 바닥 데칼끼리도 앞뒤가 있어야 겹칠 때 튀지 않는다.
                 int units = _profile != null ? _profile.depthUnitsPerCell : DepthSort.DefaultUnitsPerCell;
                 sr.sortingOrder = DepthSort.OrderFor(ground.y, units);
+
+                // 레퍼런스의 캐릭터는 발밑 AO 하나로 끝나지 않는다. 공통 키라이트의 반대편으로
+                // 짧고 납작한 그림자가 한 겹 더 밀려 있어 발 방향과 공간 깊이를 동시에 읽게 한다.
+                if (want.castLength > 0f)
+                {
+                    var cast = Take(used++);
+                    if (cast == null) { used--; continue; }
+                    cast.gameObject.name = $"Directional cast {i}";
+                    cast.sprite = DefaultSprite();
+
+                    Vector2 direction = want.castDirection.sqrMagnitude > .001f
+                        ? want.castDirection.normalized : new Vector2(.88f, -.47f);
+                    float heightSeparation = want.scaleWithVisualHeight
+                        ? Mathf.Max(0f, anchor.visualHeight) * .18f : 0f;
+                    Vector2 castPosition = p + direction * (want.castLength * .52f + heightSeparation);
+                    var castTransform = cast.transform;
+                    castTransform.position = new Vector3(castPosition.x, castPosition.y, 0f);
+                    castTransform.rotation = Quaternion.Euler(0f, 0f,
+                        Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+                    castTransform.localScale = new Vector3(
+                        radius * 1.65f + want.castLength,
+                        radius * 2f * squashY * .72f, 1f);
+
+                    var castColor = _shadowColor;
+                    castColor.a = Mathf.Clamp01(opacity * want.castOpacity);
+                    cast.color = castColor;
+                    cast.sortingOrder = DepthSort.OrderFor(ground.y, units) - 1;
+                }
             }
 
             // 남는 풀은 끈다. 파괴하지 않고 재사용해 GC 를 만들지 않는다(§13).
@@ -164,7 +207,7 @@ namespace TunnelCrew.Presentation.Visual
                 go.transform.SetParent(transform, false);
                 var sr = go.AddComponent<SpriteRenderer>();
                 if (VisualLayers.Exists(_sortingLayer)) sr.sortingLayerName = _sortingLayer;
-                sr.color = new Color(0f, 0f, 0f, 0.45f);
+                sr.color = _shadowColor;
                 _pool.Add(sr);
             }
 

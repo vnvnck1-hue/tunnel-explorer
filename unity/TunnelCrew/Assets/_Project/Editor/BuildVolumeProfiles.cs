@@ -27,6 +27,7 @@ namespace TunnelCrew.EditorTools
         {
             public string name;
             public Color filter;        // 구역 틴트
+            public float exposure;
             public float contrast;
             public float saturation;
             public float bloomIntensity;
@@ -41,33 +42,33 @@ namespace TunnelCrew.EditorTools
             {
                 name = "Stratum1_Surface",
                 filter = new Color(1.00f, 0.97f, 1.00f),
-                contrast = 6f, saturation = 6f,
-                bloomIntensity = 0.60f, bloomThreshold = 0.70f,
-                vignette = 0.20f, grain = 0.055f,
+                exposure = 1.45f, contrast = 2f, saturation = -5f,
+                bloomIntensity = 0.46f, bloomThreshold = 0.78f,
+                vignette = 0.10f, grain = 0.040f,
             },
             new Preset
             {
                 name = "Stratum2_Fracture",
                 filter = new Color(0.98f, 0.94f, 1.00f),
-                contrast = 8f, saturation = 2f,
-                bloomIntensity = 0.70f, bloomThreshold = 0.68f,
-                vignette = 0.24f, grain = 0.070f,
+                exposure = 1.30f, contrast = 4f, saturation = -7f,
+                bloomIntensity = 0.55f, bloomThreshold = 0.75f,
+                vignette = 0.15f, grain = 0.055f,
             },
             new Preset
             {
                 name = "Stratum3_Core",
                 filter = new Color(1.00f, 0.92f, 0.95f),
-                contrast = 10f, saturation = -4f,
-                bloomIntensity = 0.80f, bloomThreshold = 0.66f,
-                vignette = 0.28f, grain = 0.085f,
+                exposure = 1.15f, contrast = 6f, saturation = -10f,
+                bloomIntensity = 0.65f, bloomThreshold = 0.72f,
+                vignette = 0.20f, grain = 0.070f,
             },
             new Preset
             {
                 name = "Abyss",
                 filter = new Color(0.92f, 0.90f, 1.00f),
-                contrast = 12f, saturation = -12f,
-                bloomIntensity = 0.90f, bloomThreshold = 0.64f,
-                vignette = 0.32f, grain = 0.105f,
+                exposure = 1.00f, contrast = 8f, saturation = -16f,
+                bloomIntensity = 0.75f, bloomThreshold = 0.68f,
+                vignette = 0.25f, grain = 0.085f,
             },
         };
 
@@ -105,7 +106,7 @@ namespace TunnelCrew.EditorTools
             color.contrast.overrideState = true; color.contrast.value = p.contrast;
             color.saturation.overrideState = true; color.saturation.value = p.saturation;
             color.colorFilter.overrideState = true; color.colorFilter.value = p.filter;
-            color.postExposure.overrideState = true; color.postExposure.value = 0.55f;
+            color.postExposure.overrideState = true; color.postExposure.value = p.exposure;
 
             // 밝은 부분을 눌러 어둠과의 대비를 만든다
             var tone = profile.Add<Tonemapping>(true);

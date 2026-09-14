@@ -87,6 +87,7 @@ namespace TunnelCrew.Sim
         public double FloorTime { get; private set; }
 
         double _accumulator;
+        DungeonConfig _dungeonConfig = DungeonConfig.Runtime;
         readonly List<VisionSource> _visionSources = new List<VisionSource>();
 
         public event Action<TileBrokenEvent> TileBroken;
@@ -329,7 +330,7 @@ namespace TunnelCrew.Sim
         {
             if (Phase != GamePhase.Rest && Phase != GamePhase.Playing) return;
             if (Phase == GamePhase.Rest && !RestChosen) return;   // 전설을 골라야 내려간다
-            EnterDepth(Depth + 1, DungeonConfig.Runtime);
+            EnterDepth(Depth + 1, _dungeonConfig);
             RelicFx.OnDescend();
         }
 
@@ -415,6 +416,7 @@ namespace TunnelCrew.Sim
 
         public void EnterDepth(int depth, DungeonConfig cfg)
         {
+            _dungeonConfig = cfg;
             Depth = depth;
             var gen = new DungeonGenerator(cfg).Generate(depth);
             Generation = gen;
@@ -784,6 +786,21 @@ namespace TunnelCrew.Sim
             _visionSources.Add(VisionSource.Crew(Player.Position));
             foreach (var m in Crew.Members) if (!m.Down) _visionSources.Add(VisionSource.Crew(m.Position));   // AI 크루 시야 합산 (원본 AI.visionXY)
             foreach (var f in Roles.Flares) if (f.VisionRange > 0) _visionSources.Add(new VisionSource { Position = f.Position, Range = f.VisionRange, Rays = SimTuning.CrewVisionRays });   // 플레어·노드 visionRange
+            // Unity 비주얼 진입 무대의 고정 램프도 자기 주변은 보여야 한다. 실제 Light2D만 있고
+            // LOS가 덮으면 화면 반대편의 마젠타/시안 조명이 사라져 넓힌 방이 다시 암흑처럼 보인다.
+            // VisibleOnly라 탐색 기록·게임 진행에는 남지 않고, Runtime 패리티 구성에는 목록 자체가 없다.
+            if (Generation?.PresentationLamps != null)
+                foreach (var lamp in Generation.PresentationLamps)
+                {
+                    if (Generation.Lamps == null || !Generation.Lamps.Contains(lamp)) continue;
+                    _visionSources.Add(new VisionSource
+                    {
+                        Position = new Vec2(lamp.col + .5, lamp.row + .5),
+                        Range = 5,
+                        Rays = SimTuning.CrewVisionRays,
+                        VisibleOnly = true,
+                    });
+                }
             // 보스 시야원 — 보스는 스스로 빛나 시야에 들어온다 (원본 LOS.bossSources: range = max(5, round(r×2.4)+2), 탐색 기록은 남기지 않는다)
             if (Bosses != null && Bosses.Active) _visionSources.Add(new VisionSource { Position = Bosses.Boss.Body.Position, Range = Math.Max(5, (int)Math.Round(Bosses.Boss.Body.Radius * 2.4) + 2), Rays = Math.Max(56, Math.Min(160, (int)(Bosses.Boss.Body.Radius * 2.4 * 16))), VisibleOnly = true });
             Los.Compute(Player.Position, _visionSources);

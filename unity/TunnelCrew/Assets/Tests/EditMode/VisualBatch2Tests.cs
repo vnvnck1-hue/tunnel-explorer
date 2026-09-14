@@ -1,7 +1,9 @@
 using NUnit.Framework;
+using System.Linq;
 using TunnelCrew.EditorTools.ArtPipeline;
 using TunnelCrew.Presentation;
 using TunnelCrew.Presentation.Visual;
+using TunnelCrew.Sim;
 using UnityEngine;
 
 namespace TunnelCrew.Tests
@@ -573,6 +575,78 @@ namespace TunnelCrew.Tests
 
                 // 정렬 기준은 여전히 지면이다(§6.5).
                 Assert.AreEqual(DepthSort.OrderFor(2f, profile.depthUnitsPerCell), sr.sortingOrder);
+
+                ContactShadowRenderer.Unregister(shadow);
+            }
+            finally
+            {
+                Object.DestroyImmediate(actorGo);
+                Object.DestroyImmediate(rendererGo);
+                Object.DestroyImmediate(profile);
+            }
+        }
+
+        [Test]
+        public void 수호자_드론은_지면_좌표와_시각_높이를_분리한다()
+        {
+            var go = new GameObject("GuardianDroneViewTest");
+            try
+            {
+                var relics = new RelicSystem();
+                relics.Ids.Add("r_guardian");
+                relics.DronePos = new Vec2(4.25, 7.5);
+                relics.DroneBob = System.Math.PI * .5;
+                relics.DroneFace = -1;
+
+                var view = go.AddComponent<GuardianDroneView>();
+                view.Bind(relics);
+                view.Render(0f);
+
+                Assert.IsTrue(view.IsVisible);
+                Assert.AreEqual(new Vector2(4.25f, 7.5f), view.Anchor.groundPosition);
+                Assert.Greater(view.Anchor.visualHeight, GuardianDroneView.BaseVisualHeight);
+                Assert.IsTrue(view.BodyRenderer.flipX);
+                Assert.IsNotNull(view.BodyRenderer.sprite);
+                Assert.IsNotNull(view.GetComponentInChildren<ContactShadow>());
+
+                relics.Ids.Clear();
+                view.Render(0f);
+                Assert.IsFalse(view.IsVisible);
+            }
+            finally
+            {
+                Object.DestroyImmediate(go);
+            }
+        }
+
+        [Test]
+        public void 방향성_그림자는_접촉_AO_뒤로_분리되어_그려진다()
+        {
+            IsometricProjection.SetPreset(ProjectionPreset.ReferenceTopDown);
+
+            var profile = MakeProfile();
+            var rendererGo = new GameObject("ContactShadowRenderer");
+            var actorGo = new GameObject("Actor");
+            try
+            {
+                var renderer = rendererGo.AddComponent<ContactShadowRenderer>();
+                renderer.Profile = profile;
+                actorGo.AddComponent<VisualHeightAnchor>().groundPosition = new Vector2(3f, 4f);
+                var shadow = actorGo.AddComponent<ContactShadow>();
+                shadow.castLength = 0.5f;
+                shadow.castDirection = new Vector2(1f, -0.5f);
+                ContactShadowRenderer.Register(shadow);
+
+                renderer.Apply();
+                var sprites = rendererGo.GetComponentsInChildren<SpriteRenderer>();
+                Assert.AreEqual(2, renderer.ActiveCount, "접촉 AO와 방향성 투사 그림자 두 겹");
+                Assert.AreEqual(2, sprites.Length);
+                var contact = sprites.Single(s => s.name.StartsWith("Contact AO"));
+                var cast = sprites.Single(s => s.name.StartsWith("Directional cast"));
+                Assert.Greater(cast.transform.position.x, contact.transform.position.x);
+                Assert.Less(cast.transform.position.y, contact.transform.position.y);
+                Assert.Less(cast.color.a, contact.color.a);
+                Assert.Less(cast.sortingOrder, contact.sortingOrder);
 
                 ContactShadowRenderer.Unregister(shadow);
             }

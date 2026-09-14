@@ -6,8 +6,10 @@ namespace TunnelCrew.Presentation.Visual
     /// <summary>
     /// 기능명세서 §6.6 — 전경 오클루전과 플레이어 가시성 보정.
     ///
-    /// 남쪽 벽·천장 립·기둥이 캐릭터 앞에 그려져야 공간이 생기지만, 그 때문에 플레이어가
-    /// 보이지 않아서는 안 된다. 겹치면 목표 알파로 내렸다가 벗어나면 복원한다.
+    /// 남쪽 벽·천장 립·기둥이 캐릭터 앞에 그려져야 공간이 생긴다. 기본 정책은 벽을
+    /// 불투명하게 유지하고 <see cref="OccludedSilhouetteRenderer"/> 가 가려진 캐릭터의
+    /// 외곽선만 벽 위에 그리는 것이다. Visual Lab 의 비교 캡처처럼 명시적으로 켠 경우에만
+    /// 겹친 전경을 목표 알파로 내렸다가 벗어나면 복원한다.
     ///
     /// 페이드는 <b>시각 표현만</b> 바꾼다 — 전투 판정과 네트워크 상태에는 손대지 않는다(§15.2).
     /// 그룹 단위로 합쳐 하나의 벽 덩어리가 조각조각 사라지지 않게 한다.
@@ -26,7 +28,7 @@ namespace TunnelCrew.Presentation.Visual
         public WorldVisualProfile Profile { get => _profile; set => _profile = value; }
 
         /// <summary>접근성 옵션 — 끄면 전경이 늘 불투명하다(§10.3, §14 F).</summary>
-        public bool Enabled { get; set; } = true;
+        public bool Enabled { get; set; } = false;
 
         /// <summary>
         /// 전경 투명도 옵션(§10.3). 0 이면 프로파일 값을 쓴다.

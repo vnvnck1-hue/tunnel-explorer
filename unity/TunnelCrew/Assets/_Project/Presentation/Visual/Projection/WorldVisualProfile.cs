@@ -87,7 +87,7 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>소켓 광원의 세기 배율. 반경과 같은 이유로 둔다.</summary>
         [Range(0.5f, 6f)] public float socketLightIntensityScale = 2f;
         [Tooltip("벽 상단·벽 정면·바닥·캐릭터의 서로 다른 최소광 계수.")]
-        public Vector4 minLightBySurface = new Vector4(0.22f, 0.16f, 0.12f, 0.30f);
+        public Vector4 minLightBySurface = new Vector4(0.20f, 0.28f, 0.42f, 0.30f);
 
         [Header("광원 예산 (§13)")]
         [Tooltip("동시 활성 Light2D 상한 — 일반 / 스트레스.")]

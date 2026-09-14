@@ -32,6 +32,8 @@ CBUFFER_START(UnityPerMaterial)
     half _NormalStrength;
     half _AOStrength;
     half _MinLight;
+    // Albedo-only 매크로 표면은 명도 경사에서 노멀을 유도한다. 0이면 기존 노멀맵만 사용.
+    half _LabDerivedNormal;
     // 조명 거리 어둠(§7.5 대기 원근의 "저층 안개" 와 다른 축이다 — 이건 광원 거리다).
     half4 _DarkTint;
     half _DarkStrength;

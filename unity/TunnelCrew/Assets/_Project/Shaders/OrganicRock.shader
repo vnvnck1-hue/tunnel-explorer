@@ -4,6 +4,10 @@ Shader "Tunnel Crew/Organic Rock"
     {
         _LabUVRect("Atlas interior UV", Vector) = (0,0,1,1)
         _LabMacro("World-space variation", Range(0,1)) = 1
+        _LabScale("World UV scale", Vector) = (0.53,0.53,0,0)
+        _LabMirrorRepeat("Mirror macro blocks", Range(0,1)) = 0
+        _LabAccentEmission("Magenta mineral emission", Range(0,2)) = 0
+        _LabDerivedNormal("Derive normal from albedo", Range(0,1)) = 0
         [Header(Channels)]
         _MainTex("Albedo", 2D) = "white" {}
         _MaskTex("Material Mask (R metal G gloss B wet)", 2D) = "white" {}
@@ -52,7 +56,10 @@ Shader "Tunnel Crew/Organic Rock"
             #include "TunnelCrewImpact.hlsl"
             float4 _LabUVRect;
             float _LabMacro;
-            float2 LabUV(float2 w) { float2 p = w * 0.53 + 0.045 * sin(w.yx * 1.71); return _LabUVRect.xy + frac(p) * _LabUVRect.zw; }
+            float4 _LabScale;
+            float _LabMirrorRepeat;
+            float _LabAccentEmission;
+            float2 LabUV(float2 w) { float2 p = w * _LabScale.xy; float2 repeated = frac(p + 0.045 * sin(w.yx * 1.71)); float2 mirrored = 1.0 - abs(frac(p * 0.5) * 2.0 - 1.0); return _LabUVRect.xy + lerp(repeated, mirrored, _LabMirrorRepeat) * _LabUVRect.zw; }
             half LabMacro(float2 w) { return lerp(1.0, 0.82 + 0.16 * sin(w.x * .71 + sin(w.y * .43)) + .08 * sin(w.y * 1.12), _LabMacro); }
 
             #pragma vertex TCLitVertex
@@ -96,7 +103,12 @@ Shader "Tunnel Crew/Organic Rock"
             {
                 input.color.rgb *= LabMacro(input.uv);
                 input.uv = LabUV(input.uv);
-                return TCLitFragment(input, input.color);
+                half4 lit = TCLitFragment(input, input.color);
+                half3 source = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).rgb;
+                half accent = smoothstep(0.42h, 0.72h, max(source.r, source.b))
+                            * smoothstep(0.08h, 0.30h, source.r - source.g);
+                lit.rgb += source * accent * _LabAccentEmission;
+                return lit;
             }
             ENDHLSL
         }
@@ -110,7 +122,10 @@ Shader "Tunnel Crew/Organic Rock"
             #include "TunnelCrewImpact.hlsl"
             float4 _LabUVRect;
             float _LabMacro;
-            float2 LabUV(float2 w) { float2 p = w * 0.53 + 0.045 * sin(w.yx * 1.71); return _LabUVRect.xy + frac(p) * _LabUVRect.zw; }
+            float4 _LabScale;
+            float _LabMirrorRepeat;
+            float _LabAccentEmission;
+            float2 LabUV(float2 w) { float2 p = w * _LabScale.xy; float2 repeated = frac(p + 0.045 * sin(w.yx * 1.71)); float2 mirrored = 1.0 - abs(frac(p * 0.5) * 2.0 - 1.0); return _LabUVRect.xy + lerp(repeated, mirrored, _LabMirrorRepeat) * _LabUVRect.zw; }
             half LabMacro(float2 w) { return lerp(1.0, 0.82 + 0.16 * sin(w.x * .71 + sin(w.y * .43)) + .08 * sin(w.y * 1.12), _LabMacro); }
 
             #pragma vertex TCNormalsVertex
@@ -174,7 +189,10 @@ Shader "Tunnel Crew/Organic Rock"
             #include "TunnelCrewImpact.hlsl"
             float4 _LabUVRect;
             float _LabMacro;
-            float2 LabUV(float2 w) { float2 p = w * 0.53 + 0.045 * sin(w.yx * 1.71); return _LabUVRect.xy + frac(p) * _LabUVRect.zw; }
+            float4 _LabScale;
+            float _LabMirrorRepeat;
+            float _LabAccentEmission;
+            float2 LabUV(float2 w) { float2 p = w * _LabScale.xy; float2 repeated = frac(p + 0.045 * sin(w.yx * 1.71)); float2 mirrored = 1.0 - abs(frac(p * 0.5) * 2.0 - 1.0); return _LabUVRect.xy + lerp(repeated, mirrored, _LabMirrorRepeat) * _LabUVRect.zw; }
             half LabMacro(float2 w) { return lerp(1.0, 0.82 + 0.16 * sin(w.x * .71 + sin(w.y * .43)) + .08 * sin(w.y * 1.12), _LabMacro); }
 
             #pragma vertex TCUnlitVertex
@@ -216,7 +234,12 @@ Shader "Tunnel Crew/Organic Rock"
             {
                 input.color.rgb *= LabMacro(input.uv);
                 input.uv = LabUV(input.uv);
-                return CommonUnlitFragment(input, input.color);
+                half4 lit = CommonUnlitFragment(input, input.color);
+                half3 source = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).rgb;
+                half accent = smoothstep(0.42h, 0.72h, max(source.r, source.b))
+                            * smoothstep(0.08h, 0.30h, source.r - source.g);
+                lit.rgb += source * accent * _LabAccentEmission;
+                return lit;
             }
             ENDHLSL
         }

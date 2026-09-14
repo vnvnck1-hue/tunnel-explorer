@@ -61,7 +61,10 @@ namespace TunnelCrew.Presentation
         /// </summary>
         const float R2SolidVisibility = 0.22f;
         /// <summary>벽 윗면 전역광 = 앰비언트 × 이 값(랩 프리셋 ⑬ wallTopAmbientScale).</summary>
-        const float R2WallTopAmbientScale = 0.25f;
+        // Primary reference calibration: readable mid-tones carry the cave forms;
+        // LOS still owns the true black outside explored space.
+        const float R2AmbientFloor = 0.22f;
+        const float R2WallTopAmbientScale = 0.32f;
         Light2D _globalTopLight;
 
         // ── 이주 B 7단계(2026-09-10): 50px 타일 WorldRenderer → 레퍼런스 키트 EnvironmentChunkRenderer.
@@ -98,6 +101,7 @@ namespace TunnelCrew.Presentation
         TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
         TunnelCrew.Presentation.Visual.WallOreOverlay _envOre;
         TunnelCrew.Presentation.Visual.ShadowGeometryBuilder _envShadows;
+        TunnelCrew.Presentation.Visual.ContactShadowRenderer _contactShadows;
         TunnelCrew.Presentation.Visual.LightSocketRenderer _lightSockets;
 
         /// <summary>
@@ -200,6 +204,7 @@ namespace TunnelCrew.Presentation
         LootView _lootView;
         EnemyView _enemyView;
         CrewView _crewView;
+        GuardianDroneView _guardianDroneView;
         TeamOverlay _team;
         AudioDirector _audio;
         BossIntroCinematic _cine;
@@ -270,7 +275,7 @@ namespace TunnelCrew.Presentation
             Sim = new TunnelSim();
             Sim.StartRun(_role, MetaStore.Load(), _objective, _equipment, _contract);
             MetaStore.Save();
-            Sim.EnterDepth(_depth, DungeonConfig.Runtime);
+            Sim.EnterDepth(_depth, DungeonConfig.UnityVisual);
             SubscribeSim();
 
             BuildCamera();
@@ -641,7 +646,7 @@ namespace TunnelCrew.Presentation
 
             // 깊이 시스템(§6.5·§6.6) — 랩의 "Depth" 와 같다. 북쪽이 열린 벽의 cap 은 lift 만큼 올라가 그 바닥의 캐릭터를
             // 덮는 전경 오클루더(FrontStructure)다. 이 셋이 없으면 캐릭터가 cap 뒤로 그냥 사라진다(2026-09-10 캡처).
-            // 관심 캐릭터가 겹치면 그 청크의 cap 이 페이드하고, 가려진 몸은 실루엣으로 보정된다.
+            // 벽은 항상 불투명하게 유지하고, 가려진 몸의 외곽 실루엣만 벽 위에 표시한다.
             // 벽 그림자 — 표면 생성기가 "벽"으로 보는 셀의 윤곽을 추적해 캐스터를 만든다(§7.4-3, 이주 B 9단계).
             // 청크 사각 분할(WallShadowBuilder)과 달리 표면과 그림자가 항상 같은 판정을 쓰고, 수신 레이어는 바닥 4종으로 제한된다.
             var shadowGo = new GameObject("Wall Shadows (contour)");
@@ -651,7 +656,11 @@ namespace TunnelCrew.Presentation
             var depthGo = new GameObject("Depth");
             depthGo.transform.SetParent(_envRoot, false);
             depthGo.AddComponent<TunnelCrew.Presentation.Visual.FootpointSorter>().Profile = _envProfile;
-            depthGo.AddComponent<TunnelCrew.Presentation.Visual.ForegroundFadeController>().Profile = _envProfile;
+            _contactShadows = depthGo.AddComponent<TunnelCrew.Presentation.Visual.ContactShadowRenderer>();
+            _contactShadows.Profile = _envProfile;
+            var foregroundVisibility = depthGo.AddComponent<TunnelCrew.Presentation.Visual.ForegroundFadeController>();
+            foregroundVisibility.Profile = _envProfile;
+            foregroundVisibility.Enabled = false;
             depthGo.AddComponent<TunnelCrew.Presentation.Visual.OccludedSilhouetteRenderer>().Profile = _envProfile;
 
             BindEnvironment();
@@ -673,6 +682,15 @@ namespace TunnelCrew.Presentation
             _playerAnchor.wantsSilhouette = true;
             _playerAnchor.footprintRadius = 0.45f;
             _playerAnchor.sortingLayer = TunnelCrew.Presentation.Visual.VisualLayers.UnlayeredDefault;   // 개체 대역. 자식 렌더러가 없어 실제 영향은 없다
+            var contact = go.AddComponent<TunnelCrew.Presentation.Visual.ContactShadow>();
+            contact.radius = 0.52f;
+            contact.squash = 0.43f;
+            contact.opacity = 0.48f;
+            contact.offset = new Vector2(0.11f, -0.09f);
+            contact.scaleWithVisualHeight = false;
+            contact.castLength = 0.46f;
+            contact.castDirection = new Vector2(0.72f, -0.38f);
+            contact.castOpacity = 0.58f;
             var sil = go.AddComponent<TunnelCrew.Presentation.Visual.OccludedSilhouette>();
             sil.body = sr;
             sil.mode = TunnelCrew.Presentation.Visual.SilhouetteMode.Interest;
@@ -750,6 +768,8 @@ namespace TunnelCrew.Presentation
             _enemyView.Bind(_monsterSheets);
             _crewView = new GameObject("Crew").AddComponent<CrewView>();
             _crewView.Bind(_sheets);
+            _guardianDroneView = new GameObject("Guardian Drone").AddComponent<GuardianDroneView>();
+            _guardianDroneView.Bind(Sim.RelicFx);
             _cine = new GameObject("BossIntro").AddComponent<BossIntroCinematic>();
             _cine.Bind(Sim, _rig, _cam, _feedback, _fx);
             _ceiling = new GameObject("CeilingFx").AddComponent<CeilingFx>();
@@ -805,7 +825,7 @@ namespace TunnelCrew.Presentation
             // 순간 다른 전역광과 레이어가 겹쳐 "More than one global light on layer …" 오류가 난다(2026-09-10 실측 6건).
             if (R2Layers) _globalLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitGroundLevelLayerIds();
             _globalLight.lightType = Light2D.LightType.Global;
-            _globalLight.intensity = _ambientIntensity;
+            _globalLight.intensity = _r2Look ? Mathf.Max(_ambientIntensity, R2AmbientFloor) : _ambientIntensity;
             _globalLight.color = _r2Look ? R2AmbientColor : new Color(0.62f, 0.58f, 0.80f);
 
             // 전역광 2분할(랩 확정, 6단계 후속 3): 바닥·개체용과 벽 윗면용. 윗면은 빛이 옆(방)에서 오므로 훨씬 어둡다.
@@ -816,7 +836,7 @@ namespace TunnelCrew.Presentation
                 _globalTopLight = topGo.AddComponent<Light2D>();
                 _globalTopLight.targetSortingLayers = TunnelCrew.Presentation.Visual.VisualLayers.LitElevatedLayerIds();   // Global 전환 전에
                 _globalTopLight.lightType = Light2D.LightType.Global;
-                _globalTopLight.intensity = _ambientIntensity * R2WallTopAmbientScale;
+                _globalTopLight.intensity = Mathf.Max(_ambientIntensity, R2AmbientFloor) * R2WallTopAmbientScale;
                 _globalTopLight.color = R2AmbientColor;
             }
 
@@ -828,10 +848,11 @@ namespace TunnelCrew.Presentation
             _flashlight.pointLightInnerAngle = 40f;
             _flashlight.pointLightOuterAngle = 56f;
             _flashlight.pointLightInnerRadius = 0.6f;
-            _flashlight.pointLightOuterRadius = 4.8f;
-            // 노멀맵 조명 모드에서는 평평한 면의 N·L 이 0.3 안팎으로 떨어져 같은 세기면 어둡다 → 1.35 → 2.6. 빛을 마주보는 벽 베벨은 N·L≈1 로 4배 가까이 밝아 림이 선다.
-            _flashlight.intensity = 5.0f;
-            _flashlight.color = new Color(1f, 0.94f, 0.80f);
+            _flashlight.pointLightOuterRadius = 8.4f;
+            // 레퍼런스의 탐색광은 작은 과노출 원이 아니라 방의 형태를 한 번에 읽히게 하는 긴 원뿔이다.
+            // 반경을 넓히는 대신 세기를 낮춰 중앙 번짐과 급격한 falloff 를 함께 줄인다.
+            _flashlight.intensity = 2.8f;
+            _flashlight.color = new Color(0.34f, 0.92f, 1f);
             // 손전등 그림자는 완전 차단 — 캐릭터 발밑 캐스터(PlayerView)가 벽처럼 또렷한 그림자를 드리운다 (기본 .75 는 앰비언트에 묻혀 거의 안 보였다)
             _flashlight.shadowIntensity = 0.9f; _flashlight.shadowSoftness = 0.35f;   // 1.0 은 경계가 완전 검정 직선이 된다
             if (_r2Look)
@@ -841,7 +862,7 @@ namespace TunnelCrew.Presentation
             }
             UseNormalMaps(_flashlight, PlayerLightNormalHeightCells);
             // worldOnly: 손전등 빛이 캐릭터를 덮지 않게 개체 대역을 뺀다 — 빛이 캐릭터 아래로 깔린다.
-            AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 5.0f, 4.8f, 0.31f, 0f, true);
+            AddSocket(_flashlight, TunnelCrew.Presentation.Visual.LightClass.Scout, 2.8f, 8.4f, 0.31f, 0f, true);
             // 소켓 렌더러가 매 프레임 높이를 되돌리므로 소켓에도 같은 값을 준다.
             if (_flashlight.TryGetComponent<TunnelCrew.Presentation.Visual.LightSocket>(out var flashSocket)) flashSocket.normalMapHeightCells = PlayerLightNormalHeightCells;
 
@@ -853,8 +874,8 @@ namespace TunnelCrew.Presentation
             _playerHalo.pointLightInnerAngle = 360f;
             _playerHalo.pointLightOuterAngle = 360f;
             _playerHalo.pointLightInnerRadius = 0.2f;
-            _playerHalo.pointLightOuterRadius = 1.9f;
-            _playerHalo.intensity = 2.4f;   // 노멀맵 모드 보정 (0.9 →) · 반경 축소분 보상(2026-09-11)
+            _playerHalo.pointLightOuterRadius = 2.8f;
+            _playerHalo.intensity = 1.8f;
             _playerHalo.color = new Color(0.95f, 0.88f, 0.78f);
             // 헤일로는 그림자를 만들지 않는다 — 캐릭터 중심(발 위 0.5칸)에서 발밑 캐스터를 늘 위에서 비춰 "아래로 고정된 마름모 그림자"가 생기던 원인
             _playerHalo.shadowIntensity = 0f;
@@ -1102,12 +1123,42 @@ namespace TunnelCrew.Presentation
         }
 
         /// <summary>
-        /// 랜턴 광원 자리에 횃불 실체를 세운다(4차 §4 · 코어키퍼 "횃불 박기"). 광원 위치·세기는 그대로 두고 그림만 붙인다.
-        /// 스프라이트 피벗 하단 중앙 → 바닥을 셀 아래쪽에 두어 불꽃(상단)이 광원 근처에 온다. 이미션은 Unlit 으로 항상 빛난다.
+        /// 일반 랜턴은 기존 횃불을 유지한다. 구도용 3색 램프는 바닥 받침과 상부 설비 소켓이 있는
+        /// 통합 서비스 기둥으로 바꿔, 타일 위에 붙은 독립 소품이 아니라 방 구조의 일부로 읽히게 한다.
+        /// 기둥의 바닥 피벗은 광원보다 아래에 놓이고 발 위치로 정렬된다. 따라서 몸통은 뒤쪽 개체와
+        /// 자연스럽게 겹치면서 받침은 앞쪽 바닥 경계에 고정된다.
         /// </summary>
-        void AttachTorch(Transform lamp)
+        void AttachTorch(Transform lamp, int compositionIndex, int row)
         {
             if (!UseEnvironmentRenderer || Sim == null) return;
+
+            if (compositionIndex >= 0)
+            {
+                var style = Resources.Load<TunnelCrew.Presentation.Visual.OrganicEnvironmentStyle>("Visual/OrganicEnvironmentStyle");
+                if (style != null && style.servicePylons != null && compositionIndex < style.servicePylons.Length)
+                {
+                    var sprite = style.servicePylons[compositionIndex];
+                    if (sprite != null)
+                    {
+                        const float targetHeightCells = 2.15f;
+                        const float lightAboveFootCells = 1.42f;
+                        var pylon = new GameObject($"Integrated Service Pylon {compositionIndex}");
+                        pylon.transform.SetParent(lamp, false);
+                        pylon.transform.localPosition = new Vector3(0f, -lightAboveFootCells, 0f);
+                        float scale = targetHeightCells / Mathf.Max(0.01f, sprite.bounds.size.y);
+                        pylon.transform.localScale = new Vector3(scale, scale, 1f);
+
+                        var pr = pylon.AddComponent<SpriteRenderer>();
+                        pr.sprite = sprite;
+                        pr.sortingLayerName = TunnelCrew.Presentation.Visual.VisualLayers.WorldEntity;
+                        pr.sortingOrder = TunnelCrew.Presentation.Visual.DepthSort.OrderFor(row + 0.5f - lightAboveFootCells) - 2;
+                        var pylonLit = Shader.Find("Universal Render Pipeline/2D/Sprite-Lit-Default");
+                        if (pylonLit != null) pr.sharedMaterial = TorchLitMaterial(pylonLit);
+                        return;
+                    }
+                }
+            }
+
             var kit = KitForDepth(Sim.Depth);
             if (kit == null || kit.torch == null) return;
             var go = new GameObject("Torch");
@@ -1134,6 +1185,26 @@ namespace TunnelCrew.Presentation
         static Material TorchLitMaterial(Shader lit) => s_torchLit != null ? s_torchLit : (s_torchLit = new Material(lit) { name = "Torch-Lit" });
         static Material TorchUnlitMaterial() => s_torchUnlit != null ? s_torchUnlit : (s_torchUnlit = TunnelCrew.Presentation.Visual.OverlayMaterials.Unlit("Torch-Emission"));
 
+        static Color EnvironmentLampColor(int col, int row)
+        {
+            // 최상위 레퍼런스의 색 역할: 벽 설비는 마젠타가 주역, 시안은 드문 방향 표식,
+            // 앰버는 안전한 작업등 포인트다. 좌표 해시라 재바인드·채굴 후에도 색이 바뀌지 않는다.
+            uint h = TunnelCrew.Presentation.Visual.SurfaceTopologyBuilder.Hash(col, row, 0x51A7);
+            return (h % 5u) switch
+            {
+                0u => new Color(0.20f, 0.88f, 1.00f),
+                1u => new Color(1.00f, 0.69f, 0.28f),
+                _ => new Color(0.88f, 0.25f, 1.00f),
+            };
+        }
+
+        static Color PresentationLampColor(int index) => index switch
+        {
+            0 => new Color(0.20f, 0.88f, 1.00f),
+            1 => new Color(0.88f, 0.25f, 1.00f),
+            _ => new Color(1.00f, 0.69f, 0.28f),
+        };
+
         void RebuildLamps()
         {
             foreach (var old in _lamps) if (old != null) Destroy(old.gameObject);
@@ -1142,6 +1213,10 @@ namespace TunnelCrew.Presentation
             if (lamps == null || _lightRoot == null) return;
             foreach (var (col, row) in lamps)
             {
+                int compositionIndex = Sim.Generation.PresentationLamps == null
+                    ? -1
+                    : Sim.Generation.PresentationLamps.IndexOf((col, row));
+                bool compositionLamp = compositionIndex >= 0;
                 var go = new GameObject($"Lamp_{col}_{row}");
                 go.transform.SetParent(_lightRoot, false);
                 go.transform.position = IsometricProjection.ToRender3(new Vector2(col + 0.5f, row + 0.5f));
@@ -1150,18 +1225,19 @@ namespace TunnelCrew.Presentation
                 l.pointLightInnerAngle = 360f;
                 l.pointLightOuterAngle = 360f;
                 l.pointLightInnerRadius = 0.4f;
-                l.pointLightOuterRadius = 3.0f;   // 원본 DEMO.lampRadius 94px = 1.88셀. 넓히면 "드러난 반경 : 밝은 반경" 비율이 무너진다(2026-09-11).
-                l.intensity = 1.1f;
-                l.color = new Color(1f, 0.69f, 0.28f);   // 원본 hue '#FFB048'
+                l.pointLightOuterRadius = compositionLamp ? 4.2f : 3.0f;
+                l.intensity = compositionLamp ? 1.35f : 1.1f;
+                l.color = compositionLamp ? PresentationLampColor(compositionIndex) : EnvironmentLampColor(col, row);
                 if (_r2Look)
                 {   // R2: 랜턴 그림자는 넓은 반그림자로(작업등 분류 규칙). 색·반경·세기(본선 정의)는 그대로 둔다.
                     l.shadowIntensity = TunnelCrew.Presentation.Visual.LightClassRules.ShadowIntensity(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
                     l.shadowSoftness = TunnelCrew.Presentation.Visual.LightClassRules.ShadowSoftness(TunnelCrew.Presentation.Visual.LightClass.Worklamp);
                 }
                 UseNormalMaps(l);
-                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, 3.0f, 3.0f, 0.13f + 0.21f * (_lamps.Count % 7));
+                float socketRadius = compositionLamp ? 4.2f : 3.0f;
+                AddSocket(l, TunnelCrew.Presentation.Visual.LightClass.Worklamp, socketRadius, socketRadius, 0.13f + 0.21f * (_lamps.Count % 7));
                 _lamps.Add(l);
-                AttachTorch(go.transform);
+                AttachTorch(go.transform, compositionIndex, row);
             }
         }
 
@@ -1184,7 +1260,7 @@ namespace TunnelCrew.Presentation
             _role = role;
             Sim.StartRun(role, MetaStore.Load(), _objective, _equipment, _contract);
             MetaStore.Save();
-            Sim.EnterDepth(_depth, DungeonConfig.Runtime);
+            Sim.EnterDepth(_depth, DungeonConfig.UnityVisual);
             RebindWorld();
             LoadRoleFrames(role);
             Prespawn();
@@ -1265,6 +1341,7 @@ namespace TunnelCrew.Presentation
             _lootView.Render(Sim.Loot);
             _enemyView.Render(Sim.Enemies.Enemies, Time.deltaTime);
             _crewView.Render(Sim.Crew, Time.deltaTime);
+            _guardianDroneView.Render(Time.deltaTime);
             _combatView.Render(Sim, Time.deltaTime);
             UpdateLighting();
         }

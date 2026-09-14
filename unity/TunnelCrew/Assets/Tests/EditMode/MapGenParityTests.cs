@@ -175,5 +175,70 @@ namespace TunnelCrew.Tests
             var d2 = Generate(2);
             CollectionAssert.AreNotEqual(d1.Tiles, d2.Tiles, "심층이 다르면 맵이 달라야 한다");
         }
+
+        [Test]
+        public void UnityVisual_AddsWideEntryCompositionWithoutChangingRuntimeContract()
+        {
+            var parity = DungeonConfig.Runtime;
+            var visual = DungeonConfig.UnityVisual;
+            Assert.Zero(parity.PresentationEntryHalfWidth);
+            Assert.Zero(parity.PresentationEntryHalfHeight);
+            Assert.IsFalse(parity.PresentationEntryLamps);
+
+            var got = new DungeonGenerator(visual).Generate(1);
+            Assert.AreEqual(3, got.PresentationLamps.Count);
+            foreach (var lamp in got.PresentationLamps)
+            {
+                Assert.AreEqual(TileType.Empty, got.Tiles[lamp.row * got.Cols + lamp.col]);
+                CollectionAssert.Contains(got.Lamps, lamp);
+            }
+
+            int horizontalOpen = 0;
+            for (int dc = -visual.PresentationEntryHalfWidth + 1;
+                 dc <= visual.PresentationEntryHalfWidth - 1; dc++)
+                if (got.Tiles[got.EntryRow * got.Cols + got.EntryCol + dc] == TileType.Empty)
+                    horizontalOpen++;
+            Assert.GreaterOrEqual(horizontalOpen, 23, "진입부는 카메라 데드존 뒤에도 16:9 첫 화면을 채워야 한다");
+
+            int upperOpen = 0;
+            for (int dc = -visual.PresentationEntryHalfWidth + 1;
+                 dc <= visual.PresentationEntryHalfWidth - 1; dc++)
+                if (got.Tiles[(got.EntryRow + visual.PresentationEntryHalfHeight) * got.Cols + got.EntryCol + dc]
+                    == TileType.Empty) upperOpen++;
+            Assert.GreaterOrEqual(upperOpen, 11,
+                "둥근 직사각 무대의 위쪽도 길게 열려 수평 설비 벽이 끊기지 않아야 한다");
+
+            int interiorCore = 0;
+            for (int dr = -visual.PresentationEntryHalfHeight; dr <= visual.PresentationEntryHalfHeight; dr++)
+                for (int dc = -visual.PresentationEntryHalfWidth; dc <= visual.PresentationEntryHalfWidth; dc++)
+                {
+                    double nx = System.Math.Abs(dc / (visual.PresentationEntryHalfWidth + .15));
+                    double ny = System.Math.Abs(dr / (visual.PresentationEntryHalfHeight + .15));
+                    if (System.Math.Pow(nx, 4) + System.Math.Pow(ny, 4) > 1.0) continue;
+                    if (got.Tiles[(got.EntryRow + dr) * got.Cols + got.EntryCol + dc] == TileType.Core)
+                        interiorCore++;
+                }
+            Assert.Zero(interiorCore, "Unity 전용 작업실 내부에는 독립된 검은 Core 기둥이 남지 않아야 한다");
+        }
+
+        [Test]
+        public void UnityVisual_PersistsAcrossDescend()
+        {
+            var sim = new TunnelSim();
+            sim.StartRun(RoleId.Driller);
+            sim.EnterDepth(1, DungeonConfig.UnityVisual);
+            sim.Descend();
+
+            Assert.AreEqual(2, sim.Depth);
+            Assert.That(sim.Generation.PresentationLamps, Is.Not.Null);
+            Assert.AreEqual(3, sim.Generation.PresentationLamps.Count);
+            sim.RefreshVision();
+            foreach (var lamp in sim.Generation.PresentationLamps)
+            {
+                if (!sim.Generation.Lamps.Contains(lamp)) continue;
+                Assert.AreEqual(1, sim.Los.Visible[lamp.row * sim.World.Cols + lamp.col],
+                    "프레젠테이션 램프는 탐색 기록 없이 자기 위치를 밝혀야 한다");
+            }
+        }
     }
 }

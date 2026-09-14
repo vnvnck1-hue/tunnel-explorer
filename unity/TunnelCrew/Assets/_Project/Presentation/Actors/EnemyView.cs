@@ -35,7 +35,7 @@ namespace TunnelCrew.Presentation
         public System.Func<EnemyState, (bool fire, double rate)> BossAnimInfo;
         const float DragonFps = 10f;   // BOSS_DRAGON_ANIMS 공통
 
-        static readonly Color ShadowColor = new Color(0, 0, 0, 0.32f);
+        static readonly Color ShadowColor = new Color(0.055f, 0.012f, 0.075f, 0.42f);
         Sprite _dot;
 
         /// <summary>보스 시선 방향(+1 오른쪽). RunBootstrap 이 BossSystem 에서 연결한다.</summary>
@@ -157,8 +157,17 @@ namespace TunnelCrew.Presentation
             if (e.Hurt > 0) tint = Color.Lerp(tint, Color.white, Mathf.Clamp01((float)e.Hurt / 0.18f) * 0.85f);
             it.Body.color = tint;
 
-            it.Shadow.transform.localScale = new Vector3(r * 1.9f, r * 1.1f, 1f);
-            it.Shadow.color = new Color(0, 0, 0, 0.32f * (1f - Mathf.Clamp01(lift / (r * 0.9f)) * 0.5f));
+            // 지상에서는 짧은 우하향 그림자, 도약 중에는 몸과 바닥 그림자의 간격이 벌어진다.
+            // 레퍼런스의 비행 드론처럼 높이를 실루엣 크기보다 "분리 거리"로 먼저 읽게 한다.
+            float airborne = Mathf.Clamp01(lift / Mathf.Max(.01f, r * .9f));
+            it.Shadow.transform.localPosition = new Vector3(
+                r * (.18f + airborne * .35f), -r * (.18f + airborne * .30f), 0f);
+            it.Shadow.transform.localScale = new Vector3(
+                r * (1.85f - airborne * .25f), r * (.68f - airborne * .10f), 1f);
+            it.Shadow.transform.localRotation = Quaternion.Euler(0f, 0f, -9f);
+            var shadow = ShadowColor;
+            shadow.a *= 1f - airborne * 0.58f;
+            it.Shadow.color = shadow;
 
             // 체력바 — 광란종·보스 제외 (원본 규칙)
             bool showHp = !e.IsApex && !e.IsBoss && e.Hp < e.HpMax;

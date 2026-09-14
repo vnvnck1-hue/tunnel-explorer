@@ -16,6 +16,7 @@ namespace TunnelCrew.Presentation
         {
             public GameObject Go; public PlayerView View; public PlayerState Proxy = new PlayerState();
             public TextMesh Label, State; public SpriteRenderer HpBg, HpBar, Shield;
+            public TunnelCrew.Presentation.Visual.VisualHeightAnchor GroundAnchor;
         }
         readonly Dictionary<CrewMember, Item> _items = new Dictionary<CrewMember, Item>();
         readonly List<CrewMember> _gone = new List<CrewMember>();
@@ -56,6 +57,20 @@ namespace TunnelCrew.Presentation
             if (_sheets.TryGetValue(m.Role, out var sheet) || _sheets.TryGetValue(RoleId.Driller, out sheet))
                 foreach (var d in sheet.directions) if (d.walk != null && d.walk.Length > 0) view.SetWalkFrames(d.direction, d.walk);
             var it = new Item { Go = go, View = view };
+            var groundGo = new GameObject("Crew Grounding");
+            groundGo.transform.SetParent(go.transform, false);
+            it.GroundAnchor = groundGo.AddComponent<TunnelCrew.Presentation.Visual.VisualHeightAnchor>();
+            it.GroundAnchor.sortingLayer = TunnelCrew.Presentation.Visual.VisualLayers.UnlayeredDefault;
+            it.GroundAnchor.footprintRadius = 0.42f;
+            var contact = groundGo.AddComponent<TunnelCrew.Presentation.Visual.ContactShadow>();
+            contact.radius = 0.43f;
+            contact.squash = 0.44f;
+            contact.opacity = 0.38f;
+            contact.offset = new Vector2(0.09f, -0.08f);
+            contact.scaleWithVisualHeight = false;
+            contact.castLength = 0.38f;
+            contact.castDirection = new Vector2(0.72f, -0.38f);
+            contact.castOpacity = 0.54f;
             // 부모(PlayerView)가 발을 시뮬 위치보다 FootDrop 만큼 아래에 두므로, 자식들은 그만큼 올려 몸 중심 기준 오프셋을 유지한다
             const float fd = PlayerView.FootDrop;
             it.Label = MakeText(go.transform, 1.62f + fd, 0.24f, 44);
@@ -82,6 +97,7 @@ namespace TunnelCrew.Presentation
         {
             var p = it.Proxy;
             p.Position = m.Position; p.Velocity = m.Dashing ? m.DashVel : m.Velocity; p.Aim = m.Aim; p.Downed = m.Down; p.IFrames = m.IFrames; p.DashActive = m.Dashing;
+            it.GroundAnchor.groundPosition = new Vector2((float)m.Position.X, (float)m.Position.Y);
             it.View.Render(p, dt);
             var col = RoleCol[(int)m.Role];
             it.Label.text = $"AI {AiCrewSystem.NameOf(m.Role)} · {m.Level}";

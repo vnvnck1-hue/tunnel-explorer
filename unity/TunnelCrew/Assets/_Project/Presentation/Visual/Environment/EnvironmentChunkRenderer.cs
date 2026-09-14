@@ -97,7 +97,7 @@ namespace TunnelCrew.Presentation.Visual
                 var go = new GameObject("Organic environment");
                 go.transform.SetParent(_grid.transform, false);
                 _organic = go.AddComponent<OrganicEnvironmentRenderer>();
-                if (!_organic.Initialize(this, _field, _wallTopMaterials, _wallFrontMaterials, _frontOccluders))
+                if (!_organic.Initialize(this, _field, _floorMaterials, _wallTopMaterials, _wallFrontMaterials, _frontOccluders))
                 {
                     Destroy(go); _organic = null;
                     Debug.LogWarning("[비주얼] OrganicEnvironmentStyle unavailable; retaining tile walls.");

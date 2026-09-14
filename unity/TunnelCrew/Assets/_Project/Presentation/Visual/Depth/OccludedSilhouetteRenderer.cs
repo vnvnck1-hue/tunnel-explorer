@@ -6,7 +6,7 @@ namespace TunnelCrew.Presentation.Visual
     /// <summary>§6.6 — 가림 보정의 두 성격. 관심 캐릭터와 적은 요구가 다르다.</summary>
     public enum SilhouetteMode
     {
-        /// <summary>로컬 관심 캐릭터. 벽이 이미 페이드했으므로 얇은 팀 색 림만 얹는다.</summary>
+        /// <summary>로컬 관심 캐릭터. 불투명한 벽 위에 얇은 팀 색 외곽 림만 얹는다.</summary>
         Interest = 0,
 
         /// <summary>적. 벽은 페이드하지 않으므로 위협 실루엣이 벽 위로 올라와야 한다.</summary>
@@ -71,8 +71,8 @@ namespace TunnelCrew.Presentation.Visual
     /// 실루엣이 어둠을 뚫고 보이면 그건 정보 누설이다.
     ///
     /// 관심 캐릭터와 적의 차이는 <see cref="SilhouetteMode"/> 하나로 갈린다.
-    /// 관심 캐릭터는 벽이 이미 0.34 까지 페이드했으니 얇은 림만 있으면 되고, 적은
-    /// 벽이 불투명한 상태에서 형태가 읽혀야 하므로 낮은 내부 채움을 더한다.
+    /// 관심 캐릭터는 불투명한 벽 위에 얇은 외곽 림만 표시하고, 적은 위협의 형태까지
+    /// 읽혀야 하므로 낮은 내부 채움을 더한다.
     /// </summary>
     [DefaultExecutionOrder(115)]   // ForegroundFadeController(110) 다음 — 같은 프레임의 오클루더 알파를 쓴다
     public sealed class OccludedSilhouetteRenderer : MonoBehaviour

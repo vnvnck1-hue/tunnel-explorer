@@ -14,4 +14,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.OrganicEnvironmentStyle
   rockShader: {fileID: 4800000, guid: 429612eabf4cf1242b46a8723b60e4b8, type: 3}
   rock: {fileID: 21300000, guid: 2f815375e13e0b546b14775de584282a, type: 3}
+  wallSupports:
+  - {fileID: -506987232, guid: 85f11adc6423ef44d9dd84dd01c809db, type: 3}
+  - {fileID: 1819306496, guid: 85f11adc6423ef44d9dd84dd01c809db, type: 3}
+  - {fileID: 10055483, guid: 85f11adc6423ef44d9dd84dd01c809db, type: 3}
+  wallConduits:
+  - {fileID: -1764610188, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -593235831, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: 1379706107, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -159785754, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -1761099365, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -985868793, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -151775375, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: 2047139921, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  - {fileID: -492886204, guid: bb718bfb8c89e41428b1ff34329ef6c7, type: 3}
+  wallJunctions:
+  - {fileID: 1714854823, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: 1408166895, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: -637041871, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: -1240737925, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: -1641561401, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: 242908112, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: -1025027075, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: 126687813, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  - {fileID: -1502331244, guid: 22f338328fc43294ab5229abcc24b6a0, type: 3}
+  servicePylons:
+  - {fileID: -1039433833, guid: 8f05d0516ecc2ee448967e9d4f20ca63, type: 3}
+  - {fileID: 124102767, guid: 8f05d0516ecc2ee448967e9d4f20ca63, type: 3}
+  - {fileID: -1909343966, guid: 8f05d0516ecc2ee448967e9d4f20ca63, type: 3}
   macroVariation: 1
+  floorMacro: {fileID: 2800000, guid: f2c173ec99dae524bac84179ec519d6c, type: 3}
+  wallTopMacro: {fileID: 2800000, guid: 9fd1eba18d89d394e83cc48febc185fb, type: 3}
+  wallFrontMacro: {fileID: 2800000, guid: b6313e4f060358949ab2e461bce72cd9, type: 3}
+  wallRimMacro: {fileID: 2800000, guid: 4591000aece4cfa42a722f29849733c4, type: 3}
+  floorNormal: {fileID: 2800000, guid: 8c4cde3163df26b4cbd2540a95a40c76, type: 3}
+  floorAo: {fileID: 2800000, guid: 98f8d1ef14d92d142a356997499a8c45, type: 3}
+  floorEmission: {fileID: 2800000, guid: 70db1eab01c464b418951e9f3d4e5b22, type: 3}
+  wallTopNormal: {fileID: 2800000, guid: e4fbb895ce4b2a548be10eb5bea83ddf, type: 3}
+  wallTopAo: {fileID: 2800000, guid: 67e03fb9542de4f4287b0a06d527323a, type: 3}
+  wallTopEmission: {fileID: 2800000, guid: a21f151cfd50ef146bf33093bd7176b8, type: 3}
+  wallFrontNormal: {fileID: 2800000, guid: f0ff76af7653e0f4490884b6ec438bef, type: 3}
+  wallFrontAo: {fileID: 2800000, guid: 47e33d33e17c7db4aa6f9270de2c6c3c, type: 3}
+  wallFrontEmission: {fileID: 2800000, guid: 53caf106e7851db4f93c19e417077c24, type: 3}
+  wallRimNormal: {fileID: 2800000, guid: a4c6782c21a1fe040b115b4b3f42ab00, type: 3}
+  wallRimAo: {fileID: 2800000, guid: 254d814f38a7352479ff8d64613a4aae, type: 3}
+  wallRimEmission: {fileID: 2800000, guid: 565485b03d705564a9b2831e2f60236e, type: 3}
+  macroSizeCells: 12
+  floorMacroSizeCells: 18
+  wallTopMacroSizeCells: 9
+  wallFrontMacroSizeCells: 6
+  wallRimMacroSizeCells: 8
+  floorMinLight: 0.42
+  wallTopMinLight: 0.2
+  wallFrontMinLight: 0.28
+  wallRimMinLight: 0.28
+  floorAccentEmission: 0.22
+  wallAccentEmission: 0.3
+  floorAoStrength: 0.48
+  wallAoStrength: 0.62
+  floorDerivedNormalStrength: 0.65
+  wallTopDerivedNormalStrength: 1
+  wallFrontDerivedNormalStrength: 1.45
+  wallRimDerivedNormalStrength: 1.1
+  floorMirrorMacro: 1
+  mirrorMacro: 1

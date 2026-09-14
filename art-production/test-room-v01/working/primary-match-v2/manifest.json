@@ -1,0 +1,166 @@
+{
+  "packageId": "tr01-primary-match-basic-surfaces-v2",
+  "revision": 8,
+  "status": "working",
+  "createdAt": "2026-09-15",
+  "productionProjection": "ReferenceTopDown",
+  "primaryReference": "../../reference/tr01_primary_style_target.png",
+  "sourceDimensionsPixels": [1254, 1254],
+  "sliceGrid": {
+    "columns": 3,
+    "rows": 3,
+    "cellDimensionsPixels": [418, 418],
+    "coordinateSystem": "image_top_left_y_down",
+    "unityRectY": "(2 - sourceRow) * 418"
+  },
+  "selectionMode": "world_anchored_full_texture_macro",
+  "randomizeSlices": false,
+  "assets": [
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-MACRO-3X3",
+      "role": "floorBase",
+      "path": "tr01_primarymatch_floor_macro_3x3_source.png",
+      "alpha": false,
+      "pivot": "center_per_slice",
+      "runtimeMacroCells": 18,
+      "runtimeMirrorRepeat": true,
+      "macroEdgeWrapApproved": false,
+      "sha256": "82112FA2625F8E5BA5DE173170ECCB03EEAB55C57581687ED7580E9B14DEE8B2",
+      "alignedChannels": {
+        "normal": {"path": "channels/floor_normal.png", "sha256": "6041792062A511D170A0CBD4DFA02A43C1F85CE5BDC8B6F10AB096DDD78292D3"},
+        "ao": {"path": "channels/floor_ao.png", "sha256": "3BF2A078D1610FFA0C490A8CD646A9D3EC5E81313C7956F1B9DCE3EAD96A7735"},
+        "emission": {"path": "channels/floor_emission.png", "sha256": "D7A00E78F9B4AB8E41F33B7DAC13C1074B493E169106005DFD26ECB48C00E0EC"}
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALLTOP-MACRO-3X3",
+      "role": "wallTop",
+      "path": "tr01_primarymatch_wall_top_macro_3x3_source.png",
+      "alpha": false,
+      "pivot": "center_per_slice",
+      "macroEdgeWrapApproved": false,
+      "sha256": "D27228CAAFF0340867C59ABB941A2B1277A84DA4E05AF9262279F98AC7048FA8",
+      "alignedChannels": {
+        "normal": {"path": "channels/wall_top_normal.png", "sha256": "AD8AAA609B2D888940FA9D2E0EE5643EB3686B2A5A1969D094A401E2B943D762"},
+        "ao": {"path": "channels/wall_top_ao.png", "sha256": "0351C6EBBC1774D6B226970BCA4E881F157611449BEE88EB23C6A847C5740AE9"},
+        "emission": {"path": "channels/wall_top_emission.png", "sha256": "CF1D7F1E91704B3D4B5D64867EDB71ADB5E20276DAB2D12C8124A29FEE21A62D"}
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALLFRONT-MACRO-3X3",
+      "role": "wallFront",
+      "path": "tr01_primarymatch_wall_front_macro_3x3_source.png",
+      "alpha": false,
+      "pivot": "center_per_slice_pending_assembly_check",
+      "macroEdgeWrapApproved": false,
+      "sha256": "F8B0C9A11E3E21D74637583EDE90119C5F9A894190AD3E54DA7E4DD03BADD518",
+      "alignedChannels": {
+        "normal": {"path": "channels/wall_front_normal.png", "sha256": "A814EB86B9FFE60A252FB73D8EB21484D551A26E1270432DF6232B4B33B72F2E"},
+        "ao": {"path": "channels/wall_front_ao.png", "sha256": "A5EB23A1A2492D307E28283513FEF1DA172281AC42380071F7D99CB89977D76B"},
+        "emission": {"path": "channels/wall_front_emission.png", "sha256": "8B6330871C82B5DC1574ED638FB7C0C3723C51CBB5F053D658A05585112446E5"}
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALLTOP-RIM-3X3",
+      "role": "wallTopRim",
+      "path": "tr01_primarymatch_wall_top_rim_3x3_source.png",
+      "alpha": false,
+      "layout": "three_row_variants_each_split_into_three_connected_columns",
+      "sha256": "90D147ED216F52C3D600D1BF2D318500DC3BCD9B34234C68FC9B904C426DC0C8",
+      "alignedChannels": {
+        "normal": {"path": "channels/wall_rim_normal.png", "sha256": "BF6F110F99808244D9A8937D6A53403C00116E3900917D85732C01C9C96C3C30"},
+        "ao": {"path": "channels/wall_rim_ao.png", "sha256": "C66BF0AE6F8CB0C5E2D9B84117297A9C49A4ECD0A074FFE441DD14F89643893C"},
+        "emission": {"path": "channels/wall_rim_emission.png", "sha256": "56F501CB8BC9FF9894466774865ACFE56C63591133E05FDF72C8F24E13902397"}
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-WALL-CONTACT-3X3",
+      "role": "floorWallContact",
+      "path": "tr01_primarymatch_floor_wall_contact_3x3_source.png",
+      "alpha": true,
+      "layoutTopToBottom": [
+        ["NW", "N", "NE"],
+        ["W", "C", "E"],
+        ["SW", "S", "SE"]
+      ],
+      "sha256": "66F0A055DDFF7C6E13E23A84A2CC2E558C84615D93DA72D535170BAE21510301"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALL-SUPPORTS-3COL",
+      "role": "wallIntegratedSupport",
+      "path": "tr01_primarymatch_wall_supports_3col_source.png",
+      "alpha": true,
+      "layout": "three_equal_columns",
+      "cellDimensionsPixels": [418, 1254],
+      "pivot": "bottom_center",
+      "runtimeHeightCells": 1.75,
+      "placementContract": "south_facing_facade_runs_length_5_or_more",
+      "sha256": "946C0FDE351D1D922DF5EA09AEBA9374DB5EAF7E116FC2E26D333B1DE512A421"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALL-CONDUITS-3X3",
+      "role": "wallIntegratedConduit",
+      "path": "tr01_primarymatch_wall_conduits_3x3_source.png",
+      "alpha": true,
+      "layout": "three_connected_rows_each_left_middle_right",
+      "cellDimensionsPixels": [418, 418],
+      "pivot": "center_per_slice",
+      "runtimeHeightOnFacadeCells": 0.62,
+      "placementContract": "continuous_span_from_inner_left_support_to_inner_right_support_on_south_facing_facade_runs_length_5_or_more",
+      "sha256": "FEE9F641C5F7CE47474F934CB54A7140867539F47FE84021465F3B1A5DDF044E"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-SERVICE-PYLONS-3COL",
+      "role": "presentationIntegratedServiceLight",
+      "path": "tr01_primarymatch_service_pylons_3col_source.png",
+      "alpha": true,
+      "layout": "three_equal_columns_cyan_magenta_amber",
+      "cellDimensionsPixels": [418, 1254],
+      "pivot": "bottom_center",
+      "runtimeHeightCells": 2.15,
+      "lightAboveFootCells": 1.42,
+      "placementContract": "presentation_lamps_only_in_fixed_color_order",
+      "sha256": "8AB9B0B9A6057669E867A56590F95E7C5FA4B060D1EEC11973D8F8595756B47E"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-WALL-JUNCTIONS-3X3",
+      "role": "wallIntegratedJunction",
+      "path": "tr01_primarymatch_wall_junctions_3x3_source.png",
+      "alpha": true,
+      "layout": "three_connected_rows_each_left_turn_vertical_repeat_right_turn",
+      "cellDimensionsPixels": [418, 418],
+      "pivot": "center_per_slice",
+      "runtimeVerticalRepeatScaleY": 1.15,
+      "placementContract": "south_facing_service_facade_length_5_or_more_and_endpoint_continues_upward_as_a_real_side_boundary_for_2_or_more_cells",
+      "sha256": "BC51E50654324229A54C04372A7659251F2A58049574CE193B929EEF14EABF52"
+    }
+  ],
+  "validation": {
+    "dimensionsDivisibleByGrid": true,
+    "contactBackgroundHasRealAlpha": true,
+    "wallSupportBackgroundHasRealAlpha": true,
+    "wallSupportSpriteSlicingVerified": true,
+    "wallConduitBackgroundHasRealAlpha": true,
+    "wallConduitSpriteSlicingVerified": true,
+    "servicePylonBackgroundHasRealAlpha": true,
+    "servicePylonSpriteSlicingVerified": true,
+    "servicePylonRuntimeCount": 3,
+    "wallJunctionBackgroundHasRealAlpha": true,
+    "wallJunctionSpriteSlicingVerified": true,
+    "wallJunctionRuntimeTurnCount": 4,
+    "wallJunctionRuntimeSideRepeatCount": 10,
+    "surfaceChannelDimensionsMatchAlbedo": true,
+    "surfaceChannelUnityImportVerified": true,
+    "surfaceChannelReferencesAssigned": 12,
+    "quietFloorPass21GameViewVerified": true,
+    "slabFloorPass22GameViewVerified": true,
+    "floorScale14Pass23RejectedForPeriodicMineralBands": true,
+    "unityImportVerified": true,
+    "playModeVerified": true,
+    "gameViewVerified": true,
+    "runtimeIntegrationActive": true,
+    "albedoDerivedNormalActive": false,
+    "normalMapsCreated": true,
+    "approvedForRuntime": false
+  }
+}

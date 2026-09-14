@@ -68,6 +68,7 @@ namespace TunnelCrew.Sim
             int exit = PlaceExit(tiles, dist, ex0, er0, out var open); // 10
             PlacePoi(tiles, open, exit, result);        // 유물·보급품·랜턴·소품
             ApplyEnsurePath(tiles, ex0, er0);           // 11
+            ApplyPresentationEntry(tiles, ex0, er0, result); // Unity 본편 전용 · RNG 이후
 
             result.Tiles = tiles;
             result.Exit = exit;
@@ -669,6 +670,53 @@ namespace TunnelCrew.Sim
                         A[k] = TileType.Empty;
                 }
         }
+
+        /// <summary>
+        /// 원본 생성이 완전히 끝난 뒤 적용하는 Unity 전용 구도 패스.
+        /// Runtime 설정에서는 꺼져 있으므로 패리티 픽스처와 난수 소비 순서는 변하지 않는다.
+        /// </summary>
+        void ApplyPresentationEntry(TileType[] A, int ex0, int er0, DungeonResult result)
+        {
+            int halfW = _cfg.PresentationEntryHalfWidth;
+            int halfH = _cfg.PresentationEntryHalfHeight;
+            if (halfW <= 0 || halfH <= 0) return;
+
+            for (int dr = -halfH; dr <= halfH; dr++)
+                for (int dc = -halfW; dc <= halfW; dc++)
+                {
+                    double nx = System.Math.Abs(dc / (halfW + .15));
+                    double ny = System.Math.Abs(dr / (halfH + .15));
+                    // 타원은 위·아래에서 한두 셀로 급격히 좁아져, 레퍼런스의 긴 설비 벽 대신
+                    // 계단형 동굴 입구를 만들었다. 4차 superellipse는 중앙 직선 구간을 길게
+                    // 유지하면서 모서리만 둥글려 산업 작업실과 자연 암반의 중간 실루엣을 만든다.
+                    if (System.Math.Pow(nx, 4) + System.Math.Pow(ny, 4) > 1.0) continue;
+
+                    int x = ex0 + dc, y = er0 + dr;
+                    if (!Inb(x, y)) continue;
+                    int k = Idx(x, y);
+                    // Unity 전용 첫 방 안의 무작위 Core는 검은 정사각 독립 기둥으로 남아
+                    // 연결 설비와 열린 작업 동선을 끊는다. 외곽 Rock은 보존하되 내부 Core까지
+                    // 비워, 특수 구조물이 아니라 기본 방 바닥으로 읽히게 한다.
+                    if (A[k] != TileType.Rock) A[k] = TileType.Empty;
+                }
+
+            if (!_cfg.PresentationEntryLamps) return;
+
+            result.PresentationLamps = new List<(int col, int row)>
+            {
+                (ex0 - Math.Max(2, halfW - 2), er0 + Math.Max(1, halfH - 2)), // 시안 방향등
+                (ex0 + Math.Max(2, halfW - 2), er0 + Math.Max(1, halfH - 2)), // 마젠타 설비등
+                (ex0, er0 - Math.Max(2, halfH - 1)),                         // 앰버 작업등
+            };
+
+            foreach (var lamp in result.PresentationLamps)
+            {
+                if (!Inb(lamp.col, lamp.row)) continue;
+                int k = Idx(lamp.col, lamp.row);
+                if (A[k] != TileType.Empty) continue;
+                if (!result.Lamps.Contains(lamp)) result.Lamps.Add(lamp);
+            }
+        }
     }
 
     public sealed class DungeonResult
@@ -683,6 +731,8 @@ namespace TunnelCrew.Sim
         public HashSet<int> Relics;
         public List<CachePlacement> Caches;
         public List<(int col, int row)> Lamps;
+        /// <summary>Unity 비주얼 진입부의 색 역할 고정 램프. 순서: 시안, 마젠타, 앰버.</summary>
+        public List<(int col, int row)> PresentationLamps;
         public List<PropPlacement> Props;
     }
 

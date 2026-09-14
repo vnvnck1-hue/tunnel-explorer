@@ -840,6 +840,7 @@ namespace TunnelCrew.Presentation
             if(sim.Generation?.Lamps!=null)
             {
                 sim.Generation.Lamps.Clear();
+                sim.Generation.PresentationLamps?.Clear();
                 sim.Generation.Lamps.Add((ex,ey));
                 sim.Generation.Lamps.Add((X(21),ey+2));
             }

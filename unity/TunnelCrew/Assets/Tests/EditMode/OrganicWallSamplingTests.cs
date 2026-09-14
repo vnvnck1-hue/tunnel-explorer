@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using TunnelCrew.Presentation.Visual;
 using UnityEngine;
@@ -65,6 +66,100 @@ namespace TunnelCrew.Tests
             var style=Resources.Load<OrganicEnvironmentStyle>("Visual/OrganicEnvironmentStyle");
             Assert.That(style,Is.Not.Null);Assert.That(style.rockShader,Is.Not.Null);
             Assert.That(style.rockShader.isSupported,Is.True);Assert.That(style.rock,Is.Not.Null);
+            Assert.That(style.floorMacro,Is.Not.Null);
+            Assert.That(style.wallTopMacro,Is.Not.Null);
+            Assert.That(style.wallFrontMacro,Is.Not.Null);
+            Assert.That(style.wallRimMacro,Is.Not.Null);
+            Assert.That(new[]
+            {
+                style.floorNormal, style.floorAo, style.floorEmission,
+                style.wallTopNormal, style.wallTopAo, style.wallTopEmission,
+                style.wallFrontNormal, style.wallFrontAo, style.wallFrontEmission,
+                style.wallRimNormal, style.wallRimAo, style.wallRimEmission,
+            }, Has.All.Not.Null);
+            Assert.That(style.floorAoStrength, Is.InRange(0.01f, 1f));
+            Assert.That(style.wallAoStrength, Is.InRange(0.01f, 1f));
+            Assert.That(style.wallSupports,Is.Not.Null);
+            Assert.That(style.wallSupports.Length,Is.EqualTo(3));
+            Assert.That(style.wallSupports,Has.All.Not.Null);
+            Assert.That(style.wallConduits,Is.Not.Null);
+            Assert.That(style.wallConduits.Length,Is.EqualTo(9));
+            Assert.That(style.wallConduits,Has.All.Not.Null);
+            Assert.That(style.wallJunctions,Is.Not.Null);
+            Assert.That(style.wallJunctions.Length,Is.EqualTo(9));
+            Assert.That(style.wallJunctions,Has.All.Not.Null);
+            Assert.That(style.servicePylons,Is.Not.Null);
+            Assert.That(style.servicePylons.Length,Is.EqualTo(3));
+            Assert.That(style.servicePylons,Has.All.Not.Null);
+            Assert.That(style.floorMacroSizeCells,Is.GreaterThan(style.wallFrontMacroSizeCells));
+            Assert.That(style.floorDerivedNormalStrength,Is.GreaterThan(0f));
+            Assert.That(style.wallFrontDerivedNormalStrength,Is.GreaterThan(style.floorDerivedNormalStrength));
+            var material=new Material(style.rockShader);
+            try
+            {
+                Assert.That(material.HasProperty("_LabScale"),Is.True);
+                Assert.That(material.HasProperty("_LabMirrorRepeat"),Is.True);
+                Assert.That(material.HasProperty("_LabAccentEmission"),Is.True);
+                Assert.That(material.HasProperty("_LabDerivedNormal"),Is.True);
+            }
+            finally { Object.DestroyImmediate(material); }
+        }
+
+        [Test]
+        public void IntegratedSupportsOnlyOccupyLongFacadeInteriorSlots()
+        {
+            for (int i = 0; i < 5; i++)
+                Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(i, 4), Is.False);
+            Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(0, 5), Is.False);
+            Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(1, 5), Is.True);
+            Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(2, 5), Is.False);
+            Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(3, 5), Is.True);
+            Assert.That(OrganicEnvironmentRenderer.IsWallSupportSlot(4, 5), Is.False);
+            CollectionAssert.AreEqual(new[] { 1, 6, 11 },
+                System.Linq.Enumerable.Range(0, 13)
+                    .Where(i => OrganicEnvironmentRenderer.IsWallSupportSlot(i, 13)).ToArray());
+        }
+
+        [Test]
+        public void IntegratedConduitsFormOneLeftMiddleRightSpanBetweenSupports()
+        {
+            for (int i = 0; i < 4; i++)
+                Assert.That(OrganicEnvironmentRenderer.ConduitPieceFor(i, 4), Is.EqualTo(-1));
+
+            CollectionAssert.AreEqual(new[] { -1, 0, 1, 2, -1 },
+                System.Linq.Enumerable.Range(0, 5)
+                    .Select(i => OrganicEnvironmentRenderer.ConduitPieceFor(i, 5)).ToArray());
+            CollectionAssert.AreEqual(new[] { -1, 0, 1, 1, 1, 1, 1, 2, -1 },
+                System.Linq.Enumerable.Range(0, 9)
+                    .Select(i => OrganicEnvironmentRenderer.ConduitPieceFor(i, 9)).ToArray());
+        }
+
+        [Test]
+        public void IntegratedConduitRowIsStableForTheSameFacade()
+        {
+            int row = OrganicEnvironmentRenderer.ConduitRowFor(7, 11);
+            Assert.That(row, Is.InRange(0, 2));
+            Assert.That(OrganicEnvironmentRenderer.ConduitRowFor(7, 11), Is.EqualTo(row));
+        }
+
+        [Test]
+        public void WallJunctionsOnlyTurnAtServiceFacadeEndsWithRealSideWalls()
+        {
+            Assert.That(OrganicEnvironmentRenderer.JunctionPieceFor(0, 4, 4, 0), Is.EqualTo(-1));
+            Assert.That(OrganicEnvironmentRenderer.JunctionPieceFor(0, 5, 1, 0), Is.EqualTo(-1));
+            Assert.That(OrganicEnvironmentRenderer.JunctionPieceFor(0, 5, 2, 0), Is.EqualTo(0));
+            Assert.That(OrganicEnvironmentRenderer.JunctionPieceFor(4, 5, 0, 2), Is.EqualTo(2));
+            Assert.That(OrganicEnvironmentRenderer.JunctionPieceFor(2, 5, 4, 4), Is.EqualTo(-1));
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(1, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        [TestCase(9, 4)]
+        public void SideWallInfrastructureUsesAControlledVerticalSpan(int sideCells, int expected)
+        {
+            Assert.That(OrganicEnvironmentRenderer.VerticalJunctionSegmentCount(sideCells), Is.EqualTo(expected));
         }
     }
 }
