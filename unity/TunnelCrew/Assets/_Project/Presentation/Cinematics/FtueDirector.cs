@@ -29,23 +29,39 @@ namespace TunnelCrew.Presentation
             public string Resource, Speaker, Caption, Cue;
             public Rect Normalized;
             public Rect Uv;
-            public float Start, Hold, Rotation;
+            public float Rotation;
+            public bool RevealPanel;
             [NonSerialized] public Texture2D Texture;
+            [NonSerialized] public DynamicDialogueText.Script Script;
         }
+
+        sealed class DialogueLine
+        {
+            public string Speaker, Caption, Cue;
+            public float Seconds;
+        }
+
+        enum TransitionStyle { None, Impact, Signal, Hatch }
 
         readonly FtueProgressModel _progress = new FtueProgressModel();
         readonly List<ComicPanel> _comic = new List<ComicPanel>();
+        readonly Queue<DialogueLine> _dialogueQueue = new Queue<DialogueLine>();
         readonly List<EnemyState> _wave = new List<EnemyState>();
         RunBootstrap _run;
         AudioDirector _audio;
         WorldLayout _layout;
         Action _comicDone;
-        float _comicTime, _comicDuration, _skipHeld, _stateDelay, _nextAid;
-        int _firedPanels, _combatKills;
+        float _comicTime, _comicInputLock, _skipHeld, _stateDelay, _nextAid;
+        int _comicBeat, _comicTutorialClicks, _combatKills;
+        bool _comicForceComplete;
         RoleId _selectedRole = RoleId.Driller;
         Vec2 _moveOrigin;
         string _speaker = "", _caption = "";
-        float _captionUntil;
+        float _captionUntil, _captionStarted;
+        DynamicDialogueText.Script _dialogueScript, _rolePromptScript;
+        Texture2D _lockerArt;
+        float _roleChoiceStarted, _transitionTime, _transitionDuration;
+        TransitionStyle _transitionStyle;
         bool _pacingWarned, _finishing;
         Texture2D _titleLogo;
         GUIStyle _objectiveStyle, _promptStyle, _speakerStyle, _captionStyle, _roleStyle, _roleTagStyle;
@@ -55,12 +71,16 @@ namespace TunnelCrew.Presentation
         public FtueProgressModel.Stage CurrentStage => _progress.Current;
         public FtueProgressModel.Hint CurrentHint => _progress.HintLevel;
         public string CurrentObjective => FtueProgressModel.Objective(_progress.Current);
+        public int CurrentComicBeat => _comicBeat;
+        public bool ComicTextComplete => _comic.Count == 0 || _comicForceComplete ||
+            _comic[_comicBeat].Script == null || _comicTime >= _comic[_comicBeat].Script.Duration;
 
         public void Bind(RunBootstrap run)
         {
             _run = run;
             _audio = AudioDirector.Instance;
             _titleLogo = Resources.Load<Texture2D>("UI/title-logo");
+            _lockerArt = Resources.Load<Texture2D>("FTUE/Art/equipment_locker");
             CrtSurface.Register(this, 80);
             _run.Sim.TileBroken += OnTileBroken;
             _run.Sim.EnemyHurt += OnEnemyHurt;
@@ -70,6 +90,7 @@ namespace TunnelCrew.Presentation
         public void Begin()
         {
             _finishing = false;
+            _comicTutorialClicks = 0;
             _selectedRole = RoleId.Driller;
             _progress.Begin(Time.unscaledTimeAsDouble);
             PlayCrashComic();
@@ -106,6 +127,8 @@ namespace TunnelCrew.Presentation
         void Update()
         {
             if (!Active || _run == null || _run.Sim == null) return;
+            if (_transitionTime > 0) _transitionTime = Mathf.Max(0, _transitionTime - Time.unscaledDeltaTime);
+            TickDialogue();
             double now = Time.unscaledTimeAsDouble;
             var previousHint = _progress.HintLevel;
             _progress.Tick(now);
@@ -197,12 +220,18 @@ namespace TunnelCrew.Presentation
         {
             var kb = Keyboard.current;
             var gp = Gamepad.current;
+            if (Mouse.current != null)
+            {
+                var m = Mouse.current.position.ReadValue();
+                var top = new Vector2(m.x, Screen.height - m.y);
+                for (int i = 0; i < 4; i++) if (RoleBayRect(i).Contains(top)) _selectedRole = (RoleId)i;
+            }
             if (kb != null)
             {
-                if (kb.digit1Key.wasPressedThisFrame) _selectedRole = RoleId.Driller;
-                else if (kb.digit2Key.wasPressedThisFrame) _selectedRole = RoleId.Gunner;
-                else if (kb.digit3Key.wasPressedThisFrame) _selectedRole = RoleId.Scout;
-                else if (kb.digit4Key.wasPressedThisFrame) _selectedRole = RoleId.Engineer;
+                if (kb.digit1Key.wasPressedThisFrame) { _selectedRole = RoleId.Driller; ConfirmRole(); return; }
+                else if (kb.digit2Key.wasPressedThisFrame) { _selectedRole = RoleId.Gunner; ConfirmRole(); return; }
+                else if (kb.digit3Key.wasPressedThisFrame) { _selectedRole = RoleId.Scout; ConfirmRole(); return; }
+                else if (kb.digit4Key.wasPressedThisFrame) { _selectedRole = RoleId.Engineer; ConfirmRole(); return; }
                 else if (kb.leftArrowKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame) _selectedRole = (RoleId)(((int)_selectedRole + 3) % 4);
                 else if (kb.rightArrowKey.wasPressedThisFrame || kb.dKey.wasPressedThisFrame) _selectedRole = (RoleId)(((int)_selectedRole + 1) % 4);
                 if (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame) ConfirmRole();
@@ -217,13 +246,12 @@ namespace TunnelCrew.Presentation
             {
                 var m = Mouse.current.position.ReadValue();
                 var top = new Vector2(m.x, Screen.height - m.y);
-                float k = Screen.height / 1080f, W = Screen.width / k;
-                float total = 4 * 300 + 3 * 22, x0 = W * .5f - total * .5f;
                 for (int i = 0; i < 4; i++)
                 {
-                    var r = new Rect((x0 + i * 322) * k, 255 * k, 300 * k, 430 * k);
+                    var r = RoleBayRect(i);
                     if (!r.Contains(top)) continue;
-                    if (_selectedRole == (RoleId)i) ConfirmRole(); else { _selectedRole = (RoleId)i; _audio?.Pick(); }
+                    _selectedRole = (RoleId)i;
+                    ConfirmRole();
                     break;
                 }
             }
@@ -235,7 +263,15 @@ namespace TunnelCrew.Presentation
             _layout = _run.PrepareFtueRole(_selectedRole);
             _moveOrigin = _run.Sim.Player.Position;
             _progress.Set(FtueProgressModel.Stage.Movement, Time.unscaledTimeAsDouble);
-            Say("모래", "일어나. 출구는 암반 반대쪽이야.", "morae", 3f);
+            StartTransition(TransitionStyle.Hatch, .55f);
+            string line = _selectedRole switch
+            {
+                RoleId.Driller => "드릴 챙겼네. [tint=morae]막힌 길은 네가 열어.[/tint]",
+                RoleId.Gunner => "파쇄기야. 벽에도 붙어. [slam]두 번 물러서.[/slam]",
+                RoleId.Scout => "조명탄은 아껴. [tint=signal]이 아래엔 빛을 싫어하는 게 있어.[/tint]",
+                _ => "전력 제어기. 길이 없으면 [wave=.45]공간부터 만들어.[/wave]",
+            };
+            Say("모래", line, "morae", 4.2f);
         }
 
         void OnTileBroken(TileBrokenEvent e)
@@ -253,7 +289,8 @@ namespace TunnelCrew.Presentation
                 _run.Sim.Crew.Add(RoleId.Scout);
                 if (_run.Sim.Crew.Members.Count > 0) _run.Sim.Crew.Members[0].Position = _layout.Rescue;
                 _audio?.Rescue();
-                Say("모래", "신입? 오늘부터라며. 운도 없네.", "morae", 3.8f);
+                Say("관제", "스카우트 모래 확인. [tint=signal]생존자 한 명.[/tint] 잔여 반응 둘.", "control", 4.1f);
+                Say("모래", "여기 한 명 살아 있어. [slam]나.[/slam] 나머지 둘은 사람이 아니야.", "morae", 4.3f);
                 _stateDelay = 1.4f;
                 _progress.Set(FtueProgressModel.Stage.Combat, now);
             }
@@ -267,7 +304,8 @@ namespace TunnelCrew.Presentation
             {
                 _wave.Clear();
                 _audio?.FtueCue("beacon");
-                Say("관제", "구조 신호가 바로 앞에서 반복된다.", "control", 3.2f);
+                Say("관제", "적성체 셋의 맥박이 [tint=signal][jitter=.55]구조 신호와 동기화됐다.[/jitter][/tint]", "control", 4.2f);
+                Say("모래", "놈들이 신호를 내는 게 아니야. [tint=danger]신호가 놈들을 움직여.[/tint]", "morae", 4.0f);
                 _progress.Set(FtueProgressModel.Stage.BlackboxInteract, Time.unscaledTimeAsDouble);
             }
         }
@@ -298,7 +336,11 @@ namespace TunnelCrew.Presentation
                 _wave.Add(e);
                 sim.Enemies.AddExternal(e);
             }
-            if (!chase) Say("모래", "잠깐. 저건 돌이 아니야.", "morae", 2.6f);
+            if (!chase)
+            {
+                Say("모래", "잠깐. [jitter=.45]저건 돌이 아니야.[/jitter]", "morae", 3.0f);
+                Say("관제", "구조 반응 둘, 빠르게 접근 중.", "control", 3.0f);
+            }
         }
 
         void OnStageChanged(FtueProgressModel.Stage previous, FtueProgressModel.Stage next)
@@ -311,11 +353,40 @@ namespace TunnelCrew.Presentation
 
         void Say(string speaker, string text, string cue, float seconds)
         {
-            _speaker = speaker;
-            _caption = text;
-            _captionUntil = Time.unscaledTime + seconds;
+            var line = new DialogueLine { Speaker = speaker, Caption = text, Cue = cue, Seconds = seconds };
+            if (string.IsNullOrEmpty(_caption) || Time.unscaledTime > _captionUntil) BeginDialogue(line);
+            else _dialogueQueue.Enqueue(line);
+        }
+
+        void TickDialogue()
+        {
+            if (string.IsNullOrEmpty(_caption) || Time.unscaledTime <= _captionUntil) return;
+            if (_dialogueQueue.Count > 0) BeginDialogue(_dialogueQueue.Dequeue());
+            else
+            {
+                _speaker = _caption = string.Empty;
+                _dialogueScript = null;
+                _audio?.NarrativeDuck(false);
+            }
+        }
+
+        void BeginDialogue(DialogueLine line)
+        {
+            _speaker = line.Speaker;
+            _caption = line.Caption;
+            _dialogueScript = DynamicDialogueText.Compile(line.Caption);
+            _captionStarted = Time.unscaledTime;
+            _captionUntil = _captionStarted + Mathf.Max(line.Seconds, _dialogueScript.Duration + .75f);
             _audio?.NarrativeDuck(true);
-            _audio?.FtueCue(cue);
+            _audio?.FtueCue(line.Cue);
+        }
+
+        void ClearDialogue()
+        {
+            _dialogueQueue.Clear();
+            _speaker = _caption = string.Empty;
+            _dialogueScript = null;
+            _captionUntil = 0;
         }
 
         void PlayCrashComic()
@@ -323,10 +394,19 @@ namespace TunnelCrew.Presentation
             _audio?.UseTunnel();
             BeginComic(FtueProgressModel.Stage.CrashComic, new[]
             {
-                P("FTUE/Art/sequence_crash", .04f,.09f,.42f,.35f, 0f, 2.8f, "관제", "구조 신호 확인. 4번 갱도, 생존자 셋.", "control", -1.2f, new Rect(0,.5f,.5f,.5f)),
-                P("FTUE/Art/sequence_crash", .51f,.09f,.45f,.35f, 2.6f, 3.1f, "모래", "사흘 지난 신호잖아.", "morae", 1.0f, new Rect(.5f,.5f,.5f,.5f)),
-                P("FTUE/Art/sequence_crash", .09f,.50f,.82f,.42f, 5.5f, 2.4f, "", "", "impact", 0f, new Rect(0,0,1,.5f)),
-            }, () => _progress.Set(FtueProgressModel.Stage.RoleChoice, Time.unscaledTimeAsDouble));
+                P("FTUE/Art/sequence_crash", .04f,.09f,.42f,.35f, "관제", "4번 갱도에서 [tint=signal][echo]구조 신호 셋[/echo][/tint]. 마지막 기록은 71시간 전.", "control", -1.2f, new Rect(0,.5f,.5f,.5f)),
+                D("관제", "생체 패턴은 서로 다른데… 좌표가 [jitter=.45]완전히 겹친다.[/jitter]", "beacon"),
+                P("FTUE/Art/sequence_crash", .51f,.09f,.45f,.35f, "모래", "사흘 묵은 신호를 셋이나? [speed=.72]기분 나쁜데.[/speed]", "morae", 1.0f, new Rect(.5f,.5f,.5f,.5f)),
+                D("관제", "회수 우선. 폭풍 전선까지 11분. 착륙 좌표 전송한다.", "control"),
+                P("FTUE/Art/sequence_crash", .09f,.50f,.82f,.42f, "", "", "impact", 0f, new Rect(0,0,1,.5f)),
+                D("모래", "[slam][tint=danger]충격 온다![/tint][/slam] 손잡이 잡아!", "impact"),
+            }, () =>
+            {
+                _progress.Set(FtueProgressModel.Stage.RoleChoice, Time.unscaledTimeAsDouble);
+                _roleChoiceStarted = Time.unscaledTime;
+                _rolePromptScript = DynamicDialogueText.Compile("모래: 선반 고정이 풀렸어. [tint=morae]살아 나갈 장비 하나[/tint] 골라.");
+                StartTransition(TransitionStyle.Impact, .72f);
+            });
         }
 
         void PlayBlackboxComic()
@@ -335,12 +415,15 @@ namespace TunnelCrew.Presentation
             _audio?.UseTunnel();
             BeginComic(FtueProgressModel.Stage.BlackboxComic, new[]
             {
-                P("FTUE/Art/sequence_record", .04f,.06f,.53f,.42f, 0f, 2.8f, "선발대장", "본부, 광맥이 예상보다 크다.", "captain", -.7f, new Rect(0,.5f,.6f,.5f)),
-                P("FTUE/Art/sequence_record", .61f,.06f,.35f,.42f, 2.6f, 2.8f, "선발대원", "광맥이… 움직입니다.", "captain", .9f, new Rect(.6f,.5f,.4f,.5f)),
-                P("FTUE/Art/sequence_record", .04f,.52f,.34f,.40f, 5.2f, 3.0f, "선발대원", "벽 안에 빈 공간이 있어요. 엄청 커요.", "beacon", -.8f, new Rect(0,0,.3333f,.5f)),
-                P("FTUE/Art/sequence_record", .41f,.52f,.26f,.40f, 8.0f, 3.2f, "선발대장", "신호를 끄고 올라간다. 아무도 내려보내지 마.", "captain", .6f, new Rect(.3333f,0,.3334f,.5f)),
-                P("FTUE/Art/sequence_record", .70f,.52f,.26f,.40f, 11.0f, 3.4f, "선발대장", "저건 심장이 아니야. 저건—", "mimic", -.4f, new Rect(.6667f,0,.3333f,.5f)),
+                P("FTUE/Art/sequence_record", .04f,.06f,.53f,.42f, "선발대장", "본부, 광맥이 예상보다 크다. 장비가 자꾸 같은 좌표를 찍는다.", "captain", -.7f, new Rect(0,.5f,.6f,.5f)),
+                D("관제 기록", "신호원은 몇 명인가?", "control"),
+                P("FTUE/Art/sequence_record", .61f,.06f,.35f,.42f, "선발대원", "셋입니다. 그런데 광맥이… [wave=.7]움직입니다.[/wave]", "captain", .9f, new Rect(.6f,.5f,.4f,.5f)),
+                P("FTUE/Art/sequence_record", .04f,.52f,.34f,.40f, "선발대원", "벽 안에 빈 공간이 있어요. 엄청 커요. 안에서 우리 호출 부호가 들립니다.", "beacon", -.8f, new Rect(0,0,.3333f,.5f)),
+                D("???", "[echo][tint=signal]선발대. 응답하라.[/tint][/echo]", "mimic"),
+                P("FTUE/Art/sequence_record", .41f,.52f,.26f,.40f, "선발대장", "신호를 끄고 올라간다. [tint=danger]아무도 내려보내지 마.[/tint]", "captain", .6f, new Rect(.3333f,0,.3334f,.5f)),
+                P("FTUE/Art/sequence_record", .70f,.52f,.26f,.40f, "선발대장", "저건 심장이 아니야. 저건 [jitter=.8]우리 목소리를—[/jitter]", "mimic", -.4f, new Rect(.6667f,0,.3333f,.5f)),
             }, PlayAwakeningComic);
+            StartTransition(TransitionStyle.Signal, .58f);
         }
 
         void PlayAwakeningComic()
@@ -348,14 +431,17 @@ namespace TunnelCrew.Presentation
             _progress.Set(FtueProgressModel.Stage.AwakeningComic, Time.unscaledTimeAsDouble);
             BeginComic(FtueProgressModel.Stage.AwakeningComic, new[]
             {
-                P("FTUE/Art/sequence_awake", .04f,.07f,.60f,.86f, 0f, 3.6f, "", "", "beacon", -.6f, new Rect(0,0,.67f,1)),
-                P("FTUE/Art/sequence_awake", .67f,.07f,.29f,.86f, 3.3f, 3.8f, "모래", "저 신호가 우릴 부른 거야. 뛰어.", "morae", .7f, new Rect(.67f,0,.33f,1)),
+                P("FTUE/Art/sequence_awake", .04f,.07f,.60f,.86f, "", "", "beacon", -.6f, new Rect(0,0,.67f,1)),
+                D("???", "[speed=.55][echo][tint=signal]여기… 한 명 살아 있어.[/tint][/echo][/speed]", "mimic"),
+                P("FTUE/Art/sequence_awake", .67f,.07f,.29f,.86f, "모래", "방금 건 내 목소리였어. 내가 한 말이 아니야.", "morae", .7f, new Rect(.67f,0,.33f,1)),
+                D("모래", "저 신호가 우릴 부른 거야. [slam][tint=danger]뛰어.[/tint][/slam]", "morae"),
             }, () =>
             {
                 _audio?.UseTunnel();
                 _stateDelay = 1.2f;
                 _wave.Clear();
                 _progress.Set(FtueProgressModel.Stage.ReturnToLander, Time.unscaledTimeAsDouble);
+                StartTransition(TransitionStyle.Signal, .55f);
             });
         }
 
@@ -366,15 +452,21 @@ namespace TunnelCrew.Presentation
             _audio?.UseTunnel();
             BeginComic(FtueProgressModel.Stage.EscapeComic, new[]
             {
-                P("FTUE/Art/sequence_escape", .04f,.07f,.45f,.40f, 0f, 2.6f, "", "", "door", -1f, new Rect(0,.5f,.5f,.5f)),
-                P("FTUE/Art/sequence_escape", .52f,.07f,.44f,.40f, 2.3f, 3.0f, "???", "여기… 한 명 살아 있어.", "mimic", .8f, new Rect(.5f,.5f,.5f,.5f)),
-                P("FTUE/Art/sequence_escape", .04f,.51f,.44f,.41f, 5.0f, 3.0f, "모래", "저거… 내 목소리야.", "morae", -.5f, new Rect(0,0,.5f,.5f)),
-                P("FTUE/Art/sequence_escape", .51f,.51f,.45f,.41f, 7.7f, 3.5f, "", "", "title", .5f, new Rect(.5f,0,.5f,.5f)),
+                P("FTUE/Art/sequence_escape", .04f,.07f,.45f,.40f, "관제", "강하선 도킹. 생존자 신호… [jitter=.45]넷[/jitter]을 확인했다.", "door", -1f, new Rect(0,.5f,.5f,.5f)),
+                D("모래", "넷? 여기엔 우리 둘뿐이야.", "morae"),
+                P("FTUE/Art/sequence_escape", .52f,.07f,.44f,.40f, "???", "[speed=.55][echo][tint=signal]여기… 한 명 살아 있어.[/tint][/echo][/speed]", "mimic", .8f, new Rect(.5f,.5f,.5f,.5f)),
+                P("FTUE/Art/sequence_escape", .04f,.51f,.44f,.41f, "모래", "저거… [jitter=.75]내 목소리야.[/jitter]", "morae", -.5f, new Rect(0,0,.5f,.5f)),
+                D("관제", "4번 갱도 신호가 지상으로 이동한다.", "control"),
+                P("FTUE/Art/sequence_escape", .51f,.51f,.45f,.41f, "", "", "title", .5f, new Rect(.5f,0,.5f,.5f)),
             }, Finish);
+            StartTransition(TransitionStyle.Hatch, .62f);
         }
 
-        static ComicPanel P(string resource, float x, float y, float w, float h, float start, float hold, string speaker, string caption, string cue, float rot, Rect uv)
-            => new ComicPanel { Resource = resource, Normalized = new Rect(x,y,w,h), Uv = uv, Start = start, Hold = hold, Speaker = speaker, Caption = caption, Cue = cue, Rotation = rot };
+        static ComicPanel P(string resource, float x, float y, float w, float h, string speaker, string caption, string cue, float rot, Rect uv)
+            => new ComicPanel { Resource = resource, Normalized = new Rect(x,y,w,h), Uv = uv, Speaker = speaker, Caption = caption, Cue = cue, Rotation = rot, RevealPanel = true };
+
+        static ComicPanel D(string speaker, string caption, string cue)
+            => new ComicPanel { Speaker = speaker, Caption = caption, Cue = cue, RevealPanel = false };
 
         void BeginComic(FtueProgressModel.Stage stage, ComicPanel[] panels, Action done)
         {
@@ -382,46 +474,73 @@ namespace TunnelCrew.Presentation
             _comic.Clear();
             _comic.AddRange(panels);
             _comicTime = 0;
-            _firedPanels = 0;
+            _comicBeat = 0;
+            _comicInputLock = .18f;
+            _comicForceComplete = false;
             _skipHeld = 0;
             _comicDone = done;
-            _comicDuration = 0;
+            ClearDialogue();
             foreach (var p in _comic)
             {
-                p.Texture = Resources.Load<Texture2D>(p.Resource);
-                _comicDuration = Mathf.Max(_comicDuration, p.Start + p.Hold);
+                if (!string.IsNullOrEmpty(p.Resource)) p.Texture = Resources.Load<Texture2D>(p.Resource);
+                p.Script = DynamicDialogueText.Compile(p.Caption);
             }
             _audio?.NarrativeDuck(true);
+            FireComicBeat();
         }
 
         void TickComic(float dt)
         {
             _comicTime += dt;
-            while (_firedPanels < _comic.Count && _comicTime >= _comic[_firedPanels].Start)
-            {
-                var p = _comic[_firedPanels++];
-                _speaker = p.Speaker;
-                _caption = p.Caption;
-                _captionUntil = Time.unscaledTime + p.Hold;
-                _audio?.FtueCue(string.IsNullOrEmpty(p.Cue) ? "panel" : p.Cue);
-            }
+            _comicInputLock = Mathf.Max(0, _comicInputLock - dt);
 
             var kb = Keyboard.current;
             var gp = Gamepad.current;
             bool advance = kb != null && (kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame);
             advance |= gp != null && gp.buttonSouth.wasPressedThisFrame;
             advance |= Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
-            if (advance && _firedPanels < _comic.Count && _comicTime > .35f)
-                _comicTime = Mathf.Max(_comicTime, _comic[_firedPanels].Start);
+            if (advance) AdvanceComic();
 
             bool skip = kb != null && kb.escapeKey.isPressed;
             skip |= gp != null && gp.buttonEast.isPressed;
             _skipHeld = skip ? _skipHeld + dt : 0;
-            if (_skipHeld >= .85f) _comicTime = _comicDuration;
+            if (_skipHeld >= .85f) FinishComic();
+        }
 
-            if (_comicTime < _comicDuration) return;
+        public bool AdvanceComic()
+        {
+            if (_comic.Count == 0 || _comicInputLock > 0) return false;
+            var beat = _comic[_comicBeat];
+            bool ready = ComicTextComplete && (!string.IsNullOrEmpty(beat.Caption) || _comicTime >= .45f);
+            if (!ready)
+            {
+                _comicForceComplete = true;
+                _comicInputLock = .12f;
+                _comicTutorialClicks++;
+                return true;
+            }
+            _comicTutorialClicks++;
+            if (_comicBeat + 1 >= _comic.Count) { FinishComic(); return true; }
+            _comicBeat++;
+            _comicTime = 0;
+            _comicForceComplete = false;
+            _comicInputLock = .18f;
+            FireComicBeat();
+            return true;
+        }
+
+        void FireComicBeat()
+        {
+            if (_comic.Count == 0) return;
+            var p = _comic[_comicBeat];
+            _audio?.FtueCue(string.IsNullOrEmpty(p.Cue) ? "panel" : p.Cue);
+        }
+
+        void FinishComic()
+        {
             var done = _comicDone;
             _comicDone = null;
+            _comic.Clear();
             _audio?.NarrativeDuck(false);
             done?.Invoke();
         }
@@ -447,6 +566,7 @@ namespace TunnelCrew.Presentation
                 if (FtueProgressModel.BlocksWorld(_progress.Current)) DrawComic();
                 else if (_progress.Current == FtueProgressModel.Stage.RoleChoice) DrawRoleChoice();
                 else DrawGameplayGuide();
+                DrawTransition();
             }
             finally { GUI.OriginalPalette = false; }
         }
@@ -476,11 +596,11 @@ namespace TunnelCrew.Presentation
             GUI.color = Color.black;
             GUI.DrawTexture(new Rect(0,0,W,H), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            for (int i = 0; i < _comic.Count; i++)
+            for (int i = 0; i <= _comicBeat && i < _comic.Count; i++)
             {
                 var p = _comic[i];
-                if (_comicTime < p.Start) continue;
-                float enter = Mathf.Clamp01((_comicTime - p.Start) / .2f);
+                if (!p.RevealPanel) continue;
+                float enter = i == _comicBeat ? Mathf.Clamp01(_comicTime / .2f) : 1;
                 enter = enter * enter * (3 - 2 * enter);
                 var r = new Rect(p.Normalized.x*W, p.Normalized.y*H, p.Normalized.width*W, p.Normalized.height*H);
                 var c = r.center;
@@ -502,18 +622,25 @@ namespace TunnelCrew.Presentation
                 DrawBorder(r, Mathf.Max(2, H/360f));
                 GUI.color = Color.white;
             }
-            if (_progress.Current == FtueProgressModel.Stage.EscapeComic && _comicTime >= 7.7f && _titleLogo != null)
+            if (_progress.Current == FtueProgressModel.Stage.EscapeComic && _comicBeat >= _comic.Count - 1 && _titleLogo != null)
             {
-                float enter = Mathf.Clamp01((_comicTime - 7.7f) / .35f);
-                var panel = _comic[3].Normalized;
+                float enter = Mathf.Clamp01(_comicTime / .35f);
+                var panel = _comic[_comic.Count - 1].Normalized;
                 var r = new Rect((panel.x + .04f) * W, (panel.y + .035f) * H, (panel.width - .08f) * W, panel.height * .48f * H);
                 GUI.color = new Color(1, 1, 1, enter);
                 GUI.DrawTexture(r, _titleLogo, ScaleMode.ScaleToFit);
                 GUI.color = Color.white;
             }
-            if (!string.IsNullOrEmpty(_caption) && Time.unscaledTime <= _captionUntil) DrawSpeechBubble();
-            var help = Style(Mathf.RoundToInt(15*H/1080f), FontStyle.Normal, TextAnchor.MiddleRight, false, new Color(.58f,.55f,.58f));
-            GUI.Label(new Rect(W-430*H/1080f,H-40*H/1080f,400*H/1080f,26*H/1080f), "Enter 빨리 보기  ·  Esc 길게 누르기 건너뛰기", help);
+            if (_comic.Count > 0)
+            {
+                var beat = _comic[_comicBeat];
+                if (!string.IsNullOrEmpty(beat.Caption)) DrawSpeechBubble(beat.Speaker, beat.Script, _comicTime, _comicForceComplete);
+            }
+            var help = Style(Mathf.RoundToInt(18*H/1080f), FontStyle.Bold, TextAnchor.MiddleCenter, false, new Color(.8f,.76f,.82f));
+            string primary = Gamepad.current != null ? "A" : Mouse.current != null ? "클릭" : "Enter";
+            string hint = _comicTutorialClicks == 0 ? $"{primary}하면 문장 완성" :
+                _comicTutorialClicks == 1 ? $"{primary}하여 다음 컷" : $"{primary} 다음  ·  Esc/B 길게 건너뛰기";
+            GUI.Label(new Rect(W*.5f-235*H/1080f,H-42*H/1080f,470*H/1080f,28*H/1080f), hint, help);
         }
 
         static void DrawBorder(Rect r, float w)
@@ -545,7 +672,7 @@ namespace TunnelCrew.Presentation
             GUI.DrawTextureWithTexCoords(destination, texture, uv);
         }
 
-        void DrawSpeechBubble()
+        void DrawSpeechBubble(string speaker, DynamicDialogueText.Script script, float elapsed, bool complete)
         {
             float k = Screen.height/1080f, w = Mathf.Min(Screen.width*.62f, 980*k), h = 126*k;
             var r = new Rect(Screen.width*.5f-w*.5f,Screen.height-176*k,w,h);
@@ -554,31 +681,44 @@ namespace TunnelCrew.Presentation
             GUI.color = new Color(.13f,.08f,.035f,1);
             DrawBorder(r,2.2f*k);
             GUI.color = Color.white;
-            GUI.Label(new Rect(r.x+24*k,r.y+11*k,r.width-48*k,24*k),_speaker,_speakerStyle);
-            GUI.Label(new Rect(r.x+24*k,r.y+38*k,r.width-48*k,r.height-45*k),_caption,_captionStyle);
+            GUI.Label(new Rect(r.x+24*k,r.y+11*k,r.width-48*k,24*k),speaker,_speakerStyle);
+            GUI.DynamicLabel(new Rect(r.x+24*k,r.y+38*k,r.width-48*k,r.height-45*k),script,_captionStyle,elapsed,complete,ReducedMotion);
         }
 
         void DrawRoleChoice()
         {
-            float k=Screen.height/1080f,W=Screen.width/k;
+            float k=Screen.height/1080f;
             GUI.color=Color.black;GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;
-            var title=Style(Mathf.RoundToInt(37*k),FontStyle.Bold,TextAnchor.MiddleCenter,false,new Color(1f,.87f,.55f));
-            GUI.Label(new Rect(0,95*k,Screen.width,70*k),"역할 하나를 골라. 나머지는 크루가 채운다.",title);
+            if (_lockerArt != null) GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),_lockerArt,ScaleMode.ScaleAndCrop);
+            GUI.color=new Color(.025f,.014f,.035f,.28f);GUI.DrawTexture(new Rect(0,0,Screen.width,Screen.height),Texture2D.whiteTexture);GUI.color=Color.white;
+            var title=Style(Mathf.RoundToInt(28*k),FontStyle.Bold,TextAnchor.MiddleCenter,false,new Color(1f,.9f,.66f));
+            var titleRect=new Rect(Screen.width*.18f,42*k,Screen.width*.64f,58*k);
+            GUI.color=new Color(.025f,.014f,.035f,.8f);GUI.DrawTexture(titleRect,Texture2D.whiteTexture);GUI.color=Color.white;
+            GUI.DynamicLabel(titleRect,_rolePromptScript,title,Time.unscaledTime-_roleChoiceStarted,false,ReducedMotion);
             string[] names={"드릴러","거너","스카우트","엔지니어"};
-            string[] tags={"길을 연다","적을 지운다","어둠을 연다","공간을 만든다"};
+            string[] tags={"드릴 헤드 · 길을 연다","파쇄 발사기 · 적과 벽을 부순다","조명탄 장치 · 어둠을 밝힌다","전력 제어기 · 공간을 만든다"};
             Color[] colors={new Color(1f,.77f,.28f),new Color(1f,.42f,.34f),new Color(.34f,.9f,.75f),new Color(.68f,.47f,1f)};
-            float total=4*300+3*22,x0=W*.5f-total*.5f;
             for(int i=0;i<4;i++)
             {
-                var r=new Rect((x0+i*322)*k,255*k,300*k,430*k);bool on=(int)_selectedRole==i;
-                GUI.color=on?new Color(colors[i].r*.22f,colors[i].g*.22f,colors[i].b*.22f,1):new Color(.06f,.045f,.08f,1);
-                GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=colors[i];DrawBorder(r,on?5*k:2*k);GUI.color=Color.white;
+                var r=RoleBayRect(i);bool on=(int)_selectedRole==i;
+                GUI.color=on?new Color(colors[i].r,colors[i].g,colors[i].b,.12f):new Color(0,0,0,.06f);
+                GUI.DrawTexture(r,Texture2D.whiteTexture);GUI.color=on?colors[i]:new Color(.66f,.58f,.5f,.58f);DrawBorder(r,on?5*k:1.5f*k);GUI.color=Color.white;
                 var badge=Resources.Load<Texture2D>("UI/badge-"+((RoleId)i).ToString().ToLowerInvariant());
-                if(badge!=null)GUI.DrawTexture(new Rect(r.x+55*k,r.y+38*k,190*k,190*k),badge,ScaleMode.ScaleToFit);
-                GUI.Label(new Rect(r.x,r.y+250*k,r.width,48*k),$"{i+1}  {names[i]}",_roleStyle);
-                GUI.Label(new Rect(r.x+20*k,r.y+312*k,r.width-40*k,62*k),tags[i],_roleTagStyle);
-                if(on)GUI.Label(new Rect(r.x,r.y+382*k,r.width,32*k),"Enter  장착",_roleTagStyle);
+                var info=new Rect(r.x-7*k,r.yMax-112*k,r.width+14*k,112*k);
+                GUI.color=new Color(.025f,.014f,.035f,on ? .9f : .72f);GUI.DrawTexture(info,Texture2D.whiteTexture);GUI.color=Color.white;
+                if(badge!=null)GUI.DrawTexture(new Rect(info.x+10*k,info.y+13*k,44*k,44*k),badge,ScaleMode.ScaleToFit);
+                GUI.Label(new Rect(info.x+54*k,info.y+8*k,info.width-60*k,45*k),$"{i+1}  {names[i]}",_roleStyle);
+                GUI.Label(new Rect(info.x+12*k,info.y+49*k,info.width-24*k,34*k),tags[i],_roleTagStyle);
+                if(on)GUI.Label(new Rect(info.x,info.y+81*k,info.width,26*k),"클릭 / Enter  장착",_roleTagStyle);
             }
+        }
+
+        static Rect RoleBayRect(int index)
+        {
+            float[] centers={.305f,.455f,.596f,.735f};
+            float[] widths={.17f,.16f,.145f,.15f};
+            float w=Screen.width*widths[Mathf.Clamp(index,0,3)];
+            return new Rect(Screen.width*centers[Mathf.Clamp(index,0,3)]-w*.5f,Screen.height*.14f,w,Screen.height*.61f);
         }
 
         void DrawGameplayGuide()
@@ -604,8 +744,51 @@ namespace TunnelCrew.Presentation
                 GUI.Label(r,prompt,_promptStyle);
             }
             if(_progress.HintLevel>=FtueProgressModel.Hint.Direction&&TryTarget(out var target)) DrawWaypoint(target);
-            if(!string.IsNullOrEmpty(_caption)&&Time.unscaledTime<=_captionUntil)DrawSpeechBubble();
+            if(!string.IsNullOrEmpty(_caption)&&Time.unscaledTime<=_captionUntil)
+                DrawSpeechBubble(_speaker,_dialogueScript,Time.unscaledTime-_captionStarted,false);
             else if(Time.unscaledTime>_captionUntil)_audio?.NarrativeDuck(false);
+        }
+
+        bool ReducedMotion => MetaScreens.ReducedMotionPref || (Feedback.Instance != null && Feedback.Instance.ReducedMotion) ||
+            CRTDisplayController.Instance?.Accessibility == CrtAccessibility.Photosensitive;
+
+        void StartTransition(TransitionStyle style, float duration)
+        {
+            _transitionStyle=style;
+            _transitionDuration=ReducedMotion?Mathf.Min(.22f,duration):duration;
+            _transitionTime=_transitionDuration;
+        }
+
+        void DrawTransition()
+        {
+            if (_transitionTime<=0 || _transitionDuration<=0) return;
+            float W=Screen.width,H=Screen.height;
+            float p=1-_transitionTime/_transitionDuration;
+            float remain=1-Mathf.SmoothStep(0,1,p);
+            if (_transitionStyle==TransitionStyle.Impact)
+            {
+                Color c=ReducedMotion?new Color(.02f,.01f,.03f,remain):new Color(1f,.82f,.54f,remain*.82f);
+                GUI.color=c;GUI.DrawTexture(new Rect(0,0,W,H),Texture2D.whiteTexture);GUI.color=Color.white;
+            }
+            else if (_transitionStyle==TransitionStyle.Hatch)
+            {
+                float cover=H*.5f*remain;
+                GUI.color=new Color(.018f,.01f,.026f,.98f);
+                GUI.DrawTexture(new Rect(0,0,W,cover),Texture2D.whiteTexture);
+                GUI.DrawTexture(new Rect(0,H-cover,W,cover),Texture2D.whiteTexture);GUI.color=Color.white;
+            }
+            else if (_transitionStyle==TransitionStyle.Signal)
+            {
+                int bands=ReducedMotion?1:12;
+                GUI.color=new Color(.025f,.01f,.04f,.94f);
+                for(int i=0;i<bands;i++)
+                {
+                    float y=H*i/bands;
+                    float stagger=ReducedMotion?remain:Mathf.Clamp01(remain+(i%3-1)*.08f);
+                    GUI.DrawTexture(new Rect((1-stagger)*W,y,stagger*W,H/bands+1),Texture2D.whiteTexture);
+                }
+                GUI.color=Color.white;
+            }
         }
 
         bool TryTarget(out Vec2 target)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TunnelCrew.Sim;
 using UnityEngine;
 using TunnelCrew.Presentation.Visual;
+using UnityEngine.Rendering.Universal;
 
 namespace TunnelCrew.Presentation
 {
@@ -14,10 +15,14 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class FxSystem : MonoBehaviour
     {
+        public const float CharacterMuzzleFlashOffset = .16f;
+        public const float LaserMuzzleFlashOffset = .24f;
         public int ActiveShapeCount => _shapes.Count;
+        public int ActiveTransientLightCount => _transientLights.Count;
+        public int ActiveCasingCount => _casings != null ? _casings.particleCount : 0;
         const float Px = 1f / 50f;
 
-        ParticleSystem _chunks, _burst, _spikes, _smoke;
+        ParticleSystem _chunks, _burst, _spikes, _smoke, _casings;
         readonly List<Shape> _shapes = new List<Shape>();
         readonly Stack<SpriteRenderer> _shapePool = new Stack<SpriteRenderer>();
         readonly Stack<Shape> _shapeStatePool = new Stack<Shape>();
@@ -27,6 +32,13 @@ namespace TunnelCrew.Presentation
         bool _initialized;
 
         sealed class Shape { public SpriteRenderer Sr; public float Life, Decay, R0, R1; public Color Col; public bool Ring; }
+        sealed class TransientLight
+        {
+            public Light2D Light;
+            public float Age, Duration, Radius, Peak, Seed;
+        }
+        readonly List<TransientLight> _transientLights = new List<TransientLight>(16);
+        readonly Stack<TransientLight> _transientLightPool = new Stack<TransientLight>(16);
 
         // 타일 팔레트 — 원본 P.* 근사 (흙·돌·광물·기반암)
         static readonly Color[] PalDirt = { C("#8F7B5C"), C("#C9B79A"), C("#6B5A40") };
@@ -72,6 +84,8 @@ namespace TunnelCrew.Presentation
             _spikes = MakeSystem("Spikes", 43, _dot, gravity: 0f, drag: 0f, rotate: false, stretch: true, order2: 46);
             // 연기 — 커지며 사라진다
             _smoke = MakeSystem("Smoke", 30, _dot, gravity: -0.15f, drag: 4f, rotate: false, stretch: false, order2: 41);
+            // 탄피 — 화면의 위쪽으로 튀었다가 중력에 끌리고, 회전하면서 어둠 속으로 떨어진다.
+            _casings = MakeSystem("Casings", 34, MakeCasingSprite(), gravity: 1.25f, drag: 1.4f, rotate: true, stretch: false, order2: 43);
         }
 
         ParticleSystem MakeSystem(string name, int order, Sprite sprite, float gravity, float drag, bool rotate, bool stretch, int order2)
@@ -81,7 +95,7 @@ namespace TunnelCrew.Presentation
             var main = ps.main;
             // 방출은 Emit() 로만 한다. 시스템은 항상 재생 상태여야 방출된 입자가 시뮬레이션된다.
             main.loop = true; main.playOnAwake = true;
-            main.maxParticles = name == "Chunks" ? 420 : name == "Burst" ? 560 : name == "Spikes" ? 420 : 240;
+            main.maxParticles = name == "Chunks" ? 420 : name == "Burst" ? 560 : name == "Spikes" ? 420 : name == "Casings" ? 96 : 240;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = gravity;
             main.startLifetime = 0.7f; main.startSpeed = 0f; main.startSize = 0.1f;
@@ -101,9 +115,29 @@ namespace TunnelCrew.Presentation
             r.renderMode = stretch ? ParticleSystemRenderMode.Stretch : ParticleSystemRenderMode.Billboard;
             if (stretch) { r.velocityScale = 0.05f; r.lengthScale = 0.6f; }
             r.sortingOrder = order2;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) r.sortingLayerName = VisualLayers.WorldFX;
             var tsa = ps.textureSheetAnimation; tsa.enabled = true; tsa.mode = ParticleSystemAnimationMode.Sprites; tsa.AddSprite(sprite);
             ps.Play();
             return ps;
+        }
+
+        static Sprite MakeCasingSprite()
+        {
+            const int w = 24, h = 10;
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, name = "Procedural Casing" };
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++)
+            {
+                float nx = (x + .5f) / w, ny = Mathf.Abs((y + .5f) / h - .5f) * 2f;
+                float end = Mathf.Min(nx, 1f - nx) * w / h;
+                float edge = Mathf.Min(1f - ny, end);
+                float alpha = Mathf.SmoothStep(0f, .20f, edge);
+                float gleam = .62f + .38f * Mathf.Pow(Mathf.Clamp01(1f - Mathf.Abs(ny - .28f) * 2.8f), 3f);
+                var col = Color.Lerp(new Color(.42f, .19f, .055f), new Color(1f, .72f, .20f), gleam);
+                col.a = alpha;
+                tex.SetPixel(x, y, col);
+            }
+            tex.Apply();
+            return Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(.5f, .5f), 50f);
         }
 
         static Color[] Pal(TileType t) => t switch
@@ -236,6 +270,81 @@ namespace TunnelCrew.Presentation
                 var c = s.Col; c.a *= s.Ring ? s.Life : Mathf.Min(1, s.Life * 1.4f);
                 s.Sr.color = c;
             }
+
+            for (int i = _transientLights.Count - 1; i >= 0; i--)
+            {
+                var pulse = _transientLights[i];
+                pulse.Age += dt;
+                float t = Mathf.Clamp01(pulse.Age / pulse.Duration);
+                float attack = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / .10f));
+                float decay = (1f - t) * (1f - t);
+                float flutter = .91f + .09f * Mathf.Sin(pulse.Seed + pulse.Age * 92f);
+                pulse.Light.intensity = pulse.Peak * attack * decay * flutter;
+                pulse.Light.pointLightInnerRadius = pulse.Radius * Mathf.Lerp(.08f, .20f, t);
+                pulse.Light.pointLightOuterRadius = pulse.Radius * Mathf.Lerp(.58f, 1f, Mathf.Sqrt(t));
+                if (t < 1f) continue;
+                pulse.Light.gameObject.SetActive(false);
+                _transientLights.RemoveAt(i);
+                _transientLightPool.Push(pulse);
+            }
+        }
+
+        void PulseLight(Vector2 at, Color color, float radius, float peak, float duration)
+        {
+            EnsureInitialized();
+            TransientLight pulse;
+            if (_transientLightPool.Count > 0) pulse = _transientLightPool.Pop();
+            else if (_transientLights.Count < 16) pulse = NewTransientLight(_transientLights.Count);
+            else
+            {
+                pulse = _transientLights[0];
+                _transientLights.RemoveAt(0);
+            }
+            pulse.Age = 0f;
+            pulse.Duration = Mathf.Max(.04f, duration);
+            pulse.Radius = radius;
+            pulse.Peak = peak;
+            pulse.Seed = Random.value * 31f;
+            pulse.Light.transform.position = new Vector3(at.x, at.y, .05f);
+            pulse.Light.color = color;
+            pulse.Light.pointLightInnerAngle = pulse.Light.pointLightOuterAngle = 360f;
+            pulse.Light.pointLightInnerRadius = radius * .08f;
+            pulse.Light.pointLightOuterRadius = radius * .58f;
+            pulse.Light.intensity = peak * .35f;
+            pulse.Light.gameObject.SetActive(true);
+            _transientLights.Add(pulse);
+        }
+
+        TransientLight NewTransientLight(int index)
+        {
+            var go = new GameObject("combat-light-" + index);
+            go.transform.SetParent(transform, false);
+            var light = go.AddComponent<Light2D>();
+            light.lightType = Light2D.LightType.Point;
+            light.targetSortingLayers = VisualLayers.LitWorldOnlyLayerIds();
+            light.shadowIntensity = 0f;
+            return new TransientLight { Light = light };
+        }
+
+        void EjectCasing(Vector2 origin, Vector2 dir, bool ai, string visualId)
+        {
+            if (_casings == null || visualId == "laser" || visualId == "support" || visualId == "shard") return;
+            if (ai && Random.value > .35f) return;
+            dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector2.right;
+            var side = new Vector2(-dir.y, dir.x);
+            if (side.y < 0f) side = -side;
+            float speed = Random.Range(1.15f, 1.85f) * (ai ? .75f : 1f);
+            var velocity = side * speed - dir * Random.Range(.12f, .42f) + Vector2.up * Random.Range(.28f, .62f);
+            var ep = new ParticleSystem.EmitParams
+            {
+                position = origin - dir * .12f + side * .13f,
+                velocity = velocity,
+                startSize = Random.Range(.18f, .24f),
+                startLifetime = Random.Range(.78f, 1.18f),
+                startColor = Color.white,
+                rotation = Random.value * 360f,
+            };
+            _casings.Emit(ep, 1);
         }
 
         // ───────────────────────────── 게임 이벤트 → 원본 연출 조합
@@ -301,8 +410,12 @@ namespace TunnelCrew.Presentation
             if (flags == ProjectileStyleFlags.None) flags = ProjectileSystem.InferStyleFlags(visualId);
             var p = ProjectileVfxProfiles.Compose(visualId, flags);
             float aiMul = ai ? .62f : 1f;
-            Vector2 at = origin + dir.normalized * (visualId == "laser" ? .58f : .40f);
+            Vector2 at = origin + dir.normalized * (visualId == "laser" ? LaserMuzzleFlashOffset : CharacterMuzzleFlashOffset);
             Flash(at, p.Width * 1.75f * aiMul, new Color(p.Body.r, p.Body.g, p.Body.b, .68f));
+            Ring(at, new Color(p.Body.r, p.Body.g, p.Body.b, .38f * aiMul), .015f, Mathf.Lerp(.24f, .46f, p.LightPriority / 10f), 11f);
+            PulseLight(at, Color.Lerp(p.Body, p.Core, .28f), p.LightRadius * (ai ? 1.28f : 1.85f),
+                Mathf.Lerp(4.3f, 7.8f, p.LightPriority / 10f) * aiMul, visualId == "laser" ? .16f : .115f);
+            EjectCasing(origin, dir, ai, visualId);
 
             switch (visualId)
             {
@@ -350,6 +463,13 @@ namespace TunnelCrew.Presentation
             if (flags == ProjectileStyleFlags.None) flags = ProjectileSystem.InferStyleFlags(visualId);
             var p = ProjectileVfxProfiles.Compose(visualId, flags);
             power = Mathf.Clamp(power, .55f, 1.65f);
+            if (kind != ProjectileImpactKind.Expire)
+            {
+                float blastMul = exploded ? 1.65f : 1f;
+                float hitPeak = Mathf.Lerp(4.0f, 7.2f, p.LightPriority / 10f) * power * blastMul;
+                float hitRadius = p.LightRadius * (exploded ? 2.20f : 1.55f) * Mathf.Sqrt(power);
+                PulseLight(at, Color.Lerp(p.Body, p.Core, .46f), hitRadius, hitPeak, exploded ? .25f : .15f);
+            }
             if (kind == ProjectileImpactKind.Expire && !exploded)
             {
                 Flash(at, p.Width * .70f, new Color(p.Body.r, p.Body.g, p.Body.b, .28f));

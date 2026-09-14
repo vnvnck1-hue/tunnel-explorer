@@ -1,5 +1,6 @@
 ﻿build/*.zip
 
+build/*/coop/saves/
 build/*-single.html
 build/.single-cache/
 unity/Build/

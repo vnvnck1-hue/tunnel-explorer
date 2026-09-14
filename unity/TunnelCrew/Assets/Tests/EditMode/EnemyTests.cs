@@ -231,6 +231,29 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
+        public void 투사체_넉백은_기존_충격량의_30퍼센트다()
+        {
+            var sim = NewSim();
+            var normal = sim.Enemies.Spawn(sim.Player.Position);
+            var projectileHit = sim.Enemies.Spawn(sim.Player.Position);
+            Assert.IsNotNull(normal);
+            Assert.IsNotNull(projectileHit);
+
+            projectileHit.Position = normal.Position;
+            normal.Knock = Vec2.Zero;
+            projectileHit.Knock = Vec2.Zero;
+            var dir = new Vec2(1, 0);
+            var src = normal.Position - dir * 2;
+
+            sim.Enemies.HurtEnemy(normal, SimTuning.EnemyGunDamage, dir, src);
+            sim.Enemies.HurtEnemy(projectileHit, SimTuning.EnemyGunDamage, dir, src,
+                knockbackMul: ProjectileSystem.EnemyKnockbackScale);
+
+            Assert.That(projectileHit.Knock.Length / normal.Knock.Length,
+                Is.EqualTo(.30).Within(1e-6));
+        }
+
+        [Test]
         public void Apex_ResistsKnockbackMoreThanNormal()
         {
             var sim = NewSim();

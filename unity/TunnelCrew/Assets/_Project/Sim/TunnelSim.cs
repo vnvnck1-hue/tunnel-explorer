@@ -311,8 +311,10 @@ namespace TunnelCrew.Sim
         public bool SwitchRoleMidRun(RoleId role)
         {
             if (Phase != GamePhase.Playing) return false;
-            Build.ApplyRole(role);
-            Build.Ammo = Build.MagSize; Build.ReloadLeft = 0;
+            // 관전 크루는 별도 장비 선택이 없으므로 빙의 시 해당 직업의 기본 장비로 교체한다.
+            // 특성·영구 성장으로 붙은 배율과 추가 탄창은 PlayerBuild가 보존한다.
+            SelectedEquipment = EquipmentVariant.Standard;
+            Build.SwitchRolePreservingProgression(role, SelectedEquipment);
             Player.DrillHeat = 0; Player.DrillHeatLock = 0; Player.IsDigging = false;
             Los?.MarkDirty();
             return true;

@@ -21,6 +21,7 @@ namespace TunnelCrew.Presentation
         float _k = 1f;
         Texture2D _white;
         readonly Dictionary<string, Texture2D> _tex = new Dictionary<string, Texture2D>();
+        readonly Dictionary<string, CRT.DynamicDialogueText.Script> _bubbleScripts = new Dictionary<string, CRT.DynamicDialogueText.Script>();
         Font _font;
 
         // ── 핑 휠 상태 (원본 P.hold)
@@ -422,7 +423,12 @@ namespace TunnelCrew.Presentation
                 Fill(new Rect(bx, by, w, h), new Color(1f, .96f, .88f, alpha));
                 Fill(new Rect(bx, by, w, 2 * _k), Hex(CrewChat.SeatColor(kv.Key)) * new Color(1, 1, 1, alpha * .9f));
                 Fill(new Rect(s.x - 5 * _k, by + h, 10 * _k, 8 * _k), new Color(1f, .96f, .88f, alpha));   // 꼬리
-                GUI.Label(new Rect(bx + 11 * _k, by + 6 * _k, w - 22 * _k, h - 12 * _k), b.Text, st);
+                if (!_bubbleScripts.TryGetValue(b.Text, out var script))
+                {
+                    script = CRT.DynamicDialogueText.Compile(b.Text, false);
+                    _bubbleScripts[b.Text] = script;
+                }
+                GUI.DynamicLabel(new Rect(bx + 11 * _k, by + 6 * _k, w - 22 * _k, h - 12 * _k), script, st, (float)age, false, reduced);
                 GUI.matrix = m0;
             }
         }

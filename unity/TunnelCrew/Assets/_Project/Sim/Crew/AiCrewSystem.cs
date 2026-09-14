@@ -680,13 +680,16 @@ namespace TunnelCrew.Sim
             if (m.Ammo <= 0) { m.ReloadLeft = m.ReloadTime; return false; }
             m.Ammo--;
             double err = m.Pers.AimErr * (m.Digging ? 1.6 : 1);
-            double a = (target - m.Position).Angle + Rnd(-err, err);
+            double aimOffset = m.Kit.Accuracy < 1.0
+                ? ProjectileSystem.RollInaccuracy(_rng, m.Kit.Accuracy) * (m.Digging ? 1.15 : 1.0)
+                : Rnd(-err, err);
+            double a = (target - m.Position).Angle + aimOffset;
             var dir = Vec2.FromAngle(a);
             _sim.Projectiles.Emit(new Projectile
             {
-                Position = m.Position + dir * (SimTuning.PlayerRadius * .9), Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("standard")), Life = ProjectileSystem.BaseLife("standard"),
+                Position = m.Position + dir * ProjectileSystem.CharacterMuzzleOffset, Velocity = dir * SimTuning.TeCells(ProjectileSystem.BaseSpeedPx("standard")), Life = ProjectileSystem.BaseLife("standard"),
                 Power = 1, Owner = m, AiMul = m.Kit.GunMul, VisualId = "standard",
-            }, a);
+            }, a, m.Position);
             m.GunCd = m.Kit.FireCd;
             if (m.Ammo <= 0) m.ReloadLeft = m.ReloadTime;
             return true;

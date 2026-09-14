@@ -18,7 +18,7 @@ namespace TunnelCrew.Sim
         static readonly EquipmentDef[,] Defs =
         {
             { new EquipmentDef("고압 중형 드릴", "정밀 굴착과 안정적인 열 관리", "균형형"), new EquipmentDef("충격 코어 드릴", "넓게 부수고 지형을 빠르게 연다", "굴착력 -18% · 열 +28%") },
-            { new EquipmentDef("벨트식 중화기", "지속 사격과 긴 교전", "균형형"), new EquipmentDef("파쇄 산탄총", "근거리 5발 확산과 빠른 재장전", "탄창 8 · 사거리 짧음") },
+            { new EquipmentDef("벨트식 중화기", "48발 탄띠와 2배 연사력으로 퍼붓는 지속 사격", "탄 피해 -20% · 명중률 -30%"), new EquipmentDef("파쇄 산탄총", "근거리 5발 확산과 빠른 재장전", "탄창 8 · 사거리 짧음") },
             { new EquipmentDef("정찰 카빈", "기동 중 안정적인 단발 사격", "균형형"), new EquipmentDef("레일 카빈", "고속 관통탄으로 일렬의 적을 꿰뚫는다", "탄창 6 · 발사 간격 증가") },
             { new EquipmentDef("서비스 총기", "설치물과 병행하는 안정 사격", "균형형"), new EquipmentDef("코일 리피터", "도탄탄 · 전력장 안에서 화력 상승", "전력장 밖 화력 -20%") },
         };
@@ -97,6 +97,8 @@ namespace TunnelCrew.Sim
         public double ProjectileSpeedMul = 1.0;
         public double ProjectileLifeMul = 1.0;
         public double ProjectileSpread = -1.0;
+        /// <summary>1이면 정조준, 낮을수록 단발 조준선에 무작위 탄착 편차가 생긴다.</summary>
+        public double Accuracy = 1.0;
 
         // 탄창
         public int MagSize = 12;
@@ -136,11 +138,11 @@ namespace TunnelCrew.Sim
         public double CoreBonusChance = 0;
         public double OreHeal = 0;
 
-        /// <summary>원본 infSetMag — 탄창 3~40, 늘어난 만큼 즉시 채운다.</summary>
+        /// <summary>탄창 3~80, 늘어난 만큼 즉시 채운다. 48발 거너 기본 탄띠도 특성 적용 시 줄어들지 않는다.</summary>
         public void SetMag(int delta)
         {
             int old = MagSize;
-            MagSize = Math.Max(3, Math.Min(40, (int)Math.Round(MagSize + (double)delta)));
+            MagSize = Math.Max(3, Math.Min(80, (int)Math.Round(MagSize + (double)delta)));
             Ammo = Math.Max(0, Math.Min(MagSize, Ammo + Math.Max(0, MagSize - old)));
         }
         /// <summary>원본 infAdjustReload — 0.42~3.5초.</summary>
@@ -158,6 +160,57 @@ namespace TunnelCrew.Sim
             }
         }
 
+        /// <summary>
+        /// 관전 중 크루와 교대할 때 쓰는 직업 전환. 런에서 얻은 특성 배율·추가 탄창은 유지하고,
+        /// 기존 장비의 기본 보정만 제거한 뒤 새 직업 장비의 기본 보정을 적용한다.
+        /// </summary>
+        public void SwitchRolePreservingProgression(RoleId role, EquipmentVariant equipment = EquipmentVariant.Standard)
+        {
+            var oldBase = new PlayerBuild(); oldBase.Reset(Role, Equipment);
+            var newBase = new PlayerBuild(); newBase.Reset(role, equipment);
+
+            double gunProgress = Ratio(GunMul, oldBase.GunMul);
+            double fireRateProgress = Ratio(FireRate, oldBase.FireRate);
+            double reloadProgress = Ratio(ReloadTime, oldBase.ReloadTime);
+            double speedProgress = Ratio(ProjectileSpeedMul, oldBase.ProjectileSpeedMul);
+            double lifeProgress = Ratio(ProjectileLifeMul, oldBase.ProjectileLifeMul);
+            double heatProgress = Ratio(HeatBuildMul, oldBase.HeatBuildMul);
+            int shotBonus = Shots - oldBase.Shots;
+            int pierceBonus = Pierce - oldBase.Pierce;
+            int bounceBonus = Bounces - oldBase.Bounces;
+            int magBonus = MagSize - oldBase.MagSize;
+            int drillWidthBonus = DrillWidth - oldBase.DrillWidth;
+            bool explosiveBonus = Explosive && !oldBase.Explosive;
+            bool customSpread = Math.Abs(ProjectileSpread - oldBase.ProjectileSpread) > 1e-9;
+            double preservedSpread = ProjectileSpread;
+
+            Role = role;
+            Equipment = equipment;
+            RoleDigMul = newBase.RoleDigMul;
+            RoleGunMul = newBase.RoleGunMul;
+            RoleDashMul = newBase.RoleDashMul;
+            RoleHasGun = newBase.RoleHasGun;
+            GunMul = newBase.GunMul * gunProgress;
+            FireRate = newBase.FireRate * fireRateProgress;
+            ReloadTime = newBase.ReloadTime * reloadProgress;
+            ProjectileSpeedMul = newBase.ProjectileSpeedMul * speedProgress;
+            ProjectileLifeMul = newBase.ProjectileLifeMul * lifeProgress;
+            HeatBuildMul = newBase.HeatBuildMul * heatProgress;
+            Shots = Math.Max(1, newBase.Shots + shotBonus);
+            Pierce = Math.Max(0, newBase.Pierce + pierceBonus);
+            Bounces = Math.Max(0, newBase.Bounces + bounceBonus);
+            Explosive = newBase.Explosive || explosiveBonus;
+            DrillWidth = Math.Max(0, newBase.DrillWidth + drillWidthBonus);
+            ProjectileSpread = customSpread ? preservedSpread : newBase.ProjectileSpread;
+            Accuracy = newBase.Accuracy;
+            MagSize = Math.Max(3, Math.Min(80, newBase.MagSize + magBonus));
+            Ammo = MagSize;
+            ReloadLeft = 0;
+        }
+
+        static double Ratio(double current, double baseline) =>
+            Math.Abs(baseline) > 1e-9 ? current / baseline : current;
+
         /// <summary>원본 infResetBuild() — 런 시작 시 전부 기본값으로.</summary>
         public void Reset(RoleId role, EquipmentVariant equipment = EquipmentVariant.Standard)
         {
@@ -166,7 +219,7 @@ namespace TunnelCrew.Sim
             Roles = new RoleTuning();
             DrillMul = GunMul = GunWallMul = FireRate = MoveMul = DrillReach = 1.0;
             Shots = 1; Pierce = 0; Bounces = 0; Explosive = false; LaserEvery = 0; SyncMul = 1.0;
-            ProjectileSpeedMul = ProjectileLifeMul = 1.0; ProjectileSpread = -1.0;
+            ProjectileSpeedMul = ProjectileLifeMul = Accuracy = 1.0; ProjectileSpread = -1.0;
             MagSize = 12; Ammo = 12; ReloadTime = 1.35; ReloadLeft = 0; ReloadCount = 0; ShotCounter = 0;
             TraitFx = new HashSet<string>();
             DrillWidth = 0; DrillPenetration = 0; FocusDrill = false; BreakShockRadius = 0; BreakShockPower = 0;
@@ -175,6 +228,17 @@ namespace TunnelCrew.Sim
             AuxDrills = 0; AuxDrillPower = 0; AfterDrill = false; VortexMining = false; PlanetBreakerEvery = 0; GrandCollapseEvery = 0; DrillStorm = 0;
             CoreBonusChance = 0; OreHeal = 0;
             ApplyEquipment();
+            ApplyStandardEquipmentTuning();
+        }
+
+        void ApplyStandardEquipmentTuning()
+        {
+            if (Role != RoleId.Gunner || Equipment != EquipmentVariant.Standard) return;
+
+            MagSize = Ammo = 48;
+            GunMul *= .80;
+            FireRate *= 2.0;
+            Accuracy = .70;
         }
 
         void ApplyEquipment()

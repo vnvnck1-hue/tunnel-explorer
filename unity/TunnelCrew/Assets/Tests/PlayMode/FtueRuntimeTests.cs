@@ -47,6 +47,25 @@ namespace TunnelCrew.Tests
         }
 
         [UnityTest]
+        public IEnumerator ComicWaitsForInputAndUsesFirstClickToCompleteTyping()
+        {
+            var run = Object.FindFirstObjectByType<RunBootstrap>();
+            run.LaunchFtue();
+            yield return new WaitForSecondsRealtime(.28f);
+            var ftue = Object.FindFirstObjectByType<FtueDirector>();
+            int beat = ftue.CurrentComicBeat;
+
+            yield return new WaitForSecondsRealtime(1.2f);
+            Assert.That(ftue.CurrentComicBeat, Is.EqualTo(beat), "comic must never auto-advance");
+            Assert.That(ftue.AdvanceComic(), Is.True);
+            Assert.That(ftue.ComicTextComplete, Is.True, "first input completes the current sentence");
+            Assert.That(ftue.CurrentComicBeat, Is.EqualTo(beat));
+            yield return new WaitForSecondsRealtime(.15f);
+            Assert.That(ftue.AdvanceComic(), Is.True);
+            Assert.That(ftue.CurrentComicBeat, Is.EqualTo(beat + 1), "second input advances the beat");
+        }
+
+        [UnityTest]
         public IEnumerator GunnerGetsAuthoredRouteAndBreakerCompatibleGates()
         {
             var run = Object.FindFirstObjectByType<RunBootstrap>();
@@ -64,9 +83,9 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
-        public void AllFourComicPagesLoadAtProductionResolution()
+        public void AllComicAndEquipmentArtLoadAtProductionResolution()
         {
-            foreach (string path in new[] { "FTUE/Art/sequence_crash", "FTUE/Art/sequence_record", "FTUE/Art/sequence_awake", "FTUE/Art/sequence_escape" })
+            foreach (string path in new[] { "FTUE/Art/sequence_crash", "FTUE/Art/sequence_record", "FTUE/Art/sequence_awake", "FTUE/Art/sequence_escape", "FTUE/Art/equipment_locker" })
             {
                 var texture = Resources.Load<Texture2D>(path);
                 Assert.That(texture, Is.Not.Null, path);

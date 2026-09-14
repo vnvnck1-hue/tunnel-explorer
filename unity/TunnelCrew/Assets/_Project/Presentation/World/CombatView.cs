@@ -15,6 +15,7 @@ namespace TunnelCrew.Presentation
         public int ActiveProjectileRendererCount => _projectileVfx != null ? _projectileVfx.ActiveRendererCount : 0;
         public int ActiveProjectileTrailCount => _projectileVfx != null ? _projectileVfx.ActiveTrailCount : 0;
         public int ActiveProjectileLightCount => _projectileVfx != null ? _projectileVfx.ActiveLightCount : 0;
+        public int ActiveProjectileSmokeTrailCount => _projectileVfx != null ? _projectileVfx.ActiveSmokeTrailCount : 0;
         public Material SharedProjectileMaterial => _projectileVfx != null ? _projectileVfx.SharedEnergyMaterial : null;
         readonly List<SpriteRenderer> _shotPool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _installPool = new List<SpriteRenderer>();
@@ -40,6 +41,11 @@ namespace TunnelCrew.Presentation
         // 원본 DEMO 기본값: 크기 25/34px · 팝 1.45(감쇠 3.4/s) · 스쿼시 .22 · 페이드 2.2 · 수명 1.3/.56 · 상승 120px/s · 중력 980
         const float DmgBase = 25f, DmgBig = 34f, DmgPop = 1.45f, DmgPopDec = 3.4f, DmgSquash = .22f, DmgFade = 2.2f;
         const float DmgLifeRate = 1.3f / .56f, DmgRise = 120f, DmgGravity = 980f, DmgDamp = .97f, DmgJx = 12f, DmgJy = 9f, DmgDrift = 40f, Px = 1f / 50f;
+        public static readonly Color DamageColor = new Color(.38f, .27f, .18f);
+        public static readonly Color DamageBigColor = new Color(.46f, .22f, .13f);
+        public static readonly Color DamageHotColor = new Color(.52f, .12f, .10f);
+        public static readonly Color DamageHotBigColor = new Color(.58f, .16f, .11f);
+        public static readonly Color DamageShadowColor = new Color(.055f, .032f, .022f);
 
         void Awake()
         {
@@ -248,7 +254,7 @@ namespace TunnelCrew.Presentation
                 t.Go.transform.rotation = Quaternion.Euler(0, 0, t.Rot * Mathf.Rad2Deg);
                 t.Go.transform.localScale = new Vector3(sqX, sqY, 1) * (cellH / 6.4f);   // fontSize 64 · characterSize 1 = 6.4 유닛
                 var c = t.Col; c.a = a; t.Mesh.color = c;
-                t.Shadow.color = new Color(20 / 255f, 10 / 255f, 4 / 255f, .30f * a + .35f * a);
+                var shadow = DamageShadowColor; shadow.a = .72f * a; t.Shadow.color = shadow;
             }
         }
 
@@ -283,8 +289,6 @@ namespace TunnelCrew.Presentation
             float spd = spd0 * (1 - lr * .5f + Random.value * lr) * (big ? 1.18f : 1) * (1 + hfx * .25f);
             var vel = new Vector2(Mathf.Cos(ang) * spd + (Random.value - .5f) * drift * .35f, Mathf.Sin(ang) * spd + (Random.value - .5f) * drift * .15f) * Px;
 
-            var col0 = new Color(1f, .99f, .96f); var colB0 = new Color(1f, .92f, .71f);
-            var hot = new Color(1f, .16f, .16f); var hotB = new Color(1f, .35f, .23f);
             var t = Rent();
             t.Label = false; t.Big = big;
             t.Pos = IsometricProjection.ToRender(at) + new Vector2((Random.value - .5f) * jx * Px, (Random.value - .5f) * jy * Px);
@@ -292,7 +296,7 @@ namespace TunnelCrew.Presentation
             t.Rot = big ? (Random.value - .5f) * 18f * (1 + hfx) * Mathf.Deg2Rad : (Random.value - .5f) * .2f;
             t.VRot = (Random.value - .5f) * 1.2f * (1 + hfx * 1.35f) * (big ? 1.6f : 1);
             t.SzMul = 1 + hfx * .95f; t.PopMul = 1 + hfx * .75f;
-            t.Col = Color.Lerp(big ? colB0 : col0, big ? hotB : hot, hfx);
+            t.Col = Color.Lerp(big ? DamageBigColor : DamageColor, big ? DamageHotBigColor : DamageHotColor, hfx);
             t.Mesh.text = t.Shadow.text = Mathf.RoundToInt((float)value).ToString();
             SetFont(t, Fonts.Damage);   // 피해 숫자 — ARCO (원본 @font-face 'ARCO')
             t.Mesh.fontStyle = t.Shadow.fontStyle = FontStyle.Bold;

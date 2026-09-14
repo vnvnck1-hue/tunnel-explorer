@@ -1,0 +1,19 @@
+{
+  "description": "Prevent Unity MCP calls from crossing between TunnelCrew and SlimeForge.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^mcp__unityMCP__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "commandWindows": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\Loadcomplete\\Documents\\ChatGPT\\땅굴 크루 만들기\\.codex\\hooks\\require-unity-instance.ps1\"",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:\\Users\\Loadcomplete\\Documents\\ChatGPT\\땅굴 크루 만들기\\.codex\\hooks\\require-unity-instance.ps1\"",
+            "timeout": 5,
+            "statusMessage": "Checking TunnelCrew Unity instance"
+          }
+        ]
+      }
+    ]
+  }
+}

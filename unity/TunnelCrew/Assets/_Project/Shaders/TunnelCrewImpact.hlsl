@@ -13,6 +13,8 @@
 
 // xy = 충격 중심(월드) · z = 시작 시각(_Time.y 기준) · w = 세기. w <= 0 이면 빈 슬롯.
 float4 _TCImpacts[TC_IMPACT_MAX];
+// 슬롯별 지속 시간. 총구/탄착은 짧고 벽 파괴는 기존 지속을 유지한다.
+float _TCImpactDurations[TC_IMPACT_MAX];
 // x = 파동 속도(셀/초) · y = 파수(rad/셀) · z = 반경(셀) · w = 지속(초)
 float4 _TCImpactParams;
 // 전체 진폭(셀). 0 이면 기능 자체가 꺼진다 — 아무도 값을 넣지 않은 씬의 기본값이다.
@@ -24,7 +26,7 @@ float2 TCImpactOffsetWS(float2 wp)
     if (_TCImpactAmplitude <= 0.0) return sum;
 
     float radius   = max(0.0001, _TCImpactParams.z);
-    float duration = max(0.0001, _TCImpactParams.w);
+    float defaultDuration = max(0.0001, _TCImpactParams.w);
 
     [unroll]
     for (int i = 0; i < TC_IMPACT_MAX; i++)
@@ -32,6 +34,7 @@ float2 TCImpactOffsetWS(float2 wp)
         float4 im = _TCImpacts[i];
         if (im.w <= 0.0) continue;
 
+        float duration = _TCImpactDurations[i] > 0.0 ? _TCImpactDurations[i] : defaultDuration;
         float age = _Time.y - im.z;
         if (age < 0.0 || age > duration) continue;
 
