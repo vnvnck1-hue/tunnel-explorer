@@ -70,6 +70,8 @@ namespace TunnelCrew.Presentation
         [Header("환경 렌더러 (R2 · 이주 B 7단계)")]
         [Tooltip("켜면 레퍼런스 키트로 월드를 그린다. 자산이 비어 있으면 자동으로 구 WorldRenderer.")]
         [SerializeField] bool _r2Environment = true;
+        [Tooltip("유기적 벽 외곽·월드 재질·암석 장식. 끄면 기존 타일 벽으로 비교한다.")]
+        [SerializeField] bool _organicEnvironment = true;
         [SerializeField] TunnelCrew.Presentation.Visual.EnvironmentKit _envKit;
         [SerializeField] TunnelCrew.Presentation.Visual.WorldVisualProfile _envProfile;
         [SerializeField] TunnelCrew.Presentation.Visual.SurfaceRuleSet _envRules;
@@ -614,6 +616,7 @@ namespace TunnelCrew.Presentation
             var envGo = new GameObject("Environment");
             envGo.transform.SetParent(_envRoot, false);
             _env = envGo.AddComponent<TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer>();
+            _env.UseOrganicWalls = _organicEnvironment;
             _env.Assign(_envProfile, _envRules, _envKit, _envFloorSet, _envWallTopSet, _envWallFrontSet);
 
             var dropGo = new GameObject("Wall Drop Shadow");

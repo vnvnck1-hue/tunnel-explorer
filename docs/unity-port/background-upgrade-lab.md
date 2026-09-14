@@ -68,3 +68,32 @@
 공유 작업 폴더에서 FTUE 작업이 다른 브랜치를 사용했으므로, 별도 Git 인덱스로 이번 작업 파일만 `codex/background-upgrade-lab`에 커밋했다. FTUE·투사체 변경은 이 브랜치에 포함하지 않았다. 본편 씬·빌드 설정을 변경하지 않았다.
 
 실행 도중 발견한 보조 수정 두 가지는 배경 브랜치의 파일 범위와 분리했다. `.codex/hooks/require-unity-instance.ps1`의 UTF-8 표준입력 처리를 보정했으며 인스턴스 검사/거부 규칙은 유지했다. 다른 작업의 `DynamicDialogueText.ValueAfterEquals`에는 미할당 `out` 인자 초기값 한 줄을 추가해 그 작업의 컴파일을 복구했다.
+# 본편 적용 (2026-09-14)
+
+`RunBootstrap._organicEnvironment` 기본값을 켰다. 본편 `Run.unity`에서 출격하면
+`EnvironmentChunkRenderer`가 `OrganicEnvironmentRenderer`를 만든다. HTML 프로토타입과 게임 판정 코드는 변경하지 않았다.
+
+- 셀 충돌/채굴은 기존 Sim 격자 그대로. 표시 외곽만 최대 0.18셀 이동한다.
+- 동일 월드 좌표와 인접 4셀에서 외곽점을 계산하므로 구역 경계를 독립 갱신해도 같은 정점을 만든다.
+- 벽 상단·정면·테두리·접촉 그림자와 드문 암석 어깨 장식을 추가했다. 지층별 기존 암석 채널을 월드 좌표로 샘플링한다.
+- 광맥·균열 오버레이와 보스 벽 전용 타일은 유지한다. 전경 메시/장식 알파는 기존 오클루더를 따른다.
+- 기존 16×16 dirty 구역을 재사용한다. 유기적 메시 모드에서는 프레임당 최대 2구역, `FlushDirty`는 즉시 전부 처리한다.
+- `Resources/Visual/OrganicEnvironmentStyle.asset`이 셰이더/장식을 참조하여 플레이어 빌드 포함 경로를 확보한다. 자산 또는 셰이더가 없으면 타일 벽으로 폴백한다.
+- 랩의 고정 배치(수정방/배관방/레일), 고정 조명, 안개 카드, CRT 해제는 본편에 복사하지 않았다. 본편 바닥·시야 어둠·조명·CRT는 그대로다.
+
+## 본편 검증
+
+- Unity `6000.3.15f1`, `TunnelCrew@5795f232`의 Play Mode에서 확인.
+- EditMode: `OrganicWallSamplingTests`, `BackgroundUpgradeLabTests`, `SurfaceTopologyTests`, `DepthSortTests` **36/36 통과**. job `473a7d54612a4995b4181eeb53a1d517`.
+- 실제 본편 `WorldGrid.Damage` 이벤트 경로: (31,45) 손상 단계 2 → 파괴 → 표면 제거 → 타일 복구 확인. 전체 25구역 중 2구역만 재생성. 입력 장치 클릭 자동화가 아니라 실제 월드 이벤트 통합 검사다.
+- 보스 집합 등록 + `SetTile` 경로에서 BossWall 표면 플래그와 전용 cap 타일 유지 확인.
+- 깊이 1/2/3/4의 `EnterDepth` + 본편 `RebindWorld`로 각 키트/아틀라스 교체 및 화면 확인. 하강 버튼/보스 진행 전체를 자동화한 검사는 아니다.
+- 전경 뒤에 플레이어를 배치했을 때 메시 알파 0.34, 캐릭터 가시성 확인. 반복 지층 교체 뒤 유기적 렌더러는 1개.
+- 관측값: 80×72맵, 25구역, 약 151,216정점. 단일 구역 재생성 한 표본 4.71ms, 전경 화면 117 batches. Editor 관측이며 배포 빌드 FPS 보장은 아니다.
+- 새 셰이더 메시지 0, 최종 본편 Console 오류 0. 캡처 도구 사용 중 기존 AudioListener 경고는 있었으며 본 작업에서 오디오 설정은 변경하지 않았다.
+- 스크린샷: `unity/TunnelCrew/Captures/BackgroundMain/`의 `A-main-tiles.png`, `C-main-organic.png`, `stratum-2.png`, `stratum-3.png`, `abyss.png`, `foreground-fade.png` (Git 제외).
+- CLI `git diff --check` 통과. 독립 플레이어 빌드는 이번 검증 범위에 포함하지 않았다.
+
+## 비교/되돌리기
+
+Run 씬의 RunBootstrap 인스펙터에서 **Organic Environment**를 끄고 Play Mode를 다시 시작하면 기존 타일 벽이다. 디버그 숫자키 1/2/3은 본편에서 직업 전환이므로 랩의 비교키를 이식하지 않았다.
