@@ -33,6 +33,7 @@ Transform:
   - {fileID: 6146198549264629140}
   - {fileID: 5186534213373613022}
   - {fileID: 7038379853187821583}
+  - {fileID: 8645754449785948943}
   m_Father: {fileID: 8707802496435596639}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1456743805863837758
@@ -125,7 +126,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -282,7 +283,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -305,12 +306,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 30
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: e92042905300a294e930e76c031784a7, type: 3}
+  m_Sprite: {fileID: 7493399497723472924, guid: a666e379d0201be4e93404b735382372, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.9375, y: 0.9375}
+  m_Size: {x: 2, y: 0.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -373,7 +374,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -464,7 +465,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 76e1bc6346aa15c469e28746b7d5451e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -555,7 +556,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -588,6 +589,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &6461565428005814069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8645754449785948943}
+  m_Layer: 0
+  m_Name: EjectionPort
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8645754449785948943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6461565428005814069}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.45, y: 0.12, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2400598699065791980}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7559357192886351620
 GameObject:
   m_ObjectHideFlags: 0
@@ -646,7 +678,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -737,7 +769,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: ccc6d40705eddd041a59439b3a0601ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -779,6 +811,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 799290044741939705}
+  - component: {fileID: 1251254198176303872}
+  - component: {fileID: 7337509040173874366}
   - component: {fileID: 7591341147050873253}
   - component: {fileID: 4636427970475430374}
   - component: {fileID: 4162886282013900448}
@@ -807,6 +841,31 @@ Transform:
   - {fileID: 2339617323147707614}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &1251254198176303872
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8782199164005144643}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 100
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &7337509040173874366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8782199164005144643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56c5cb5db9bd5e44fa73e3f8c2dc4ba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Prototype.ModularGunnerDepthSorter
 --- !u!50 &7591341147050873253
 Rigidbody2D:
   serializedVersion: 5
@@ -907,10 +966,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Prototype.ModularGunnerController
   _moveSpeed: 4.8
   _shotsPerSecond: 7.5
+  _baseSpreadDegrees: 2.4
+  _movingSpreadBonusDegrees: 1.6
   _body: {fileID: 7591341147050873253}
   _animator: {fileID: 4162886282013900448}
   _aimRig: {fileID: 8707802496435596639}
   _muzzle: {fileID: 7038379853187821583}
+  _ejectionPort: {fileID: 8645754449785948943}
   _bodyRenderer: {fileID: 4824218286876749982}
   _headRenderer: {fileID: 8400507937927757165}
   _bodyDownLeftSprite: {fileID: 21300000, guid: 960351a5059d1fd46bc1e47b42aea01e, type: 3}
@@ -922,6 +984,14 @@ MonoBehaviour:
   _supportHandRenderer: {fileID: 1337812375636801733}
   _muzzleFlashRenderer: {fileID: 7858489607044455301}
   _projectilePrefab: {fileID: 662570417309128338, guid: 32d4a0fc09b4faa439d3b74b6daa41c6, type: 3}
+  _weaponRecoilFrames:
+  - {fileID: 7493399497723472924, guid: a666e379d0201be4e93404b735382372, type: 3}
+  - {fileID: 1663944113, guid: a666e379d0201be4e93404b735382372, type: 3}
+  - {fileID: 1436043290, guid: a666e379d0201be4e93404b735382372, type: 3}
+  - {fileID: 615984826, guid: a666e379d0201be4e93404b735382372, type: 3}
+  _shakeStrength: 0.18
+  _shakeHighRatio: 0.95
+  _kickStrength: 0.12
 --- !u!1 &9058575588554338944
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,85 @@
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
+namespace TunnelCrew.Presentation.Prototype
+{
+    /// <summary>풀에서 빌려 쓰는 순간 발광 버스트. 스프라이트와 Light2D 를 함께 감쇠시킨다.</summary>
+    public sealed class ModularGunnerFxBurst : MonoBehaviour
+    {
+        SpriteRenderer _renderer;
+        Light2D _light;
+        float _life;
+        float _age;
+        float _startScale;
+        float _endScale;
+        float _lightIntensity;
+        Color _color;
+        bool _active;
+
+        /// <summary>풀이 한 번만 부르는 구성.</summary>
+        public void PoolAwake()
+        {
+            _renderer = gameObject.AddComponent<SpriteRenderer>();
+            _light = gameObject.AddComponent<Light2D>();
+            _light.lightType = Light2D.LightType.Point;
+            _light.pointLightInnerAngle = 360f;
+            _light.pointLightOuterAngle = 360f;
+            Release();
+        }
+
+        public void Prepare(Sprite sprite, Material material, Color color, float life, float startScale,
+            float endScale, int sortingOrder, float lightRadius, float lightIntensity)
+        {
+            _renderer.sprite = sprite;
+            _renderer.sharedMaterial = material;
+            _renderer.color = color;
+            _renderer.sortingOrder = sortingOrder;
+            _renderer.enabled = true;
+
+            _life = life;
+            _age = 0f;
+            _startScale = startScale;
+            _endScale = endScale;
+            _color = color;
+            _lightIntensity = lightIntensity;
+            transform.localScale = Vector3.one * startScale;
+
+            bool lit = lightIntensity > 0f;
+            _light.enabled = lit;
+            if (lit)
+            {
+                _light.color = color;
+                _light.intensity = lightIntensity;
+                _light.pointLightInnerRadius = lightRadius * 0.18f;
+                _light.pointLightOuterRadius = lightRadius;
+            }
+
+            _active = true;
+            gameObject.SetActive(true);
+        }
+
+        void Release()
+        {
+            _active = false;
+            _renderer.enabled = false;
+            _light.enabled = false;
+            gameObject.SetActive(false);
+        }
+
+        void Update()
+        {
+            if (!_active) return;
+
+            _age += Time.deltaTime;
+            float t = Mathf.Clamp01(_age / Mathf.Max(0.001f, _life));
+            transform.localScale = Vector3.one * Mathf.Lerp(_startScale, _endScale, t);
+
+            Color c = _color;
+            c.a *= 1f - t;
+            _renderer.color = c;
+
+            if (_light.enabled) _light.intensity = _lightIntensity * (1f - t) * (1f - t);
+            if (_age >= _life) Release();
+        }
+    }
+}

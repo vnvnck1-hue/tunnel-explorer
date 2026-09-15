@@ -11,10 +11,13 @@ namespace TunnelCrew.Presentation.Prototype
     {
         [SerializeField] float _moveSpeed = 4.8f;
         [SerializeField] float _shotsPerSecond = 7.5f;
+        [SerializeField, Range(0f, 12f)] float _baseSpreadDegrees = 2.4f;
+        [SerializeField, Range(0f, 8f)] float _movingSpreadBonusDegrees = 1.6f;
         [SerializeField] Rigidbody2D _body;
         [SerializeField] Animator _animator;
         [SerializeField] Transform _aimRig;
         [SerializeField] Transform _muzzle;
+        [SerializeField] Transform _ejectionPort;
         [SerializeField] SpriteRenderer _bodyRenderer;
         [SerializeField] SpriteRenderer _headRenderer;
         [SerializeField] Sprite _bodyDownLeftSprite;
@@ -26,15 +29,31 @@ namespace TunnelCrew.Presentation.Prototype
         [SerializeField] SpriteRenderer _supportHandRenderer;
         [SerializeField] SpriteRenderer _muzzleFlashRenderer;
         [SerializeField] ModularGunnerProjectile _projectilePrefab;
+        [SerializeField] Sprite[] _weaponRecoilFrames;
+
+        [Header("Weapon shake preset — 로드맵 4.11")]
+        [Tooltip("이 총기의 발사 흔들림 세기. 총기를 늘릴 때 무기마다 다른 값을 준다.")]
+        [SerializeField, Range(0f, 1f)] float _shakeStrength = 0.18f;
+        [Tooltip("1에 가까울수록 잘게 떨고 0에 가까울수록 크게 밀린다. 미니건은 고주파다.")]
+        [SerializeField, Range(0f, 1f)] float _shakeHighRatio = 0.95f;
+        [Tooltip("총구 반대 방향으로 미는 카메라 킥의 세기.")]
+        [SerializeField, Range(0f, 1f)] float _kickStrength = 0.12f;
 
         static readonly int SpeedHash = Animator.StringToHash("Speed");
         static readonly int FireHash = Animator.StringToHash("Fire");
+
+        // 승인 아트의 4프레임 반동 시트에서 2번이 총열이 가장 뒤로 밀린 포즈다.
+        // 발사 순간 그 포즈로 튀었다가 두 단계에 걸쳐 정지 포즈로 돌아온다.
+        static readonly int[] RecoilSequence = { 2, 1, 0 };
+        const float RecoilFrameDuration = 0.035f;
 
         Vector2 _moveInput;
         Vector2 _aimDirection = Vector2.right;
         Camera _camera;
         float _nextShotTime;
         float _flashUntil;
+        int _recoilStep = -1;
+        float _nextRecoilStepAt;
 
         public Vector2 AimDirection => _aimDirection;
 
@@ -43,6 +62,7 @@ namespace TunnelCrew.Presentation.Prototype
             Animator animator,
             Transform aimRig,
             Transform muzzle,
+            Transform ejectionPort,
             SpriteRenderer bodyRenderer,
             SpriteRenderer headRenderer,
             SpriteRenderer weaponRenderer,
@@ -51,12 +71,15 @@ namespace TunnelCrew.Presentation.Prototype
             SpriteRenderer muzzleFlashRenderer,
             ModularGunnerProjectile projectilePrefab,
             Sprite bodyUpLeftSprite,
-            Sprite headUpLeftSprite)
+            Sprite headUpLeftSprite,
+            Sprite[] weaponRecoilFrames)
         {
+            _weaponRecoilFrames = weaponRecoilFrames;
             _body = body;
             _animator = animator;
             _aimRig = aimRig;
             _muzzle = muzzle;
+            _ejectionPort = ejectionPort;
             _bodyRenderer = bodyRenderer;
             _headRenderer = headRenderer;
             _bodyDownLeftSprite = bodyRenderer != null ? bodyRenderer.sprite : null;
@@ -72,6 +95,8 @@ namespace TunnelCrew.Presentation.Prototype
 
         void Awake()
         {
+            ModularGunnerPhysicsLayers.Assign(gameObject, ModularGunnerPhysicsLayers.Player);
+            ModularGunnerPhysicsLayers.ConfigureCollisionMatrix();
             Application.targetFrameRate = 60;
             Time.fixedDeltaTime = 1f / 60f;
             _camera = Camera.main;
@@ -93,6 +118,32 @@ namespace TunnelCrew.Presentation.Prototype
 
             if (_muzzleFlashRenderer != null && _muzzleFlashRenderer.enabled && Time.time >= _flashUntil)
                 _muzzleFlashRenderer.enabled = false;
+
+            AdvanceRecoil();
+        }
+
+        /// <summary>발사 후 무기 스프라이트를 반동 포즈에서 정지 포즈로 되돌린다.</summary>
+        void AdvanceRecoil()
+        {
+            if (_recoilStep < 0 || _weaponRenderer == null || _weaponRecoilFrames == null || _weaponRecoilFrames.Length == 0)
+                return;
+            if (Time.time < _nextRecoilStepAt) return;
+
+            _recoilStep++;
+            if (_recoilStep >= RecoilSequence.Length)
+            {
+                _recoilStep = -1;
+                _weaponRenderer.sprite = _weaponRecoilFrames[0];
+                return;
+            }
+            SetRecoilFrame(RecoilSequence[_recoilStep]);
+        }
+
+        void SetRecoilFrame(int frame)
+        {
+            if (_weaponRenderer == null || _weaponRecoilFrames == null || _weaponRecoilFrames.Length == 0) return;
+            _weaponRenderer.sprite = _weaponRecoilFrames[Mathf.Clamp(frame, 0, _weaponRecoilFrames.Length - 1)];
+            _nextRecoilStepAt = Time.time + RecoilFrameDuration;
         }
 
         void FixedUpdate()
@@ -171,15 +222,32 @@ namespace TunnelCrew.Presentation.Prototype
             if (_projectilePrefab == null || _muzzle == null) return;
 
             _nextShotTime = Time.time + 1f / _shotsPerSecond;
+            Vector2 shotDirection = SampleShotDirection(_aimDirection);
             var shot = Instantiate(_projectilePrefab, _muzzle.position, Quaternion.identity);
-            shot.Launch(_aimDirection, this);
+            shot.Launch(shotDirection, this);
+            ModularGunnerEffects.Instance?.Muzzle(
+                _ejectionPort != null ? _ejectionPort.position : _muzzle.position,
+                _aimDirection, _shakeStrength, _shakeHighRatio, _kickStrength);
 
             if (_animator != null) _animator.SetTrigger(FireHash);
+            _recoilStep = 0;
+            SetRecoilFrame(RecoilSequence[0]);
             if (_muzzleFlashRenderer != null)
             {
                 _muzzleFlashRenderer.enabled = true;
                 _flashUntil = Time.time + 0.045f;
             }
+        }
+
+        Vector2 SampleShotDirection(Vector2 aim)
+        {
+            float moveRatio = Mathf.Clamp01(_moveInput.magnitude);
+            float maxSpread = _baseSpreadDegrees + _movingSpreadBonusDegrees * moveRatio;
+
+            // 세 번의 균등 샘플을 합쳐 중앙 밀도가 높은 종 모양 탄착군을 만든다.
+            float centered = Random.value + Random.value + Random.value - 1.5f;
+            float angle = centered / 1.5f * maxSpread;
+            return Quaternion.Euler(0f, 0f, angle) * aim.normalized;
         }
     }
 }
