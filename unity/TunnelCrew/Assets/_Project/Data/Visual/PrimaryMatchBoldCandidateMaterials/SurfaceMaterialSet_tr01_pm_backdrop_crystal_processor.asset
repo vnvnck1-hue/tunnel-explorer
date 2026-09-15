@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba29ccf1d985f943acb49bdc0fb66a0, type: 3}
+  m_Name: SurfaceMaterialSet_tr01_pm_backdrop_crystal_processor
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
+  kind: 0
+  minLightSlot: 1
+  normal: {fileID: 2800000, guid: 03baeeb9b94dab74996418a4bb2193d1, type: 3}
+  emission: {fileID: 2800000, guid: f6839e9a3344054439dbfe5a6cbb179a, type: 3}
+  materialMask: {fileID: 2800000, guid: 56089472a546cb04e8f8b0fbb92cf0b6, type: 3}
+  ao: {fileID: 2800000, guid: 0308bad7e21a0b44e984f23948cf5a9a, type: 3}
+  normalStrength: 1
+  aoStrength: 1
+  emissionTint: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 1
+  minLightOverride: -1

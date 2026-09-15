@@ -1,0 +1,123 @@
+{
+  "status": "working_candidate_not_runtime_integrated",
+  "primaryReference": "../../reference/tr01_primary_style_target.png",
+  "productionProjection": "ReferenceTopDown",
+  "compositionContract": {
+    "minimumOpenCenterWidthFraction": 0.45,
+    "maximumMonumentalWallModulesPerView": 3,
+    "maximumHeroMachinesPerView": 2,
+    "maximumForegroundOccludersPerView": 2,
+    "maximumCrystalClustersPerView": 4,
+    "railRoutesPerRoom": 1,
+    "archesAllowed": false,
+    "defaultDioramaReference": "diorama-process-05-curated-clean-room.png",
+    "materialLightingHypothesis": "diorama-process-06-material-lighting-preview.png"
+  },
+  "sets": [
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3",
+      "anchor": "open_floor_route_connected_to_loading_dock_or_wall_socket",
+      "sorting": "ground_integrated",
+      "collision": "none_candidate",
+      "gridTopToBottom": [
+        ["horizontal_left", "horizontal_middle", "horizontal_right"],
+        ["turn_up_left", "reinforced_cross", "turn_up_right"],
+        ["damaged_left", "broken_gap", "damaged_right"]
+      ],
+      "rules": [
+        "keep one continuous readable gauge per room",
+        "never place an isolated middle or turn",
+        "terminate at a loading dock, equipment transition, wall socket, or damaged end"
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3",
+      "anchor": "wall_foot_broken_slab_rail_end_or_mined_scar",
+      "sorting": "ground_or_wall_foot_by_variant",
+      "collision": "medium_clusters_only_candidate",
+      "gridTopToBottom": [
+        ["low_left_seam", "low_center_cluster", "low_right_seam"],
+        ["medium_left_outcrop", "medium_center_outcrop", "medium_right_outcrop"],
+        ["depleted_left_scar", "depleted_center_scar", "depleted_right_scar"]
+      ],
+      "rules": [
+        "reserve medium center outcrop for boundaries or POIs",
+        "do not distribute crystals uniformly across open floor",
+        "replace intact outcrops with depleted scars after mining where applicable"
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3",
+      "anchor": "machine_to_rock_or_machine_to_floor_termination",
+      "sorting": "ground_or_wall_foot_by_variant",
+      "collision": "core_plate_only_candidate",
+      "gridTopToBottom": [
+        ["left_termination", "buried_threshold", "right_termination"],
+        ["left_broken_corner", "reinforced_socket", "right_broken_corner"],
+        ["left_rubble_ramp", "capped_machine_scar", "right_rubble_ramp"]
+      ],
+      "rules": [
+        "use whenever a rail, conduit, or machine would otherwise end in empty stone",
+        "prefer damaged and capped variants after topology changes"
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2",
+      "anchor": "large_wall_foot_or_fixed_service_room_anchor",
+      "sorting": "foot_y_world_entity",
+      "collision": "broad_machine_core_candidate",
+      "gridTopToBottom": [
+        ["ore_crusher", "ventilation_turbine"],
+        ["power_relay", "minecart_loading_dock"]
+      ],
+      "rules": [
+        "use one hero machine by default and two only in large presentation rooms",
+        "ventilation turbine belongs on a wall plane rather than open floor",
+        "loading dock must connect to a rail route",
+        "keep a navigable lane around the exaggerated silhouette"
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2",
+      "anchor": "screen_edge_room_boundary_or_raised_platform_anchor",
+      "sorting": "foreground_fade_or_elevated_surface",
+      "collision": "visible_top_plane_candidate",
+      "gridTopToBottom": [
+        ["left_foreground_shelf", "right_foreground_shelf"],
+        ["bottom_cliff_lip", "raised_service_platform"]
+      ],
+      "rules": [
+        "foreground shelves require the existing foreground fade contract",
+        "never close more than 55 percent of the horizontal play view",
+        "use bottom cliff lip as a room boundary rather than a repeated decoration",
+        "raised platform requires explicit walkability and height rules before runtime use"
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2",
+      "anchor": "long_flat_wall_run_or_fixed_presentation_wall_anchor",
+      "sorting": "background_wall_plane",
+      "collision": "wall_topology_only_candidate",
+      "gridTopToBottom": [
+        ["sealed_bulkhead", "pipe_manifold"],
+        ["crystal_processor", "collapsed_wall_machine"]
+      ],
+      "rules": [
+        "sealed bulkhead remains closed and is not an arch or traversal opening",
+        "use two to three distinct primary silhouettes per large view",
+        "avoid repeating the same module in adjacent wall spans",
+        "crystal processor is a rare POI-scale accent"
+      ]
+    }
+  ],
+  "runtimeGates": [
+    "confirm TunnelCrew Unity 6000.3.15f1 instance",
+    "import without editing scene or prefab YAML directly",
+    "verify pivots and sorting in all F8/F9 projection presets",
+    "verify central path and collision remain playable",
+    "verify foreground fade before enabling foreground shelves",
+    "verify intact damaged and depleted topology transitions",
+    "run MapGenParityTests and VisualBatch2Tests",
+    "capture Game View and compare with the primary reference"
+  ]
+}

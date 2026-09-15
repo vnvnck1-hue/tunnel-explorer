@@ -1,0 +1,1952 @@
+{
+  "status": "verified_offline_full_blueprint_footprints",
+  "unityExecuted": false,
+  "groundOverlaysAreNonBlocking": true,
+  "summary": {
+    "fixtureCount": 3,
+    "blueprintCount": 3,
+    "evaluations": 9,
+    "fullBlueprintFits": 9,
+    "assignedRoomFits": 3
+  },
+  "fixtures": [
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d1.json",
+      "fixtureSha256": "2DC6294C85511C865842486490AFAD617A089CD795A006A1F2349190C8D2A2F4",
+      "depth": 1,
+      "assignedRoom": "ore_intake",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ore_intake_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "north",
+                "anchorCell": [
+                  38,
+                  48
+                ],
+                "occupiedCells": [
+                  [
+                    37,
+                    47
+                  ],
+                  [
+                    37,
+                    48
+                  ],
+                  [
+                    38,
+                    47
+                  ],
+                  [
+                    38,
+                    48
+                  ],
+                  [
+                    39,
+                    47
+                  ],
+                  [
+                    39,
+                    48
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  47,
+                  47
+                ],
+                "occupiedCells": [
+                  [
+                    47,
+                    46
+                  ],
+                  [
+                    47,
+                    47
+                  ],
+                  [
+                    48,
+                    46
+                  ],
+                  [
+                    48,
+                    47
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/2_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  44,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  48,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_08",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  50,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    50,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_09",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  42,
+                  44
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    41,
+                    45
+                  ],
+                  [
+                    42,
+                    44
+                  ],
+                  [
+                    42,
+                    45
+                  ],
+                  [
+                    43,
+                    44
+                  ],
+                  [
+                    43,
+                    45
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 19,
+            "groundOverlayCount": 4,
+            "railRouteCells": [
+              [
+                43,
+                53
+              ],
+              [
+                44,
+                53
+              ],
+              [
+                45,
+                53
+              ]
+            ]
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ventilation_service_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  45,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    46
+                  ],
+                  [
+                    45,
+                    46
+                  ],
+                  [
+                    46,
+                    46
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  38,
+                  48
+                ],
+                "occupiedCells": [
+                  [
+                    37,
+                    48
+                  ],
+                  [
+                    38,
+                    48
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  48,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_03",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  44,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  40,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    40,
+                    46
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "south",
+                "anchorCell": [
+                  42,
+                  44
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    41,
+                    45
+                  ],
+                  [
+                    42,
+                    44
+                  ],
+                  [
+                    42,
+                    45
+                  ],
+                  [
+                    43,
+                    44
+                  ],
+                  [
+                    43,
+                    45
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 14,
+            "groundOverlayCount": 3,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "crystal_power_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  45,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    46
+                  ],
+                  [
+                    45,
+                    46
+                  ],
+                  [
+                    46,
+                    46
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  47,
+                  47
+                ],
+                "occupiedCells": [
+                  [
+                    47,
+                    46
+                  ],
+                  [
+                    47,
+                    47
+                  ],
+                  [
+                    48,
+                    46
+                  ],
+                  [
+                    48,
+                    47
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  44,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_05",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  50,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    50,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_06",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  51,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    51,
+                    46
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  48,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  42,
+                  44
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    41,
+                    45
+                  ],
+                  [
+                    42,
+                    44
+                  ],
+                  [
+                    42,
+                    45
+                  ],
+                  [
+                    43,
+                    44
+                  ],
+                  [
+                    43,
+                    45
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 7,
+            "blockingOccupiedCells": 17,
+            "groundOverlayCount": 2,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d2.json",
+      "fixtureSha256": "96359A98C697CC96E2A9CC6A4BC2CCD1ECECBDDC4DB3149BDFEDB13FF367309F",
+      "depth": 2,
+      "assignedRoom": "ventilation_service",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            29,
+            16,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 35,
+            "y": 20,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 18,
+            "northWallFootLongestRun": 4,
+            "westWallFoot": 17,
+            "eastWallFoot": 18,
+            "southBoundary": 22
+          },
+          "feasible": true,
+          "score": 640,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ore_intake_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "north",
+                "anchorCell": [
+                  30,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    29,
+                    17
+                  ],
+                  [
+                    29,
+                    18
+                  ],
+                  [
+                    30,
+                    17
+                  ],
+                  [
+                    30,
+                    18
+                  ],
+                  [
+                    31,
+                    17
+                  ],
+                  [
+                    31,
+                    18
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  45,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    45,
+                    16
+                  ],
+                  [
+                    45,
+                    17
+                  ],
+                  [
+                    46,
+                    16
+                  ],
+                  [
+                    46,
+                    17
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/2_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  30,
+                  16
+                ],
+                "occupiedCells": [
+                  [
+                    30,
+                    16
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  31,
+                  19
+                ],
+                "occupiedCells": [
+                  [
+                    31,
+                    19
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_08",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  33,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    33,
+                    17
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_09",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  43,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    42,
+                    18
+                  ],
+                  [
+                    42,
+                    19
+                  ],
+                  [
+                    43,
+                    18
+                  ],
+                  [
+                    43,
+                    19
+                  ],
+                  [
+                    44,
+                    18
+                  ],
+                  [
+                    44,
+                    19
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 19,
+            "groundOverlayCount": 4,
+            "railRouteCells": [
+              [
+                35,
+                20
+              ],
+              [
+                36,
+                20
+              ],
+              [
+                37,
+                20
+              ]
+            ]
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ventilation_service_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  56,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    14
+                  ],
+                  [
+                    56,
+                    14
+                  ],
+                  [
+                    57,
+                    14
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  62,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    61,
+                    18
+                  ],
+                  [
+                    62,
+                    18
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  54,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    54,
+                    14
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_03",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  55,
+                  15
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    15
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  66,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    66,
+                    14
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "south",
+                "anchorCell": [
+                  53,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    52,
+                    17
+                  ],
+                  [
+                    52,
+                    18
+                  ],
+                  [
+                    53,
+                    17
+                  ],
+                  [
+                    53,
+                    18
+                  ],
+                  [
+                    54,
+                    17
+                  ],
+                  [
+                    54,
+                    18
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 14,
+            "groundOverlayCount": 3,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "crystal_power_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  56,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    14
+                  ],
+                  [
+                    56,
+                    14
+                  ],
+                  [
+                    57,
+                    14
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  52,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    52,
+                    17
+                  ],
+                  [
+                    52,
+                    18
+                  ],
+                  [
+                    53,
+                    17
+                  ],
+                  [
+                    53,
+                    18
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  55,
+                  15
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    15
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_05",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  55,
+                  16
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    16
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_06",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  55,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    17
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  54,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    54,
+                    14
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  50,
+                  19
+                ],
+                "occupiedCells": [
+                  [
+                    49,
+                    19
+                  ],
+                  [
+                    49,
+                    20
+                  ],
+                  [
+                    50,
+                    19
+                  ],
+                  [
+                    50,
+                    20
+                  ],
+                  [
+                    51,
+                    19
+                  ],
+                  [
+                    51,
+                    20
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 7,
+            "blockingOccupiedCells": 17,
+            "groundOverlayCount": 2,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d3.json",
+      "fixtureSha256": "61701B373CDCCCB4C7866449442CE733B5C1287A2A2C70239C0A66A3A4356CB2",
+      "depth": 3,
+      "assignedRoom": "crystal_power",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ore_intake_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "north",
+                "anchorCell": [
+                  7,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    6,
+                    31
+                  ],
+                  [
+                    6,
+                    32
+                  ],
+                  [
+                    7,
+                    31
+                  ],
+                  [
+                    7,
+                    32
+                  ],
+                  [
+                    8,
+                    31
+                  ],
+                  [
+                    8,
+                    32
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  13,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    13,
+                    31
+                  ],
+                  [
+                    13,
+                    32
+                  ],
+                  [
+                    14,
+                    31
+                  ],
+                  [
+                    14,
+                    32
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/2_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  10,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  3,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_08",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  16,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    16,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ore_intake_09",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  4,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ],
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 19,
+            "groundOverlayCount": 4,
+            "railRouteCells": [
+              [
+                2,
+                38
+              ],
+              [
+                3,
+                38
+              ],
+              [
+                4,
+                38
+              ]
+            ]
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "ventilation_service_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  11,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    31
+                  ],
+                  [
+                    11,
+                    31
+                  ],
+                  [
+                    12,
+                    31
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  16,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    15,
+                    31
+                  ],
+                  [
+                    16,
+                    31
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  3,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_03",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  10,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  6,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    6,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "ventilation_service_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "south",
+                "anchorCell": [
+                  4,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ],
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 6,
+            "blockingOccupiedCells": 14,
+            "groundOverlayCount": 3,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "fullBlueprintFit": {
+            "blockingPlacements": [
+              {
+                "instanceId": "crystal_power_00",
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "boundarySide": "north",
+                "anchorCell": [
+                  11,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    31
+                  ],
+                  [
+                    11,
+                    31
+                  ],
+                  [
+                    12,
+                    31
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_01",
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  13,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    13,
+                    31
+                  ],
+                  [
+                    13,
+                    32
+                  ],
+                  [
+                    14,
+                    31
+                  ],
+                  [
+                    14,
+                    32
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_02",
+                "role": "service",
+                "sourceVariantId": "existing/tr01_primarymatch_service_pylons_3col_source/0_0",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  10,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_05",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  16,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    16,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_06",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "east",
+                "boundarySide": "east",
+                "anchorCell": [
+                  16,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    16,
+                    31
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_07",
+                "role": "detail",
+                "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+                "footprintCells": [
+                  1,
+                  1
+                ],
+                "edgePreference": "west",
+                "boundarySide": "west",
+                "anchorCell": [
+                  3,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    30
+                  ]
+                ]
+              },
+              {
+                "instanceId": "crystal_power_08",
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "boundarySide": "south",
+                "anchorCell": [
+                  4,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ],
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ]
+                ]
+              }
+            ],
+            "blockingPlacementCount": 7,
+            "blockingOccupiedCells": 17,
+            "groundOverlayCount": 2,
+            "railRouteCells": []
+          },
+          "fullBlockingFootprintsFeasible": true
+        }
+      }
+    }
+  ]
+}

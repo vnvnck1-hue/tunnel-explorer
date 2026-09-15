@@ -1,0 +1,144 @@
+{
+  "status": "derived_working_candidate_requires_artist_paintover",
+  "materialMaskContract": {
+    "R": "metal",
+    "G": "gloss",
+    "B": "wet_or_crystal",
+    "A": "effect_strength"
+  },
+  "unityImported": false,
+  "assets": [
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3",
+      "source": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_floor_rail_transitions_3x3_normal.png",
+          "sha256": "BD9BD177F9B5D080FEB516D7BC3C4B6E99E811B46055AF898C7A517ED9EFC904"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_floor_rail_transitions_3x3_ao.png",
+          "sha256": "B28733B2A479905CAE73EF238839EDDC869039E0C3A03E6F941703DB549D9ED2"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_floor_rail_transitions_3x3_emission.png",
+          "sha256": "097A4BFB57EEE03E71407DB5A31348BB91528EF43F4E44C49A1E83E50650FE3D"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_floor_rail_transitions_3x3_mask.png",
+          "sha256": "EBD3177AD54CA4980FED6B08A11364D4B894E47B3B6338759089792BD8AF2C72"
+        }
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3",
+      "source": "tr01_primarymatch_crystal_outcrops_3x3_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_crystal_outcrops_3x3_normal.png",
+          "sha256": "F1F0F3E5E3CF7FB3A8D01E8CF244A0F84EC34CDAF8DB9CA36E3069D2D014010D"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_crystal_outcrops_3x3_ao.png",
+          "sha256": "E52B3C870D2238CF2B8B910F4E60B276A3BA8C11F9308060E99D5329C0CC6AAB"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_crystal_outcrops_3x3_emission.png",
+          "sha256": "1ABE398710BA14CF0E8819BEF823A4B7E7EDD160995E60344FCC7AB009F944B0"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_crystal_outcrops_3x3_mask.png",
+          "sha256": "19126322F46DF87EFA7EA6EF04B1145AC88B36BB79B071EB555F90C3A3C8C8E3"
+        }
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3",
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_equipment_transitions_3x3_normal.png",
+          "sha256": "B9B69D25DCA85BF9EE03EF2205E5E2F91B03C4829606F7B21FFA8C661FE4ADFB"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_equipment_transitions_3x3_ao.png",
+          "sha256": "E891273E851917D86D2AD8698C2C0473CB4073351CF6118FBD00FEBF850C6257"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_equipment_transitions_3x3_emission.png",
+          "sha256": "D6E8F9DEA63BC4E34F5BC30CB43739787719DA35DDCAD83C5C789955D98016B2"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_equipment_transitions_3x3_mask.png",
+          "sha256": "1C08421EA9A46EBF2977FFACAAB97041EBA9E198632C28D1DF24650F135BFCF2"
+        }
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2",
+      "source": "tr01_primarymatch_hero_machinery_2x2_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_hero_machinery_2x2_normal.png",
+          "sha256": "819AA7906546E3A66DC73A476A957F84EC9B6D3C09E78B0DA7B73714B053C0F1"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_hero_machinery_2x2_ao.png",
+          "sha256": "AD012B9FFDF7B415B16314AE31A6007DEDB68BAA77D6DFB1EA144E6B2950CA80"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_hero_machinery_2x2_emission.png",
+          "sha256": "B7163B551FB48DD9955644F7CB05707BCDE54E963AFF3182620DF85182974A8D"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_hero_machinery_2x2_mask.png",
+          "sha256": "2669AF06FAE63BC1130A4D0023F5CEC9D1E77378CC5692345A51B7A1A1E80350"
+        }
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2",
+      "source": "tr01_primarymatch_foreground_depth_2x2_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_foreground_depth_2x2_normal.png",
+          "sha256": "D1CCBAC264BF3EA7D2C021F75201417FE9E8D4BD8F779DE799E5EE8FC478F6B8"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_foreground_depth_2x2_ao.png",
+          "sha256": "C2A038836B1A8FC8A84DF621B26AF49993934440E8A2807CAA7E3011CB180CA1"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_foreground_depth_2x2_emission.png",
+          "sha256": "920E8D5663ED01AE78763B05A3AB5CD7A887A87C8976BA834754FAECE4886C56"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_foreground_depth_2x2_mask.png",
+          "sha256": "95A679F57EE45B8472E9D4A3A8C3904CB734C08007B57A1B365D76278E1166B5"
+        }
+      }
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2",
+      "source": "tr01_primarymatch_monumental_wall_modules_2x2_source.png",
+      "channels": {
+        "normal": {
+          "path": "channels/resource-first/tr01_primarymatch_monumental_wall_modules_2x2_normal.png",
+          "sha256": "A649795EAE53CDB6BBB8E0D3C4CE870A6BECC8EE98BFFFCFB299E9CC546F22D7"
+        },
+        "ao": {
+          "path": "channels/resource-first/tr01_primarymatch_monumental_wall_modules_2x2_ao.png",
+          "sha256": "AE74962816229C9775BA2AC15F69B22BB2C1AA4737351DEF80157A34C81D77D7"
+        },
+        "emission": {
+          "path": "channels/resource-first/tr01_primarymatch_monumental_wall_modules_2x2_emission.png",
+          "sha256": "8BC4EFBE24E813837E6DC6CA04A7141F0D8135EF50C33AC2D20FB26789F5728E"
+        },
+        "mask": {
+          "path": "channels/resource-first/tr01_primarymatch_monumental_wall_modules_2x2_mask.png",
+          "sha256": "D83636D867F53CEC79474C91CC3DEEE29C3506F80ABFC9761F85762D0F2B2988"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,1729 @@
+fileFormatVersion: 2
+guid: 45f2397eff91f0542a9df84e182484e4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6071562293687937736
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_0
+  - first:
+      213: -6556543911487895641
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_1
+  - first:
+      213: -1518643552443020855
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_2
+  - first:
+      213: -5363661741390888417
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_3
+  - first:
+      213: -1122511792475878647
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_4
+  - first:
+      213: 3917860816694097346
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_5
+  - first:
+      213: 9209351333600875414
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_6
+  - first:
+      213: 1739213973715418146
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_7
+  - first:
+      213: -9170436701494907090
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_8
+  - first:
+      213: 6737296422093566475
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_9
+  - first:
+      213: -2951450696465865220
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_10
+  - first:
+      213: -5794095149019444289
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_11
+  - first:
+      213: 2759811391814561909
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_12
+  - first:
+      213: 8901918482718171156
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_13
+  - first:
+      213: 2830397179553219341
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_14
+  - first:
+      213: 6178404832429301012
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_15
+  - first:
+      213: -226815063839689496
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_16
+  - first:
+      213: 1790266413845212014
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_17
+  - first:
+      213: -9140848701129138794
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_18
+  - first:
+      213: -683072598891382362
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_19
+  - first:
+      213: 7758659337823564922
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_20
+  - first:
+      213: -4118333217398984681
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_21
+  - first:
+      213: -2809907779817254854
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_22
+  - first:
+      213: 5005475225337939425
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_23
+  - first:
+      213: -4463851764026436702
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_24
+  - first:
+      213: 5636745854450947852
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_25
+  - first:
+      213: 8937890678184518631
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_26
+  - first:
+      213: -9054246449095027578
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_27
+  - first:
+      213: -4688058033399184560
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_28
+  - first:
+      213: -6360166995480215659
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_29
+  - first:
+      213: 2550991278836639320
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_30
+  - first:
+      213: 4946720883388740523
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_31
+  - first:
+      213: -7372429949805416230
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_32
+  - first:
+      213: 9151635926262824924
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_33
+  - first:
+      213: 4554306170434365943
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_34
+  - first:
+      213: 2043837396677220881
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_35
+  - first:
+      213: 90556377732993058
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_36
+  - first:
+      213: 6447533630089789235
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_37
+  - first:
+      213: -7393738402533471295
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_38
+  - first:
+      213: -2810594615133186026
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_39
+  - first:
+      213: 3560367439576834888
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_40
+  - first:
+      213: -4301213549355402458
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_41
+  - first:
+      213: -3581885033378360769
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_42
+  - first:
+      213: 4178624408079193924
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_43
+  - first:
+      213: 6801337101212771216
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_44
+  - first:
+      213: 4876353825534981866
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_45
+  - first:
+      213: -4268672248521835096
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_46
+  - first:
+      213: 2731835505817680675
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_47
+  - first:
+      213: -6061414373024024206
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_48
+  - first:
+      213: 4955373374153857591
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_49
+  - first:
+      213: 8501711153616627430
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_50
+  - first:
+      213: 665874184866518794
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_51
+  - first:
+      213: 9086851917933577214
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_52
+  - first:
+      213: -2922848023831228741
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_53
+  - first:
+      213: 5934499390200363939
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_54
+  - first:
+      213: 4256088514792845524
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_55
+  - first:
+      213: -7104313573141793946
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_56
+  - first:
+      213: 250837116868825649
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_57
+  - first:
+      213: -6819635072221200105
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_58
+  - first:
+      213: 7043909302601225834
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_59
+  - first:
+      213: -1103938807229934809
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_60
+  - first:
+      213: -3361376831550608050
+    second: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_61
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 175
+        width: 39
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8caece2dcb5824450800000000000000
+      internalID: 6071562293687937736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 258
+        width: 46
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a78381fc0a7205a0800000000000000
+      internalID: -6556543911487895641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 249
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c942343cb1bceae0800000000000000
+      internalID: -1518643552443020855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 249
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f120b0960127095b0800000000000000
+      internalID: -5363661741390888417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 234
+        width: 39
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90bc949d8790c60f0800000000000000
+      internalID: -1122511792475878647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 232
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c53972b7a90f5630800000000000000
+      internalID: 3917860816694097346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 234
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 693dc03ae303ecf70800000000000000
+      internalID: 9209351333600875414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 203
+        width: 44
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22cf3b3f4ede22810800000000000000
+      internalID: 1739213973715418146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 189
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2fe03438601cb080800000000000000
+      internalID: -9170436701494907090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 200
+        width: 42
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b02b561766faf7d50800000000000000
+      internalID: 6737296422093566475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 207
+        width: 24
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf5a211aa375a07d0800000000000000
+      internalID: -2951450696465865220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 265
+        width: 13
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbbc1ef092d379fa0800000000000000
+      internalID: -5794095149019444289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 153
+        width: 27
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 570fe28b6d1dc4620800000000000000
+      internalID: 2759811391814561909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 164
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 410a6e512b7f98b70800000000000000
+      internalID: 8901918482718171156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 166
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d03898c1d37974720800000000000000
+      internalID: 2830397179553219341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 165
+        width: 8
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41d5183e57a1eb550800000000000000
+      internalID: 6178404832429301012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 151
+        width: 56
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e4b022b6e03adcf0800000000000000
+      internalID: -226815063839689496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 166
+        width: 13
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6b6e8271dd48d810800000000000000
+      internalID: 1790266413845212014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 165
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69d5b9f598e252180800000000000000
+      internalID: -9140848701129138794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 170
+        width: 33
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9b643271d3586f0800000000000000
+      internalID: -683072598891382362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 152
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a74bd348f8b4cab60800000000000000
+      internalID: 7758659337823564922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 77
+        width: 80
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 710fd3632cdb8d6c0800000000000000
+      internalID: -4118333217398984681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 158
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a30d26403c33109d0800000000000000
+      internalID: -2809907779817254854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 135
+        width: 15
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e549428235077540800000000000000
+      internalID: 5005475225337939425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 145
+        width: 8
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a3143b98763d02c0800000000000000
+      internalID: -4463851764026436702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 136
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0754b76d7eb93e40800000000000000
+      internalID: 5636745854450947852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 145
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e3a6728734c90c70800000000000000
+      internalID: 8937890678184518631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 133
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68459d473dad85280800000000000000
+      internalID: -9054246449095027578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 106
+        width: 12
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05343d89e0ca0feb0800000000000000
+      internalID: -4688058033399184560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 75
+        width: 40
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59ffc32b0d52cb7a0800000000000000
+      internalID: -6360166995480215659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 107
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8566d286d01f66320800000000000000
+      internalID: 2550991278836639320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 90
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba374614f6846a440800000000000000
+      internalID: 4946720883388740523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 76
+        width: 30
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad0b56e750edfa990800000000000000
+      internalID: -7372429949805416230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 88
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdf39923364210f70800000000000000
+      internalID: 9151635926262824924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 85
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f92c1f0555243f30800000000000000
+      internalID: 4554306170434365943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 88
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11ada97984b2d5c10800000000000000
+      internalID: 2043837396677220881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 50
+        width: 58
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 220dbe6bb88b14100800000000000000
+      internalID: 90556377732993058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 82
+        width: 7
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33ff2e21dad3a7950800000000000000
+      internalID: 6447533630089789235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 82
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cb04dab81a246990800000000000000
+      internalID: -7393738402533471295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 50
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6185c55b613cef8d0800000000000000
+      internalID: -2810594615133186026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 79
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84328d99257f86130800000000000000
+      internalID: 3560367439576834888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 23
+        width: 62
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62bf29fc0150f44c0800000000000000
+      internalID: -4301213549355402458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_42
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 69
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f32d13f2a869a4ec0800000000000000
+      internalID: -3581885033378360769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_43
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 69
+        width: 16
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 447565582c47df930800000000000000
+      internalID: 4178624408079193924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_44
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 55
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 093e87bfe04336e50800000000000000
+      internalID: 6801337101212771216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_45
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 50
+        width: 10
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae63122e7f94ca340800000000000000
+      internalID: 4876353825534981866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_46
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 27
+        width: 58
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8adb944d431a2c4c0800000000000000
+      internalID: -4268672248521835096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_47
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 40
+        width: 18
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32bff0d2bed69e520800000000000000
+      internalID: 2731835505817680675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_48
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 45
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 279b4731eb781eba0800000000000000
+      internalID: -6061414373024024206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_49
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 32
+        width: 27
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73a9edf34d505c440800000000000000
+      internalID: 4955373374153857591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_50
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 31
+        width: 32
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6ab4e00452cf570800000000000000
+      internalID: 8501711153616627430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_51
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 50
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a07521e0b09ad3900800000000000000
+      internalID: 665874184866518794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_52
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 30
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef30207dcabfa1e70800000000000000
+      internalID: 9086851917933577214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_53
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 28
+        width: 23
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe461f4535ff67d0800000000000000
+      internalID: -2922848023831228741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_54
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 32
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ab3aa8c0c39b5250800000000000000
+      internalID: 5934499390200363939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_55
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 38
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d0f8d854f9a01b30800000000000000
+      internalID: 4256088514792845524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_56
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 27
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 663b5eb0278686d90800000000000000
+      internalID: -7104313573141793946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_57
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 33
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 132137f57072b7300800000000000000
+      internalID: 250837116868825649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_58
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 9
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 711c576a80acb51a0800000000000000
+      internalID: -6819635072221200105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_59
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 11
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a669d93c03ef0c160800000000000000
+      internalID: 7043909302601225834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_60
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 10
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7239a45f0850ea0f0800000000000000
+      internalID: -1103938807229934809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_61
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 9
+        width: 24
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4da23fb49df951d0800000000000000
+      internalID: -3361376831550608050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_0: 6071562293687937736
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_1: -6556543911487895641
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_10: -2951450696465865220
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_11: -5794095149019444289
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_12: 2759811391814561909
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_13: 8901918482718171156
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_14: 2830397179553219341
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_15: 6178404832429301012
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_16: -226815063839689496
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_17: 1790266413845212014
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_18: -9140848701129138794
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_19: -683072598891382362
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_2: -1518643552443020855
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_20: 7758659337823564922
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_21: -4118333217398984681
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_22: -2809907779817254854
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_23: 5005475225337939425
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_24: -4463851764026436702
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_25: 5636745854450947852
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_26: 8937890678184518631
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_27: -9054246449095027578
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_28: -4688058033399184560
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_29: -6360166995480215659
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_3: -5363661741390888417
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_30: 2550991278836639320
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_31: 4946720883388740523
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_32: -7372429949805416230
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_33: 9151635926262824924
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_34: 4554306170434365943
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_35: 2043837396677220881
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_36: 90556377732993058
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_37: 6447533630089789235
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_38: -7393738402533471295
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_39: -2810594615133186026
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_4: -1122511792475878647
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_40: 3560367439576834888
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_41: -4301213549355402458
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_42: -3581885033378360769
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_43: 4178624408079193924
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_44: 6801337101212771216
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_45: 4876353825534981866
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_46: -4268672248521835096
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_47: 2731835505817680675
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_48: -6061414373024024206
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_49: 4955373374153857591
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_5: 3917860816694097346
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_50: 8501711153616627430
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_51: 665874184866518794
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_52: 9086851917933577214
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_53: -2922848023831228741
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_54: 5934499390200363939
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_55: 4256088514792845524
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_56: -7104313573141793946
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_57: 250837116868825649
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_58: -6819635072221200105
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_59: 7043909302601225834
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_6: 9209351333600875414
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_60: -1103938807229934809
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_61: -3361376831550608050
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_7: 1739213973715418146
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_8: -9170436701494907090
+      tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission_9: 6737296422093566475
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

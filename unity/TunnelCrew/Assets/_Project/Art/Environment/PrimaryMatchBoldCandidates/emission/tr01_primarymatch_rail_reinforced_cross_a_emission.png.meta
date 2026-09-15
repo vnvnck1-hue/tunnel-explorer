@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 4eafa93476c7f004793e893b34ff7a61
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5018134438575927806
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_0
+  - first:
+      213: -8431662504180176981
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_1
+  - first:
+      213: 6860012582980335364
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_2
+  - first:
+      213: 5078439464771234504
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_3
+  - first:
+      213: -5243189694960380980
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_4
+  - first:
+      213: 6251190008534295094
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_5
+  - first:
+      213: -5238573437702397289
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_6
+  - first:
+      213: 1940423721828028090
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_7
+  - first:
+      213: -537730986179096773
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_8
+  - first:
+      213: -3566465543048137848
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_9
+  - first:
+      213: 3130394302766624523
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_10
+  - first:
+      213: 6981514714390101129
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_11
+  - first:
+      213: 7873339257124223491
+    second: tr01_primarymatch_rail_reinforced_cross_a_emission_12
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 108
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef1f8764faef3a540800000000000000
+      internalID: 5018134438575927806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 112
+        width: 22
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba72c5410a7bcfa80800000000000000
+      internalID: -8431662504180176981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 105
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 407b04b2919a33f50800000000000000
+      internalID: 6860012582980335364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 77
+        width: 36
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8caa30759cd3a7640800000000000000
+      internalID: 5078439464771234504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 114
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc3d5e580c27c37b0800000000000000
+      internalID: -5243189694960380980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 73
+        width: 33
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 632682a4130b0c650800000000000000
+      internalID: 6251190008534295094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 76
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 792a3fba639dc47b0800000000000000
+      internalID: -5238573437702397289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 57
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abe0d4d1815cdea10800000000000000
+      internalID: 1940423721828028090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 14
+        width: 35
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3f031064889988f0800000000000000
+      internalID: -537730986179096773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 15
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 883f1fa0c7e518ec0800000000000000
+      internalID: -3566465543048137848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 14
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0faf476805617b20800000000000000
+      internalID: 3130394302766624523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 19
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98c7261a4a253e060800000000000000
+      internalID: 6981514714390101129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_reinforced_cross_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 14
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30af601f658b34d60800000000000000
+      internalID: 7873339257124223491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_rail_reinforced_cross_a_emission_0: 5018134438575927806
+      tr01_primarymatch_rail_reinforced_cross_a_emission_1: -8431662504180176981
+      tr01_primarymatch_rail_reinforced_cross_a_emission_10: 3130394302766624523
+      tr01_primarymatch_rail_reinforced_cross_a_emission_11: 6981514714390101129
+      tr01_primarymatch_rail_reinforced_cross_a_emission_12: 7873339257124223491
+      tr01_primarymatch_rail_reinforced_cross_a_emission_2: 6860012582980335364
+      tr01_primarymatch_rail_reinforced_cross_a_emission_3: 5078439464771234504
+      tr01_primarymatch_rail_reinforced_cross_a_emission_4: -5243189694960380980
+      tr01_primarymatch_rail_reinforced_cross_a_emission_5: 6251190008534295094
+      tr01_primarymatch_rail_reinforced_cross_a_emission_6: -5238573437702397289
+      tr01_primarymatch_rail_reinforced_cross_a_emission_7: 1940423721828028090
+      tr01_primarymatch_rail_reinforced_cross_a_emission_8: -537730986179096773
+      tr01_primarymatch_rail_reinforced_cross_a_emission_9: -3566465543048137848
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

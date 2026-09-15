@@ -1,0 +1,7 @@
+status=promoted_to_runtime_catalog
+candidateEntries=38
+legacyEntries=27
+runtimeEntries=65
+runtimeCatalog=Assets/_Project/Data/Resources/Visual/SetPieceCatalog_PrimaryMatchRuntime.asset
+sceneChanged=false
+prefabChanged=false

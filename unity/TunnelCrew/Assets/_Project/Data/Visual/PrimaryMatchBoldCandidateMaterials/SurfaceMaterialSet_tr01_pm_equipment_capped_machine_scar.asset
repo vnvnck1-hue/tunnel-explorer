@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba29ccf1d985f943acb49bdc0fb66a0, type: 3}
+  m_Name: SurfaceMaterialSet_tr01_pm_equipment_capped_machine_scar
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
+  kind: 0
+  minLightSlot: 1
+  normal: {fileID: 2800000, guid: 9e009b18669e58e4b9f19fe0212ee6c9, type: 3}
+  emission: {fileID: 2800000, guid: 7e490f8d27bb0c948ac6c828d69c7e6c, type: 3}
+  materialMask: {fileID: 2800000, guid: 5719e1e6291d27e4cb210a9c08ccd2cf, type: 3}
+  ao: {fileID: 2800000, guid: 20173dca49e6c224bab68f0dc09c8cc3, type: 3}
+  normalStrength: 1
+  aoStrength: 1
+  emissionTint: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 1
+  minLightOverride: -1

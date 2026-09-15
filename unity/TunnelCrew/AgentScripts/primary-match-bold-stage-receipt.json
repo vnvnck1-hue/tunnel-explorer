@@ -1,0 +1,9 @@
+{
+  "status": "staged_candidate_assets_not_import_verified",
+  "planId": "TR01-PRIMARYMATCH-BOLD-CANDIDATE-IMPORT-V2",
+  "targetRoot": "Assets/_Project/Art/Environment/PrimaryMatchBoldCandidates",
+  "assetCount": 39,
+  "channelFiles": 195,
+  "changesSceneOrPrefab": false,
+  "changesActiveRuntimeCatalog": false
+}

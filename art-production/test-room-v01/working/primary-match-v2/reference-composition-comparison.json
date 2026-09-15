@@ -1,0 +1,104 @@
+{
+  "status": "verified_offline_reference_comparison",
+  "unityExecuted": false,
+  "comparisonImage": "diorama-process-19-primary-reference-comparison.png",
+  "entries": [
+    {
+      "id": "primary_reference",
+      "title": "PRIMARY STYLE TARGET",
+      "image": "art-production/test-room-v01/reference/tr01_primary_style_target.png",
+      "centralCropFraction": 0.8,
+      "metrics": {
+        "darkUnder008Percent": 10.9,
+        "mid008To035Percent": 79.84,
+        "lumaMedian": 0.1759,
+        "saturationMedian": 0.6528,
+        "magentaAccentPercent": 33.01,
+        "cyanAccentPercent": 6.84,
+        "amberAccentPercent": 1.97
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": 0.0,
+        "mid008To035Percent": 0.0,
+        "lumaMedian": 0.0,
+        "saturationMedian": 0.0,
+        "magentaAccentPercent": 0.0,
+        "cyanAccentPercent": 0.0,
+        "amberAccentPercent": 0.0
+      }
+    },
+    {
+      "id": "ore_intake",
+      "title": "ORE INTAKE",
+      "image": "art-production/test-room-v01/working/primary-match-v2/diorama-process-12-ore-intake-landscape.png",
+      "centralCropFraction": 0.8,
+      "metrics": {
+        "darkUnder008Percent": 10.35,
+        "mid008To035Percent": 84.81,
+        "lumaMedian": 0.1455,
+        "saturationMedian": 0.6,
+        "magentaAccentPercent": 72.86,
+        "cyanAccentPercent": 0.0,
+        "amberAccentPercent": 0.44
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -0.55,
+        "mid008To035Percent": 4.97,
+        "lumaMedian": -0.0304,
+        "saturationMedian": -0.0528,
+        "magentaAccentPercent": 39.85,
+        "cyanAccentPercent": -6.84,
+        "amberAccentPercent": -1.53
+      }
+    },
+    {
+      "id": "ventilation_service",
+      "title": "VENTILATION SERVICE",
+      "image": "art-production/test-room-v01/working/primary-match-v2/diorama-process-13-ventilation-service-landscape.png",
+      "centralCropFraction": 0.8,
+      "metrics": {
+        "darkUnder008Percent": 8.35,
+        "mid008To035Percent": 86.48,
+        "lumaMedian": 0.1597,
+        "saturationMedian": 0.5432,
+        "magentaAccentPercent": 26.05,
+        "cyanAccentPercent": 1.82,
+        "amberAccentPercent": 0.05
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -2.55,
+        "mid008To035Percent": 6.64,
+        "lumaMedian": -0.0162,
+        "saturationMedian": -0.1096,
+        "magentaAccentPercent": -6.96,
+        "cyanAccentPercent": -5.02,
+        "amberAccentPercent": -1.92
+      }
+    },
+    {
+      "id": "crystal_power",
+      "title": "CRYSTAL POWER",
+      "image": "art-production/test-room-v01/working/primary-match-v2/diorama-process-14-crystal-power-landscape.png",
+      "centralCropFraction": 0.8,
+      "metrics": {
+        "darkUnder008Percent": 9.34,
+        "mid008To035Percent": 85.35,
+        "lumaMedian": 0.1492,
+        "saturationMedian": 0.5769,
+        "magentaAccentPercent": 51.77,
+        "cyanAccentPercent": 0.57,
+        "amberAccentPercent": 0.32
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -1.56,
+        "mid008To035Percent": 5.51,
+        "lumaMedian": -0.0267,
+        "saturationMedian": -0.0759,
+        "magentaAccentPercent": 18.76,
+        "cyanAccentPercent": -6.27,
+        "amberAccentPercent": -1.65
+      }
+    }
+  ],
+  "interpretationGate": "runtime actors, VFX, camera projection, and final lighting still require Unity Game View"
+}

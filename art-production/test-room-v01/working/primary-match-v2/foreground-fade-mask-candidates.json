@@ -1,0 +1,61 @@
+{
+  "status": "offline_candidate_not_unity_integrated",
+  "unityExecuted": false,
+  "currentRuntimeConsumption": "not_consumed_uniform_sprite_alpha_is_current",
+  "futureUse": "fadeMaskPath contract for selective foreground fade",
+  "assets": [
+    {
+      "assetId": "TR01-PM-FOREGROUND-LEFT-FOREGROUND-SHELF",
+      "sourceAlbedo": "delivery-candidates/albedo/tr01_primarymatch_foreground_left_foreground_shelf_a_albedo.png",
+      "sourceAlbedoSha256": "AC507FA21D0E25244AA11BDA9DDA8D6C80752A01BF3E531B14C13CDC68F2E787",
+      "fadeMaskPath": "delivery-candidates/fade/tr01_primarymatch_foreground_left_foreground_shelf_a_fade.png",
+      "fadeMaskSha256": "43CC1A462653930960CA713F008F7AB1DC8AE0644F8BA4223E23EFD25D5966F8",
+      "dimensionsPixels": [
+        416,
+        343
+      ],
+      "rgbaContract": "RGB=white_255; A=source_albedo_alpha_exact",
+      "alphaIdenticalToAlbedo": true,
+      "targetFadeAlpha": 0.34,
+      "occluderGroup": "primarymatch_foreground_left",
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-RIGHT-FOREGROUND-SHELF",
+      "sourceAlbedo": "delivery-candidates/albedo/tr01_primarymatch_foreground_right_foreground_shelf_a_albedo.png",
+      "sourceAlbedoSha256": "131904A44215F7E5A1A954548DFAB99D86976876B02E3310695ECF59D4F0F406",
+      "fadeMaskPath": "delivery-candidates/fade/tr01_primarymatch_foreground_right_foreground_shelf_a_fade.png",
+      "fadeMaskSha256": "4289293059BC316A47CD5F4E414B11CB23A8D41FD4731928C318B8FDBBF01CF3",
+      "dimensionsPixels": [
+        416,
+        343
+      ],
+      "rgbaContract": "RGB=white_255; A=source_albedo_alpha_exact",
+      "alphaIdenticalToAlbedo": true,
+      "targetFadeAlpha": 0.34,
+      "occluderGroup": "primarymatch_foreground_right",
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-BOTTOM-CLIFF-LIP",
+      "sourceAlbedo": "delivery-candidates/albedo/tr01_primarymatch_foreground_bottom_cliff_lip_a_albedo.png",
+      "sourceAlbedoSha256": "642FC5966696CF6FBF3D4EE0E04BF422711A65CA24803A6B2F58CC3F66AD9227",
+      "fadeMaskPath": "delivery-candidates/fade/tr01_primarymatch_foreground_bottom_cliff_lip_a_fade.png",
+      "fadeMaskSha256": "B19F94F7386F57726E0BA024B2B245CC5F940C238C2FE72CFFF882318BF8354D",
+      "dimensionsPixels": [
+        544,
+        198
+      ],
+      "rgbaContract": "RGB=white_255; A=source_albedo_alpha_exact",
+      "alphaIdenticalToAlbedo": true,
+      "targetFadeAlpha": 0.34,
+      "occluderGroup": "primarymatch_foreground_lip",
+      "status": "candidate_not_unity_verified"
+    }
+  ],
+  "summary": {
+    "assetCount": 3,
+    "alphaIdenticalMasks": 3,
+    "reviewImage": "diorama-process-28-foreground-fade-mask-review.png"
+  }
+}

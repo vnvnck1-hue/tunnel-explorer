@@ -1,0 +1,559 @@
+fileFormatVersion: 2
+guid: eeccad52d7f3dbd46a00e953063dd39f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6982787200020640462
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_0
+  - first:
+      213: 8256023305974705649
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_1
+  - first:
+      213: -4504765385048599169
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_2
+  - first:
+      213: 3536433419640025788
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_3
+  - first:
+      213: -8214249962700670176
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_4
+  - first:
+      213: -5920842312258270551
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_5
+  - first:
+      213: -2375054355298470940
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_6
+  - first:
+      213: 1638564643576128254
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_7
+  - first:
+      213: 6314345693304124959
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_8
+  - first:
+      213: 3510016491097097788
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_9
+  - first:
+      213: -7749416140894948908
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_10
+  - first:
+      213: -7279070736680641617
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_11
+  - first:
+      213: 7520719686391270178
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_12
+  - first:
+      213: 5497804070201762848
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_13
+  - first:
+      213: -8333691077980044856
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_14
+  - first:
+      213: -4329949125675457949
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_15
+  - first:
+      213: 1304893850077811420
+    second: tr01_primarymatch_equipment_left_broken_corner_a_emission_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 67
+        width: 30
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec2ff5746f7d7e060800000000000000
+      internalID: 6982787200020640462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 80
+        width: 35
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fde7f95479439270800000000000000
+      internalID: 8256023305974705649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 88
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f75d3b3efbbdb71c0800000000000000
+      internalID: -4504765385048599169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 87
+        width: 46
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb2b675557fe31130800000000000000
+      internalID: 3536433419640025788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 87
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02bf5fc0e2f110e80800000000000000
+      internalID: -8214249962700670176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 78
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aa4eb67941f4dda0800000000000000
+      internalID: -5920842312258270551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 93
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e3b03eb5ac1a0fd0800000000000000
+      internalID: -2375054355298470940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 42
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef2aed1acd95db610800000000000000
+      internalID: 1638564643576128254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 46
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f16f86604ff01a750800000000000000
+      internalID: 6314345693304124959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 25
+        width: 20
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c360b9bd66516b030800000000000000
+      internalID: 3510016491097097788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 52
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d13749f31b847490800000000000000
+      internalID: -7749416140894948908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 38
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fab953d2bbb8bfa90800000000000000
+      internalID: -7279070736680641617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 10
+        width: 13
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22b83a255b6fe5860800000000000000
+      internalID: 7520719686391270178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 8
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024a2195caf1c4c40800000000000000
+      internalID: 5497804070201762848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 26
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c1482d4e18c85c80800000000000000
+      internalID: -8333691077980044856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 23
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 362e994163ee8e3c0800000000000000
+      internalID: -4329949125675457949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_broken_corner_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 8
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd2da730b0aeb1210800000000000000
+      internalID: 1304893850077811420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_0: 6982787200020640462
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_1: 8256023305974705649
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_10: -7749416140894948908
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_11: -7279070736680641617
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_12: 7520719686391270178
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_13: 5497804070201762848
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_14: -8333691077980044856
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_15: -4329949125675457949
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_16: 1304893850077811420
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_2: -4504765385048599169
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_3: 3536433419640025788
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_4: -8214249962700670176
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_5: -5920842312258270551
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_6: -2375054355298470940
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_7: 1638564643576128254
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_8: 6314345693304124959
+      tr01_primarymatch_equipment_left_broken_corner_a_emission_9: 3510016491097097788
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

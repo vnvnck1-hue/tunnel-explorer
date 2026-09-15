@@ -1,0 +1,3362 @@
+{
+  "packageId": "tr01-primary-match-bold-working-delivery-v1",
+  "revision": 1,
+  "status": "working_candidate_not_approved",
+  "productionProjection": "ReferenceTopDown",
+  "deliveryPixelsPerCell": 128,
+  "pivotPixelsCoordinateSystem": "image_top_left_y_down",
+  "sourceRuntimeCatalog": "../runtime-catalog-candidates.json",
+  "unityImported": false,
+  "assets": [
+    {
+      "assetId": "TR01-PM-RAIL-HORIZONTAL-LEFT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_left",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_horizontal_left_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_horizontal_left_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_horizontal_left_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_horizontal_left_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_horizontal_left_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "AF80197FD308523EC90AF80C0533974852583D08280B8EDD3FC3C8BAFCE50812",
+        "normal": "F54C84F06210FA55DDAF91246981B10C3BD9517A3AC759F1CE98C95D4FA95852",
+        "ao": "41F11A625299FEC9DF1438546983A6D0B42A190B1AB551E158FB7E92D52474CE",
+        "emission": "906F52963BC4708239338368B306A76BB17020B89CAAB6F6713E09A2F9BC903B",
+        "mask": "54B736574C925C98DF684401BE6E01EE60783D9AB0DFA0AFC43D7E03B196D843"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-HORIZONTAL-MIDDLE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_middle",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_horizontal_middle_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_horizontal_middle_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_horizontal_middle_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_horizontal_middle_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_horizontal_middle_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "4AE7AE8E5C3CBA5E92E579EA185EA84547571501B13F6255D18553B6484FF08C",
+        "normal": "CAF48327C46FE52B1579DFA1EBAD3C4708CBF49F327E1EF990B60C2F825991B1",
+        "ao": "88130AF197C8098F8BEF6AA823DE967013FD7FE98EBE470F313CB1789D522F46",
+        "emission": "2D8CD6E7D896CA73966B711AB1A30F37A42EE48ADEC0FA6F6F1CB907F0F9FF4E",
+        "mask": "DAA4B1A05C8386D48CE88BC4AF3C83B99BD9E8894BF0A1FD008AD6C40E6314B9"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-HORIZONTAL-RIGHT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_right",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_horizontal_right_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_horizontal_right_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_horizontal_right_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_horizontal_right_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_horizontal_right_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "B8ACCB7B73720A159C39CCA5AEAFA069EE0CC0BFAC852B14DA6FF234C9E91872",
+        "normal": "0B51F85B86949D9181619DD53086755F95C5EAA9E284FDDE5641FED8DDE9CA97",
+        "ao": "8F354D92EE188D1B062D1F8699EA2C37FC110FD99AC8499B1B772A7F6A5015CA",
+        "emission": "8458AEF89919698935A472A98CF535F560328680DF8C362BB3AF8656B328F97B",
+        "mask": "AAB21F271770B5C43F0E9BC0A0332018D58600E41BBF77F15D2447A6B46F0608"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-TURN-UP-LEFT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_left",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_turn_up_left_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_turn_up_left_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_turn_up_left_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_turn_up_left_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_turn_up_left_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "7E9F54D6F1D4B4188F084347C2537495A08ADF674C5D62E6581D987F8CF87D7C",
+        "normal": "2FCCB67C3B3326A1AA2B5E8228DD4FAC2C668575D83624E989C03F5794125609",
+        "ao": "E2F16B792B1E128B2F4EFE2A6F590423FC49A0079AC2B87B79D709E4DC49E248",
+        "emission": "EA3353049EA5A8A988573ABC309EC658E64983BAD52C6FF393817626BEF09104",
+        "mask": "AE74F79B9A3315275FB37AFAC267D721D91CCE2909F0DF0EF4DDCCF01F065645"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-REINFORCED-CROSS",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/reinforced_cross",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_reinforced_cross_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_reinforced_cross_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_reinforced_cross_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_reinforced_cross_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_reinforced_cross_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "82AEE1DA2D7DF0E1011E628ADB4C5100BBA2C8A5E74B59CED54657901EDFE322",
+        "normal": "4165494B9CCD2B8F074368880173465F0E1713014D1E79B334A324A80680CE7C",
+        "ao": "1D84053C8E4421E3FA5A68691F552F0C17D149A3672BE90DC03F4089E5040289",
+        "emission": "67A9BB8F3BA80F4F884FA85AAA470C55566A87F81C5094FCA080EBAE6EE01B19",
+        "mask": "58434DE98CBAABFF66802E4CD4A43BDBF3C302D904BED1CB0C7A489BDD787D29"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-TURN-UP-RIGHT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_right",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_turn_up_right_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_turn_up_right_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_turn_up_right_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_turn_up_right_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_turn_up_right_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "410EC1B3EE9F64E2E77A79A9C2EA35177DAE009EE8CB7E7A59673A96EC26B632",
+        "normal": "94B9D3FDA97D1BAE9E8591EB0373F1A41AF0323C10B002C0779960B0225ED72A",
+        "ao": "90BB9F93D773F1BB767BFCD4D2C149A2FA8645A641262C686AF117934D6D35DD",
+        "emission": "50A73AEDF41C52B2AEB92B9F991E04987B32E63D49D2BAE5E1EA2524DF4471D1",
+        "mask": "6804AA5FCE501D3E6EA49F5240DA69FA57B2158471D885C333EA137062B1B338"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-DAMAGED-LEFT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_left",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_damaged_left_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_damaged_left_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_damaged_left_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_damaged_left_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_damaged_left_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "9C8AC44FC7F3A81FA9FBEBE965D32AF47D0F03E7163841D394797C4CB4378397",
+        "normal": "3046B1C5D7E3C2A55A63D9D3B86BA234C272FEC3FA8202229A26DDBF8DBDFDBD",
+        "ao": "41C9BFEB045FC901C44DA4CA75D3604D0AD56E7382E8519AE8C30D31A7C8578C",
+        "emission": "6C19F24C596722E04477A308C7B59082B66086441229BDA934E3E310554B1F1C",
+        "mask": "442E15F26DD357254AB4A2C6F4B3FEB865226CDF01F9A6100F0F245BAA0FFCAB"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-BROKEN-GAP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/broken_gap",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_broken_gap_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_broken_gap_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_broken_gap_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_broken_gap_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_broken_gap_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "F9DA068B8F5C9729CC85C176C8DEB956F663BA027E44C2E81B8B10F0D00D2987",
+        "normal": "E118AD07472A58AF45CE631F34AE223EC3E86A935F6F6C777860CA43FCF06165",
+        "ao": "63DD7D80EE7FCA42FA52A57D8F3CD1F6B0B1C7354C1E9185547A414894409304",
+        "emission": "40C501A80B237FB6E6307C9E9A51919E3DBB61260AB0770D95442FB6D7207AB3",
+        "mask": "AFD3AE4BA944402CD97655A74D8C15F16D289435E5EF946ADBC7EE1096C76A5E"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-RAIL-DAMAGED-RIGHT",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_right",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_rail_damaged_right_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_rail_damaged_right_a_normal.png",
+        "ao": "ao/tr01_primarymatch_rail_damaged_right_a_ao.png",
+        "emission": "emission/tr01_primarymatch_rail_damaged_right_a_emission.png",
+        "mask": "mask/tr01_primarymatch_rail_damaged_right_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "72497C7AE81B64677B19A207D6638BBF2D1B652FF30CF0CB722AEBDE0DFD500D",
+        "normal": "0AEE06E4B7C89DD2F0D247A7F7CA0C5A0759B6F54B8F2689F0E2DF4F33342A83",
+        "ao": "754252E0D10504D75B8B3E8B80040F9FBEAC0FBBC8BC010AAD51502E17204962",
+        "emission": "971E21A49215A596A5B616E21BE9F8CFF50E5025B73957545033A0A4792315C0",
+        "mask": "775DDA4D9CE1A2B2CB9CF4B1F2D49D0280BB42BDB724D130A6EDAE922247B9B9"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-LOW-LEFT-SEAM",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_left_seam",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_low_left_seam_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_low_left_seam_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_low_left_seam_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_low_left_seam_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_low_left_seam_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "B46048F4EA72F1F3938E9A0BE40F1B84847687F712D08C141ABB75164023BBF0",
+        "normal": "1F3F1361F874BE0DB34485E6EB54C84FCF6C2959A16A1D932196411707A8596B",
+        "ao": "C01251D57EB64B93A05272E94E66B4D2CC16C537647B684E961AEB05638AC34D",
+        "emission": "A123C547815030A8A21AA1BED77826FA393DE59FB5742D176B477AE43AAC9B34",
+        "mask": "95EB136BCBEC86D29D09A11DCFC32418E64465BC496B23966BFF69B3B900B39D"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-LOW-CENTER-CLUSTER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_center_cluster",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_low_center_cluster_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_low_center_cluster_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_low_center_cluster_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_low_center_cluster_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_low_center_cluster_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "E758C27F4542587C360979A743B56D556FC42D0809B957959FE7EB3B93CEE2AD",
+        "normal": "1DEDBECD8B346B4536C5C8A609636D3BABE6F3D3B19F7EC91DBD6C2E4F33A00B",
+        "ao": "1EA1375BB7F59A7513C22099177C9B59F19E5A13C3A3442DA66EE4021A17664C",
+        "emission": "DBAD0EAFEF97555FEFF658F424C4ACDCD112984C152FE9D2501A1AADFAAEED2D",
+        "mask": "4B9BEF941F39C32D8F1FF2FDDC8C1C921FC5CE81FDF55AFFDF50F841804EE391"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-LOW-RIGHT-SEAM",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_right_seam",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_low_right_seam_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_low_right_seam_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_low_right_seam_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_low_right_seam_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_low_right_seam_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "C3D76537D8FD9D1561190A04C97CC7F413A895F1337ED4E050B35D7754D9B641",
+        "normal": "50C112FFEF4329D66F405D37AC6A8C32C83E55CF34128635F5A9DC92E041692C",
+        "ao": "20C5819A64F63061A0D9F18B4038DFDE573E03963B7031AAA8498CDD26972244",
+        "emission": "8DCDDF269517D1E518643C10CBB4CD4BEEA53ACB3F0260FD8C50E7A9BDC3DB49",
+        "mask": "4BE71A8A0AB44A33688FEA02F8F78137F7397F404C664B0D0050F13FF34DA646"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-LEFT-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 1.05,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        80,
+        143
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.05298
+      ],
+      "dimensionsPixels": [
+        160,
+        151
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_medium_left_outcrop_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_medium_left_outcrop_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_medium_left_outcrop_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_medium_left_outcrop_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_medium_left_outcrop_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "DEB7F29B41934C88B4A751165568548104C1CFF11DBED82E76AD152758E35EFE",
+        "normal": "57E9910A697D749D6DB567F6E270D0877F5C10D12F851C4374E0201145F914E6",
+        "ao": "B6D3E42062E296C008183675F4D23D16E6A6F5FF91CA0E17106F0373B5BBA694",
+        "emission": "270685267F4419A3C1151A6594E00BBD84CCDEBA9073834D063E86E0030F6C3B",
+        "mask": "CEF98D0EA69A3F53F3FA108B72DB1B9F0CBD55B52256173B5B7076EA93D854FF"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          24,
+          25,
+          393,
+          379
+        ],
+        "scale": 0.318571,
+        "pastePixelsTopLeft": [
+          34,
+          31
+        ],
+        "pivotPixelsTopLeft": [
+          80,
+          143
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.05298
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_left_scar",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 1.05,
+        "collision": "soft_block_candidate",
+        "contactShadowRadius": 0.34,
+        "shadowContourCells": [
+          -0.44,
+          0.0,
+          0.44,
+          0.0,
+          0.38,
+          0.72,
+          -0.38,
+          0.72
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-CENTER-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 1.05,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        80,
+        143
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.05298
+      ],
+      "dimensionsPixels": [
+        160,
+        151
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_medium_center_outcrop_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_medium_center_outcrop_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_medium_center_outcrop_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_medium_center_outcrop_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_medium_center_outcrop_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "3C2EB7C8D31C55E5B4C3FAC0726EF851B478271A626B75D893E363F58E4D953B",
+        "normal": "57C489E2E62A728AFEE55ECF5C31DB4C63C56E81E4BD895868D39CF433B4ACD0",
+        "ao": "40622ED352AC812D13BB0F893366955921BE65AF868F9F40D17155A9AF125EE1",
+        "emission": "938FE3F2BB6C02AABAF19FB605F94E2FE5D02D712D58743B31A0082630DB87BB",
+        "mask": "349BAE216BD9C7E5FA11DD82C58D418EB97F4A3D30BC64566D081659200E2A99"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          18,
+          14,
+          401,
+          379
+        ],
+        "scale": 0.371907,
+        "pastePixelsTopLeft": [
+          8,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          80,
+          143
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.05298
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_center_scar",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 1.05,
+        "collision": "soft_block_candidate",
+        "contactShadowRadius": 0.34,
+        "shadowContourCells": [
+          -0.44,
+          0.0,
+          0.44,
+          0.0,
+          0.38,
+          0.72,
+          -0.38,
+          0.72
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-RIGHT-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 1.05,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        80,
+        143
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.05298
+      ],
+      "dimensionsPixels": [
+        160,
+        151
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_medium_right_outcrop_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_medium_right_outcrop_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_medium_right_outcrop_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_medium_right_outcrop_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_medium_right_outcrop_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "3BD3DB4C46A4BBBDA1ADCA9FB5D42D0B1E9A9DA015FA03606AD6847554095302",
+        "normal": "5A388531C0BF16A6FF493A3BD5BBC3B931923581448EF3CBAFC9AE00053C9956",
+        "ao": "BE58EB252BAEE0838BFA9BCD9DE1691524A36B6B4B23DDF8996ABCA28DB12DD2",
+        "emission": "601986BBC480A8D9C182A1D280ED644BEC7B305425931C1EBD260F24701E84E2",
+        "mask": "B0948CE4E9D71253235740FFDF943D38D9FA22B7AF2C708CDF0E9D8C10C7F423"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          23,
+          35,
+          395,
+          380
+        ],
+        "scale": 0.291317,
+        "pastePixelsTopLeft": [
+          8,
+          43
+        ],
+        "pivotPixelsTopLeft": [
+          80,
+          143
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.05298
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_right_scar",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 1.05,
+        "collision": "soft_block_candidate",
+        "contactShadowRadius": 0.34,
+        "shadowContourCells": [
+          -0.44,
+          0.0,
+          0.44,
+          0.0,
+          0.38,
+          0.72,
+          -0.38,
+          0.72
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-DEPLETED-LEFT-SCAR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_left_scar",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_depleted_left_scar_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_depleted_left_scar_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_depleted_left_scar_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_depleted_left_scar_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_depleted_left_scar_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "576862CF2E0A66318F3F721173BB4581B94F8DD6F6D83B6E7EECFC28E6D372BC",
+        "normal": "69D57DCE5BC30C39C099713C23D8A2B246965AC7CE2AE78AAF580ACD82EA30FE",
+        "ao": "695C19C94E2E53B44FE8A5D216229225208C9C29FA98371F8E1C9EAC1C8A38D0",
+        "emission": "5272894648F447C29A5F5658F79CC26DDADFF21EBA1F817AF5F154E99EB8A1E3",
+        "mask": "7511DDCD1065019F88B96A6FF72BC0C430423055F3FC0A26AB5E14E29F0BBEA6"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-DEPLETED-CENTER-SCAR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_center_scar",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_depleted_center_scar_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_depleted_center_scar_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_depleted_center_scar_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_depleted_center_scar_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_depleted_center_scar_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "B751FE7330A637339A85E43DCE1C6433903981771EEB6ED84E13087673F7F1DC",
+        "normal": "9432796CD92DB1613B826FD815D393465AFC75BFC3A0BDD9EA02D454EB7AE0E4",
+        "ao": "91EBF5681F52F77CAF3A8809A5ED2E1BB084EEB06E0602F1C646908E70C2DAB7",
+        "emission": "AE020752A96D29164476D9913EE0EEE2535EE87224FB5C9DB15553D3A84725A1",
+        "mask": "E7173E9490770C48CA46D396203BC023AFC21946193986DF018239DC69C710DF"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-DEPLETED-RIGHT-SCAR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_right_scar",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.18,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_crystal_depleted_right_scar_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_crystal_depleted_right_scar_a_normal.png",
+        "ao": "ao/tr01_primarymatch_crystal_depleted_right_scar_a_ao.png",
+        "emission": "emission/tr01_primarymatch_crystal_depleted_right_scar_a_emission.png",
+        "mask": "mask/tr01_primarymatch_crystal_depleted_right_scar_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "95016D87E8066A4FF40B95D4AB5BA047328B87BF72D3B16CA277768874CCADE7",
+        "normal": "DFDD62E0F5B2931341B94965E8E4E78988CA322C8DD2F59634EB3B32C04A317B",
+        "ao": "E99687FFE01D7914546168F6E64DBF045CC2887E01AE80D44BF177A62AA271CB",
+        "emission": "1B3C7735A9231F9D4D2B3836529AE14CAC7D19AA723FBC1EC5138AB03FB118F8",
+        "mask": "C7827C8B8516BACEB81B5136EBD547D59B05505A7C3C620D52DCA83AC5A4BE7D"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.18,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-LEFT-TERMINATION",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_termination",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_left_termination_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_left_termination_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_left_termination_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_left_termination_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_left_termination_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "54209CE76AF31C2D05727392B0CAEBB2919D1C45E5F35DD36C109FE62A5A6161",
+        "normal": "8D47BF412E0F347C7FC9E31BA8A5AD35CD055606F175984925B5BC4BC4D14EB1",
+        "ao": "E220C13DD72AD1F09041FBBF2E1D4281E08649BD42C23389BBC786E30F23C232",
+        "emission": "DFB10527D569BAC509EB0F63840410DC8D7CD701D758075BAF43A8CB6FC2A127",
+        "mask": "9AC0E21EF1C5930541661F3AAE3930AD9CF0196ACCA4C610B94CB713D0407301"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/buried_threshold",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_buried_threshold_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_buried_threshold_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_buried_threshold_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_buried_threshold_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_buried_threshold_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "600A1F7A7B5F2E994BCE7C2944646C1EC5E943E39FAB38EBE5F31CFFA0D76AF2",
+        "normal": "3B69D7574710988445B795143D26657DFDB30C7CA74DD02E5E4C4BFAA6F9E896",
+        "ao": "B551159B186344320778B1CF22E460D8EF0B58453EF24776F89C232B341F19A1",
+        "emission": "CC69273F4E62059CFCD2BCB26BFCD5A7000E123EEB2AC0CD2769CEEF7C578E51",
+        "mask": "20E7553789A77AB889267148C50AE0D24C9B1A7A09B0ED4EB68E58149E79846A"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-RIGHT-TERMINATION",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_termination",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_right_termination_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_right_termination_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_right_termination_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_right_termination_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_right_termination_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "702857A7108CF5BA91A8533A649853B9C8925CF9868B9EDBA0E59D911A09AA4C",
+        "normal": "31FB9F44653E082FD543034B114157E5FE0474FB1976E35F9D379D787B986EEC",
+        "ao": "9B6978598A0C0F59B163697485BEEFADF88277511D766B7097D4841A0DCEE7A0",
+        "emission": "6DF78A707750F61FC6F8D4E60B0677BAE15B7CAF7906B305529FDE7EAF663283",
+        "mask": "57F5C8F8AB1E6E3A089941376AA7C57745C1D9274B576E5A90C32BA3F693551C"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-LEFT-BROKEN-CORNER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_broken_corner",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_left_broken_corner_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_left_broken_corner_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_left_broken_corner_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_left_broken_corner_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_left_broken_corner_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "1F29B2E58743330096135C5F844E9D74EAEFBA555C68786B7FFBC6992CE2DDAD",
+        "normal": "4B7701F182D217DC5B1DE7127BF208C8A781E392E95C3CBD5A9A1ED6F352487A",
+        "ao": "6D94946630FAA28A24E6601C6AF18766FD8A643233376FD64D201713DC5E08F7",
+        "emission": "CCA64A5B62CAC361C9BABC99F01B10F8F6648F62E0E67CCE1FB9EE5A2E54A596",
+        "mask": "6C14AC8E833EC30C3B44B565C1C900AADE4E9541DD387BBD254A88773C050290"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-REINFORCED-SOCKET",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/reinforced_socket",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_reinforced_socket_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_reinforced_socket_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_reinforced_socket_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_reinforced_socket_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_reinforced_socket_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "0180077E8E56AE302F849591506DFF811AF9AF16A9B5A6D2932ABDC0B2C9D35E",
+        "normal": "754535FE56575F653E05DE5F78F7A359ECBC034B52B0248260024A80FD4C8A45",
+        "ao": "9E276EC6CF4C06E41B8336349C25247B2C36DB37A2250C49065AD05C9B375DF2",
+        "emission": "44402D078D174BBC18B4F4BAFF68B70994CA8BE3A004FF70292D257B1054CB7A",
+        "mask": "92A70B9AAAB4CF276839FACA4427F00F0755856D14E5328B3ACFA9D6F8ECFBF3"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-RIGHT-BROKEN-CORNER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_broken_corner",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_right_broken_corner_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_right_broken_corner_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_right_broken_corner_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_right_broken_corner_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_right_broken_corner_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "0B444B607764882C76D0F11DFAD6A9A6C20B2C0EF8D6B0075177CA113DE49860",
+        "normal": "8C54463A5ABDC802EFCC034B1BF4B182FBE1BED484E6D1BCA64FCC9A26CDABC7",
+        "ao": "730721469867FDE6FFA04941341170B7E5BF1375C6654781C5837B4CBE3EB6DD",
+        "emission": "381360881885AA4AE13766FD53A9CA9C4A17ABA0ED4D384613F3F010B1F5DBB2",
+        "mask": "3DA0A07DF51BEDE6AEBE1C00E600C379B051C31ECC5792B101D865982599E35C"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-LEFT-RUBBLE-RAMP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_rubble_ramp",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_left_rubble_ramp_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_left_rubble_ramp_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_left_rubble_ramp_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_left_rubble_ramp_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_left_rubble_ramp_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "1BF1FC1D744EABDDBB5243CBC5A97BC6795B2CB811D2E4F18C5B589A16D1EF61",
+        "normal": "E3B1A9F6D396522A5F8AD1D2112EA5E504CC6C699216B4C6B0272D17784B0F2A",
+        "ao": "445C3EEB1CC877F584F7267158AF6F612BC5C81BEB584F184E6B1EECD3040FEF",
+        "emission": "0147E7BBFAD6A806127637DA3B4A05A9A24C1DD678F9BE5AB057C7B07E69740F",
+        "mask": "8F356C3FAF76A859F54315861FC7103201EA2770FC50CB5D254DF4FAC3CADBE2"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-CAPPED-MACHINE-SCAR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/capped_machine_scar",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_capped_machine_scar_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_capped_machine_scar_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_capped_machine_scar_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_capped_machine_scar_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_capped_machine_scar_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "4C47EF8BB8CC2718224C744B6CBC6F6AD41BA4D47F6BC23D722ED5BCFA1AFBF8",
+        "normal": "D9967B535BEB793A9E9E8B04CC9948B254917610DED11986F668437F8F4F2539",
+        "ao": "FF5E95F3A18302713167F95E52D21E418A5BC708DE93707963126ABDBACD56FB",
+        "emission": "B6FC25F23C9373724E26C72A033E88082AC40D15CBE1B5CFA2B4B2A2FB7D1179",
+        "mask": "DA9D3A6F61E4BEC1245E7AC45DC631B9F6A44BA32F5C5D484F02B73E1C16A262"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-EQUIPMENT-RIGHT-RUBBLE-RAMP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_rubble_ramp",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        1,
+        1
+      ],
+      "visualHeightCells": 0.0,
+      "sortingLayerHint": "GroundDetail",
+      "localOrder": 0,
+      "pivotPixels": [
+        64,
+        64
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.5
+      ],
+      "dimensionsPixels": [
+        128,
+        128
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_equipment_right_rubble_ramp_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_equipment_right_rubble_ramp_a_normal.png",
+        "ao": "ao/tr01_primarymatch_equipment_right_rubble_ramp_a_ao.png",
+        "emission": "emission/tr01_primarymatch_equipment_right_rubble_ramp_a_emission.png",
+        "mask": "mask/tr01_primarymatch_equipment_right_rubble_ramp_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "3AD5F2BE93AD5AF172068B7AD5E54688DC0C4E4AC7EC25611ECFF3C10E5A5953",
+        "normal": "A784BF2C59423ED11D171001462B18F497F80FC7602590BD71037261D197D8E0",
+        "ao": "FFBFF9B38252B302501341090C657FB76AEBD4B355D411BD2672AA4704E93ED2",
+        "emission": "C8AAF3CA615085CFF886DC1D1CD404B5B56E48F3F76A3E457929B0E9414EBCF6",
+        "mask": "5EECE0B05AE6E898170A4415E190AA4F50FB38E3951773BF0DFB441D14CB336D"
+      },
+      "normalization": {
+        "mode": "full_cell_ground_overlay",
+        "sourceCropPixels": [
+          0,
+          0,
+          418,
+          418
+        ],
+        "scale": 0.30622,
+        "pivotPixelsTopLeft": [
+          64,
+          64
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.5
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "ground_overlay",
+        "sortingLayer": "GroundDetail",
+        "footprintCells": [
+          1,
+          1
+        ],
+        "visualHeightCells": 0.0,
+        "collision": "none",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-HERO-ORE-CRUSHER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        2,
+        2
+      ],
+      "visualHeightCells": 2.2,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        144,
+        290
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.026846
+      ],
+      "dimensionsPixels": [
+        288,
+        298
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_hero_ore_crusher_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_hero_ore_crusher_a_normal.png",
+        "ao": "ao/tr01_primarymatch_hero_ore_crusher_a_ao.png",
+        "emission": "emission/tr01_primarymatch_hero_ore_crusher_a_emission.png",
+        "mask": "mask/tr01_primarymatch_hero_ore_crusher_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "9712ACD2A82532EB6E8F76451359FDFAC9A486B16D0FD8BA0FAF20ED7756C3D7",
+        "normal": "DE4525D7108CC35E5D35ED888BBDF7B034C8FFD0E2E32C456140A98F63922172",
+        "ao": "CBBD255BDB693E733CD5C94D2D81133344E75B722FAB362B143CFC0BC9A390CE",
+        "emission": "988894D27E1C4775353689CDDE4D813782D10FFBB1BF65D500E9EFC74F0EDF20",
+        "mask": "D54C7D8330FA46D4458274E11C56C56D3EFE09F44591BDB18A2C78967A192B76"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          17,
+          13,
+          627,
+          612
+        ],
+        "scale": 0.434171,
+        "pastePixelsTopLeft": [
+          8,
+          31
+        ],
+        "pivotPixelsTopLeft": [
+          144,
+          290
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.026846
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          2,
+          2
+        ],
+        "visualHeightCells": 2.2,
+        "collision": "broad_machine_core",
+        "contactShadowRadius": 0.76,
+        "shadowContourCells": [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.86,
+          1.56,
+          -0.86,
+          1.56
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-HERO-VENTILATION-TURBINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        2,
+        1
+      ],
+      "visualHeightCells": 2.05,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        144,
+        271
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.028674
+      ],
+      "dimensionsPixels": [
+        288,
+        279
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_hero_ventilation_turbine_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_hero_ventilation_turbine_a_normal.png",
+        "ao": "ao/tr01_primarymatch_hero_ventilation_turbine_a_ao.png",
+        "emission": "emission/tr01_primarymatch_hero_ventilation_turbine_a_emission.png",
+        "mask": "mask/tr01_primarymatch_hero_ventilation_turbine_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "A8E0152C70788824A5D31192B6943D68D284F1EBE50B1C184CEBCE7C6A1A34A8",
+        "normal": "A574B63702F1040B75E72B2722B8CCCCDF3059B477B2CA2C602D4ABD70EBB4C9",
+        "ao": "DDC740DAFED8A81E6B2CFE65EE835DA89C98874C0918E2C55E37D645A0759994",
+        "emission": "1D7844A45B66781364C99515FB78ABC910D59F1BCFA4FF897180ECA72267A445",
+        "mask": "FD886E9DF101113239C9D09CCE9D770DAC32C02652017A7B9BDB05AADF150D1B"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          19,
+          9,
+          610,
+          601
+        ],
+        "scale": 0.432862,
+        "pastePixelsTopLeft": [
+          8,
+          16
+        ],
+        "pivotPixelsTopLeft": [
+          144,
+          271
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.028674
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "BackStructure",
+        "footprintCells": [
+          2,
+          1
+        ],
+        "visualHeightCells": 2.05,
+        "collision": "wall_plane_core",
+        "contactShadowRadius": 0.68,
+        "shadowContourCells": [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.86,
+          0.78,
+          -0.86,
+          0.78
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-HERO-POWER-RELAY",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        2,
+        2
+      ],
+      "visualHeightCells": 1.95,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        144,
+        258
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.030075
+      ],
+      "dimensionsPixels": [
+        288,
+        266
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_hero_power_relay_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_hero_power_relay_a_normal.png",
+        "ao": "ao/tr01_primarymatch_hero_power_relay_a_ao.png",
+        "emission": "emission/tr01_primarymatch_hero_power_relay_a_emission.png",
+        "mask": "mask/tr01_primarymatch_hero_power_relay_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "05192B77EB154F945DFEA8B8A4848CC8C489E8D3E0C47E027FE57E06B1B85F90",
+        "normal": "B8AEB43A47BA9233507BE19EEF5D4045E305E834AA6842E9D2B1688B3CBC4DF9",
+        "ao": "A9C889938DAE886B9EC89C644CC0DAFA9C91A9CAB2677D895536BDD43938A03A",
+        "emission": "A1E43D6D4D81B22D5FDA89FA19A917E3D55A8B6671033345FB7E3072B5E59F7D",
+        "mask": "9774CA82F871513E4A5E37EB230BBF7F8C235D15B2B87BF3323CA1F9C5FCA8AE"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          14,
+          0,
+          622,
+          608
+        ],
+        "scale": 0.412544,
+        "pastePixelsTopLeft": [
+          16,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          144,
+          258
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.030075
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          2,
+          2
+        ],
+        "visualHeightCells": 1.95,
+        "collision": "broad_machine_core",
+        "contactShadowRadius": 0.72,
+        "shadowContourCells": [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.86,
+          1.56,
+          -0.86,
+          1.56
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-HERO-MINECART-LOADING-DOCK",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/minecart_loading_dock",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        2,
+        2
+      ],
+      "visualHeightCells": 1.45,
+      "sortingLayerHint": "WorldEntity",
+      "localOrder": 0,
+      "pivotPixels": [
+        144,
+        194
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.039604
+      ],
+      "dimensionsPixels": [
+        288,
+        202
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_hero_minecart_loading_dock_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_hero_minecart_loading_dock_a_normal.png",
+        "ao": "ao/tr01_primarymatch_hero_minecart_loading_dock_a_ao.png",
+        "emission": "emission/tr01_primarymatch_hero_minecart_loading_dock_a_emission.png",
+        "mask": "mask/tr01_primarymatch_hero_minecart_loading_dock_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "303E3322D25AD85A662F55F0D413995E4803D50A4CABC6922FDF5624E5EC0D1A",
+        "normal": "D93C56DCDF9CA3419F8D2CC2408FCDF1BBE8E709E043C087ACDB43EF5DF4B734",
+        "ao": "CA067CBD092B5636F76420CE235EC28B8DD858B5B97A3B13E2C27E224FE143C5",
+        "emission": "AF94DC13FD056E0D1401296E5D9B618E5B98957573F1821B4441A665403457F7",
+        "mask": "672CE127BAE6BBC068428624913AB4DACCC4478FDB299E822FD233BEA6588AAA"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          11,
+          2,
+          618,
+          606
+        ],
+        "scale": 0.308976,
+        "pastePixelsTopLeft": [
+          53,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          144,
+          194
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.039604
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "setpiece",
+        "sortingLayer": "WorldEntity",
+        "footprintCells": [
+          2,
+          2
+        ],
+        "visualHeightCells": 1.45,
+        "collision": "dock_core_keep_rail_lane_open",
+        "contactShadowRadius": 0.72,
+        "shadowContourCells": [
+          -1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.86,
+          1.56,
+          -0.86,
+          1.56
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-LEFT-FOREGROUND-SHELF",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        2
+      ],
+      "visualHeightCells": 2.55,
+      "sortingLayerHint": "FrontStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        335
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.023324
+      ],
+      "dimensionsPixels": [
+        416,
+        343
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_foreground_left_foreground_shelf_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_foreground_left_foreground_shelf_a_normal.png",
+        "ao": "ao/tr01_primarymatch_foreground_left_foreground_shelf_a_ao.png",
+        "emission": "emission/tr01_primarymatch_foreground_left_foreground_shelf_a_emission.png",
+        "mask": "mask/tr01_primarymatch_foreground_left_foreground_shelf_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "AC507FA21D0E25244AA11BDA9DDA8D6C80752A01BF3E531B14C13CDC68F2E787",
+        "normal": "2F8EC45D98D238DD44469D6B9B2C414CAC589B54BF6EECF1919291EEEEC9EF87",
+        "ao": "DBBE5DAB9C201A4B25834B76950689539970F7A84E398820942DBA31880E0B02",
+        "emission": "92D570932085F360C80F46D05C4140669602773845D89C84E63685680AED462C",
+        "mask": "C7A3C2797E4EB271CCC1DC2EC9853C2E59921C8E8208AC7AC05B18B5A2AC51F8"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          35,
+          65,
+          582,
+          627
+        ],
+        "scale": 0.500493,
+        "pastePixelsTopLeft": [
+          134,
+          54
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          335
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.023324
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "foreground_setpiece",
+        "sortingLayer": "FrontStructure",
+        "footprintCells": [
+          3,
+          2
+        ],
+        "visualHeightCells": 2.55,
+        "collision": "boundary_only",
+        "contactShadowRadius": 0.84,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.35,
+          2.0,
+          -1.35,
+          2.0
+        ],
+        "occluderGroup": "primarymatch_foreground_left",
+        "fadeTargetAlpha": 0.34
+      }
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-RIGHT-FOREGROUND-SHELF",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        2
+      ],
+      "visualHeightCells": 2.55,
+      "sortingLayerHint": "FrontStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        335
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.023324
+      ],
+      "dimensionsPixels": [
+        416,
+        343
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_foreground_right_foreground_shelf_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_foreground_right_foreground_shelf_a_normal.png",
+        "ao": "ao/tr01_primarymatch_foreground_right_foreground_shelf_a_ao.png",
+        "emission": "emission/tr01_primarymatch_foreground_right_foreground_shelf_a_emission.png",
+        "mask": "mask/tr01_primarymatch_foreground_right_foreground_shelf_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "131904A44215F7E5A1A954548DFAB99D86976876B02E3310695ECF59D4F0F406",
+        "normal": "444610AE3585132B530054B7B246735ADC20E1D694D0724F65520EFFE340CBDA",
+        "ao": "1688396153B48CF6C88BF593C6F9A212C0C75C2587B822D52100107890543437",
+        "emission": "72B2E73AC1B8CE0A245AA2F76413EEFECFAE7FD7D6E576A7B7B66E228F9B4C6E",
+        "mask": "E197AD19F5CF706DC31F0B908A1F5F1EABDAD81EA06F62D655D45FE74A4A05A7"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          68,
+          50,
+          592,
+          627
+        ],
+        "scale": 0.496043,
+        "pastePixelsTopLeft": [
+          8,
+          49
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          335
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.023324
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "foreground_setpiece",
+        "sortingLayer": "FrontStructure",
+        "footprintCells": [
+          3,
+          2
+        ],
+        "visualHeightCells": 2.55,
+        "collision": "boundary_only",
+        "contactShadowRadius": 0.84,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.35,
+          2.0,
+          -1.35,
+          2.0
+        ],
+        "occluderGroup": "primarymatch_foreground_right",
+        "fadeTargetAlpha": 0.34
+      }
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-BOTTOM-CLIFF-LIP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/bottom_cliff_lip",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        4,
+        1
+      ],
+      "visualHeightCells": 1.42,
+      "sortingLayerHint": "FrontStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        272,
+        190
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.040404
+      ],
+      "dimensionsPixels": [
+        544,
+        198
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_foreground_bottom_cliff_lip_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_foreground_bottom_cliff_lip_a_normal.png",
+        "ao": "ao/tr01_primarymatch_foreground_bottom_cliff_lip_a_ao.png",
+        "emission": "emission/tr01_primarymatch_foreground_bottom_cliff_lip_a_emission.png",
+        "mask": "mask/tr01_primarymatch_foreground_bottom_cliff_lip_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "642FC5966696CF6FBF3D4EE0E04BF422711A65CA24803A6B2F58CC3F66AD9227",
+        "normal": "DD4F6B80EF11F555DCBCF504DCBCC8C9E2EA32684EAA39ED20608BB0E58FD7C5",
+        "ao": "BD3DEA858BEBA8F09C3E649F47B019D66E9657C2339FBFEC918F95EE1550D4E3",
+        "emission": "BDBDCE36832F86DC8E59D8B4A237F4DB985E6ED6E7FADD2F728C02C147259914",
+        "mask": "127D22F8699A857BE761716D2CACB915994FAB803A58543174958D6958967D78"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          35,
+          84,
+          627,
+          556
+        ],
+        "scale": 0.38722,
+        "pastePixelsTopLeft": [
+          142,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          272,
+          190
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.040404
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "foreground_setpiece",
+        "sortingLayer": "FrontStructure",
+        "footprintCells": [
+          4,
+          1
+        ],
+        "visualHeightCells": 1.42,
+        "collision": "boundary_only",
+        "contactShadowRadius": 1.12,
+        "shadowContourCells": [
+          -2.0,
+          0.0,
+          2.0,
+          0.0,
+          1.8,
+          1.0,
+          -1.8,
+          1.0
+        ],
+        "occluderGroup": "primarymatch_foreground_lip",
+        "fadeTargetAlpha": 0.34
+      }
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-RAISED-SERVICE-PLATFORM",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/raised_service_platform",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        2
+      ],
+      "visualHeightCells": 0.8,
+      "sortingLayerHint": "WallTop",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        111
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.067227
+      ],
+      "dimensionsPixels": [
+        416,
+        119
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_foreground_raised_service_platform_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_foreground_raised_service_platform_a_normal.png",
+        "ao": "ao/tr01_primarymatch_foreground_raised_service_platform_a_ao.png",
+        "emission": "emission/tr01_primarymatch_foreground_raised_service_platform_a_emission.png",
+        "mask": "mask/tr01_primarymatch_foreground_raised_service_platform_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "77765DC021BD62A954BEE2C6F1C6BD9C1C90A075823B744665BFC9EF515833CE",
+        "normal": "68C51A2FD517BAB4BF457C6C85E14F1CC7FF6928ABA09586F966FA3FF7650672",
+        "ao": "C4E792FC7752EDCE3B3779916EDD8D081CD471C462824321682E2B187E290273",
+        "emission": "DC9CD1E33830378AFF37205A11FE796C847A7C6C92EEE126195FE0367C80E1D6",
+        "mask": "DE88620A34DF2C0F98E262C2D6D58C161189BECE5E60200761676160D70A40D5"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          121,
+          47,
+          592,
+          561
+        ],
+        "scale": 0.201183,
+        "pastePixelsTopLeft": [
+          133,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          111
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.067227
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "elevated_surface_gated",
+        "sortingLayer": "WallTop",
+        "footprintCells": [
+          3,
+          2
+        ],
+        "visualHeightCells": 0.8,
+        "collision": "requires_walkability_and_height_rules",
+        "contactShadowRadius": 0.0,
+        "shadowContourCells": [],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-SEALED-BULKHEAD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        1
+      ],
+      "visualHeightCells": 2.6,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        341
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.022923
+      ],
+      "dimensionsPixels": [
+        416,
+        349
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_backdrop_sealed_bulkhead_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_backdrop_sealed_bulkhead_a_normal.png",
+        "ao": "ao/tr01_primarymatch_backdrop_sealed_bulkhead_a_ao.png",
+        "emission": "emission/tr01_primarymatch_backdrop_sealed_bulkhead_a_emission.png",
+        "mask": "mask/tr01_primarymatch_backdrop_sealed_bulkhead_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "6353EBACE0F83B7903A1BCE7A81756FADE8F1E9AB5C5A4A8D8869F7C411BAE91",
+        "normal": "15F11595177915748D47994098F297572E55741A4C778FAB69CD711094A27972",
+        "ao": "54562F423CEE2A5A69A9FF9CDF94E7AD8664D4494EE38DAE5D47D7A59AB65D38",
+        "emission": "65DCB47A3683B0F6B5467BF9DBBFD77330D374E7155D278450DAB77EDC7CA090",
+        "mask": "1508B739ED3F30B383A3B443D5556D13C1212F2E8A70B33DD60D2B395698B729"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          14,
+          60,
+          623,
+          610
+        ],
+        "scale": 0.607662,
+        "pastePixelsTopLeft": [
+          23,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          341
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.022923
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "backdrop_setpiece",
+        "sortingLayer": "BackStructure",
+        "footprintCells": [
+          3,
+          1
+        ],
+        "visualHeightCells": 2.6,
+        "collision": "solid_wall_topology",
+        "contactShadowRadius": 0.75,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.5,
+          1.0,
+          -1.5,
+          1.0
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-PIPE-MANIFOLD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/pipe_manifold",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        1
+      ],
+      "visualHeightCells": 2.25,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        296
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.026316
+      ],
+      "dimensionsPixels": [
+        416,
+        304
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_backdrop_pipe_manifold_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_backdrop_pipe_manifold_a_normal.png",
+        "ao": "ao/tr01_primarymatch_backdrop_pipe_manifold_a_ao.png",
+        "emission": "emission/tr01_primarymatch_backdrop_pipe_manifold_a_emission.png",
+        "mask": "mask/tr01_primarymatch_backdrop_pipe_manifold_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "EC2EA39BEDD578A457D37C8B893196DC922882ECDF13B3EE7C28A43B7562F767",
+        "normal": "AD7025A95764B544BE1C0B273B819E3EB060444C42DFCD2505393C13CBAAC895",
+        "ao": "884B8B84AD27DD8970F24F67D6206F5845283C34D9A4E77F34D2A3B1FA715380",
+        "emission": "13DDFBC1C9C8D549078E3876721751E4A93FD54F12B2C42337C0A643D1101119",
+        "mask": "D0364053434D3DA4B4618804568178BDB4361BEDB961C6FE4EA9850163D78F9A"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          29,
+          43,
+          609,
+          610
+        ],
+        "scale": 0.509733,
+        "pastePixelsTopLeft": [
+          60,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          296
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.026316
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "backdrop_setpiece",
+        "sortingLayer": "BackStructure",
+        "footprintCells": [
+          3,
+          1
+        ],
+        "visualHeightCells": 2.25,
+        "collision": "wall_plane_only",
+        "contactShadowRadius": 0.75,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.5,
+          1.0,
+          -1.5,
+          1.0
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-CRYSTAL-PROCESSOR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        1
+      ],
+      "visualHeightCells": 2.7,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        354
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.022099
+      ],
+      "dimensionsPixels": [
+        416,
+        362
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_backdrop_crystal_processor_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_backdrop_crystal_processor_a_normal.png",
+        "ao": "ao/tr01_primarymatch_backdrop_crystal_processor_a_ao.png",
+        "emission": "emission/tr01_primarymatch_backdrop_crystal_processor_a_emission.png",
+        "mask": "mask/tr01_primarymatch_backdrop_crystal_processor_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "35C0BD7C7626397E896702D27A1F73F6119BA907CFC6804E3356DE5A660627D4",
+        "normal": "F380DE4720206A2813AEE8400F8A9CC3FDE045BEBF6638486D4D2164616E98EE",
+        "ao": "BC04BA8AC0B9EE039D6078926277DDE1DDF300D65B02864130B417F7F6ADBBAF",
+        "emission": "84F8D7CC4886422756A2F5C4EE54220D392F5C96F4C9715E7053C5AC07ED0BBA",
+        "mask": "B244CEAE34450C6E9B8A3D42CA634F5EDC9A6D0BEB97960E33B234DE8CE41D0F"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          15,
+          13,
+          627,
+          568
+        ],
+        "scale": 0.625686,
+        "pastePixelsTopLeft": [
+          17,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          354
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.022099
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "backdrop_setpiece",
+        "sortingLayer": "BackStructure",
+        "footprintCells": [
+          3,
+          1
+        ],
+        "visualHeightCells": 2.7,
+        "collision": "solid_wall_topology",
+        "contactShadowRadius": 0.75,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.5,
+          1.0,
+          -1.5,
+          1.0
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-COLLAPSED-WALL-MACHINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+      "status": "working_candidate_not_approved",
+      "channelStatus": {
+        "albedo": "derived_working_candidate",
+        "normal": "derived_working_candidate",
+        "ao": "derived_working_candidate",
+        "emission": "derived_working_candidate",
+        "mask": "derived_working_candidate"
+      },
+      "footprintCells": [
+        3,
+        2
+      ],
+      "visualHeightCells": 2.35,
+      "sortingLayerHint": "BackStructure",
+      "localOrder": 0,
+      "pivotPixels": [
+        208,
+        309
+      ],
+      "pivotNormalized": [
+        0.5,
+        0.025237
+      ],
+      "dimensionsPixels": [
+        416,
+        317
+      ],
+      "channels": {
+        "albedo": "albedo/tr01_primarymatch_backdrop_collapsed_wall_machine_a_albedo.png",
+        "normal": "normal/tr01_primarymatch_backdrop_collapsed_wall_machine_a_normal.png",
+        "ao": "ao/tr01_primarymatch_backdrop_collapsed_wall_machine_a_ao.png",
+        "emission": "emission/tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission.png",
+        "mask": "mask/tr01_primarymatch_backdrop_collapsed_wall_machine_a_mask.png"
+      },
+      "channelHashes": {
+        "albedo": "F327DC02C57F172FCD3964335840E46312A4FEE64307294C6DDBA72B4687841E",
+        "normal": "C22BD76626EF7E90E6883C071382A5578501CF876960E958A39D4CFDD1F45157",
+        "ao": "C1BE28347BF6B93963A0A6FBFE25899C99AA4A0D26C62710D58EECCC0075AC10",
+        "emission": "1E5AE198A9FE01609A62C3F5996851170419F362E21BADEA8FF53C89BFCF9B48",
+        "mask": "6E2E24856E85331D368A1345A4BECA18ED4D5931574D2E4D7B8986185AC59B5C"
+      },
+      "normalization": {
+        "mode": "alpha_trimmed_footpoint_canvas",
+        "sourceCropPixels": [
+          14,
+          24,
+          613,
+          567
+        ],
+        "scale": 0.556388,
+        "pastePixelsTopLeft": [
+          41,
+          8
+        ],
+        "pivotPixelsTopLeft": [
+          208,
+          309
+        ],
+        "pivotNormalizedBottomOrigin": [
+          0.5,
+          0.025237
+        ]
+      },
+      "runtimeCandidate": {
+        "integrationStatus": "candidate_not_unity_verified",
+        "localOrder": 0,
+        "lightSockets": [],
+        "replacementAssetId": "",
+        "runtimeKind": "backdrop_setpiece",
+        "sortingLayer": "BackStructure",
+        "footprintCells": [
+          3,
+          2
+        ],
+        "visualHeightCells": 2.35,
+        "collision": "solid_wall_and_rubble",
+        "contactShadowRadius": 0.75,
+        "shadowContourCells": [
+          -1.5,
+          0.0,
+          1.5,
+          0.0,
+          1.5,
+          2.0,
+          -1.5,
+          2.0
+        ],
+        "occluderGroup": "",
+        "fadeTargetAlpha": 0.0
+      }
+    }
+  ],
+  "summary": {
+    "assetCount": 39,
+    "channelImages": 195,
+    "reviewImage": "../diorama-process-08-normalized-delivery-review.png"
+  }
+}

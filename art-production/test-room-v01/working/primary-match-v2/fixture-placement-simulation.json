@@ -1,0 +1,277 @@
+{
+  "status": "verified_offline_against_mapgen_fixtures",
+  "unityExecuted": false,
+  "viewportCells": [
+    18,
+    12
+  ],
+  "minimumOpenRectCells": [
+    9,
+    3
+  ],
+  "blueprintContract": {
+    "path": "art-production/test-room-v01/working/primary-match-v2/curated-room-landscape-layouts.json",
+    "sha256": "16753A0B821C23CD618AAAB3D2C49957A589F10A1582EA9D2AAB6A45C84C4869"
+  },
+  "summary": {
+    "fixtureCount": 3,
+    "blueprintCount": 3,
+    "evaluations": 9,
+    "feasibleEvaluations": 9,
+    "assignedRoomsFeasible": 3
+  },
+  "fixtures": [
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d1.json",
+      "fixtureSha256": "2DC6294C85511C865842486490AFAD617A089CD795A006A1F2349190C8D2A2F4",
+      "depth": 1,
+      "assignedRoom": "ore_intake",
+      "connectedOpenCells": 1711,
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            18,
+            60,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 26,
+            "y": 60,
+            "width": 9,
+            "height": 5,
+            "area": 45
+          },
+          "openWidthFractionOfViewport": 0.5,
+          "anchors": {
+            "northWallFoot": 15,
+            "northWallFootLongestRun": 3,
+            "westWallFoot": 10,
+            "eastWallFoot": 11,
+            "southBoundary": 6
+          },
+          "feasible": true,
+          "score": 484
+        },
+        "ventilation_service": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352
+        },
+        "crystal_power": {
+          "viewport": [
+            18,
+            60,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 26,
+            "y": 60,
+            "width": 9,
+            "height": 5,
+            "area": 45
+          },
+          "openWidthFractionOfViewport": 0.5,
+          "anchors": {
+            "northWallFoot": 15,
+            "northWallFootLongestRun": 3,
+            "westWallFoot": 10,
+            "eastWallFoot": 11,
+            "southBoundary": 6
+          },
+          "feasible": true,
+          "score": 484
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d2.json",
+      "fixtureSha256": "96359A98C697CC96E2A9CC6A4BC2CCD1ECECBDDC4DB3149BDFEDB13FF367309F",
+      "depth": 2,
+      "assignedRoom": "ventilation_service",
+      "connectedOpenCells": 1699,
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644
+        },
+        "ventilation_service": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644
+        },
+        "crystal_power": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d3.json",
+      "fixtureSha256": "61701B373CDCCCB4C7866449442CE733B5C1287A2A2C70239C0A66A3A4356CB2",
+      "depth": 3,
+      "assignedRoom": "crystal_power",
+      "connectedOpenCells": 1764,
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344
+        },
+        "ventilation_service": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344
+        },
+        "crystal_power": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344
+        }
+      }
+    }
+  ]
+}

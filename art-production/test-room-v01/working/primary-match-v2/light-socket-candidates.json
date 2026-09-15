@@ -1,0 +1,395 @@
+{
+  "status": "offline_candidate_not_unity_integrated",
+  "source": "delivery-candidates/manifest.json",
+  "scope": "hero machinery and monumental backdrop only",
+  "threshold": {
+    "emissionAlphaMinimum": 72,
+    "minimumWeightedEnergy": 900,
+    "maximumSocketsPerAsset": 2
+  },
+  "rules": [
+    "do not generate Light2D sockets for ground overlays or distributed crystal sheets",
+    "magenta candidates default to MineralGlow; cyan and amber candidates default to Worklamp",
+    "all socket positions are measured from the normalized delivery footpoint at 128 PPU",
+    "Unity review may demote small panels to Indicator or remove redundant sockets"
+  ],
+  "assets": [
+    {
+      "assetId": "TR01-PM-HERO-ORE-CRUSHER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+      "emissionPath": "emission/tr01_primarymatch_hero_ore_crusher_a_emission.png",
+      "emissionSha256": "988894D27E1C4775353689CDDE4D813782D10FFBB1BF65D500E9EFC74F0EDF20",
+      "sockets": [
+        {
+          "pixel": [
+            152.36997635933807,
+            105.69290780141844
+          ],
+          "offsetCells": [
+            0.065,
+            1.44
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 13,
+          "semanticTargetOffsetCells": [
+            0.0,
+            1.35
+          ],
+          "snapDistanceCells": 0.111,
+          "lightClass": "MineralGlow",
+          "rangeCells": 1.8,
+          "intensity": 0.48,
+          "id": "emission_magenta_1",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-HERO-VENTILATION-TURBINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+      "emissionPath": "emission/tr01_primarymatch_hero_ventilation_turbine_a_emission.png",
+      "emissionSha256": "1D7844A45B66781364C99515FB78ABC910D59F1BCFA4FF897180ECA72267A445",
+      "sockets": [
+        {
+          "pixel": [
+            130.17157894736843,
+            130.47263157894736
+          ],
+          "offsetCells": [
+            -0.108,
+            1.098
+          ],
+          "hue": "cyan",
+          "color": [
+            0.16,
+            0.82,
+            0.92,
+            1.0
+          ],
+          "componentPixels": 7,
+          "semanticTargetOffsetCells": [
+            0.0,
+            1.15
+          ],
+          "snapDistanceCells": 0.12,
+          "lightClass": "Worklamp",
+          "rangeCells": 2.15,
+          "intensity": 0.62,
+          "id": "emission_cyan_1",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-HERO-POWER-RELAY",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+      "emissionPath": "emission/tr01_primarymatch_hero_power_relay_a_emission.png",
+      "emissionSha256": "A1E43D6D4D81B22D5FDA89FA19A917E3D55A8B6671033345FB7E3072B5E59F7D",
+      "sockets": [
+        {
+          "pixel": [
+            137.3652505446623,
+            106.02657952069717
+          ],
+          "offsetCells": [
+            -0.052,
+            1.187
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 75,
+          "semanticTargetOffsetCells": [
+            0.0,
+            1.2
+          ],
+          "snapDistanceCells": 0.054,
+          "lightClass": "MineralGlow",
+          "rangeCells": 2.2,
+          "intensity": 0.64,
+          "id": "emission_magenta_1",
+          "status": "candidate_not_unity_verified"
+        },
+        {
+          "pixel": [
+            227.5,
+            121.82618343195266
+          ],
+          "offsetCells": [
+            0.652,
+            1.064
+          ],
+          "hue": "cyan",
+          "color": [
+            0.16,
+            0.82,
+            0.92,
+            1.0
+          ],
+          "componentPixels": 19,
+          "semanticTargetOffsetCells": [
+            0.65,
+            1.05
+          ],
+          "snapDistanceCells": 0.014,
+          "lightClass": "Indicator",
+          "rangeCells": 1.25,
+          "intensity": 0.32,
+          "id": "emission_cyan_2",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-HERO-MINECART-LOADING-DOCK",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/minecart_loading_dock",
+      "emissionPath": "emission/tr01_primarymatch_hero_minecart_loading_dock_a_emission.png",
+      "emissionSha256": "AF94DC13FD056E0D1401296E5D9B618E5B98957573F1821B4441A665403457F7",
+      "sockets": [
+        {
+          "pixel": [
+            220.99885452462772,
+            85.92382588774342
+          ],
+          "offsetCells": [
+            0.602,
+            0.844
+          ],
+          "hue": "amber",
+          "color": [
+            1.0,
+            0.48,
+            0.12,
+            1.0
+          ],
+          "componentPixels": 14,
+          "semanticTargetOffsetCells": [
+            0.75,
+            0.82
+          ],
+          "snapDistanceCells": 0.15,
+          "lightClass": "Worklamp",
+          "rangeCells": 1.85,
+          "intensity": 0.56,
+          "id": "emission_amber_1",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-SEALED-BULKHEAD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+      "emissionPath": "emission/tr01_primarymatch_backdrop_sealed_bulkhead_a_emission.png",
+      "emissionSha256": "65DCB47A3683B0F6B5467BF9DBBFD77330D374E7155D278450DAB77EDC7CA090",
+      "sockets": [
+        {
+          "pixel": [
+            205.53840410917996,
+            178.19706743116527
+          ],
+          "offsetCells": [
+            -0.019,
+            1.272
+          ],
+          "hue": "cyan",
+          "color": [
+            0.16,
+            0.82,
+            0.92,
+            1.0
+          ],
+          "componentPixels": 100,
+          "semanticTargetOffsetCells": [
+            0.0,
+            1.3
+          ],
+          "snapDistanceCells": 0.034,
+          "lightClass": "Worklamp",
+          "rangeCells": 1.85,
+          "intensity": 0.52,
+          "id": "emission_cyan_1",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-PIPE-MANIFOLD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/pipe_manifold",
+      "emissionPath": "emission/tr01_primarymatch_backdrop_pipe_manifold_a_emission.png",
+      "emissionSha256": "13DDFBC1C9C8D549078E3876721751E4A93FD54F12B2C42337C0A643D1101119",
+      "sockets": [
+        {
+          "pixel": [
+            147.23780801328957,
+            156.08873551398173
+          ],
+          "offsetCells": [
+            -0.475,
+            1.093
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 139,
+          "semanticTargetOffsetCells": [
+            -0.45,
+            1.15
+          ],
+          "snapDistanceCells": 0.062,
+          "lightClass": "MineralGlow",
+          "rangeCells": 1.75,
+          "intensity": 0.48,
+          "id": "emission_magenta_1",
+          "status": "candidate_not_unity_verified"
+        },
+        {
+          "pixel": [
+            250.65414165666266,
+            148.77274909963987
+          ],
+          "offsetCells": [
+            0.333,
+            1.15
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 25,
+          "semanticTargetOffsetCells": [
+            0.45,
+            1.15
+          ],
+          "snapDistanceCells": 0.117,
+          "lightClass": "MineralGlow",
+          "rangeCells": 1.75,
+          "intensity": 0.48,
+          "id": "emission_magenta_2",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-CRYSTAL-PROCESSOR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+      "emissionPath": "emission/tr01_primarymatch_backdrop_crystal_processor_a_emission.png",
+      "emissionSha256": "84F8D7CC4886422756A2F5C4EE54220D392F5C96F4C9715E7053C5AC07ED0BBA",
+      "sockets": [
+        {
+          "pixel": [
+            201.07486890658382,
+            192.4677607302389
+          ],
+          "offsetCells": [
+            -0.054,
+            1.262
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 35,
+          "semanticTargetOffsetCells": [
+            0.0,
+            1.25
+          ],
+          "snapDistanceCells": 0.055,
+          "lightClass": "MineralGlow",
+          "rangeCells": 2.3,
+          "intensity": 0.66,
+          "id": "emission_magenta_1",
+          "status": "candidate_not_unity_verified"
+        },
+        {
+          "pixel": [
+            322.2141272189349,
+            257.1025248789672
+          ],
+          "offsetCells": [
+            0.892,
+            0.757
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 308,
+          "semanticTargetOffsetCells": [
+            0.85,
+            0.55
+          ],
+          "snapDistanceCells": 0.211,
+          "lightClass": "Indicator",
+          "rangeCells": 1.15,
+          "intensity": 0.3,
+          "id": "emission_magenta_2",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-COLLAPSED-WALL-MACHINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+      "emissionPath": "emission/tr01_primarymatch_backdrop_collapsed_wall_machine_a_emission.png",
+      "emissionSha256": "1E5AE198A9FE01609A62C3F5996851170419F362E21BADEA8FF53C89BFCF9B48",
+      "sockets": [
+        {
+          "pixel": [
+            143.94,
+            268.32278481012656
+          ],
+          "offsetCells": [
+            -0.5,
+            0.318
+          ],
+          "hue": "magenta",
+          "color": [
+            0.92,
+            0.18,
+            0.82,
+            1.0
+          ],
+          "componentPixels": 12,
+          "semanticTargetOffsetCells": [
+            -0.65,
+            0.45
+          ],
+          "snapDistanceCells": 0.2,
+          "lightClass": "MineralGlow",
+          "rangeCells": 1.55,
+          "intensity": 0.4,
+          "id": "emission_magenta_1",
+          "status": "candidate_not_unity_verified"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "assetCount": 8,
+    "socketCount": 11,
+    "reviewImage": "diorama-process-09-light-socket-review.png"
+  }
+}

@@ -15,6 +15,11 @@ namespace TunnelCrew.Sim
     {
         public Vec2 Position, Velocity;
         public double Life;
+        /// <summary>
+        /// 플레이어가 지정한 조준점까지 남은 비행 거리. 무한대면 기존 수명 기반 탄환(AI·설치물)이다.
+        /// 벽이나 적을 먼저 만나지 않으면 이 거리를 정확히 소모한 지점에서 바닥에 착탄한다.
+        /// </summary>
+        public double AimTravelRemaining = double.PositiveInfinity;
         public int Pierce, Bounces;
         public bool Explosive, Laser;
         /// <summary>드릴+사격 동시 사용 배율.</summary>
@@ -36,7 +41,7 @@ namespace TunnelCrew.Sim
 
     public struct ProjectileFiredEvent { public Vec2 Position; public double Angle; public string VisualId; public ProjectileStyleFlags VisualFlags; public int Count; public bool Ai; public uint VisualSeed; }
     public struct ProjectileEndedEvent { public Vec2 Position; public bool Exploded; public string VisualId; public ProjectileStyleFlags VisualFlags; }
-    public enum ProjectileImpactKind : byte { Expire, Enemy, Wall, Bedrock, Ricochet }
+    public enum ProjectileImpactKind : byte { Expire, Enemy, Wall, Bedrock, Ricochet, Ground }
     public struct ProjectileImpactEvent
     {
         public Vec2 Position, Direction;
@@ -141,6 +146,9 @@ namespace TunnelCrew.Sim
             double speed = SimTuning.TeCells(BaseSpeedPx(visualId)) * (build.RoleGunMul > 1 ? 1.08 : 1.0) * build.ProjectileSpeedMul;
 
             double a = player.Aim;
+            double aimDistance = player.AimReady
+                ? Vec2.Distance(player.Position, player.AimPoint)
+                : double.PositiveInfinity;
             uint firedVisualSeed = 0;
             for (int i = 0; i < shots; i++)
             {
@@ -149,11 +157,18 @@ namespace TunnelCrew.Sim
                 var dir = Vec2.FromAngle(a + off);
                 uint visualSeed = NextVisualSeed();
                 if (firedVisualSeed == 0) firedVisualSeed = visualSeed;
+                double spawnOffset = double.IsPositiveInfinity(aimDistance)
+                    ? CharacterMuzzleOffset
+                    : Math.Min(CharacterMuzzleOffset, aimDistance);
+                double maxTravel = speed * BaseLife(visualId) * build.ProjectileLifeMul;
                 Projectiles.Add(new Projectile
                 {
-                    Position = player.Position + dir * CharacterMuzzleOffset,
+                    Position = player.Position + dir * spawnOffset,
                     Velocity = dir * speed,
                     Life = BaseLife(visualId) * build.ProjectileLifeMul,
+                    AimTravelRemaining = double.IsPositiveInfinity(aimDistance)
+                        ? double.PositiveInfinity
+                        : Math.Max(0.0, Math.Min(aimDistance, maxTravel) - spawnOffset),
                     Pierce = build.Pierce + (laser ? 5 : 0),
                     Bounces = laser ? 0 : build.Bounces,
                     Explosive = build.Explosive || laser,
@@ -283,9 +298,16 @@ namespace TunnelCrew.Sim
             for (int i = Projectiles.Count - 1; i >= 0; i--)
             {
                 var p = Projectiles[i];
-                p.Position += p.Velocity * dt;
-                p.Life -= dt;
-                p.Age += dt;
+                double speed = p.Velocity.Length;
+                double stepTravel = speed * dt;
+                bool reachedAim = !double.IsPositiveInfinity(p.AimTravelRemaining)
+                               && stepTravel >= p.AimTravelRemaining;
+                double moveDt = reachedAim && speed > 1e-9 ? p.AimTravelRemaining / speed : dt;
+                p.Position += p.Velocity * moveDt;
+                if (!double.IsPositiveInfinity(p.AimTravelRemaining))
+                    p.AimTravelRemaining = Math.Max(0.0, p.AimTravelRemaining - stepTravel);
+                p.Life -= moveDt;
+                p.Age += moveDt;
 
                 var n = p.Velocity.Normalized;
                 bool hit = false;
@@ -384,7 +406,7 @@ namespace TunnelCrew.Sim
 
                 bool outOfWorld = p.Position.X < 0 || p.Position.Y < 0
                                || p.Position.X > _world.Cols || p.Position.Y > _world.Rows;
-                bool ended = hit || p.Life <= 0 || outOfWorld;
+                bool ended = hit || reachedAim || p.Life <= 0 || outOfWorld;
                 if (!ended) continue;
 
                 if (!impactEmitted)
@@ -393,7 +415,7 @@ namespace TunnelCrew.Sim
                     {
                         Position = p.Position, Direction = n, VisualId = p.VisualId,
                         VisualFlags = p.VisualFlags == ProjectileStyleFlags.None ? InferStyleFlags(p.VisualId) : p.VisualFlags,
-                        Kind = ProjectileImpactKind.Expire, Terminal = true,
+                        Kind = reachedAim ? ProjectileImpactKind.Ground : ProjectileImpactKind.Expire, Terminal = true,
                         Exploded = p.Explosive && !outOfWorld, Power = p.Power,
                     });
                 }

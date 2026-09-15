@@ -1,0 +1,715 @@
+fileFormatVersion: 2
+guid: c0e28ac9f9efc35408e37fdae9cffa19
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3135020769580065701
+    second: tr01_primarymatch_rail_broken_gap_a_emission_0
+  - first:
+      213: -551038007841953763
+    second: tr01_primarymatch_rail_broken_gap_a_emission_1
+  - first:
+      213: -5832074393270808957
+    second: tr01_primarymatch_rail_broken_gap_a_emission_2
+  - first:
+      213: -8413882826856914132
+    second: tr01_primarymatch_rail_broken_gap_a_emission_3
+  - first:
+      213: -291418227246182503
+    second: tr01_primarymatch_rail_broken_gap_a_emission_4
+  - first:
+      213: 8496351549782535905
+    second: tr01_primarymatch_rail_broken_gap_a_emission_5
+  - first:
+      213: -5216371724136971532
+    second: tr01_primarymatch_rail_broken_gap_a_emission_6
+  - first:
+      213: 6581617094913505522
+    second: tr01_primarymatch_rail_broken_gap_a_emission_7
+  - first:
+      213: 3534984788883984917
+    second: tr01_primarymatch_rail_broken_gap_a_emission_8
+  - first:
+      213: 4935477607895640987
+    second: tr01_primarymatch_rail_broken_gap_a_emission_9
+  - first:
+      213: -1423041071431892942
+    second: tr01_primarymatch_rail_broken_gap_a_emission_10
+  - first:
+      213: 7181764234969230334
+    second: tr01_primarymatch_rail_broken_gap_a_emission_11
+  - first:
+      213: 3889207638938640551
+    second: tr01_primarymatch_rail_broken_gap_a_emission_12
+  - first:
+      213: 1366120487585793101
+    second: tr01_primarymatch_rail_broken_gap_a_emission_13
+  - first:
+      213: 3361472102924588061
+    second: tr01_primarymatch_rail_broken_gap_a_emission_14
+  - first:
+      213: 906411454001509721
+    second: tr01_primarymatch_rail_broken_gap_a_emission_15
+  - first:
+      213: 5043301618401257791
+    second: tr01_primarymatch_rail_broken_gap_a_emission_16
+  - first:
+      213: -4461786463771366500
+    second: tr01_primarymatch_rail_broken_gap_a_emission_17
+  - first:
+      213: -3868155840859701282
+    second: tr01_primarymatch_rail_broken_gap_a_emission_18
+  - first:
+      213: -2300819044548530130
+    second: tr01_primarymatch_rail_broken_gap_a_emission_19
+  - first:
+      213: -7611525606321481096
+    second: tr01_primarymatch_rail_broken_gap_a_emission_20
+  - first:
+      213: 627742859532116723
+    second: tr01_primarymatch_rail_broken_gap_a_emission_21
+  - first:
+      213: 7002023002403860663
+    second: tr01_primarymatch_rail_broken_gap_a_emission_22
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 93
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a3aa46a7c4d18b20800000000000000
+      internalID: 3135020769580065701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 111
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1867d4f9d15a58f0800000000000000
+      internalID: -551038007841953763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 101
+        width: 24
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38e017d2d3f401fa0800000000000000
+      internalID: -5832074393270808957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 112
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c232f6bc522eb3b80800000000000000
+      internalID: -8413882826856914132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 54
+        width: 73
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99fcae39aaca4fbf0800000000000000
+      internalID: -291418227246182503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 88
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1eea0ab08ba19e570800000000000000
+      internalID: 8496351549782535905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 86
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f28c6eed89bb97b0800000000000000
+      internalID: -5216371724136971532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 87
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f835fd70e9965b50800000000000000
+      internalID: 6581617094913505522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 91
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 512d6d3bfe9ce0130800000000000000
+      internalID: 3534984788883984917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 96
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9ba38f2cb65e7440800000000000000
+      internalID: 4935477607895640987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 85
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 230c2846fa7504ce0800000000000000
+      internalID: -1423041071431892942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 22
+        width: 34
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efb22f56580caa360800000000000000
+      internalID: 7181764234969230334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 45
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a06ca0edbd39f530800000000000000
+      internalID: 3889207638938640551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 36
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d444fee685f65f210800000000000000
+      internalID: 1366120487585793101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 35
+        width: 31
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d149439511956ae20800000000000000
+      internalID: 3361472102924588061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 23
+        width: 37
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 955fa104a68349c00800000000000000
+      internalID: 906411454001509721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 37
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f39a5f3f9186df540800000000000000
+      internalID: 5043301618401257791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 44
+        width: 24
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9be24bc9dc8412c0800000000000000
+      internalID: -4461786463771366500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 39
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edf74b1d1cc815ac0800000000000000
+      internalID: -3868155840859701282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 37
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e203b3de449d110e0800000000000000
+      internalID: -2300819044548530130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 37
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87a1b64e9cd6e5690800000000000000
+      internalID: -7611525606321481096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 33
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f223b80ec036b800800000000000000
+      internalID: 627742859532116723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_rail_broken_gap_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 22
+        width: 27
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b0756782de2c2160800000000000000
+      internalID: 7002023002403860663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_rail_broken_gap_a_emission_0: 3135020769580065701
+      tr01_primarymatch_rail_broken_gap_a_emission_1: -551038007841953763
+      tr01_primarymatch_rail_broken_gap_a_emission_10: -1423041071431892942
+      tr01_primarymatch_rail_broken_gap_a_emission_11: 7181764234969230334
+      tr01_primarymatch_rail_broken_gap_a_emission_12: 3889207638938640551
+      tr01_primarymatch_rail_broken_gap_a_emission_13: 1366120487585793101
+      tr01_primarymatch_rail_broken_gap_a_emission_14: 3361472102924588061
+      tr01_primarymatch_rail_broken_gap_a_emission_15: 906411454001509721
+      tr01_primarymatch_rail_broken_gap_a_emission_16: 5043301618401257791
+      tr01_primarymatch_rail_broken_gap_a_emission_17: -4461786463771366500
+      tr01_primarymatch_rail_broken_gap_a_emission_18: -3868155840859701282
+      tr01_primarymatch_rail_broken_gap_a_emission_19: -2300819044548530130
+      tr01_primarymatch_rail_broken_gap_a_emission_2: -5832074393270808957
+      tr01_primarymatch_rail_broken_gap_a_emission_20: -7611525606321481096
+      tr01_primarymatch_rail_broken_gap_a_emission_21: 627742859532116723
+      tr01_primarymatch_rail_broken_gap_a_emission_22: 7002023002403860663
+      tr01_primarymatch_rail_broken_gap_a_emission_3: -8413882826856914132
+      tr01_primarymatch_rail_broken_gap_a_emission_4: -291418227246182503
+      tr01_primarymatch_rail_broken_gap_a_emission_5: 8496351549782535905
+      tr01_primarymatch_rail_broken_gap_a_emission_6: -5216371724136971532
+      tr01_primarymatch_rail_broken_gap_a_emission_7: 6581617094913505522
+      tr01_primarymatch_rail_broken_gap_a_emission_8: 3534984788883984917
+      tr01_primarymatch_rail_broken_gap_a_emission_9: 4935477607895640987
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

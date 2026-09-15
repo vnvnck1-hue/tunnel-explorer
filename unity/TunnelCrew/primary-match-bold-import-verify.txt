@@ -1,0 +1,7 @@
+status=verified_candidate_import_not_runtime_connected
+channels=195
+sprites=39
+catalogEntries=38
+lightSockets=11
+shadowContours=14
+activeRuntimeAssignments=0

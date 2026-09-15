@@ -1,0 +1,663 @@
+fileFormatVersion: 2
+guid: dfeed8576a2ddee4697a38149cea0723
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7234130189177305057
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_0
+  - first:
+      213: -6964945882028319424
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_1
+  - first:
+      213: -2272166408393623103
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_2
+  - first:
+      213: -8305076963940480124
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_3
+  - first:
+      213: -5652164997616033551
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_4
+  - first:
+      213: -1357956935194259605
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_5
+  - first:
+      213: 6260823251401880045
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_6
+  - first:
+      213: -5434967324707489610
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_7
+  - first:
+      213: -2628123333225821860
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_8
+  - first:
+      213: -5078695536946828796
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_9
+  - first:
+      213: -2335284749586825263
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_10
+  - first:
+      213: -8918609330145685340
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_11
+  - first:
+      213: 4910568852580120919
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_12
+  - first:
+      213: -3598413170214185985
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_13
+  - first:
+      213: -3052626484229451051
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_14
+  - first:
+      213: -6975468460675906595
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_15
+  - first:
+      213: -1014087185515369337
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_16
+  - first:
+      213: 303392959509490534
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_17
+  - first:
+      213: -8346128240568312211
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_18
+  - first:
+      213: -7875602685732110138
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_19
+  - first:
+      213: 4608199107702417868
+    second: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 21
+        width: 126
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e7b7d8341bc46460800000000000000
+      internalID: 7234130189177305057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_1
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 44
+        width: 37
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04dd1e54f9a875f90800000000000000
+      internalID: -6964945882028319424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_2
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 78
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c97f15a0b4a770e0800000000000000
+      internalID: -2272166408393623103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_3
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 47
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48b4c04e0807ebc80800000000000000
+      internalID: -8305076963940480124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_4
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 34
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f0233191e97f81b0800000000000000
+      internalID: -5652164997616033551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_5
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 22
+        width: 21
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6fc779bc51972de0800000000000000
+      internalID: -1357956935194259605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_6
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 27
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de1b05d6399e2e650800000000000000
+      internalID: 6260823251401880045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_7
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 22
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b874fc830e1394b0800000000000000
+      internalID: -5434967324707489610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_8
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 6
+        width: 50
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c59c829b0c7078bd0800000000000000
+      internalID: -2628123333225821860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_9
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 22
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40a2ce53159d489b0800000000000000
+      internalID: -5078695536946828796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_10
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 22
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1df7d73a4e6679fd0800000000000000
+      internalID: -2335284749586825263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_11
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 14
+        width: 28
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a09e2a211cba3480800000000000000
+      internalID: -8918609330145685340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_12
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 28
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 759b227aa58d52440800000000000000
+      internalID: 4910568852580120919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_13
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 17
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff3db42794edf0ec0800000000000000
+      internalID: -3598413170214185985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_14
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 8
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d2dd87d264e2a5d0800000000000000
+      internalID: -3052626484229451051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_15
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 13
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd3c8738468223f90800000000000000
+      internalID: -6975468460675906595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_16
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 7
+        width: 18
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78ca410e31d3de1f0800000000000000
+      internalID: -1014087185515369337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_17
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 8
+        width: 29
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66beaea0a4ed53400800000000000000
+      internalID: 303392959509490534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_18
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 7
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6ed11bb5989c2c80800000000000000
+      internalID: -8346128240568312211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_19
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 7
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c043d4851d34b290800000000000000
+      internalID: -7875602685732110138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_crystal_medium_center_outcrop_a_mask_20
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 10
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc9efd45cac93ff30800000000000000
+      internalID: 4608199107702417868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_0: 7234130189177305057
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_1: -6964945882028319424
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_10: -2335284749586825263
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_11: -8918609330145685340
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_12: 4910568852580120919
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_13: -3598413170214185985
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_14: -3052626484229451051
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_15: -6975468460675906595
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_16: -1014087185515369337
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_17: 303392959509490534
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_18: -8346128240568312211
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_19: -7875602685732110138
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_2: -2272166408393623103
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_20: 4608199107702417868
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_3: -8305076963940480124
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_4: -5652164997616033551
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_5: -1357956935194259605
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_6: 6260823251401880045
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_7: -5434967324707489610
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_8: -2628123333225821860
+      tr01_primarymatch_crystal_medium_center_outcrop_a_mask_9: -5078695536946828796
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

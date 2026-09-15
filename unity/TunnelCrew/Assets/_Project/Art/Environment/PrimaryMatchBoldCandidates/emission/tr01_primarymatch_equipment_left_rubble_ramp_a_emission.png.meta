@@ -1,0 +1,481 @@
+fileFormatVersion: 2
+guid: faced4e27c4d98742be88cf4d795f453
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7068279533471066379
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_0
+  - first:
+      213: -4810433055905940015
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_1
+  - first:
+      213: -955434521200741914
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_2
+  - first:
+      213: -7916904232429981560
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_3
+  - first:
+      213: -4500109197844205811
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_4
+  - first:
+      213: 8874275209190483176
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_5
+  - first:
+      213: 5152804239000953758
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_6
+  - first:
+      213: 4652273050352200360
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_7
+  - first:
+      213: 815915292333067477
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_8
+  - first:
+      213: 304120150391548913
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_9
+  - first:
+      213: -7006298667482777523
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_10
+  - first:
+      213: 8878136227822175266
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_11
+  - first:
+      213: 1211872600042552283
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_12
+  - first:
+      213: 3991542246182218576
+    second: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 61
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b09e4bd49c2971260800000000000000
+      internalID: 7068279533471066379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 107
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ddfde65f98ed3db0800000000000000
+      internalID: -4810433055905940015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 85
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e13fa57d5d9db2f0800000000000000
+      internalID: -955434521200741914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 90
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8807931db81812290800000000000000
+      internalID: -7916904232429981560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 84
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0f2704f6866c81c0800000000000000
+      internalID: -4500109197844205811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 71
+        width: 41
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e4aadae842c72b70800000000000000
+      internalID: 8874275209190483176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 36
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9367c69720728740800000000000000
+      internalID: 5152804239000953758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 41
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aaad54c0b1309040800000000000000
+      internalID: 4652273050352200360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 51
+        width: 26
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dc425ea2a6b25b00800000000000000
+      internalID: 815915292333067477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 26
+        width: 49
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fb602d5aa3783400800000000000000
+      internalID: 304120150391548913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 29
+        width: 28
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d48756e9b70a4ce90800000000000000
+      internalID: -7006298667482777523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 28
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2240ede5cd9753b70800000000000000
+      internalID: 8878136227822175266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 32
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdbb09e75bf61d010800000000000000
+      internalID: 1211872600042552283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_left_rubble_ramp_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 32
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05be7a9568ec46730800000000000000
+      internalID: 3991542246182218576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_0: 7068279533471066379
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_1: -4810433055905940015
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_10: -7006298667482777523
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_11: 8878136227822175266
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_12: 1211872600042552283
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_13: 3991542246182218576
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_2: -955434521200741914
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_3: -7916904232429981560
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_4: -4500109197844205811
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_5: 8874275209190483176
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_6: 5152804239000953758
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_7: 4652273050352200360
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_8: 815915292333067477
+      tr01_primarymatch_equipment_left_rubble_ramp_a_emission_9: 304120150391548913
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

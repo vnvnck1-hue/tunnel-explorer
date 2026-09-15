@@ -103,6 +103,8 @@ namespace TunnelCrew.Presentation
         TunnelCrew.Presentation.Visual.ShadowGeometryBuilder _envShadows;
         TunnelCrew.Presentation.Visual.ContactShadowRenderer _contactShadows;
         TunnelCrew.Presentation.Visual.LightSocketRenderer _lightSockets;
+        TunnelCrew.Presentation.Visual.PrimaryMatchRoomDecorator _primaryMatchRooms;
+        TunnelCrew.Presentation.Visual.SetPieceCatalog _primaryMatchCatalog;
 
         /// <summary>
         /// 광원을 소켓으로 등록한다(이주 B 10단계). 소켓 렌더러가 없으면(R1) 아무것도 하지 않는다.
@@ -663,6 +665,16 @@ namespace TunnelCrew.Presentation
             foregroundVisibility.Enabled = false;
             depthGo.AddComponent<TunnelCrew.Presentation.Visual.OccludedSilhouetteRenderer>().Profile = _envProfile;
 
+            var setPieceGo = new GameObject("Primary Match Rooms");
+            setPieceGo.transform.SetParent(_envRoot, false);
+            _primaryMatchRooms = setPieceGo.AddComponent<TunnelCrew.Presentation.Visual.PrimaryMatchRoomDecorator>();
+            _primaryMatchCatalog = Resources.Load<TunnelCrew.Presentation.Visual.SetPieceCatalog>(
+                "Visual/SetPieceCatalog_PrimaryMatchRuntime");
+            if (_primaryMatchCatalog == null)
+                Debug.LogWarning("[Primary Match] 런타임 카탈로그가 없어 방 프랍을 건너뛴다.");
+            else
+                foregroundVisibility.Enabled = true;
+
             BindEnvironment();
         }
 
@@ -720,6 +732,8 @@ namespace TunnelCrew.Presentation
             for (int r = 0; r < world.Rows; r++)
                 for (int c = 0; c < world.Cols; c++)
                     RefreshOre(c, r);
+
+            _primaryMatchRooms?.Bind(world, Sim.Depth, _primaryMatchCatalog, _envProfile, _envShadows);
 
             // 층마다 WorldGrid 가 새로 만들어지므로 이벤트도 새 인스턴스에 건다.
             world.TileBroken += e => OnEnvCellChanged(e.Col, e.Row);

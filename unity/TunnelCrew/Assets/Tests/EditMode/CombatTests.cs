@@ -80,7 +80,10 @@ namespace TunnelCrew.Tests
             bool reloadStarted = false, manual = true;
             sim.ReloadChanged += e => { if (e.Started) { reloadStarted = true; manual = e.Manual; } };
 
-            Run(sim, input, 6.0);
+            // 조준점 착탄으로 투사체 수명이 짧아져도 재장전 경계 자체만 검증하도록,
+            // 첫 자동 재장전이 시작되는 순간 발사 입력을 놓는다.
+            for (int i = 0; i < 1000 && !reloadStarted; i++)
+                sim.Tick(SimTuning.FixedDeltaTime, input);
             Assert.IsTrue(reloadStarted, "탄이 비면 자동 재장전이 시작된다");
             Assert.IsFalse(manual);
 
@@ -114,12 +117,18 @@ namespace TunnelCrew.Tests
 
             bool ended = false;
             sim.ProjectileEnded += e => ended = true;
-            var input = Aim(sim, a); input.FireHeld = true;
+            // 커서가 곧 탄착점이므로 실제 벽 셀을 조준해야 벽까지 날아간다.
+            var input = new PlayerInput
+            {
+                AimWorld = WorldGrid.CellCenter(wall.c, wall.r),
+                FireHeld = true,
+            };
             Run(sim, input, 0.5);
 
             Assert.IsTrue(ended, "탄이 벽에 닿아 소멸한다");
             if (!TileTypes.IsBedrock(t))
-                Assert.Less(sim.World.HpAt(k), hp0, "벽이 파괴 가능하면 체력이 깎인다");
+                Assert.IsTrue(!sim.World.IsSolid(wall.c, wall.r) || sim.World.HpAt(k) < hp0,
+                    "벽이 파괴 가능하면 체력이 깎이거나 완전히 파괴된다");
             else
                 Assert.AreEqual(hp0, sim.World.HpAt(k), "기반암은 총으로 깎이지 않는다");
         }

@@ -1,0 +1,294 @@
+{
+  "status": "offline_lighting_calibration_candidate_v2",
+  "calibrationVersion": 2,
+  "unityExecuted": false,
+  "primaryReference": "art-production/test-room-v01/reference/tr01_primary_style_target.png",
+  "primaryReferenceMetrics": {
+    "darkUnder008Percent": 10.93,
+    "mid008To035Percent": 79.8,
+    "lumaMedian": 0.176,
+    "saturationMedian": 0.6528,
+    "magentaAccentPercent": 33.05,
+    "cyanAccentPercent": 6.82,
+    "amberAccentPercent": 1.97
+  },
+  "rules": [
+    "preserve source diorama pixels and save calibrated siblings",
+    "use broad soft pools and one restrained directional beam per room",
+    "do not treat preview alpha or blur as final Unity Light2D values",
+    "preserve protected open-floor readability"
+  ],
+  "rooms": [
+    {
+      "roomId": "ore_intake",
+      "sourceImage": "diorama-process-12-ore-intake-landscape.png",
+      "calibratedImage": "diorama-process-24-ore-intake-lighting-calibration-v2.png",
+      "brightnessFactor": 1.02,
+      "saturationFactor": 0.98,
+      "finalSaturationFactor": 1.18,
+      "lights": [
+        {
+          "kind": "radial",
+          "box": [
+            620,
+            210,
+            1660,
+            1040
+          ],
+          "color": [
+            24,
+            218,
+            232
+          ],
+          "alpha": 46,
+          "blur": 155
+        },
+        {
+          "kind": "radial",
+          "box": [
+            20,
+            280,
+            930,
+            1030
+          ],
+          "color": [
+            255,
+            131,
+            34
+          ],
+          "alpha": 28,
+          "blur": 145
+        },
+        {
+          "kind": "beam",
+          "polygon": [
+            [
+              1680,
+              0
+            ],
+            [
+              1900,
+              0
+            ],
+            [
+              1190,
+              820
+            ],
+            [
+              910,
+              780
+            ]
+          ],
+          "color": [
+            35,
+            221,
+            235
+          ],
+          "alpha": 18,
+          "blur": 52
+        }
+      ],
+      "intent": "reduce magenta dominance; add cyan route separation and amber machinery warmth",
+      "metrics": {
+        "darkUnder008Percent": 7.24,
+        "mid008To035Percent": 85.96,
+        "lumaMedian": 0.179,
+        "saturationMedian": 0.5366,
+        "magentaAccentPercent": 30.39,
+        "cyanAccentPercent": 1.6,
+        "amberAccentPercent": 0.46
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -3.69,
+        "mid008To035Percent": 6.16,
+        "lumaMedian": 0.003,
+        "saturationMedian": -0.1162,
+        "magentaAccentPercent": -2.66,
+        "cyanAccentPercent": -5.22,
+        "amberAccentPercent": -1.51
+      },
+      "status": "offline_lighting_hypothesis_not_unity_verified"
+    },
+    {
+      "roomId": "ventilation_service",
+      "sourceImage": "diorama-process-13-ventilation-service-landscape.png",
+      "calibratedImage": "diorama-process-25-ventilation-service-lighting-calibration-v2.png",
+      "brightnessFactor": 1.01,
+      "saturationFactor": 1.08,
+      "finalSaturationFactor": 1.2,
+      "lights": [
+        {
+          "kind": "radial",
+          "box": [
+            430,
+            40,
+            1510,
+            990
+          ],
+          "color": [
+            22,
+            221,
+            235
+          ],
+          "alpha": 44,
+          "blur": 160
+        },
+        {
+          "kind": "radial",
+          "box": [
+            650,
+            650,
+            1320,
+            1120
+          ],
+          "color": [
+            255,
+            143,
+            42
+          ],
+          "alpha": 20,
+          "blur": 125
+        },
+        {
+          "kind": "beam",
+          "polygon": [
+            [
+              80,
+              0
+            ],
+            [
+              300,
+              0
+            ],
+            [
+              1040,
+              850
+            ],
+            [
+              760,
+              900
+            ]
+          ],
+          "color": [
+            34,
+            215,
+            231
+          ],
+          "alpha": 16,
+          "blur": 58
+        }
+      ],
+      "intent": "strengthen cyan landmark pool while preserving a quiet southern combat floor",
+      "metrics": {
+        "darkUnder008Percent": 3.43,
+        "mid008To035Percent": 88.88,
+        "lumaMedian": 0.1844,
+        "saturationMedian": 0.5763,
+        "magentaAccentPercent": 15.94,
+        "cyanAccentPercent": 8.1,
+        "amberAccentPercent": 0.04
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -7.5,
+        "mid008To035Percent": 9.08,
+        "lumaMedian": 0.0084,
+        "saturationMedian": -0.0765,
+        "magentaAccentPercent": -17.11,
+        "cyanAccentPercent": 1.28,
+        "amberAccentPercent": -1.93
+      },
+      "status": "offline_lighting_hypothesis_not_unity_verified"
+    },
+    {
+      "roomId": "crystal_power",
+      "sourceImage": "diorama-process-14-crystal-power-landscape.png",
+      "calibratedImage": "diorama-process-26-crystal-power-lighting-calibration-v2.png",
+      "brightnessFactor": 1.03,
+      "saturationFactor": 1.0,
+      "finalSaturationFactor": 1.12,
+      "lights": [
+        {
+          "kind": "radial",
+          "box": [
+            870,
+            210,
+            1860,
+            1040
+          ],
+          "color": [
+            24,
+            216,
+            232
+          ],
+          "alpha": 48,
+          "blur": 155
+        },
+        {
+          "kind": "radial",
+          "box": [
+            260,
+            560,
+            1160,
+            1130
+          ],
+          "color": [
+            255,
+            135,
+            38
+          ],
+          "alpha": 18,
+          "blur": 135
+        },
+        {
+          "kind": "beam",
+          "polygon": [
+            [
+              1700,
+              0
+            ],
+            [
+              1900,
+              0
+            ],
+            [
+              1280,
+              810
+            ],
+            [
+              1010,
+              760
+            ]
+          ],
+          "color": [
+            38,
+            216,
+            232
+          ],
+          "alpha": 16,
+          "blur": 55
+        }
+      ],
+      "intent": "separate cyan service light from the magenta core and add a restrained warm counterpoint",
+      "metrics": {
+        "darkUnder008Percent": 6.31,
+        "mid008To035Percent": 86.49,
+        "lumaMedian": 0.1759,
+        "saturationMedian": 0.5789,
+        "magentaAccentPercent": 39.44,
+        "cyanAccentPercent": 2.39,
+        "amberAccentPercent": 0.32
+      },
+      "deltaFromPrimaryReference": {
+        "darkUnder008Percent": -4.62,
+        "mid008To035Percent": 6.69,
+        "lumaMedian": -0.0001,
+        "saturationMedian": -0.0739,
+        "magentaAccentPercent": 6.39,
+        "cyanAccentPercent": -4.43,
+        "amberAccentPercent": -1.65
+      },
+      "status": "offline_lighting_hypothesis_not_unity_verified"
+    }
+  ],
+  "comparisonImage": "diorama-process-27-lighting-calibration-v2-comparison.png"
+}

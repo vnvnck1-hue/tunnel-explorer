@@ -1,0 +1,351 @@
+fileFormatVersion: 2
+guid: 4b6bbaf95c4d3ac44bc02216a52911e0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -9056861056771213006
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_0
+  - first:
+      213: 6236128282899250271
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_1
+  - first:
+      213: 4885509889361149057
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_2
+  - first:
+      213: 2604230604508744268
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_3
+  - first:
+      213: 2854813755399350309
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_4
+  - first:
+      213: -8714529002400724607
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_5
+  - first:
+      213: -9131905937273882357
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_6
+  - first:
+      213: -4960874913526373724
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_7
+  - first:
+      213: -4706189196735311520
+    second: tr01_primarymatch_hero_ore_crusher_a_mask_8
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 6
+        width: 267
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 239351baad09f4280800000000000000
+      internalID: -9056861056771213006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_1
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 52
+        width: 25
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5cf9f302ad2b8650800000000000000
+      internalID: 6236128282899250271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_2
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 46
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18c770e1c51dcc340800000000000000
+      internalID: 4885509889361149057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_3
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 6
+        width: 48
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4ac1fedfe5142420800000000000000
+      internalID: 2604230604508744268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_4
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 22
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5282a7e2cf55e9720800000000000000
+      internalID: 2854813755399350309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_5
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 14
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 189c01b3b06cf0780800000000000000
+      internalID: -8714529002400724607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_6
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 6
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b097286dee3f44180800000000000000
+      internalID: -9131905937273882357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_7
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 8
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a22d1ccc8e672bb0800000000000000
+      internalID: -4960874913526373724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_ore_crusher_a_mask_8
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 7
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0619fca2cd140beb0800000000000000
+      internalID: -4706189196735311520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_hero_ore_crusher_a_mask_0: -9056861056771213006
+      tr01_primarymatch_hero_ore_crusher_a_mask_1: 6236128282899250271
+      tr01_primarymatch_hero_ore_crusher_a_mask_2: 4885509889361149057
+      tr01_primarymatch_hero_ore_crusher_a_mask_3: 2604230604508744268
+      tr01_primarymatch_hero_ore_crusher_a_mask_4: 2854813755399350309
+      tr01_primarymatch_hero_ore_crusher_a_mask_5: -8714529002400724607
+      tr01_primarymatch_hero_ore_crusher_a_mask_6: -9131905937273882357
+      tr01_primarymatch_hero_ore_crusher_a_mask_7: -4960874913526373724
+      tr01_primarymatch_hero_ore_crusher_a_mask_8: -4706189196735311520
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

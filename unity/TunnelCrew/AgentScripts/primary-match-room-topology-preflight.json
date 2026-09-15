@@ -1,0 +1,25 @@
+{
+  "status": "inspected_read_only_no_runtime_mutation",
+  "planId": "TR01-PRIMARYMATCH-BOLD-CANDIDATE-IMPORT-V2",
+  "unityVersion": "6000.3.15f1",
+  "world": {
+    "depth": 1,
+    "cols": 80, "rows": 72,
+    "worldVersionBeforeAndAfter": [0, 0],
+    "entryCell": {"c":29,"r":44},
+    "connectedOpenCells": 1834
+  },
+  "largestConnectedOpenRectangle": {
+    "x": 17, "y": 41, "width": 25, "height": 7,
+    "widthFractionOfWorld": 0.3125,
+    "areaCells": 175
+  },
+  "candidateAnchors": {
+    "northWallFootCount": 377, "northWallFoot": [{"c":37,"r":36},{"c":38,"r":35},{"c":37,"r":39},{"c":39,"r":35},{"c":38,"r":39},{"c":40,"r":38},{"c":39,"r":39},{"c":37,"r":31},{"c":32,"r":38},{"c":41,"r":39},{"c":30,"r":37},{"c":31,"r":38}],
+    "westWallFootCount": 389, "westWallFoot": [{"c":37,"r":35},{"c":35,"r":36},{"c":38,"r":34},{"c":40,"r":36},{"c":40,"r":37},{"c":39,"r":38},{"c":38,"r":33},{"c":37,"r":31},{"c":38,"r":32},{"c":37,"r":30},{"c":33,"r":39},{"c":41,"r":39}],
+    "eastWallFootCount": 389, "eastWallFoot": [{"c":37,"r":36},{"c":36,"r":37},{"c":36,"r":38},{"c":36,"r":40},{"c":39,"r":39},{"c":31,"r":36},{"c":44,"r":36},{"c":44,"r":37},{"c":43,"r":38},{"c":42,"r":39},{"c":30,"r":35},{"c":43,"r":34}],
+    "southBoundaryCount": 377, "southBoundary": [{"c":36,"r":36},{"c":37,"r":35},{"c":35,"r":36},{"c":37,"r":39},{"c":34,"r":37},{"c":39,"r":38},{"c":38,"r":39},{"c":33,"r":37},{"c":37,"r":41},{"c":32,"r":37},{"c":38,"r":41},{"c":31,"r":36}]
+  },
+  "roomBlueprintCount": 3,
+  "runtimeMutationPerformed": false
+}

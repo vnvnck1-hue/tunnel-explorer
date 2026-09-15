@@ -1,0 +1,734 @@
+{
+  "status": "offline_candidate_not_unity_integrated",
+  "unityExecuted": false,
+  "deliveryPixelsPerCell": 128,
+  "allowedEdges": [
+    "north",
+    "east",
+    "south",
+    "west"
+  ],
+  "allowedTypes": [
+    "rail_pair",
+    "heavy_pipe",
+    "power_bundle",
+    "equipment_socket",
+    "dual_service"
+  ],
+  "rules": [
+    "ports describe logical boundary connections, not visible alpha touching the canvas edge",
+    "broken pieces may expose external ports while internalContinuity remains broken",
+    "placement must resolve compatible opposite-edge ports against current room topology",
+    "do not spawn isolated route fragments when no compatible neighbor or machine socket exists"
+  ],
+  "assets": [
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_left",
+      "deliveryAssetId": "TR01-PM-RAIL-HORIZONTAL-LEFT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 0,
+        "rectPixels": [
+          0,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_middle",
+      "deliveryAssetId": "TR01-PM-RAIL-HORIZONTAL-MIDDLE",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 0,
+        "rectPixels": [
+          418,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_right",
+      "deliveryAssetId": "TR01-PM-RAIL-HORIZONTAL-RIGHT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 0,
+        "rectPixels": [
+          836,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_left",
+      "deliveryAssetId": "TR01-PM-RAIL-TURN-UP-LEFT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 1,
+        "rectPixels": [
+          0,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "north",
+          "pixel128": [
+            64,
+            0
+          ],
+          "normalizedTopLeft": [
+            0.5,
+            0.0
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/reinforced_cross",
+      "deliveryAssetId": "TR01-PM-RAIL-REINFORCED-CROSS",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 1,
+        "rectPixels": [
+          418,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "north",
+          "pixel128": [
+            64,
+            0
+          ],
+          "normalizedTopLeft": [
+            0.5,
+            0.0
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "south",
+          "pixel128": [
+            64,
+            128
+          ],
+          "normalizedTopLeft": [
+            0.5,
+            1.0
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_right",
+      "deliveryAssetId": "TR01-PM-RAIL-TURN-UP-RIGHT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 1,
+        "rectPixels": [
+          836,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "north",
+          "pixel128": [
+            64,
+            0
+          ],
+          "normalizedTopLeft": [
+            0.5,
+            0.0
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_left",
+      "deliveryAssetId": "TR01-PM-RAIL-DAMAGED-LEFT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 2,
+        "rectPixels": [
+          0,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/broken_gap",
+      "deliveryAssetId": "TR01-PM-RAIL-BROKEN-GAP",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 2,
+        "rectPixels": [
+          418,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "broken",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_right",
+      "deliveryAssetId": "TR01-PM-RAIL-DAMAGED-RIGHT",
+      "sourceSheet": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sourceSheetSha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 2,
+        "rectPixels": [
+          836,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "rail_pair"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_termination",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-LEFT-TERMINATION",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 0,
+        "rectPixels": [
+          0,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "heavy_pipe"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/buried_threshold",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 0,
+        "rectPixels": [
+          418,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "heavy_pipe"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "heavy_pipe"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_termination",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-RIGHT-TERMINATION",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 0,
+        "rectPixels": [
+          836,
+          0,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "heavy_pipe"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_broken_corner",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-LEFT-BROKEN-CORNER",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 1,
+        "rectPixels": [
+          0,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "equipment_socket"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/reinforced_socket",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-REINFORCED-SOCKET",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 1,
+        "rectPixels": [
+          418,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "north",
+          "pixel128": [
+            64,
+            0
+          ],
+          "normalizedTopLeft": [
+            0.5,
+            0.0
+          ],
+          "type": "dual_service"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_broken_corner",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-RIGHT-BROKEN-CORNER",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 1,
+        "rectPixels": [
+          836,
+          418,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "equipment_socket"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_rubble_ramp",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-LEFT-RUBBLE-RAMP",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 0,
+        "rowFromTop": 2,
+        "rectPixels": [
+          0,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "power_bundle"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/capped_machine_scar",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-CAPPED-MACHINE-SCAR",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 1,
+        "rowFromTop": 2,
+        "rectPixels": [
+          418,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "power_bundle"
+        },
+        {
+          "edge": "east",
+          "pixel128": [
+            128,
+            64
+          ],
+          "normalizedTopLeft": [
+            1.0,
+            0.5
+          ],
+          "type": "power_bundle"
+        }
+      ],
+      "internalContinuity": "broken",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_rubble_ramp",
+      "deliveryAssetId": "TR01-PM-EQUIPMENT-RIGHT-RUBBLE-RAMP",
+      "sourceSheet": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sourceSheetSha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "cell": {
+        "column": 2,
+        "rowFromTop": 2,
+        "rectPixels": [
+          836,
+          836,
+          418,
+          418
+        ]
+      },
+      "connectionPorts": [
+        {
+          "edge": "west",
+          "pixel128": [
+            0,
+            64
+          ],
+          "normalizedTopLeft": [
+            0.0,
+            0.5
+          ],
+          "type": "power_bundle"
+        }
+      ],
+      "internalContinuity": "connected",
+      "topologyResolutionRequired": true,
+      "status": "candidate_not_unity_verified"
+    }
+  ],
+  "summary": {
+    "assetCount": 18,
+    "portCount": 27,
+    "brokenContinuityAssets": 2,
+    "reviewImage": "diorama-process-29-connection-port-review.png"
+  }
+}

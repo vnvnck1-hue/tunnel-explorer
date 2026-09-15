@@ -1,0 +1,1287 @@
+fileFormatVersion: 2
+guid: 8f4c5cf16cd39ae4a9c6fc74e9774525
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5232774361624582643
+    second: tr01_primarymatch_hero_power_relay_a_emission_0
+  - first:
+      213: -5342181154139049087
+    second: tr01_primarymatch_hero_power_relay_a_emission_1
+  - first:
+      213: 4788744000109027301
+    second: tr01_primarymatch_hero_power_relay_a_emission_2
+  - first:
+      213: -9031349237085125654
+    second: tr01_primarymatch_hero_power_relay_a_emission_3
+  - first:
+      213: -4021032192265846450
+    second: tr01_primarymatch_hero_power_relay_a_emission_4
+  - first:
+      213: -974279101456305822
+    second: tr01_primarymatch_hero_power_relay_a_emission_5
+  - first:
+      213: -6494275162680646683
+    second: tr01_primarymatch_hero_power_relay_a_emission_6
+  - first:
+      213: 3739203126115154391
+    second: tr01_primarymatch_hero_power_relay_a_emission_7
+  - first:
+      213: 3476197677537426667
+    second: tr01_primarymatch_hero_power_relay_a_emission_8
+  - first:
+      213: -7553400271160684825
+    second: tr01_primarymatch_hero_power_relay_a_emission_9
+  - first:
+      213: 2422905423925306393
+    second: tr01_primarymatch_hero_power_relay_a_emission_10
+  - first:
+      213: 2737317974214166155
+    second: tr01_primarymatch_hero_power_relay_a_emission_11
+  - first:
+      213: 6003956878501170262
+    second: tr01_primarymatch_hero_power_relay_a_emission_12
+  - first:
+      213: 4151236297393542117
+    second: tr01_primarymatch_hero_power_relay_a_emission_13
+  - first:
+      213: 5351707716137711237
+    second: tr01_primarymatch_hero_power_relay_a_emission_14
+  - first:
+      213: -5951609751488741158
+    second: tr01_primarymatch_hero_power_relay_a_emission_15
+  - first:
+      213: -6770480027288081567
+    second: tr01_primarymatch_hero_power_relay_a_emission_16
+  - first:
+      213: 4910555826326267740
+    second: tr01_primarymatch_hero_power_relay_a_emission_17
+  - first:
+      213: 6595581184198641711
+    second: tr01_primarymatch_hero_power_relay_a_emission_18
+  - first:
+      213: 2477148440895070298
+    second: tr01_primarymatch_hero_power_relay_a_emission_19
+  - first:
+      213: -8029530421440310228
+    second: tr01_primarymatch_hero_power_relay_a_emission_20
+  - first:
+      213: 3365194425271509526
+    second: tr01_primarymatch_hero_power_relay_a_emission_21
+  - first:
+      213: -7872081750694323164
+    second: tr01_primarymatch_hero_power_relay_a_emission_22
+  - first:
+      213: 3662602857811381397
+    second: tr01_primarymatch_hero_power_relay_a_emission_23
+  - first:
+      213: 8981652719707715740
+    second: tr01_primarymatch_hero_power_relay_a_emission_24
+  - first:
+      213: 4839431982018610323
+    second: tr01_primarymatch_hero_power_relay_a_emission_25
+  - first:
+      213: 8538630824104037833
+    second: tr01_primarymatch_hero_power_relay_a_emission_26
+  - first:
+      213: -8777330417860373870
+    second: tr01_primarymatch_hero_power_relay_a_emission_27
+  - first:
+      213: -7048838962678294849
+    second: tr01_primarymatch_hero_power_relay_a_emission_28
+  - first:
+      213: 8498278734402738328
+    second: tr01_primarymatch_hero_power_relay_a_emission_29
+  - first:
+      213: 5235341356954627878
+    second: tr01_primarymatch_hero_power_relay_a_emission_30
+  - first:
+      213: -3327665104583290120
+    second: tr01_primarymatch_hero_power_relay_a_emission_31
+  - first:
+      213: -3195332229364707752
+    second: tr01_primarymatch_hero_power_relay_a_emission_32
+  - first:
+      213: -4947713685405447899
+    second: tr01_primarymatch_hero_power_relay_a_emission_33
+  - first:
+      213: -6644172923715993630
+    second: tr01_primarymatch_hero_power_relay_a_emission_34
+  - first:
+      213: -5057563081642234175
+    second: tr01_primarymatch_hero_power_relay_a_emission_35
+  - first:
+      213: -2099590437801407206
+    second: tr01_primarymatch_hero_power_relay_a_emission_36
+  - first:
+      213: 1104333937489761990
+    second: tr01_primarymatch_hero_power_relay_a_emission_37
+  - first:
+      213: -1635702959034830753
+    second: tr01_primarymatch_hero_power_relay_a_emission_38
+  - first:
+      213: 8539054261959250549
+    second: tr01_primarymatch_hero_power_relay_a_emission_39
+  - first:
+      213: -8023663506412932109
+    second: tr01_primarymatch_hero_power_relay_a_emission_40
+  - first:
+      213: -6970232593088629653
+    second: tr01_primarymatch_hero_power_relay_a_emission_41
+  - first:
+      213: -1568723682868379761
+    second: tr01_primarymatch_hero_power_relay_a_emission_42
+  - first:
+      213: 4193236519722211714
+    second: tr01_primarymatch_hero_power_relay_a_emission_43
+  - first:
+      213: 2548881683412316640
+    second: tr01_primarymatch_hero_power_relay_a_emission_44
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 209
+        width: 28
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f99766be8c8e9840800000000000000
+      internalID: 5232774361624582643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 236
+        width: 30
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18371cd5b82ccd5b0800000000000000
+      internalID: -5342181154139049087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 238
+        width: 33
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef18c6db49057240800000000000000
+      internalID: 4788744000109027301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 234
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae3cb0118b33aa280800000000000000
+      internalID: -9031349237085125654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 210
+        width: 28
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e418595868c6238c0800000000000000
+      internalID: -4021032192265846450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 243
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2613c95b15aaa72f0800000000000000
+      internalID: -974279101456305822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 167
+        width: 34
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e327cec523bfd5a0800000000000000
+      internalID: -6494275162680646683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 231
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d9bf1b9e6154e330800000000000000
+      internalID: 3739203126115154391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 192
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: becf7aabe5fed3030800000000000000
+      internalID: 3476197677537426667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 109
+        width: 55
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eec027197eec2790800000000000000
+      internalID: -7553400271160684825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 191
+        width: 19
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9146f6d55a3ef9120800000000000000
+      internalID: 2422905423925306393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 164
+        width: 25
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b86c352d138ecf520800000000000000
+      internalID: 2737317974214166155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 139
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65c43dd78f6525350800000000000000
+      internalID: 6003956878501170262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 124
+        width: 27
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e399d41b672c9930800000000000000
+      internalID: 4151236297393542117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 147
+        width: 8
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 586fa1230d5154a40800000000000000
+      internalID: 5351707716137711237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 124
+        width: 28
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad043c8c672a76da0800000000000000
+      internalID: -5951609751488741158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 146
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16bed96694c6a02a0800000000000000
+      internalID: -6770480027288081567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 140
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c57e6edb18cc52440800000000000000
+      internalID: 4910555826326267740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 109
+        width: 9
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2809636426388b50800000000000000
+      internalID: 6595581184198641711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 125
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a50a67be169906220800000000000000
+      internalID: 2477148440895070298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 131
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c249bdcbf90619090800000000000000
+      internalID: -8029530421440310228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 67
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 612ee6e008293be20800000000000000
+      internalID: 3365194425271509526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 70
+        width: 38
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42c97071b5fb0c290800000000000000
+      internalID: -7872081750694323164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 88
+        width: 29
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59c8d25d4ed24d230800000000000000
+      internalID: 3662602857811381397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 88
+        width: 20
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c98791ecf8d35ac70800000000000000
+      internalID: 8981652719707715740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 52
+        width: 31
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39442ea4fbd192340800000000000000
+      internalID: 4839431982018610323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 75
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cd0ce2be7f4f7670800000000000000
+      internalID: 8538630824104037833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 62
+        width: 11
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 292933f3d78a03680800000000000000
+      internalID: -8777330417860373870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 56
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb690ae4f4e7d2e90800000000000000
+      internalID: -7048838962678294849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 50
+        width: 17
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 898d45eab73ffe570800000000000000
+      internalID: 8498278734402738328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 58
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62f2133e93ba7a840800000000000000
+      internalID: 5235341356954627878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 10
+        width: 56
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f299d5d732c1d1d0800000000000000
+      internalID: -3327665104583290120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 40
+        width: 55
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85e0c595446e7a3d0800000000000000
+      internalID: -3195332229364707752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 33
+        width: 54
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 529c1130e90365bb0800000000000000
+      internalID: -4947713685405447899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 53
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2efb3af9de72bc3a0800000000000000
+      internalID: -6644172923715993630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 51
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cea5916c2defc9b0800000000000000
+      internalID: -5057563081642234175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 51
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1d4a05fe91ccd2e0800000000000000
+      internalID: -2099590437801407206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 49
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c65c797dd1635f00800000000000000
+      internalID: 1104333937489761990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 42
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f507ca833d0dc49e0800000000000000
+      internalID: -1635702959034830753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 24
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 572ddd10c90d08670800000000000000
+      internalID: 8539054261959250549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 12
+        width: 58
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f3fdf65d8836a090800000000000000
+      internalID: -8023663506412932109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 8
+        width: 44
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b643a1fe262c44f90800000000000000
+      internalID: -6970232593088629653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_42
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 40
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8f33e33f16ca3ae0800000000000000
+      internalID: -1568723682868379761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_43
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 36
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 289dc31e56e513a30800000000000000
+      internalID: 4193236519722211714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_power_relay_a_emission_44
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 17
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e17a42f2627f5320800000000000000
+      internalID: 2548881683412316640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_hero_power_relay_a_emission_0: 5232774361624582643
+      tr01_primarymatch_hero_power_relay_a_emission_1: -5342181154139049087
+      tr01_primarymatch_hero_power_relay_a_emission_10: 2422905423925306393
+      tr01_primarymatch_hero_power_relay_a_emission_11: 2737317974214166155
+      tr01_primarymatch_hero_power_relay_a_emission_12: 6003956878501170262
+      tr01_primarymatch_hero_power_relay_a_emission_13: 4151236297393542117
+      tr01_primarymatch_hero_power_relay_a_emission_14: 5351707716137711237
+      tr01_primarymatch_hero_power_relay_a_emission_15: -5951609751488741158
+      tr01_primarymatch_hero_power_relay_a_emission_16: -6770480027288081567
+      tr01_primarymatch_hero_power_relay_a_emission_17: 4910555826326267740
+      tr01_primarymatch_hero_power_relay_a_emission_18: 6595581184198641711
+      tr01_primarymatch_hero_power_relay_a_emission_19: 2477148440895070298
+      tr01_primarymatch_hero_power_relay_a_emission_2: 4788744000109027301
+      tr01_primarymatch_hero_power_relay_a_emission_20: -8029530421440310228
+      tr01_primarymatch_hero_power_relay_a_emission_21: 3365194425271509526
+      tr01_primarymatch_hero_power_relay_a_emission_22: -7872081750694323164
+      tr01_primarymatch_hero_power_relay_a_emission_23: 3662602857811381397
+      tr01_primarymatch_hero_power_relay_a_emission_24: 8981652719707715740
+      tr01_primarymatch_hero_power_relay_a_emission_25: 4839431982018610323
+      tr01_primarymatch_hero_power_relay_a_emission_26: 8538630824104037833
+      tr01_primarymatch_hero_power_relay_a_emission_27: -8777330417860373870
+      tr01_primarymatch_hero_power_relay_a_emission_28: -7048838962678294849
+      tr01_primarymatch_hero_power_relay_a_emission_29: 8498278734402738328
+      tr01_primarymatch_hero_power_relay_a_emission_3: -9031349237085125654
+      tr01_primarymatch_hero_power_relay_a_emission_30: 5235341356954627878
+      tr01_primarymatch_hero_power_relay_a_emission_31: -3327665104583290120
+      tr01_primarymatch_hero_power_relay_a_emission_32: -3195332229364707752
+      tr01_primarymatch_hero_power_relay_a_emission_33: -4947713685405447899
+      tr01_primarymatch_hero_power_relay_a_emission_34: -6644172923715993630
+      tr01_primarymatch_hero_power_relay_a_emission_35: -5057563081642234175
+      tr01_primarymatch_hero_power_relay_a_emission_36: -2099590437801407206
+      tr01_primarymatch_hero_power_relay_a_emission_37: 1104333937489761990
+      tr01_primarymatch_hero_power_relay_a_emission_38: -1635702959034830753
+      tr01_primarymatch_hero_power_relay_a_emission_39: 8539054261959250549
+      tr01_primarymatch_hero_power_relay_a_emission_4: -4021032192265846450
+      tr01_primarymatch_hero_power_relay_a_emission_40: -8023663506412932109
+      tr01_primarymatch_hero_power_relay_a_emission_41: -6970232593088629653
+      tr01_primarymatch_hero_power_relay_a_emission_42: -1568723682868379761
+      tr01_primarymatch_hero_power_relay_a_emission_43: 4193236519722211714
+      tr01_primarymatch_hero_power_relay_a_emission_44: 2548881683412316640
+      tr01_primarymatch_hero_power_relay_a_emission_5: -974279101456305822
+      tr01_primarymatch_hero_power_relay_a_emission_6: -6494275162680646683
+      tr01_primarymatch_hero_power_relay_a_emission_7: 3739203126115154391
+      tr01_primarymatch_hero_power_relay_a_emission_8: 3476197677537426667
+      tr01_primarymatch_hero_power_relay_a_emission_9: -7553400271160684825
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

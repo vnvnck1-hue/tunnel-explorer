@@ -1,0 +1,44 @@
+{
+  "layoutId": "TR01-PRIMARYMATCH-CURATED-DIORAMA-PASS01",
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "canvasPixels": [1920, 1080],
+  "projection": "ReferenceTopDown",
+  "compositionImage": "diorama-process-05-curated-clean-room.png",
+  "materialLightingImage": "diorama-process-06-material-lighting-preview.png",
+  "minimumOpenCenterWidthFraction": 0.45,
+  "runtimeMappingNote": "screen-space composition anchors must be resolved to valid wall-foot, floor-route, and foreground-boundary cells after the current room topology is read in Unity",
+  "placements": [
+    {"id":"backdrop_bulkhead","runtimeVariantId":"TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead","source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[235,40,390],"layer":"background","anchor":"north_wall_plane","shadowBlur":17,"shadowAlpha":160},
+    {"id":"backdrop_manifold","runtimeVariantId":"TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/pipe_manifold","source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[765,35,375],"layer":"background","anchor":"north_wall_plane","shadowBlur":17,"shadowAlpha":155},
+    {"id":"backdrop_collapse","runtimeVariantId":"TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine","source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[1,1],"screen":[1335,45,390],"layer":"background","anchor":"north_wall_plane","shadowBlur":18,"shadowAlpha":165},
+
+    {"id":"hero_crusher","runtimeVariantId":"TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher","source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[65,355,410],"layer":"midground","anchor":"west_wall_foot","shadowBlur":18,"shadowAlpha":165},
+    {"id":"hero_loading_dock","runtimeVariantId":"TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/minecart_loading_dock","source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[1,1],"screen":[1420,410,430],"layer":"midground","anchor":"east_service_anchor","shadowBlur":18,"shadowAlpha":165},
+
+    {"id":"rail_left","runtimeVariantId":"TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_left","source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[0,0],"screen":[995,535,235],"layer":"ground","anchor":"dock_route","shadowBlur":10,"shadowAlpha":125},
+    {"id":"rail_middle","runtimeVariantId":"TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_middle","source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[1,0],"screen":[1190,535,235],"layer":"ground","anchor":"dock_route","shadowBlur":10,"shadowAlpha":125},
+    {"id":"rail_right","runtimeVariantId":"TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_right","source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[2,0],"screen":[1385,535,235],"layer":"ground","anchor":"dock_route","shadowBlur":10,"shadowAlpha":125},
+    {"id":"machine_scar","runtimeVariantId":"TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/capped_machine_scar","source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[810,545,235],"layer":"ground","anchor":"machine_termination","shadowBlur":10,"shadowAlpha":125},
+
+    {"id":"pylon_cyan","runtimeVariantId":"TR01-PRIMARYMATCH-SERVICE-PYLONS-3COL/cyan","source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[610,385,125],"layer":"midground","anchor":"fixed_presentation_lamp","shadowBlur":9,"shadowAlpha":115},
+    {"id":"pylon_amber","runtimeVariantId":"TR01-PRIMARYMATCH-SERVICE-PYLONS-3COL/amber","source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[2,0],"screen":[1260,390,125],"layer":"midground","anchor":"fixed_presentation_lamp","shadowBlur":9,"shadowAlpha":115},
+
+    {"id":"crystal_west","runtimeVariantId":"TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop","source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[360,650,285],"layer":"midground","anchor":"west_transition","shadowBlur":13,"shadowAlpha":145},
+    {"id":"crystal_depleted","runtimeVariantId":"TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_center_scar","source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[850,770,245],"layer":"ground","anchor":"mined_scar","shadowBlur":12,"shadowAlpha":135},
+    {"id":"crystal_east","runtimeVariantId":"TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop","source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[2,1],"screen":[1540,690,285],"layer":"midground","anchor":"east_transition","shadowBlur":13,"shadowAlpha":145},
+
+    {"id":"guardian_scale_reference","runtimeVariantId":"existing/guardian_drone","source":"unity/TunnelCrew/Assets/_Project/Data/Resources/Visual/guardian_drone.png","grid":[1,1],"cell":[0,0],"screen":[905,555,105],"layer":"scale_reference","anchor":"open_center_reference_only","shadowBlur":10,"shadowAlpha":120},
+
+    {"id":"foreground_left","runtimeVariantId":"TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf","source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[-85,745,520],"layer":"foreground","anchor":"southwest_screen_boundary","shadowBlur":21,"shadowAlpha":180},
+    {"id":"foreground_right","runtimeVariantId":"TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf","source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[1500,735,505],"layer":"foreground","anchor":"southeast_screen_boundary","shadowBlur":21,"shadowAlpha":180},
+    {"id":"foreground_platform","runtimeVariantId":"TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/raised_service_platform","source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,1],"screen":[680,785,455],"layer":"foreground","anchor":"south_service_boundary_gated","shadowBlur":18,"shadowAlpha":165}
+  ],
+  "budgets": {
+    "monumentalBackdropCount": 3,
+    "heroMachineCount": 2,
+    "railRouteCount": 1,
+    "crystalClusterCount": 3,
+    "foregroundOccluderCount": 2,
+    "gatedElevatedSurfaceCount": 1
+  }
+}

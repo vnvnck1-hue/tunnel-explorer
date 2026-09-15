@@ -1,0 +1,1625 @@
+fileFormatVersion: 2
+guid: f6839e9a3344054439dbfe5a6cbb179a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4981356794263331119
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_0
+  - first:
+      213: 541493065696016832
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_1
+  - first:
+      213: -5452300285693185092
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_2
+  - first:
+      213: 7005398240363557865
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_3
+  - first:
+      213: -2954106181952699685
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_4
+  - first:
+      213: 7549453677953120990
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_5
+  - first:
+      213: 4973777164151569645
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_6
+  - first:
+      213: -3182964865418402884
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_7
+  - first:
+      213: -8732776955830695917
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_8
+  - first:
+      213: -6050520686255816765
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_9
+  - first:
+      213: 2206969104892950850
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_10
+  - first:
+      213: 8938458399837808053
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_11
+  - first:
+      213: -6081567206604286771
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_12
+  - first:
+      213: -6519841677123552440
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_13
+  - first:
+      213: 5647715050747819971
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_14
+  - first:
+      213: -3735356171315677438
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_15
+  - first:
+      213: 3282648820859455628
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_16
+  - first:
+      213: -7461051285078267706
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_17
+  - first:
+      213: -5255007096132725730
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_18
+  - first:
+      213: 7607132073424669754
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_19
+  - first:
+      213: 6300014328679137101
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_20
+  - first:
+      213: 1188195120175733380
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_21
+  - first:
+      213: -5885376476639378061
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_22
+  - first:
+      213: 3007093218685693489
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_23
+  - first:
+      213: -3017373735134577593
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_24
+  - first:
+      213: 7952132654116463634
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_25
+  - first:
+      213: -5214688269548200597
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_26
+  - first:
+      213: -3964891576101426406
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_27
+  - first:
+      213: -6381959205432252517
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_28
+  - first:
+      213: 3862589729900613901
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_29
+  - first:
+      213: -7339692926878775931
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_30
+  - first:
+      213: -3199845143769505499
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_31
+  - first:
+      213: -8874498881828051299
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_32
+  - first:
+      213: 296177506888814245
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_33
+  - first:
+      213: -4225082445532504973
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_34
+  - first:
+      213: -3783041379043587897
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_35
+  - first:
+      213: -6006674761122269398
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_36
+  - first:
+      213: 2579239386841774960
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_37
+  - first:
+      213: 8610448311256687024
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_38
+  - first:
+      213: -7981961046238547798
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_39
+  - first:
+      213: -777881926967868485
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_40
+  - first:
+      213: 8120665151200092017
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_41
+  - first:
+      213: 6584750874091908193
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_42
+  - first:
+      213: -2817733406242269242
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_43
+  - first:
+      213: 965339183874368738
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_44
+  - first:
+      213: -1157244520218636756
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_45
+  - first:
+      213: -3657940170935278310
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_46
+  - first:
+      213: -1295881136881703301
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_47
+  - first:
+      213: -984804319813236822
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_48
+  - first:
+      213: 8844646769400971535
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_49
+  - first:
+      213: 1594471438994409583
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_50
+  - first:
+      213: -4313814351876463583
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_51
+  - first:
+      213: 2794909053120943566
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_52
+  - first:
+      213: 6735180929640798992
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_53
+  - first:
+      213: 7847895523420286903
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_54
+  - first:
+      213: -8287614302113549180
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_55
+  - first:
+      213: 4520734888757742358
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_56
+  - first:
+      213: -4421917707974481758
+    second: tr01_primarymatch_backdrop_crystal_processor_a_emission_57
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 339
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1de9472536aaedab0800000000000000
+      internalID: -4981356794263331119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 331
+        width: 19
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c9f5250315c38700800000000000000
+      internalID: 541493065696016832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 328
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb33f7617c98554b0800000000000000
+      internalID: -5452300285693185092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 307
+        width: 37
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e3340b559c283160800000000000000
+      internalID: 7005398240363557865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 323
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd28ceb3418e007d0800000000000000
+      internalID: -2954106181952699685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 315
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eda79a21f1c05c860800000000000000
+      internalID: 7549453677953120990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 310
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dec34358af7660540800000000000000
+      internalID: 4973777164151569645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 326
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb3ef28a156d3d3d0800000000000000
+      internalID: -3182964865418402884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 321
+        width: 20
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3188efc70a1fec680800000000000000
+      internalID: -8732776955830695917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 310
+        width: 37
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cfb19d2e7b380ca0800000000000000
+      internalID: -6050520686255816765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 304
+        width: 20
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 249f76735bab0ae10800000000000000
+      internalID: 2206969104892950850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 306
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b560f18e88cb0c70800000000000000
+      internalID: 8938458399837808053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 287
+        width: 18
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc4dfacd8dee99ba0800000000000000
+      internalID: -6081567206604286771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 306
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b734bc98ed485a0800000000000000
+      internalID: -6519841677123552440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 264
+        width: 46
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c773707ae6b06e40800000000000000
+      internalID: 5647715050747819971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 264
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2077a2b5a59592cc0800000000000000
+      internalID: -3735356171315677438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 278
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c88cea9d5bf4e8d20800000000000000
+      internalID: 3282648820859455628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 269
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c820f5f265057890800000000000000
+      internalID: -7461051285078267706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 255
+        width: 15
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e141ad663e67217b0800000000000000
+      internalID: -5255007096132725730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 190
+        width: 41
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3c45f30156f19960800000000000000
+      internalID: 7607132073424669754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 232
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4f7acc27a52e6750800000000000000
+      internalID: 6300014328679137101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 223
+        width: 25
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48a5ded9a215d7010800000000000000
+      internalID: 1188195120175733380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 127
+        width: 156
+        height: 149
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 375487cc641f25ea0800000000000000
+      internalID: -5885376476639378061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 223
+        width: 15
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13e2f32a9575bb920800000000000000
+      internalID: 3007093218685693489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 145
+        width: 93
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74cb5ba13922026d0800000000000000
+      internalID: -3017373735134577593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 244
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21465674486ab5e60800000000000000
+      internalID: 7952132654116463634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 225
+        width: 14
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6dde2fb5a4b1a7b0800000000000000
+      internalID: -5214688269548200597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 219
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1b29815e10e9f8c0800000000000000
+      internalID: -3964891576101426406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 212
+        width: 21
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b972d2d6ae9be67a0800000000000000
+      internalID: -6381959205432252517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 198
+        width: 14
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d015ccbf4ecaa9530800000000000000
+      internalID: 3862589729900613901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 212
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58581fc9b2c242a90800000000000000
+      internalID: -7339692926878775931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 198
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5212c559bcdd793d0800000000000000
+      internalID: -3199845143769505499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 166
+        width: 7
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d96a90d394277d480800000000000000
+      internalID: -8874498881828051299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 151
+        width: 15
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ae81909fdb3c1400800000000000000
+      internalID: 296177506888814245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 117
+        width: 17
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37cdb47b6ed7d55c0800000000000000
+      internalID: -4225082445532504973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 103
+        width: 37
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c8c08fb8efef7bc0800000000000000
+      internalID: -3783041379043587897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 112
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a27b006212104aca0800000000000000
+      internalID: -6006674761122269398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 113
+        width: 59
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07b76639e8c4bc320800000000000000
+      internalID: 2579239386841774960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 79
+        width: 31
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b121557e157e7770800000000000000
+      internalID: 8610448311256687024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 92
+        width: 54
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa032fbf7b06a3190800000000000000
+      internalID: -7981961046238547798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 90
+        width: 24
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb342e142886435f0800000000000000
+      internalID: -777881926967868485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 39
+        width: 55
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17fdc2d0ee562b070800000000000000
+      internalID: 8120665151200092017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_42
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 71
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16ce0b0580cb16b50800000000000000
+      internalID: 6584750874091908193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_43
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 78
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c79d21656665e8d0800000000000000
+      internalID: -2817733406242269242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_44
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 29
+        width: 49
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e4e8968fd2956d00800000000000000
+      internalID: 965339183874368738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_45
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 65
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2ec91e7d34a0ffe0800000000000000
+      internalID: -1157244520218636756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_46
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 60
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1565cd8bc26c3dc0800000000000000
+      internalID: -3657940170935278310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_47
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 31
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b76690dc8fa140ee0800000000000000
+      internalID: -1295881136881703301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_48
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 45
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa7034850b54552f0800000000000000
+      internalID: -984804319813236822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_49
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 11
+        width: 40
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0183f5306f7eba70800000000000000
+      internalID: 8844646769400971535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_50
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 29
+        width: 46
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6884cd6353b02610800000000000000
+      internalID: 1594471438994409583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_51
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 28
+        width: 29
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 124eb69d3b04224c0800000000000000
+      internalID: -4313814351876463583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_52
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 31
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec51ccac9f289c620800000000000000
+      internalID: 2794909053120943566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_53
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 13
+        width: 34
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01b9939fe5b287d50800000000000000
+      internalID: 6735180929640798992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_54
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 27
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bf28db066359ec60800000000000000
+      internalID: 7847895523420286903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_55
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 13
+        width: 34
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 484331fa3ba7cfc80800000000000000
+      internalID: -8287614302113549180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_56
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 27
+        width: 24
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61bce10fd60ecbe30800000000000000
+      internalID: 4520734888757742358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_crystal_processor_a_emission_57
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 33
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a8eb2ed54132a2c0800000000000000
+      internalID: -4421917707974481758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_0: -4981356794263331119
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_1: 541493065696016832
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_10: 2206969104892950850
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_11: 8938458399837808053
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_12: -6081567206604286771
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_13: -6519841677123552440
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_14: 5647715050747819971
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_15: -3735356171315677438
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_16: 3282648820859455628
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_17: -7461051285078267706
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_18: -5255007096132725730
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_19: 7607132073424669754
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_2: -5452300285693185092
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_20: 6300014328679137101
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_21: 1188195120175733380
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_22: -5885376476639378061
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_23: 3007093218685693489
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_24: -3017373735134577593
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_25: 7952132654116463634
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_26: -5214688269548200597
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_27: -3964891576101426406
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_28: -6381959205432252517
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_29: 3862589729900613901
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_3: 7005398240363557865
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_30: -7339692926878775931
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_31: -3199845143769505499
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_32: -8874498881828051299
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_33: 296177506888814245
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_34: -4225082445532504973
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_35: -3783041379043587897
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_36: -6006674761122269398
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_37: 2579239386841774960
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_38: 8610448311256687024
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_39: -7981961046238547798
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_4: -2954106181952699685
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_40: -777881926967868485
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_41: 8120665151200092017
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_42: 6584750874091908193
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_43: -2817733406242269242
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_44: 965339183874368738
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_45: -1157244520218636756
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_46: -3657940170935278310
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_47: -1295881136881703301
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_48: -984804319813236822
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_49: 8844646769400971535
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_5: 7549453677953120990
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_50: 1594471438994409583
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_51: -4313814351876463583
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_52: 2794909053120943566
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_53: 6735180929640798992
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_54: 7847895523420286903
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_55: -8287614302113549180
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_56: 4520734888757742358
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_57: -4421917707974481758
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_6: 4973777164151569645
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_7: -3182964865418402884
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_8: -8732776955830695917
+      tr01_primarymatch_backdrop_crystal_processor_a_emission_9: -6050520686255816765
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

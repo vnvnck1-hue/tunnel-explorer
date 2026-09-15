@@ -1,0 +1,1599 @@
+fileFormatVersion: 2
+guid: c8c5545b63076be4789d7b444259435d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8375903325348437312
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_0
+  - first:
+      213: 7789013756234732296
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_1
+  - first:
+      213: -992942074522347270
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_2
+  - first:
+      213: -4498447518639817527
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_3
+  - first:
+      213: 1680901055449026394
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_4
+  - first:
+      213: -7060424348370974262
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_5
+  - first:
+      213: 2140061891469986979
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_6
+  - first:
+      213: 3162595945892809794
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_7
+  - first:
+      213: -6350440163194143100
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_8
+  - first:
+      213: -1113657898053285201
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_9
+  - first:
+      213: -926372094384698829
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_10
+  - first:
+      213: -8448888803483421475
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_11
+  - first:
+      213: 5438859339394714747
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_12
+  - first:
+      213: 5321374864321322945
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_13
+  - first:
+      213: 8442533704258961057
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_14
+  - first:
+      213: -4187238256411079668
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_15
+  - first:
+      213: -5930117945826526556
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_16
+  - first:
+      213: 8454420743164175776
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_17
+  - first:
+      213: 3701378230021701881
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_18
+  - first:
+      213: 3101021519323163879
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_19
+  - first:
+      213: -717479469038190235
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_20
+  - first:
+      213: -7524059972474096484
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_21
+  - first:
+      213: 8556892354117262399
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_22
+  - first:
+      213: -6627484089210459585
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_23
+  - first:
+      213: -3423661653997807457
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_24
+  - first:
+      213: -3958757663828783424
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_25
+  - first:
+      213: 7549208034009502924
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_26
+  - first:
+      213: 6581244069474270347
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_27
+  - first:
+      213: 4772887346358818455
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_28
+  - first:
+      213: -4352111204378020907
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_29
+  - first:
+      213: -240269775628582272
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_30
+  - first:
+      213: 6722394795789614163
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_31
+  - first:
+      213: -2452229338820188161
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_32
+  - first:
+      213: -3052942517054868143
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_33
+  - first:
+      213: -1256851410314837716
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_34
+  - first:
+      213: 7883292625353112768
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_35
+  - first:
+      213: 8077637761202521733
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_36
+  - first:
+      213: -3378006397115634170
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_37
+  - first:
+      213: -5865508215720860891
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_38
+  - first:
+      213: 8575404759751166634
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_39
+  - first:
+      213: -5988234305017114049
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_40
+  - first:
+      213: 8692892137252615333
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_41
+  - first:
+      213: -3584437316590053950
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_42
+  - first:
+      213: 3853602461442253299
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_43
+  - first:
+      213: 1028450455587086646
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_44
+  - first:
+      213: 7974615666375784159
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_45
+  - first:
+      213: -249695168164797757
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_46
+  - first:
+      213: 1093594106914852652
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_47
+  - first:
+      213: -7350423885713557235
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_48
+  - first:
+      213: -8506725813294343849
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_49
+  - first:
+      213: 4604470064358885729
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_50
+  - first:
+      213: 6943281296365970121
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_51
+  - first:
+      213: -6641400654535889651
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_52
+  - first:
+      213: -5769611955580163183
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_53
+  - first:
+      213: 7226059617593932928
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_54
+  - first:
+      213: 3601554118449481141
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_55
+  - first:
+      213: -8928083396812372728
+    second: tr01_primarymatch_backdrop_pipe_manifold_a_emission_56
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 251
+        width: 18
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04d186c62bf2d3470800000000000000
+      internalID: 8375903325348437312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 276
+        width: 15
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 803900b4eb2281c60800000000000000
+      internalID: 7789013756234732296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 276
+        width: 31
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af85e8da17c5832f0800000000000000
+      internalID: -992942074522347270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 247
+        y: 239
+        width: 33
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cc7cbac0dd4291c0800000000000000
+      internalID: -4498447518639817527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 218
+        width: 18
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5f4e98aa92c35710800000000000000
+      internalID: 1680901055449026394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 244
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac944df7675540e90800000000000000
+      internalID: -7060424348370974262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 222
+        width: 10
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ac4b66a3f603bd10800000000000000
+      internalID: 2140061891469986979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 181
+        width: 27
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24c0803b14cc3eb20800000000000000
+      internalID: 3162595945892809794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 184
+        width: 26
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48e70715154bed7a0800000000000000
+      internalID: -6350440163194143100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 170
+        width: 56
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: faac939ca0e7b80f0800000000000000
+      internalID: -1113657898053285201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 202
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33a8d500d7dd423f0800000000000000
+      internalID: -926372094384698829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 212
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd47899b5648fba80800000000000000
+      internalID: -8448888803483421475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 212
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7c00fbb0c5ba7b40800000000000000
+      internalID: 5438859339394714747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 212
+        width: 26
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cf9098ce3259d940800000000000000
+      internalID: 5321374864321322945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 167
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ae3e9e6ca7e92570800000000000000
+      internalID: 8442533704258961057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 133
+        width: 18
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0c01b0adf0f3e5c0800000000000000
+      internalID: -4187238256411079668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 163
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4aa37dab52df3bda0800000000000000
+      internalID: -5930117945826526556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 133
+        width: 15
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a5aef95fd2245570800000000000000
+      internalID: 8454420743164175776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 140
+        width: 22
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f0cec3b3efed5330800000000000000
+      internalID: 3701378230021701881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 96
+        width: 50
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ec691454aa090b20800000000000000
+      internalID: 3101021519323163879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 172
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 561c75a69300b06f0800000000000000
+      internalID: -717479469038190235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 159
+        width: 14
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9432f7b15b259790800000000000000
+      internalID: -7524059972474096484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 147
+        width: 19
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c5a6c724030c670800000000000000
+      internalID: 8556892354117262399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 109
+        width: 34
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3aae04b5527604a0800000000000000
+      internalID: -6627484089210459585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 162
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9895527dd5bc70d0800000000000000
+      internalID: -3423661653997807457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 146
+        width: 13
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ce41af01eaaf09c0800000000000000
+      internalID: -3958757663828783424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 151
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc459a2a5bc24c860800000000000000
+      internalID: 7549208034009502924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 109
+        width: 32
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8cf82dbc96455b50800000000000000
+      internalID: 6581244069474270347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 124
+        width: 13
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7969ca0f0c3bc3240800000000000000
+      internalID: 4772887346358818455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 116
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d3fc080be13a93c0800000000000000
+      internalID: -4352111204378020907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 103
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 082456d79e36aacf0800000000000000
+      internalID: -240269775628582272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 114
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35c79f2337eba4d50800000000000000
+      internalID: 6722394795789614163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 70
+        width: 25
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff7e4d7a86ee7fdd0800000000000000
+      internalID: -2452229338820188161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 68
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 155f147b4f4c1a5d0800000000000000
+      internalID: -3052942517054868143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 24
+        width: 61
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c214cb82d44ce8ee0800000000000000
+      internalID: -1256851410314837716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 80
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ccf0a210e4176d60800000000000000
+      internalID: 7883292625353112768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 37
+        width: 34
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58602c42fb8891070800000000000000
+      internalID: 8077637761202521733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 62
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60eecea4419ee11d0800000000000000
+      internalID: -3378006397115634170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 58
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 523a2d6ca57899ea0800000000000000
+      internalID: -5865508215720860891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 62
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa892ec135f10770800000000000000
+      internalID: 8575404759751166634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 39
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3295a960a485eca0800000000000000
+      internalID: -5988234305017114049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 33
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a47ab7875b53a870800000000000000
+      internalID: 8692892137252615333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_42
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 28
+        width: 23
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c5def07045814ec0800000000000000
+      internalID: -3584437316590053950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_43
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 46
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f126db750fba7530800000000000000
+      internalID: 3853602461442253299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_44
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 32
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6316b5a8d3ac54e00800000000000000
+      internalID: 1028450455587086646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_45
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 29
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd6f79e72b68bae60800000000000000
+      internalID: 7974615666375784159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_46
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 21
+        width: 28
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c2e7674197e88cf0800000000000000
+      internalID: -249695168164797757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_47
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 25
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2fce1fcb0a3d2f00800000000000000
+      internalID: 1093594106914852652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_48
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 32
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d093f7f8b6c0ef990800000000000000
+      internalID: -7350423885713557235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_49
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 28
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 759d1f081f902f980800000000000000
+      internalID: -8506725813294343849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_50
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 38
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1690805c02d56ef30800000000000000
+      internalID: 4604470064358885729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_51
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 24
+        width: 21
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c2e18d4d8d7b5060800000000000000
+      internalID: 6943281296365970121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_52
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 18
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0d6757da4105d3a0800000000000000
+      internalID: -6641400654535889651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_53
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 16
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19b2ccfbe783eefa0800000000000000
+      internalID: -5769611955580163183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_54
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 13
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08c3b78dfee184460800000000000000
+      internalID: 7226059617593932928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_55
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 23
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b5c68d836a4bf130800000000000000
+      internalID: 3601554118449481141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_pipe_manifold_a_emission_56
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 24
+        width: 36
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8058fef1473191480800000000000000
+      internalID: -8928083396812372728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_0: 8375903325348437312
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_1: 7789013756234732296
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_10: -926372094384698829
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_11: -8448888803483421475
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_12: 5438859339394714747
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_13: 5321374864321322945
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_14: 8442533704258961057
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_15: -4187238256411079668
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_16: -5930117945826526556
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_17: 8454420743164175776
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_18: 3701378230021701881
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_19: 3101021519323163879
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_2: -992942074522347270
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_20: -717479469038190235
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_21: -7524059972474096484
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_22: 8556892354117262399
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_23: -6627484089210459585
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_24: -3423661653997807457
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_25: -3958757663828783424
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_26: 7549208034009502924
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_27: 6581244069474270347
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_28: 4772887346358818455
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_29: -4352111204378020907
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_3: -4498447518639817527
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_30: -240269775628582272
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_31: 6722394795789614163
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_32: -2452229338820188161
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_33: -3052942517054868143
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_34: -1256851410314837716
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_35: 7883292625353112768
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_36: 8077637761202521733
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_37: -3378006397115634170
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_38: -5865508215720860891
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_39: 8575404759751166634
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_4: 1680901055449026394
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_40: -5988234305017114049
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_41: 8692892137252615333
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_42: -3584437316590053950
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_43: 3853602461442253299
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_44: 1028450455587086646
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_45: 7974615666375784159
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_46: -249695168164797757
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_47: 1093594106914852652
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_48: -7350423885713557235
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_49: -8506725813294343849
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_5: -7060424348370974262
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_50: 4604470064358885729
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_51: 6943281296365970121
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_52: -6641400654535889651
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_53: -5769611955580163183
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_54: 7226059617593932928
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_55: 3601554118449481141
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_56: -8928083396812372728
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_6: 2140061891469986979
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_7: 3162595945892809794
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_8: -6350440163194143100
+      tr01_primarymatch_backdrop_pipe_manifold_a_emission_9: -1113657898053285201
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

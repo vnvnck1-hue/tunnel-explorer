@@ -1,0 +1,9 @@
+status=imported_candidate_not_runtime_connected
+channels=195
+catalogEntries=38
+lightSockets=11
+shadowContours=14
+catalog=Assets/_Project/Data/Visual/SetPieceCatalog_PrimaryMatchBoldCandidate.asset
+sceneChanged=false
+prefabChanged=false
+activeRuntimeCatalogChanged=false

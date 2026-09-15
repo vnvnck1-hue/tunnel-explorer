@@ -1,0 +1,59 @@
+{
+  "layoutId": "TR01-PRIMARYMATCH-ROOM-IDENTITY-VARIANTS-V1",
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "canvasPixels": [1920, 1080],
+  "projection": "ReferenceTopDown",
+  "compositionImage": "diorama-process-11-room-identity-triptych.png",
+  "sharedRules": {
+    "minimumOpenCenterWidthFraction": 0.45,
+    "heroMachinesPerRoom": 1,
+    "monumentalBackdropsPerRoom": 1,
+    "foregroundOccludersPerRoom": 1,
+    "archesAllowed": false
+  },
+  "rooms": [
+    {
+      "id": "ore_intake",
+      "title": "ORE INTAKE",
+      "accent": "amber_magenta",
+      "story": "broken wall machinery feeds one readable rail route into an oversized crusher",
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[1,1],"screen":[115,40,350],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[135,285,330],"layer":"midground"},
+        {"source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[0,0],"screen":[235,575,165],"layer":"ground"},
+        {"source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[1,0],"screen":[370,575,165],"layer":"ground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[75,565,165],"layer":"ground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[15,585,185],"layer":"midground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[385,675,280],"layer":"foreground"}
+      ]
+    },
+    {
+      "id": "ventilation_service",
+      "title": "VENTILATION SERVICE",
+      "accent": "cyan",
+      "story": "one huge turbine and a sealed bulkhead make airflow function readable at a glance",
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[120,45,345],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[145,300,315],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[80,500,100],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[470,510,100],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[250,665,155],"layer":"ground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[-75,680,285],"layer":"foreground"}
+      ]
+    },
+    {
+      "id": "crystal_power",
+      "title": "CRYSTAL POWER",
+      "accent": "magenta_cyan",
+      "story": "a monumental processor and one relay create a controlled bright core with dark edges",
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[0,1],"screen":[110,35,365],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[0,1],"screen":[145,315,315],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[1,1],"screen":[20,555,205],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[2,1],"screen":[430,585,175],"layer":"midground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[1,1],"screen":[245,655,155],"layer":"ground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[395,675,275],"layer":"foreground"}
+      ]
+    }
+  ]
+}

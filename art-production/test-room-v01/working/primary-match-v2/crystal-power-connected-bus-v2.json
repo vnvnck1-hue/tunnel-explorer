@@ -1,0 +1,96 @@
+{
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "unityExecuted": false,
+  "sourceRoom": "crystal_power",
+  "sourceComposition": "diorama-process-14-crystal-power-landscape.png",
+  "compositionImage": "diorama-process-32-crystal-power-connected-bus-v2.png",
+  "comparisonImage": "diorama-process-33-crystal-power-bus-comparison.png",
+  "change": "two detached equipment details replaced by a connected heavy-pipe bus",
+  "route": {
+    "id": "power_bus",
+    "runtimeAnchor": "west_relay_to_north_processor_connection",
+    "assetIds": [
+      "TR01-PM-EQUIPMENT-LEFT-TERMINATION",
+      "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "TR01-PM-EQUIPMENT-RIGHT-TERMINATION"
+    ],
+    "screens": [
+      [
+        520,
+        610,
+        240
+      ],
+      [
+        720,
+        610,
+        240
+      ],
+      [
+        920,
+        610,
+        240
+      ]
+    ],
+    "portEdges": [
+      [
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west"
+      ]
+    ],
+    "portType": "heavy_pipe",
+    "internalConnectionsCompatible": true,
+    "heroScreenOverlapPixels": 80,
+    "backdropScreenOverlapPixels": 495,
+    "groundOverlayNonBlocking": true
+  },
+  "removedGroundOverlays": [
+    {
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "grid": [
+        3,
+        3
+      ],
+      "cell": [
+        1,
+        1
+      ],
+      "screen": [
+        970,
+        590,
+        245
+      ],
+      "layer": "ground"
+    },
+    {
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "grid": [
+        3,
+        3
+      ],
+      "cell": [
+        2,
+        0
+      ],
+      "screen": [
+        1270,
+        575,
+        225
+      ],
+      "layer": "ground"
+    }
+  ],
+  "openFloorRectPixels": [
+    625,
+    760,
+    1490,
+    1060
+  ],
+  "nonGroundPlacementsChanged": false,
+  "runtimeTopologyResolutionRequired": true
+}

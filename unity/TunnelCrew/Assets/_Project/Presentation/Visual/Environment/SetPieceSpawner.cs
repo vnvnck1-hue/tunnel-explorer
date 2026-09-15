@@ -13,6 +13,7 @@ namespace TunnelCrew.Presentation.Visual
     {
         [SerializeField] string _assetId;
         [SerializeField] Vector2 _groundCell;
+        [SerializeField, Min(0.01f)] float _visualScale = 1f;
 
         SetPieceDef _def;
         int _version;
@@ -35,11 +36,12 @@ namespace TunnelCrew.Presentation.Visual
 
         public int ContourVersion => _version;
 
-        public void Bind(SetPieceDef def, Vector2 groundCell)
+        public void Bind(SetPieceDef def, Vector2 groundCell, float visualScale = 1f)
         {
             _def = def;
             _assetId = def != null ? def.assetId : null;
             _groundCell = groundCell;
+            _visualScale = Mathf.Max(0.01f, visualScale);
             _version++;
         }
 
@@ -47,6 +49,11 @@ namespace TunnelCrew.Presentation.Visual
         {
             if (_def == null || into == null) return;
             _def.AppendContour(_groundCell, _buffer);
+            if (!Mathf.Approximately(_visualScale, 1f))
+            {
+                for (int i = 0; i < _buffer.Count; i++)
+                    _buffer[i] = _groundCell + (_buffer[i] - _groundCell) * _visualScale;
+            }
             if (_buffer.Count >= 3) into.Add(_buffer.ToArray());
         }
     }
@@ -103,7 +110,7 @@ namespace TunnelCrew.Presentation.Visual
         /// 조용히 빠지면 방이 비어 보이는 원인을 찾기 어렵다.
         /// </summary>
         public SetPieceInstance Spawn(string assetId, Vector2 groundCell,
-            ShadowGeometryBuilder shadows = null)
+            ShadowGeometryBuilder shadows = null, float visualScale = 1f)
         {
             if (_catalog == null)
             {
@@ -125,6 +132,8 @@ namespace TunnelCrew.Presentation.Visual
 
             var go = new GameObject($"SetPiece {def.assetId}");
             go.transform.SetParent(transform, false);
+            visualScale = Mathf.Max(0.01f, visualScale);
+            go.transform.localScale = new Vector3(visualScale, visualScale, 1f);
             _spawned.Add(go);
 
             // ── 본체
@@ -162,22 +171,22 @@ namespace TunnelCrew.Presentation.Visual
                     : def.occluderGroup.GetHashCode();
                 occ.fadeTargetAlpha = def.fadeTargetAlpha;
 
-                float halfW = Mathf.Max(1, def.footprintCells.x) * 0.5f;
-                float rows = Mathf.Max(1, def.footprintCells.y);
+                float halfW = Mathf.Max(1, def.footprintCells.x) * 0.5f * visualScale;
+                float rows = Mathf.Max(1, def.footprintCells.y) * visualScale;
                 occ.footprintCells = new Rect(
                     groundCell.x - halfW, groundCell.y,
-                    Mathf.Max(1, def.footprintCells.x), rows);
+                    Mathf.Max(1, def.footprintCells.x) * visualScale, rows);
 
                 // 소품의 스프라이트는 발점에서 <b>위(북쪽)로</b> 시각 높이만큼 솟는다. 그래서
                 // 이 소품이 실제로 가리는 화면 영역은 [발점, 발점 + 시각 높이] 이고, footprint
                 // 깊이를 넘는 나머지가 오클루더의 남쪽 도달 거리다. 기본값 1셀로 두면
                 // 1.94셀 전경 난간이 캐릭터를 가리는데도 페이드가 걸리지 않는다.
-                occ.capLiftCells = Mathf.Max(0f, def.visualHeightCells - rows);
+                occ.capLiftCells = Mathf.Max(0f, def.visualHeightCells * visualScale - rows);
             }
 
             // ── 접촉 AO
             var shadow = go.AddComponent<ContactShadow>();
-            shadow.radius = def.ResolvedContactRadius;
+            shadow.radius = def.ResolvedContactRadius * visualScale;
             shadow.scaleWithVisualHeight = false;   // 지면에 서 있다
 
             // ── 조명 소켓
@@ -189,7 +198,7 @@ namespace TunnelCrew.Presentation.Visual
 
             // ── 그림자 윤곽
             var instance = go.AddComponent<SetPieceInstance>();
-            instance.Bind(def, groundCell);
+            instance.Bind(def, groundCell, visualScale);
             _instances.Add(instance);
             shadows?.RegisterSetpiece(instance);
 

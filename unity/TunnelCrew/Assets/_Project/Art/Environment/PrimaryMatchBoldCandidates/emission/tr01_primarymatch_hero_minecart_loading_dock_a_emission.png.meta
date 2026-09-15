@@ -1,0 +1,1209 @@
+fileFormatVersion: 2
+guid: bfe37cb066d21db41b4e827725aa2d38
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3744949771868740083
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_0
+  - first:
+      213: -9137980475278794805
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_1
+  - first:
+      213: 4414590383147856120
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_2
+  - first:
+      213: 7560589541177155632
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_3
+  - first:
+      213: 6268384152455841865
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_4
+  - first:
+      213: -4034554471264880783
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_5
+  - first:
+      213: 5153197972581791306
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_6
+  - first:
+      213: -5810716856620473586
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_7
+  - first:
+      213: -5186590027950170534
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_8
+  - first:
+      213: 2073328699385809672
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_9
+  - first:
+      213: -6394034333842005175
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_10
+  - first:
+      213: 8317284464372586968
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_11
+  - first:
+      213: -6370179437818033034
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_12
+  - first:
+      213: -7153442940571689953
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_13
+  - first:
+      213: 8744186030805759592
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_14
+  - first:
+      213: 6576044123779618853
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_15
+  - first:
+      213: 842056975546073389
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_16
+  - first:
+      213: 3565632937713358772
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_17
+  - first:
+      213: 6709704371399582457
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_18
+  - first:
+      213: -4912407201662030902
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_19
+  - first:
+      213: 620088975003439941
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_20
+  - first:
+      213: -526754222025008105
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_21
+  - first:
+      213: 4688282147248789249
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_22
+  - first:
+      213: 1292203865660115193
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_23
+  - first:
+      213: -3714539027028656395
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_24
+  - first:
+      213: 201521866970746377
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_25
+  - first:
+      213: -1078054500941605347
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_26
+  - first:
+      213: -7148770735080389280
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_27
+  - first:
+      213: -9033662397532053021
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_28
+  - first:
+      213: 8984489248373233508
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_29
+  - first:
+      213: 9134669077554485461
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_30
+  - first:
+      213: -6304479171724188436
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_31
+  - first:
+      213: -3286637837745117381
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_32
+  - first:
+      213: 5294978335053644957
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_33
+  - first:
+      213: 5367022239687924124
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_34
+  - first:
+      213: 8536835731939134148
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_35
+  - first:
+      213: -5484471670791707125
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_36
+  - first:
+      213: 6349183136114015575
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_37
+  - first:
+      213: 5851012652344941995
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_38
+  - first:
+      213: -6910702293294887857
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_39
+  - first:
+      213: 952789425758172056
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_40
+  - first:
+      213: -1364427377914863250
+    second: tr01_primarymatch_hero_minecart_loading_dock_a_emission_41
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 146
+        width: 25
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d06651a2604470cc0800000000000000
+      internalID: -3744949771868740083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 171
+        width: 38
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcf5d8e3c2f5f2180800000000000000
+      internalID: -9137980475278794805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 140
+        width: 52
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f032606096c34d30800000000000000
+      internalID: 4414590383147856120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 179
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 030e566412c9ce860800000000000000
+      internalID: 7560589541177155632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 139
+        width: 26
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94881d2ec26cdf650800000000000000
+      internalID: 6268384152455841865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 154
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 177fa4995126208c0800000000000000
+      internalID: -4034554471264880783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 166
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a463005d046d38740800000000000000
+      internalID: 5153197972581791306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 145
+        width: 31
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0323ce2ecf2c5fa0800000000000000
+      internalID: -5810716856620473586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 138
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5e527c69d78508b0800000000000000
+      internalID: -5186590027950170534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 146
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b83859771f5cc10800000000000000
+      internalID: 2073328699385809672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 146
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94322b186a3d347a0800000000000000
+      internalID: -6394034333842005175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 145
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d99dca472eec6370800000000000000
+      internalID: 8317284464372586968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 84
+        width: 47
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ccb5d4d839897a0800000000000000
+      internalID: -6370179437818033034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 103
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1cd23ecb8dd9bc90800000000000000
+      internalID: -7153442940571689953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 106
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8663c18cdd6995970800000000000000
+      internalID: 8744186030805759592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 106
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 528dd290a4dc24b50800000000000000
+      internalID: 6576044123779618853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 99
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d21401c9b569fab00800000000000000
+      internalID: 842056975546073389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 81
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b756dbe34cab7130800000000000000
+      internalID: 3565632937713358772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 72
+        width: 9
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f268258398ad1d50800000000000000
+      internalID: 6709704371399582457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 53
+        width: 51
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acb2dd85daf93dbb0800000000000000
+      internalID: -4912407201662030902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 94
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 543573c23affa9800800000000000000
+      internalID: 620088975003439941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 58
+        width: 30
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71c134073d790b8f0800000000000000
+      internalID: -526754222025008105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 73
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 107d199f5cf101140800000000000000
+      internalID: 4688282147248789249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 78
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f8ce06c194dee110800000000000000
+      internalID: 1292203865660115193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 69
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5feb1a57f6e437cc0800000000000000
+      internalID: -3714539027028656395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 70
+        width: 8
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90ec34ff113fbc200800000000000000
+      internalID: 201521866970746377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 64
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d165dd6a42bf901f0800000000000000
+      internalID: -1078054500941605347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 62
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06543da64e67acc90800000000000000
+      internalID: -7148770735080389280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 52
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e16c4e69ebf1a280800000000000000
+      internalID: -9033662397532053021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 42
+        width: 30
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4675a999e515fac70800000000000000
+      internalID: 8984489248373233508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 61
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d85164e02dd4ce70800000000000000
+      internalID: 9134669077554485461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 51
+        width: 25
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce4e78b889df188a0800000000000000
+      internalID: -6304479171724188436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 11
+        width: 51
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3728d7cc448362d0800000000000000
+      internalID: -3286637837745117381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 41
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d940342edba8b7940800000000000000
+      internalID: 5294978335053644957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 35
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9958329a4e7b7a40800000000000000
+      internalID: 5367022239687924124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 20
+        width: 28
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ca081c3edee87670800000000000000
+      internalID: 8536835731939134148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 18
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0664c9c21e33e3b0800000000000000
+      internalID: -5484471670791707125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 27
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75df9f14c64dc1850800000000000000
+      internalID: 6349183136114015575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 17
+        width: 30
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bad165fd109f23150800000000000000
+      internalID: 5851012652344941995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 10
+        width: 19
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4c4ea3f0e04810a0800000000000000
+      internalID: -6910702293294887857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 28
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89370144fecf83d00800000000000000
+      internalID: 952789425758172056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_hero_minecart_loading_dock_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 8
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6121916784901de0800000000000000
+      internalID: -1364427377914863250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_0: -3744949771868740083
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_1: -9137980475278794805
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_10: -6394034333842005175
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_11: 8317284464372586968
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_12: -6370179437818033034
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_13: -7153442940571689953
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_14: 8744186030805759592
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_15: 6576044123779618853
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_16: 842056975546073389
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_17: 3565632937713358772
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_18: 6709704371399582457
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_19: -4912407201662030902
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_2: 4414590383147856120
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_20: 620088975003439941
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_21: -526754222025008105
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_22: 4688282147248789249
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_23: 1292203865660115193
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_24: -3714539027028656395
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_25: 201521866970746377
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_26: -1078054500941605347
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_27: -7148770735080389280
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_28: -9033662397532053021
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_29: 8984489248373233508
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_3: 7560589541177155632
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_30: 9134669077554485461
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_31: -6304479171724188436
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_32: -3286637837745117381
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_33: 5294978335053644957
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_34: 5367022239687924124
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_35: 8536835731939134148
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_36: -5484471670791707125
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_37: 6349183136114015575
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_38: 5851012652344941995
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_39: -6910702293294887857
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_4: 6268384152455841865
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_40: 952789425758172056
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_41: -1364427377914863250
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_5: -4034554471264880783
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_6: 5153197972581791306
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_7: -5810716856620473586
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_8: -5186590027950170534
+      tr01_primarymatch_hero_minecart_loading_dock_a_emission_9: 2073328699385809672
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,437 @@
+{
+  "status": "offline_candidate_not_unity_integrated",
+  "source": "delivery-candidates/manifest.json",
+  "algorithmContract": {
+    "matchesIntentOf": "SpriteAlphaContour.cs",
+    "alphaCut": 0.35,
+    "maximumPoints": 24,
+    "scan": "lower footprint-depth band only",
+    "coordinates": "delivery footpoint-relative cells"
+  },
+  "assets": [
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-LEFT-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+      "albedoPath": "albedo/tr01_primarymatch_crystal_medium_left_outcrop_a_albedo.png",
+      "albedoSha256": "DEB7F29B41934C88B4A751165568548104C1CFF11DBED82E76AD152758E35EFE",
+      "footprintCells": [
+        1,
+        1
+      ],
+      "shadowContourCells": [
+        -0.328,
+        0.0,
+        0.562,
+        0.031,
+        0.484,
+        0.195,
+        0.312,
+        0.273,
+        0.305,
+        0.359,
+        -0.07,
+        0.688,
+        -0.07,
+        0.766,
+        -0.32,
+        0.852,
+        -0.352,
+        0.031
+      ],
+      "pointCount": 9,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-CENTER-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+      "albedoPath": "albedo/tr01_primarymatch_crystal_medium_center_outcrop_a_albedo.png",
+      "albedoSha256": "3C2EB7C8D31C55E5B4C3FAC0726EF851B478271A626B75D893E363F58E4D953B",
+      "footprintCells": [
+        1,
+        1
+      ],
+      "shadowContourCells": [
+        -0.344,
+        0.0,
+        0.438,
+        0.031,
+        0.492,
+        0.438,
+        0.109,
+        0.852,
+        -0.32,
+        0.852,
+        -0.375,
+        0.602,
+        -0.539,
+        0.031
+      ],
+      "pointCount": 7,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-CRYSTAL-MEDIUM-RIGHT-OUTCROP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+      "albedoPath": "albedo/tr01_primarymatch_crystal_medium_right_outcrop_a_albedo.png",
+      "albedoSha256": "3BD3DB4C46A4BBBDA1ADCA9FB5D42D0B1E9A9DA015FA03606AD6847554095302",
+      "footprintCells": [
+        1,
+        1
+      ],
+      "shadowContourCells": [
+        -0.164,
+        0.0,
+        0.273,
+        0.031,
+        0.25,
+        0.766,
+        0.062,
+        0.766,
+        -0.555,
+        0.031
+      ],
+      "pointCount": 5,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-HERO-ORE-CRUSHER",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+      "albedoPath": "albedo/tr01_primarymatch_hero_ore_crusher_a_albedo.png",
+      "albedoSha256": "9712ACD2A82532EB6E8F76451359FDFAC9A486B16D0FD8BA0FAF20ED7756C3D7",
+      "footprintCells": [
+        2,
+        2
+      ],
+      "shadowContourCells": [
+        -1.023,
+        0.0,
+        0.969,
+        0.0,
+        0.828,
+        1.852,
+        -0.852,
+        1.852,
+        -1.055,
+        0.117
+      ],
+      "pointCount": 5,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-HERO-VENTILATION-TURBINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+      "albedoPath": "albedo/tr01_primarymatch_hero_ventilation_turbine_a_albedo.png",
+      "albedoSha256": "A8E0152C70788824A5D31192B6943D68D284F1EBE50B1C184CEBCE7C6A1A34A8",
+      "footprintCells": [
+        2,
+        1
+      ],
+      "shadowContourCells": [
+        -0.281,
+        0.0,
+        0.883,
+        0.031,
+        0.93,
+        0.852,
+        -0.961,
+        0.852,
+        -0.922,
+        0.031
+      ],
+      "pointCount": 5,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-HERO-POWER-RELAY",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+      "albedoPath": "albedo/tr01_primarymatch_hero_power_relay_a_albedo.png",
+      "albedoSha256": "05192B77EB154F945DFEA8B8A4848CC8C489E8D3E0C47E027FE57E06B1B85F90",
+      "footprintCells": [
+        2,
+        2
+      ],
+      "shadowContourCells": [
+        -0.812,
+        0.0,
+        0.82,
+        0.0,
+        0.945,
+        0.117,
+        0.867,
+        1.68,
+        0.797,
+        1.852,
+        -0.766,
+        1.852,
+        -0.938,
+        1.156,
+        -0.992,
+        0.117
+      ],
+      "pointCount": 8,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-HERO-MINECART-LOADING-DOCK",
+      "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/minecart_loading_dock",
+      "albedoPath": "albedo/tr01_primarymatch_hero_minecart_loading_dock_a_albedo.png",
+      "albedoSha256": "303E3322D25AD85A662F55F0D413995E4803D50A4CABC6922FDF5624E5EC0D1A",
+      "footprintCells": [
+        2,
+        2
+      ],
+      "shadowContourCells": [
+        -0.68,
+        0.0,
+        0.688,
+        0.0,
+        0.695,
+        0.945,
+        0.484,
+        1.375,
+        -0.422,
+        1.375,
+        -0.711,
+        0.086
+      ],
+      "pointCount": 6,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-LEFT-FOREGROUND-SHELF",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+      "albedoPath": "albedo/tr01_primarymatch_foreground_left_foreground_shelf_a_albedo.png",
+      "albedoSha256": "AC507FA21D0E25244AA11BDA9DDA8D6C80752A01BF3E531B14C13CDC68F2E787",
+      "footprintCells": [
+        3,
+        2
+      ],
+      "shadowContourCells": [
+        -0.492,
+        0.0,
+        0.477,
+        0.0,
+        0.672,
+        0.117,
+        0.398,
+        0.469,
+        0.805,
+        0.641,
+        0.906,
+        0.812,
+        1.219,
+        0.984,
+        1.516,
+        1.328,
+        1.531,
+        1.68,
+        0.367,
+        1.852,
+        -0.562,
+        1.852,
+        -0.562,
+        0.117
+      ],
+      "pointCount": 12,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-RIGHT-FOREGROUND-SHELF",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+      "albedoPath": "albedo/tr01_primarymatch_foreground_right_foreground_shelf_a_albedo.png",
+      "albedoSha256": "131904A44215F7E5A1A954548DFAB99D86976876B02E3310695ECF59D4F0F406",
+      "footprintCells": [
+        3,
+        2
+      ],
+      "shadowContourCells": [
+        -0.508,
+        0.0,
+        0.461,
+        0.0,
+        0.461,
+        1.852,
+        -0.641,
+        1.852,
+        -1.523,
+        1.68,
+        -1.555,
+        1.508,
+        -1.281,
+        1.156,
+        -0.828,
+        0.984,
+        -0.781,
+        0.812,
+        -0.516,
+        0.641,
+        -0.258,
+        0.289,
+        -0.5,
+        0.117
+      ],
+      "pointCount": 12,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-BOTTOM-CLIFF-LIP",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/bottom_cliff_lip",
+      "albedoPath": "albedo/tr01_primarymatch_foreground_bottom_cliff_lip_a_albedo.png",
+      "albedoSha256": "642FC5966696CF6FBF3D4EE0E04BF422711A65CA24803A6B2F58CC3F66AD9227",
+      "footprintCells": [
+        4,
+        1
+      ],
+      "shadowContourCells": [
+        0.328,
+        0.0,
+        0.773,
+        0.031,
+        0.773,
+        0.852,
+        -1.008,
+        0.852,
+        -0.969,
+        0.109,
+        -0.906,
+        0.031
+      ],
+      "pointCount": 6,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-FOREGROUND-RAISED-SERVICE-PLATFORM",
+      "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/raised_service_platform",
+      "albedoPath": "albedo/tr01_primarymatch_foreground_raised_service_platform_a_albedo.png",
+      "albedoSha256": "77765DC021BD62A954BEE2C6F1C6BD9C1C90A075823B744665BFC9EF515833CE",
+      "footprintCells": [
+        3,
+        2
+      ],
+      "shadowContourCells": [
+        -0.031,
+        0.0,
+        0.156,
+        0.031,
+        0.148,
+        0.781,
+        -0.047,
+        0.781,
+        -0.109,
+        0.703,
+        -0.531,
+        0.617,
+        -0.547,
+        0.031
+      ],
+      "pointCount": 7,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-SEALED-BULKHEAD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+      "albedoPath": "albedo/tr01_primarymatch_backdrop_sealed_bulkhead_a_albedo.png",
+      "albedoSha256": "6353EBACE0F83B7903A1BCE7A81756FADE8F1E9AB5C5A4A8D8869F7C411BAE91",
+      "footprintCells": [
+        3,
+        1
+      ],
+      "shadowContourCells": [
+        -1.383,
+        0.0,
+        1.438,
+        0.031,
+        1.312,
+        0.766,
+        1.383,
+        0.852,
+        -1.336,
+        0.852,
+        -1.438,
+        0.031
+      ],
+      "pointCount": 6,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-PIPE-MANIFOLD",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/pipe_manifold",
+      "albedoPath": "albedo/tr01_primarymatch_backdrop_pipe_manifold_a_albedo.png",
+      "albedoSha256": "EC2EA39BEDD578A457D37C8B893196DC922882ECDF13B3EE7C28A43B7562F767",
+      "footprintCells": [
+        3,
+        1
+      ],
+      "shadowContourCells": [
+        -1.109,
+        0.0,
+        1.148,
+        0.031,
+        1.094,
+        0.852,
+        -1.07,
+        0.852,
+        -1.133,
+        0.523,
+        -1.148,
+        0.031
+      ],
+      "pointCount": 6,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-CRYSTAL-PROCESSOR",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+      "albedoPath": "albedo/tr01_primarymatch_backdrop_crystal_processor_a_albedo.png",
+      "albedoSha256": "35C0BD7C7626397E896702D27A1F73F6119BA907CFC6804E3356DE5A660627D4",
+      "footprintCells": [
+        3,
+        1
+      ],
+      "shadowContourCells": [
+        -1.43,
+        0.0,
+        1.492,
+        0.031,
+        1.484,
+        0.852,
+        -1.406,
+        0.852,
+        -1.484,
+        0.031
+      ],
+      "pointCount": 5,
+      "status": "candidate_not_unity_verified"
+    },
+    {
+      "assetId": "TR01-PM-BACKDROP-COLLAPSED-WALL-MACHINE",
+      "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+      "albedoPath": "albedo/tr01_primarymatch_backdrop_collapsed_wall_machine_a_albedo.png",
+      "albedoSha256": "F327DC02C57F172FCD3964335840E46312A4FEE64307294C6DDBA72B4687841E",
+      "footprintCells": [
+        3,
+        2
+      ],
+      "shadowContourCells": [
+        -1.297,
+        0.0,
+        1.289,
+        0.0,
+        1.211,
+        1.852,
+        -1.188,
+        1.852,
+        -1.297,
+        0.117
+      ],
+      "pointCount": 5,
+      "status": "candidate_not_unity_verified"
+    }
+  ],
+  "summary": {
+    "assetCount": 15,
+    "minimumPointCount": 5,
+    "maximumPointCount": 12,
+    "reviewImage": "diorama-process-10-shadow-contour-review.png"
+  }
+}

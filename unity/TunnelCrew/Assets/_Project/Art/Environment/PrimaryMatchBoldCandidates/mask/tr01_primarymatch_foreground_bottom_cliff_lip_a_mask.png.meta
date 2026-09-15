@@ -1,0 +1,1287 @@
+fileFormatVersion: 2
+guid: e1f7955992dee3e44a54e0d9bb59f4d7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4258993248834331804
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_0
+  - first:
+      213: 4634424288209635151
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_1
+  - first:
+      213: 1605832176154681096
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_2
+  - first:
+      213: 5437898055113610638
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_3
+  - first:
+      213: 6710692077984303573
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_4
+  - first:
+      213: -5168269064218035870
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_5
+  - first:
+      213: -1642497192636618433
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_6
+  - first:
+      213: -1139653312111896324
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_7
+  - first:
+      213: -1868593482582946202
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_8
+  - first:
+      213: 5817584462548942194
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_9
+  - first:
+      213: -8585797072949079551
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_10
+  - first:
+      213: 1652909564564255394
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_11
+  - first:
+      213: 5265830028495041631
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_12
+  - first:
+      213: 3366925967135548765
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_13
+  - first:
+      213: 7069740553581741131
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_14
+  - first:
+      213: -8816573792981149319
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_15
+  - first:
+      213: 5425671696741223389
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_16
+  - first:
+      213: 786973692000279785
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_17
+  - first:
+      213: 7264326287910729292
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_18
+  - first:
+      213: -708080949342566817
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_19
+  - first:
+      213: 6277716985213555495
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_20
+  - first:
+      213: -7795082101155625086
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_21
+  - first:
+      213: 4271134221648174021
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_22
+  - first:
+      213: 3958503534832545263
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_23
+  - first:
+      213: 1157098904461950611
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_24
+  - first:
+      213: 2617930730396589535
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_25
+  - first:
+      213: 8579639817063944423
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_26
+  - first:
+      213: 8372515003104860293
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_27
+  - first:
+      213: 4889119940657870196
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_28
+  - first:
+      213: -6049460141535182562
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_29
+  - first:
+      213: -4966552793967378263
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_30
+  - first:
+      213: -7701780616272717068
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_31
+  - first:
+      213: -907651440937454526
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_32
+  - first:
+      213: -4419236942656288741
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_33
+  - first:
+      213: 546551147066357892
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_34
+  - first:
+      213: -5777264896241194086
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_35
+  - first:
+      213: -6040685484938194891
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_36
+  - first:
+      213: 2770473338209112597
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_37
+  - first:
+      213: 909387362439472843
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_38
+  - first:
+      213: 8963642633147211623
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_39
+  - first:
+      213: -175965628354306202
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_40
+  - first:
+      213: -6660897433579878569
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_41
+  - first:
+      213: 3945836472389646199
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_42
+  - first:
+      213: -4974857725619184120
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_43
+  - first:
+      213: -3728419281140403212
+    second: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_44
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_0
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 139
+        width: 57
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94ae817bcbfa1b30800000000000000
+      internalID: 4258993248834331804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_1
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 16
+        width: 137
+        height: 155
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f478d2df558c05040800000000000000
+      internalID: 4634424288209635151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_2
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 170
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80f979c2bdf094610800000000000000
+      internalID: 1605832176154681096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_3
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 167
+        width: 16
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8595db487b477b40800000000000000
+      internalID: 5437898055113610638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_4
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 7
+        width: 114
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d94841e3ea212d50800000000000000
+      internalID: 6710692077984303573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_5
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 152
+        width: 31
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 269b4a33bae9648b0800000000000000
+      internalID: -5168269064218035870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_6
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 125
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f396150718da439e0800000000000000
+      internalID: -1642497192636618433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_7
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 106
+        width: 32
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf8197cc9532f20f0800000000000000
+      internalID: -1139653312111896324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_8
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 111
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66e8809b02c6116e0800000000000000
+      internalID: -1868593482582946202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_9
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 86
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27dbf0dee363cb050800000000000000
+      internalID: 5817584462548942194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_10
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 96
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10218493d0f19d880800000000000000
+      internalID: -8585797072949079551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_11
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 63
+        width: 10
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a2b2b1dd7050f610800000000000000
+      internalID: 1652909564564255394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_12
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 24
+        width: 37
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f543808e28cf31940800000000000000
+      internalID: 5265830028495041631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_13
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 52
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5527201459b9be20800000000000000
+      internalID: 3366925967135548765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_14
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 31
+        width: 7
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b44c96e8393cc1260800000000000000
+      internalID: 7069740553581741131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_15
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 38
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9791755f8dc35a580800000000000000
+      internalID: -8816573792981149319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_16
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 29
+        width: 6
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddbc62869abdb4b40800000000000000
+      internalID: 5425671696741223389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_17
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 28
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ec114f3764ebea00800000000000000
+      internalID: 786973692000279785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_18
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 36
+        width: 14
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c467373554210d460800000000000000
+      internalID: 7264326287910729292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_19
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 31
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f56073ec0246c26f0800000000000000
+      internalID: -708080949342566817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_20
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 27
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7231718565eee1750800000000000000
+      internalID: 6277716985213555495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_21
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 18
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2870d9d012e42d390800000000000000
+      internalID: -7795082101155625086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_22
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 23
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cb9a55f1fd164b30800000000000000
+      internalID: 4271134221648174021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_23
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 21
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fed62dbedfd6fe630800000000000000
+      internalID: 3958503534832545263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_24
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 21
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39eb272b257de0010800000000000000
+      internalID: 1157098904461950611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_25
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 23
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd1edff022c45420800000000000000
+      internalID: 2617930730396589535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_26
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 19
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e0d4ece4f0011770800000000000000
+      internalID: 8579639817063944423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_27
+      rect:
+        serializedVersion: 2
+        x: 300
+        y: 18
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58891bc2906213470800000000000000
+      internalID: 8372515003104860293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_28
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 6
+        width: 23
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 475f03faea4a9d340800000000000000
+      internalID: 4889119940657870196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_29
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 18
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1149ec7d000c0ca0800000000000000
+      internalID: -6049460141535182562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_30
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 8
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a0c95d3c82431bb0800000000000000
+      internalID: -4966552793967378263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_31
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 9
+        width: 21
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fa5315d557cd1590800000000000000
+      internalID: -7701780616272717068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_32
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 17
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2443d0bc2df5763f0800000000000000
+      internalID: -907651440937454526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_33
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 7
+        width: 25
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1840be2a67bba2c0800000000000000
+      internalID: -4419236942656288741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_34
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 19
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 488f87c5f5db59700800000000000000
+      internalID: 546551147066357892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_35
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 12
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9ba536af2803dfa0800000000000000
+      internalID: -5777264896241194086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_36
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 10
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 530966e6e8c2b2ca0800000000000000
+      internalID: -6040685484938194891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_37
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 9
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51215af82d2b27620800000000000000
+      internalID: 2770473338209112597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_38
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 10
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc62f6decface9c00800000000000000
+      internalID: 909387362439472843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_39
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 8
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76f5942cb71456c70800000000000000
+      internalID: 8963642633147211623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_40
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 7
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66f534d7138de8df0800000000000000
+      internalID: -175965628354306202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_41
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 8
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 757092a331dbf83a0800000000000000
+      internalID: -6660897433579878569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_42
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 6
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 777b09e9d5d62c630800000000000000
+      internalID: 3945836472389646199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_43
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 8
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e5c58a141c5fab0800000000000000
+      internalID: -4974857725619184120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_44
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 10
+        width: 12
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f3b8e5fa6ef14cc0800000000000000
+      internalID: -3728419281140403212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_0: 4258993248834331804
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_1: 4634424288209635151
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_10: -8585797072949079551
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_11: 1652909564564255394
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_12: 5265830028495041631
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_13: 3366925967135548765
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_14: 7069740553581741131
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_15: -8816573792981149319
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_16: 5425671696741223389
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_17: 786973692000279785
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_18: 7264326287910729292
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_19: -708080949342566817
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_2: 1605832176154681096
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_20: 6277716985213555495
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_21: -7795082101155625086
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_22: 4271134221648174021
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_23: 3958503534832545263
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_24: 1157098904461950611
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_25: 2617930730396589535
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_26: 8579639817063944423
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_27: 8372515003104860293
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_28: 4889119940657870196
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_29: -6049460141535182562
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_3: 5437898055113610638
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_30: -4966552793967378263
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_31: -7701780616272717068
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_32: -907651440937454526
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_33: -4419236942656288741
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_34: 546551147066357892
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_35: -5777264896241194086
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_36: -6040685484938194891
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_37: 2770473338209112597
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_38: 909387362439472843
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_39: 8963642633147211623
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_4: 6710692077984303573
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_40: -175965628354306202
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_41: -6660897433579878569
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_42: 3945836472389646199
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_43: -4974857725619184120
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_44: -3728419281140403212
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_5: -5168269064218035870
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_6: -1642497192636618433
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_7: -1139653312111896324
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_8: -1868593482582946202
+      tr01_primarymatch_foreground_bottom_cliff_lip_a_mask_9: 5817584462548942194
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

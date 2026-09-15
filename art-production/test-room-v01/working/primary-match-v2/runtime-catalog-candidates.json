@@ -1,0 +1,2081 @@
+{
+  "status": "offline_candidate_not_unity_integrated",
+  "sourceOfRuntimeContract": [
+    "SetPieceCatalog.cs",
+    "SetPieceSpawner.cs",
+    "ForegroundOccluder.cs"
+  ],
+  "coordinateNotes": {
+    "alphaBounds": "cell-local pixels [left, top, rightExclusive, bottomExclusive]",
+    "pivot": "normalized Unity sprite pivot in the untrimmed cell rect",
+    "shadowContour": "ground-foot-relative cell coordinates used by SetPieceDef.shadowContourCells"
+  },
+  "approvalGates": [
+    "pivot candidates must be checked in ReferenceTopDown plus F8/F9 projection presets",
+    "collision candidates must preserve the central 45 percent open-width contract",
+    "foreground candidates require live overlap/fade verification",
+    "raised_service_platform remains disabled until walkability and visual-height rules are explicit",
+    "all values remain candidates until Game View comparison and regression tests pass"
+  ],
+  "sheets": [
+    {
+      "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3",
+      "path": "tr01_primarymatch_floor_rail_transitions_3x3_source.png",
+      "sha256": "CD989E85CE44C86CB2FED4FA1C277DFD3E17227464194E2FBB2956837364EAA6",
+      "grid": [
+        3,
+        3
+      ],
+      "cellDimensionsPixels": [
+        418,
+        418
+      ],
+      "integrationKind": "ground_overlay",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_left",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              30,
+              79,
+              383,
+              403
+            ],
+            "alphaCoverageFraction": 0.5598,
+            "bottomContactPivotNormalized": [
+              0.5081,
+              0.0359
+            ],
+            "occupiedWidthFraction": 0.8445,
+            "occupiedHeightFraction": 0.7751
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_middle",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              418,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              40,
+              79,
+              371,
+              401
+            ],
+            "alphaCoverageFraction": 0.5472,
+            "bottomContactPivotNormalized": [
+              0.5095,
+              0.0407
+            ],
+            "occupiedWidthFraction": 0.7919,
+            "occupiedHeightFraction": 0.7703
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/horizontal_right",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 0,
+            "rectPixels": [
+              836,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              35,
+              79,
+              389,
+              402
+            ],
+            "alphaCoverageFraction": 0.5661,
+            "bottomContactPivotNormalized": [
+              0.4773,
+              0.0383
+            ],
+            "occupiedWidthFraction": 0.8469,
+            "occupiedHeightFraction": 0.7727
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_left",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              40,
+              25,
+              376,
+              378
+            ],
+            "alphaCoverageFraction": 0.6008,
+            "bottomContactPivotNormalized": [
+              0.5395,
+              0.0957
+            ],
+            "occupiedWidthFraction": 0.8038,
+            "occupiedHeightFraction": 0.8445
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/reinforced_cross",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              418,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              35,
+              25,
+              380,
+              380
+            ],
+            "alphaCoverageFraction": 0.6288,
+            "bottomContactPivotNormalized": [
+              0.4933,
+              0.0909
+            ],
+            "occupiedWidthFraction": 0.8254,
+            "occupiedHeightFraction": 0.8493
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/turn_up_right",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 1,
+            "rectPixels": [
+              836,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              35,
+              25,
+              377,
+              380
+            ],
+            "alphaCoverageFraction": 0.6051,
+            "bottomContactPivotNormalized": [
+              0.4522,
+              0.0909
+            ],
+            "occupiedWidthFraction": 0.8182,
+            "occupiedHeightFraction": 0.8493
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_left",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 2,
+            "rectPixels": [
+              0,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              28,
+              14,
+              383,
+              354
+            ],
+            "alphaCoverageFraction": 0.5993,
+            "bottomContactPivotNormalized": [
+              0.5086,
+              0.1531
+            ],
+            "occupiedWidthFraction": 0.8493,
+            "occupiedHeightFraction": 0.8134
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/broken_gap",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 2,
+            "rectPixels": [
+              418,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              36,
+              23,
+              382,
+              354
+            ],
+            "alphaCoverageFraction": 0.5955,
+            "bottomContactPivotNormalized": [
+              0.4457,
+              0.1531
+            ],
+            "occupiedWidthFraction": 0.8278,
+            "occupiedHeightFraction": 0.7919
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FLOOR-RAIL-TRANSITIONS-3X3/damaged_right",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 2,
+            "rectPixels": [
+              836,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              37,
+              16,
+              389,
+              354
+            ],
+            "alphaCoverageFraction": 0.5925,
+            "bottomContactPivotNormalized": [
+              0.4862,
+              0.1531
+            ],
+            "occupiedWidthFraction": 0.8421,
+            "occupiedHeightFraction": 0.8086
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3",
+      "path": "tr01_primarymatch_crystal_outcrops_3x3_source.png",
+      "sha256": "1C9935D50C2AC582E84BE5BC276BEEF77D973B9C72742B23F1252E64219C11F8",
+      "grid": [
+        3,
+        3
+      ],
+      "cellDimensionsPixels": [
+        418,
+        418
+      ],
+      "integrationKind": "mixed_ground_and_setpiece",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_left_seam",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              26,
+              161,
+              390,
+              366
+            ],
+            "alphaCoverageFraction": 0.2142,
+            "bottomContactPivotNormalized": [
+              0.2482,
+              0.1244
+            ],
+            "occupiedWidthFraction": 0.8708,
+            "occupiedHeightFraction": 0.4904
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_center_cluster",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              418,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              20,
+              185,
+              402,
+              363
+            ],
+            "alphaCoverageFraction": 0.2383,
+            "bottomContactPivotNormalized": [
+              0.4442,
+              0.1316
+            ],
+            "occupiedWidthFraction": 0.9139,
+            "occupiedHeightFraction": 0.4258
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/low_right_seam",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 0,
+            "rectPixels": [
+              836,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              42,
+              144,
+              393,
+              364
+            ],
+            "alphaCoverageFraction": 0.2112,
+            "bottomContactPivotNormalized": [
+              0.6308,
+              0.1292
+            ],
+            "occupiedWidthFraction": 0.8397,
+            "occupiedHeightFraction": 0.5263
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_left_outcrop",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              26,
+              27,
+              391,
+              377
+            ],
+            "alphaCoverageFraction": 0.3826,
+            "bottomContactPivotNormalized": [
+              0.3995,
+              0.0981
+            ],
+            "occupiedWidthFraction": 0.8732,
+            "occupiedHeightFraction": 0.8373
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_left_scar",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 1.05,
+            "collision": "soft_block_candidate",
+            "contactShadowRadius": 0.34,
+            "shadowContourCells": [
+              -0.44,
+              0.0,
+              0.44,
+              0.0,
+              0.38,
+              0.72,
+              -0.38,
+              0.72
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_center_outcrop",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              418,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              20,
+              16,
+              399,
+              377
+            ],
+            "alphaCoverageFraction": 0.5096,
+            "bottomContactPivotNormalized": [
+              0.5042,
+              0.0981
+            ],
+            "occupiedWidthFraction": 0.9067,
+            "occupiedHeightFraction": 0.8636
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_center_scar",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 1.05,
+            "collision": "soft_block_candidate",
+            "contactShadowRadius": 0.34,
+            "shadowContourCells": [
+              -0.44,
+              0.0,
+              0.44,
+              0.0,
+              0.38,
+              0.72,
+              -0.38,
+              0.72
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/medium_right_outcrop",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 1,
+            "rectPixels": [
+              836,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              25,
+              37,
+              393,
+              378
+            ],
+            "alphaCoverageFraction": 0.38,
+            "bottomContactPivotNormalized": [
+              0.6463,
+              0.0957
+            ],
+            "occupiedWidthFraction": 0.8804,
+            "occupiedHeightFraction": 0.8158
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_right_scar",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 1.05,
+            "collision": "soft_block_candidate",
+            "contactShadowRadius": 0.34,
+            "shadowContourCells": [
+              -0.44,
+              0.0,
+              0.44,
+              0.0,
+              0.38,
+              0.72,
+              -0.38,
+              0.72
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_left_scar",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 2,
+            "rectPixels": [
+              0,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              28,
+              101,
+              391,
+              335
+            ],
+            "alphaCoverageFraction": 0.2481,
+            "bottomContactPivotNormalized": [
+              0.4264,
+              0.1986
+            ],
+            "occupiedWidthFraction": 0.8684,
+            "occupiedHeightFraction": 0.5598
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_center_scar",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 2,
+            "rectPixels": [
+              418,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              20,
+              153,
+              399,
+              340
+            ],
+            "alphaCoverageFraction": 0.2818,
+            "bottomContactPivotNormalized": [
+              0.5151,
+              0.1866
+            ],
+            "occupiedWidthFraction": 0.9067,
+            "occupiedHeightFraction": 0.4474
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-CRYSTAL-OUTCROPS-3X3/depleted_right_scar",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 2,
+            "rectPixels": [
+              836,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              27,
+              93,
+              393,
+              337
+            ],
+            "alphaCoverageFraction": 0.2421,
+            "bottomContactPivotNormalized": [
+              0.5448,
+              0.1938
+            ],
+            "occupiedWidthFraction": 0.8756,
+            "occupiedHeightFraction": 0.5837
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.18,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3",
+      "path": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "sha256": "8EAD9207EBDB0C8BCBF371CBA7A40CB02FA17B2ABB135881E3169791B77B1CC3",
+      "grid": [
+        3,
+        3
+      ],
+      "cellDimensionsPixels": [
+        418,
+        418
+      ],
+      "integrationKind": "ground_overlay",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_termination",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              27,
+              82,
+              405,
+              398
+            ],
+            "alphaCoverageFraction": 0.469,
+            "bottomContactPivotNormalized": [
+              0.2197,
+              0.0478
+            ],
+            "occupiedWidthFraction": 0.9043,
+            "occupiedHeightFraction": 0.756
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/buried_threshold",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              418,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              49,
+              150,
+              370,
+              389
+            ],
+            "alphaCoverageFraction": 0.3735,
+            "bottomContactPivotNormalized": [
+              0.6627,
+              0.0694
+            ],
+            "occupiedWidthFraction": 0.7679,
+            "occupiedHeightFraction": 0.5718
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_termination",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 0,
+            "rectPixels": [
+              836,
+              0,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              12,
+              76,
+              391,
+              398
+            ],
+            "alphaCoverageFraction": 0.4658,
+            "bottomContactPivotNormalized": [
+              0.7242,
+              0.0478
+            ],
+            "occupiedWidthFraction": 0.9067,
+            "occupiedHeightFraction": 0.7703
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_broken_corner",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              31,
+              33,
+              371,
+              407
+            ],
+            "alphaCoverageFraction": 0.5724,
+            "bottomContactPivotNormalized": [
+              0.3959,
+              0.0263
+            ],
+            "occupiedWidthFraction": 0.8134,
+            "occupiedHeightFraction": 0.8947
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/reinforced_socket",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              418,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              35,
+              51,
+              380,
+              403
+            ],
+            "alphaCoverageFraction": 0.5555,
+            "bottomContactPivotNormalized": [
+              0.4765,
+              0.0359
+            ],
+            "occupiedWidthFraction": 0.8254,
+            "occupiedHeightFraction": 0.8421
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_broken_corner",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 1,
+            "rectPixels": [
+              836,
+              418,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              40,
+              40,
+              386,
+              403
+            ],
+            "alphaCoverageFraction": 0.5586,
+            "bottomContactPivotNormalized": [
+              0.7071,
+              0.0359
+            ],
+            "occupiedWidthFraction": 0.8278,
+            "occupiedHeightFraction": 0.8684
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/left_rubble_ramp",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 2,
+            "rectPixels": [
+              0,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              27,
+              41,
+              408,
+              352
+            ],
+            "alphaCoverageFraction": 0.401,
+            "bottomContactPivotNormalized": [
+              0.2993,
+              0.1579
+            ],
+            "occupiedWidthFraction": 0.9115,
+            "occupiedHeightFraction": 0.744
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/capped_machine_scar",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 2,
+            "rectPixels": [
+              418,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              34,
+              90,
+              390,
+              349
+            ],
+            "alphaCoverageFraction": 0.4635,
+            "bottomContactPivotNormalized": [
+              0.5634,
+              0.1651
+            ],
+            "occupiedWidthFraction": 0.8517,
+            "occupiedHeightFraction": 0.6196
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-EQUIPMENT-TRANSITIONS-3X3/right_rubble_ramp",
+          "cell": {
+            "column": 2,
+            "rowFromTop": 2,
+            "rectPixels": [
+              836,
+              836,
+              418,
+              418
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              2,
+              51,
+              391,
+              347
+            ],
+            "alphaCoverageFraction": 0.3894,
+            "bottomContactPivotNormalized": [
+              0.6907,
+              0.1699
+            ],
+            "occupiedWidthFraction": 0.9306,
+            "occupiedHeightFraction": 0.7081
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "ground_overlay",
+            "sortingLayer": "GroundDetail",
+            "footprintCells": [
+              1,
+              1
+            ],
+            "visualHeightCells": 0.0,
+            "collision": "none",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2",
+      "path": "tr01_primarymatch_hero_machinery_2x2_source.png",
+      "sha256": "ADA3FA46A6A94D037A94C14D073FC91A905B9506B1D40F9FD03ADD02B204AAED",
+      "grid": [
+        2,
+        2
+      ],
+      "cellDimensionsPixels": [
+        627,
+        627
+      ],
+      "integrationKind": "setpiece",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              19,
+              15,
+              627,
+              610
+            ],
+            "alphaCoverageFraction": 0.786,
+            "bottomContactPivotNormalized": [
+              0.5267,
+              0.0271
+            ],
+            "occupiedWidthFraction": 0.9697,
+            "occupiedHeightFraction": 0.949
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              2,
+              2
+            ],
+            "visualHeightCells": 2.2,
+            "collision": "broad_machine_core",
+            "contactShadowRadius": 0.76,
+            "shadowContourCells": [
+              -1.0,
+              0.0,
+              1.0,
+              0.0,
+              0.86,
+              1.56,
+              -0.86,
+              1.56
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              627,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              21,
+              11,
+              608,
+              599
+            ],
+            "alphaCoverageFraction": 0.7534,
+            "bottomContactPivotNormalized": [
+              0.5314,
+              0.0447
+            ],
+            "occupiedWidthFraction": 0.9362,
+            "occupiedHeightFraction": 0.9378
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "BackStructure",
+            "footprintCells": [
+              2,
+              1
+            ],
+            "visualHeightCells": 2.05,
+            "collision": "wall_plane_core",
+            "contactShadowRadius": 0.68,
+            "shadowContourCells": [
+              -1.0,
+              0.0,
+              1.0,
+              0.0,
+              0.86,
+              0.78,
+              -0.86,
+              0.78
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              16,
+              1,
+              620,
+              606
+            ],
+            "alphaCoverageFraction": 0.8112,
+            "bottomContactPivotNormalized": [
+              0.5174,
+              0.0335
+            ],
+            "occupiedWidthFraction": 0.9633,
+            "occupiedHeightFraction": 0.9649
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              2,
+              2
+            ],
+            "visualHeightCells": 1.95,
+            "collision": "broad_machine_core",
+            "contactShadowRadius": 0.72,
+            "shadowContourCells": [
+              -1.0,
+              0.0,
+              1.0,
+              0.0,
+              0.86,
+              1.56,
+              -0.86,
+              1.56
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/minecart_loading_dock",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              627,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              13,
+              4,
+              616,
+              604
+            ],
+            "alphaCoverageFraction": 0.7792,
+            "bottomContactPivotNormalized": [
+              0.4858,
+              0.0367
+            ],
+            "occupiedWidthFraction": 0.9617,
+            "occupiedHeightFraction": 0.9569
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "setpiece",
+            "sortingLayer": "WorldEntity",
+            "footprintCells": [
+              2,
+              2
+            ],
+            "visualHeightCells": 1.45,
+            "collision": "dock_core_keep_rail_lane_open",
+            "contactShadowRadius": 0.72,
+            "shadowContourCells": [
+              -1.0,
+              0.0,
+              1.0,
+              0.0,
+              0.86,
+              1.56,
+              -0.86,
+              1.56
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2",
+      "path": "tr01_primarymatch_foreground_depth_2x2_source.png",
+      "sha256": "FBBAFE7A65AF8764F7717A10BF3DFB0BD1B7C1738F3174586BE44AB2E12D93A8",
+      "grid": [
+        2,
+        2
+      ],
+      "cellDimensionsPixels": [
+        627,
+        627
+      ],
+      "integrationKind": "foreground_or_elevated",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              37,
+              67,
+              580,
+              627
+            ],
+            "alphaCoverageFraction": 0.4493,
+            "bottomContactPivotNormalized": [
+              0.2909,
+              0.0
+            ],
+            "occupiedWidthFraction": 0.866,
+            "occupiedHeightFraction": 0.8931
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "foreground_setpiece",
+            "sortingLayer": "FrontStructure",
+            "footprintCells": [
+              3,
+              2
+            ],
+            "visualHeightCells": 2.55,
+            "collision": "boundary_only",
+            "contactShadowRadius": 0.84,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.35,
+              2.0,
+              -1.35,
+              2.0
+            ],
+            "occluderGroup": "primarymatch_foreground_left",
+            "fadeTargetAlpha": 0.34
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              627,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              70,
+              52,
+              590,
+              627
+            ],
+            "alphaCoverageFraction": 0.4118,
+            "bottomContactPivotNormalized": [
+              0.7515,
+              0.0
+            ],
+            "occupiedWidthFraction": 0.8293,
+            "occupiedHeightFraction": 0.9171
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "foreground_setpiece",
+            "sortingLayer": "FrontStructure",
+            "footprintCells": [
+              3,
+              2
+            ],
+            "visualHeightCells": 2.55,
+            "collision": "boundary_only",
+            "contactShadowRadius": 0.84,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.35,
+              2.0,
+              -1.35,
+              2.0
+            ],
+            "occluderGroup": "primarymatch_foreground_right",
+            "fadeTargetAlpha": 0.34
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/bottom_cliff_lip",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              37,
+              86,
+              627,
+              554
+            ],
+            "alphaCoverageFraction": 0.5909,
+            "bottomContactPivotNormalized": [
+              0.5914,
+              0.1164
+            ],
+            "occupiedWidthFraction": 0.941,
+            "occupiedHeightFraction": 0.7464
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "foreground_setpiece",
+            "sortingLayer": "FrontStructure",
+            "footprintCells": [
+              4,
+              1
+            ],
+            "visualHeightCells": 1.42,
+            "collision": "boundary_only",
+            "contactShadowRadius": 1.12,
+            "shadowContourCells": [
+              -2.0,
+              0.0,
+              2.0,
+              0.0,
+              1.8,
+              1.0,
+              -1.8,
+              1.0
+            ],
+            "occluderGroup": "primarymatch_foreground_lip",
+            "fadeTargetAlpha": 0.34
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/raised_service_platform",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              627,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              123,
+              49,
+              590,
+              559
+            ],
+            "alphaCoverageFraction": 0.4653,
+            "bottomContactPivotNormalized": [
+              0.7883,
+              0.1085
+            ],
+            "occupiedWidthFraction": 0.7448,
+            "occupiedHeightFraction": 0.8134
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "elevated_surface_gated",
+            "sortingLayer": "WallTop",
+            "footprintCells": [
+              3,
+              2
+            ],
+            "visualHeightCells": 0.8,
+            "collision": "requires_walkability_and_height_rules",
+            "contactShadowRadius": 0.0,
+            "shadowContourCells": [],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2",
+      "path": "tr01_primarymatch_monumental_wall_modules_2x2_source.png",
+      "sha256": "D10490A6DB7B365F04362E265ACB90B816B228F61DF09FC6879E0A8FB2602570",
+      "grid": [
+        2,
+        2
+      ],
+      "cellDimensionsPixels": [
+        627,
+        627
+      ],
+      "integrationKind": "backdrop_setpiece",
+      "variants": [
+        {
+          "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 0,
+            "rectPixels": [
+              0,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              16,
+              62,
+              621,
+              608
+            ],
+            "alphaCoverageFraction": 0.7646,
+            "bottomContactPivotNormalized": [
+              0.5074,
+              0.0303
+            ],
+            "occupiedWidthFraction": 0.9649,
+            "occupiedHeightFraction": 0.8708
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "backdrop_setpiece",
+            "sortingLayer": "BackStructure",
+            "footprintCells": [
+              3,
+              1
+            ],
+            "visualHeightCells": 2.6,
+            "collision": "solid_wall_topology",
+            "contactShadowRadius": 0.75,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.5,
+              1.0,
+              -1.5,
+              1.0
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/pipe_manifold",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 0,
+            "rectPixels": [
+              627,
+              0,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              31,
+              45,
+              607,
+              608
+            ],
+            "alphaCoverageFraction": 0.7262,
+            "bottomContactPivotNormalized": [
+              0.5083,
+              0.0303
+            ],
+            "occupiedWidthFraction": 0.9187,
+            "occupiedHeightFraction": 0.8979
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "backdrop_setpiece",
+            "sortingLayer": "BackStructure",
+            "footprintCells": [
+              3,
+              1
+            ],
+            "visualHeightCells": 2.25,
+            "collision": "wall_plane_only",
+            "contactShadowRadius": 0.75,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.5,
+              1.0,
+              -1.5,
+              1.0
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+          "cell": {
+            "column": 0,
+            "rowFromTop": 1,
+            "rectPixels": [
+              0,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              17,
+              15,
+              625,
+              566
+            ],
+            "alphaCoverageFraction": 0.7611,
+            "bottomContactPivotNormalized": [
+              0.5117,
+              0.0973
+            ],
+            "occupiedWidthFraction": 0.9697,
+            "occupiedHeightFraction": 0.8788
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "backdrop_setpiece",
+            "sortingLayer": "BackStructure",
+            "footprintCells": [
+              3,
+              1
+            ],
+            "visualHeightCells": 2.7,
+            "collision": "solid_wall_topology",
+            "contactShadowRadius": 0.75,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.5,
+              1.0,
+              -1.5,
+              1.0
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        },
+        {
+          "assetId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+          "cell": {
+            "column": 1,
+            "rowFromTop": 1,
+            "rectPixels": [
+              627,
+              627,
+              627,
+              627
+            ]
+          },
+          "measured": {
+            "occupied": true,
+            "alphaBoundsTopLeftPixels": [
+              16,
+              26,
+              611,
+              565
+            ],
+            "alphaCoverageFraction": 0.7362,
+            "bottomContactPivotNormalized": [
+              0.4999,
+              0.0989
+            ],
+            "occupiedWidthFraction": 0.949,
+            "occupiedHeightFraction": 0.8596
+          },
+          "runtimeCandidate": {
+            "integrationStatus": "candidate_not_unity_verified",
+            "localOrder": 0,
+            "lightSockets": [],
+            "replacementAssetId": "",
+            "runtimeKind": "backdrop_setpiece",
+            "sortingLayer": "BackStructure",
+            "footprintCells": [
+              3,
+              2
+            ],
+            "visualHeightCells": 2.35,
+            "collision": "solid_wall_and_rubble",
+            "contactShadowRadius": 0.75,
+            "shadowContourCells": [
+              -1.5,
+              0.0,
+              1.5,
+              0.0,
+              1.5,
+              2.0,
+              -1.5,
+              2.0
+            ],
+            "occluderGroup": "",
+            "fadeTargetAlpha": 0.0
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "sheetCount": 6,
+    "variantCount": 39
+  }
+}

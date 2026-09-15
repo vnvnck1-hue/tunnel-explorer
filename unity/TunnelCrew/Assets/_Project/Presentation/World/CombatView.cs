@@ -11,6 +11,10 @@ namespace TunnelCrew.Presentation
     /// </summary>
     public sealed class CombatView : MonoBehaviour
     {
+        /// <summary>
+        /// 벽·몬스터 위에 뜨는 피해 숫자 표시. 계산과 호출 경로는 유지하되 현재 연출에서는 숨긴다.
+        /// </summary>
+        public static bool ShowWorldDamageNumbers = false;
         public int ProjectileRendererCount => _projectileVfx != null ? _projectileVfx.RendererCount : 0;
         public int ActiveProjectileRendererCount => _projectileVfx != null ? _projectileVfx.ActiveRendererCount : 0;
         public int ActiveProjectileTrailCount => _projectileVfx != null ? _projectileVfx.ActiveTrailCount : 0;
@@ -277,6 +281,7 @@ namespace TunnelCrew.Presentation
         /// <summary>원본 J.dmg(x,y,v,big) — 위로 튀어 오르며 떨어지는 숫자. 드릴 열(hfx)은 M7 과열 연출과 함께.</summary>
         public void Damage(Vec2 at, double value, bool big, float heat = 0f)
         {
+            if (!ShowWorldDamageNumbers) return;
             if (value < 1) return;
             float hfx = Mathf.Clamp01(heat);
             float jx = DmgJx * (1 + hfx * .85f), jy = DmgJy * (1 + hfx * .85f);

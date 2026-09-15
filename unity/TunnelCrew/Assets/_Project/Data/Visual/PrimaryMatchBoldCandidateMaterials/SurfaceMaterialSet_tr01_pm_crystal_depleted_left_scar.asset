@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba29ccf1d985f943acb49bdc0fb66a0, type: 3}
+  m_Name: SurfaceMaterialSet_tr01_pm_crystal_depleted_left_scar
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
+  kind: 0
+  minLightSlot: 1
+  normal: {fileID: 2800000, guid: 542c8e473d3d1b2468b75ce9b77c7d0b, type: 3}
+  emission: {fileID: 2800000, guid: 56f19b8dbe01b7d41a66f2853a892ed5, type: 3}
+  materialMask: {fileID: 2800000, guid: 48a86fec4f892184f9e5f0f19fe6c17d, type: 3}
+  ao: {fileID: 2800000, guid: cbe78305c4f16de45a20cd0655340679, type: 3}
+  normalStrength: 1
+  aoStrength: 1
+  emissionTint: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 1
+  minLightOverride: -1

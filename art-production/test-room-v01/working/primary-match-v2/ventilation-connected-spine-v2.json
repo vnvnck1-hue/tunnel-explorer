@@ -1,0 +1,128 @@
+{
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "unityExecuted": false,
+  "sourceRoom": "ventilation_service",
+  "sourceComposition": "diorama-process-13-ventilation-service-landscape.png",
+  "compositionImage": "diorama-process-34-ventilation-connected-spine-v2.png",
+  "comparisonImage": "diorama-process-35-ventilation-spine-comparison.png",
+  "change": "two detached equipment details replaced by one six-piece pylon-to-turbine service spine",
+  "route": {
+    "id": "ventilation_service_spine",
+    "runtimeAnchor": "west_service_through_turbine_to_east_service_connection",
+    "assetIds": [
+      "TR01-PM-EQUIPMENT-LEFT-TERMINATION",
+      "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "TR01-PM-EQUIPMENT-BURIED-THRESHOLD",
+      "TR01-PM-EQUIPMENT-RIGHT-TERMINATION"
+    ],
+    "screens": [
+      [
+        355,
+        610,
+        240
+      ],
+      [
+        555,
+        610,
+        240
+      ],
+      [
+        755,
+        610,
+        240
+      ],
+      [
+        955,
+        610,
+        240
+      ],
+      [
+        1155,
+        610,
+        240
+      ],
+      [
+        1355,
+        610,
+        240
+      ]
+    ],
+    "portEdges": [
+      [
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west"
+      ]
+    ],
+    "portType": "heavy_pipe",
+    "internalConnectionsCompatible": true,
+    "heroScreenOverlapPixels": 510,
+    "leftPylonScreenOverlapPixels": 120,
+    "rightPylonScreenOverlapPixels": 135,
+    "protectedFloorClearancePixels": 40,
+    "groundOverlayNonBlocking": true
+  },
+  "removedGroundOverlays": [
+    {
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "grid": [
+        3,
+        3
+      ],
+      "cell": [
+        0,
+        1
+      ],
+      "screen": [
+        225,
+        610,
+        230
+      ],
+      "layer": "ground"
+    },
+    {
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "grid": [
+        3,
+        3
+      ],
+      "cell": [
+        2,
+        1
+      ],
+      "screen": [
+        1470,
+        610,
+        230
+      ],
+      "layer": "ground"
+    }
+  ],
+  "openFloorRectPixels": [
+    500,
+    890,
+    1425,
+    1060
+  ],
+  "nonGroundPlacementsChanged": false,
+  "runtimeTopologyResolutionRequired": true
+}

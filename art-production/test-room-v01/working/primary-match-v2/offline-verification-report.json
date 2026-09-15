@@ -1,0 +1,392 @@
+{
+  "status": "verified_resource_first_and_unity_runtime_applied",
+  "runtimeIntegrationVerified": true,
+  "unityImportPerformed": true,
+  "counts": {
+    "candidateSheets": 6,
+    "occupiedVariants": 39,
+    "processImages": 35,
+    "sheetPreviewChannels": 24,
+    "normalizedDeliveryAssets": 39,
+    "normalizedDeliveryChannels": 195,
+    "curatedPlacements": 7,
+    "lightSocketAssets": 8,
+    "lightSockets": 11,
+    "shadowContourAssets": 15,
+    "roomIdentities": 3,
+    "landscapeRoomCompositions": 3,
+    "dormantUnityImportAssets": 39,
+    "dormantUnityImportCatalogEntries": 38,
+    "runtimeCatalogEntries": 65,
+    "runtimeGameViewCaptures": 3
+  },
+  "processImages": {
+    "diorama-process-01-rail-crystal-transitions.png": {
+      "sha256": "3E853CE6F13481A02F055D24E40F60EC5A154CF58A301DB5F458BF1FE5F753CC",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-02-bold-hero-machinery.png": {
+      "sha256": "558333369D082A49DEDBFBD7D0F265D7676C1A1344F4909A6856E66E62484164",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-03-foreground-depth.png": {
+      "sha256": "23E22372C2A4795E5F46F22A4DE7A332FAA1D800337FC4DE7912F532A43A788C",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-04-monumental-wall-backdrop.png": {
+      "sha256": "2F50B572F071135B1740BB5C36AC035D60E0ECDE536D9AE6F0567A5DCB590970",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-05-curated-clean-room.png": {
+      "sha256": "42F11243F7A58CE56B361F7B6224702BA6023879EEEC4E260317BBD2C7A8B813",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-06-material-lighting-preview.png": {
+      "sha256": "078C5BC6440579F08384BA596E8E285E7F5945DFDA7A71657B18C229905C36F2",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-07-runtime-footpoint-review.png": {
+      "sha256": "1BDFFB468F1C2D002AD598D6CD5CD998790312A19862AC91733DE84401F8E9FC",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-08-normalized-delivery-review.png": {
+      "sha256": "AC5283A15BC11B61EABF74DE4CE7798E6573D5C382C956307252591381F1C46A",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-09-light-socket-review.png": {
+      "sha256": "A74AF9C97E5C0E0B2C6607342600F105BCC25BC3D7D6CD0D78DBB7683D1052C7",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-10-shadow-contour-review.png": {
+      "sha256": "91D2B6FBA48FBC2A744B33F214D57891D864F9E7EFA5229CE117B937B810C376",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-11-room-identity-triptych.png": {
+      "sha256": "06779162652EB1467100A7187D6CE894100404A7A15FF9D9A7BBFFFA7D6E5458",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-12-ore-intake-landscape.png": {
+      "sha256": "858A1817405923CAAE66327447C8337A1C09C0A833870A6FCA22C56CD140BCC0",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-13-ventilation-service-landscape.png": {
+      "sha256": "99CEF887C418B6C0DF92A382B7B6E23F865FEC0548CC66AE92D08E304BE939AE",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-14-crystal-power-landscape.png": {
+      "sha256": "7449F104A1568062E9EF6CC176E15E89BF34FC8DC0A10D274DC68A25EFC47CE9",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-15-landscape-depth-clearance-review.png": {
+      "sha256": "6123BB62EAB9A056DEC24612FE00F757B2CC65693BD443DCD5389B1C87813E99",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-16-map-fixture-placement-review.png": {
+      "sha256": "96AAB92191D55A4542CA20385B604D8661BC72CF5DAF1546A0D11B1433E4EEC8",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-17-major-footprint-fit-review.png": {
+      "sha256": "B6E24C7FADBCC1A9501A8F0A0E02352AAE1CDEC02EF1C5A07D1D17B37FDB71C1",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-18-full-blueprint-footprint-fit-review.png": {
+      "sha256": "37DD144FDEB0E2B898B3A0D628B8092A9E5EC0E4BAE86A6B0B278F373E192E60",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-19-primary-reference-comparison.png": {
+      "sha256": "4BAFAFF72A5201F0547492C30CC681FE5911598758F0DDC545D5A6F3EC4C90DE",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-20-ore-intake-lighting-calibration.png": {
+      "sha256": "1107C00D9E0C89C794D954AC1F71D1998B6E1C058EC7F0A4960B220AC71D79C3",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-21-ventilation-service-lighting-calibration.png": {
+      "sha256": "8FE86D7FEDE059C1CE47CD81B3F1A4557ABB7013B650EE9F980980629CD90B4C",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-22-crystal-power-lighting-calibration.png": {
+      "sha256": "CCE0060EB84CACF19CF73189D6EEBAADD24D9570E29B62335AFE117E751E07D2",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-23-lighting-calibration-comparison.png": {
+      "sha256": "59D24395CE482E90BCEB4755EF4F2AB8A6D30F86C5F9F662302EC1D4901C9AF3",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-24-ore-intake-lighting-calibration-v2.png": {
+      "sha256": "CC33C3A22FBA2646D8426057D4F0A4225A24351818FCF14FC1063EDDED734D2B",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-25-ventilation-service-lighting-calibration-v2.png": {
+      "sha256": "01624678607DD815BDEB1C22EF38664DFACC5AB5D0BBF1E9E9EF0038A5A4CF14",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-26-crystal-power-lighting-calibration-v2.png": {
+      "sha256": "3296ADACFF3F785F5344972261BDF8D7E9A536EAC269D1D762E7A59530CF6860",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-27-lighting-calibration-v2-comparison.png": {
+      "sha256": "B899F003A1010A57F46B31BC0078AF30DE6BF0E617090F6678BE89C332BC5CEA",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-28-foreground-fade-mask-review.png": {
+      "sha256": "8BCD83BCE7FDB994CC714EF4AEF90BE9849EBFB9F783903D5EF694EAD4735E94",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-29-connection-port-review.png": {
+      "sha256": "B05840F57EC894249EECE94195B08DDADCD4BCDBAF1DD6A32CB387311BE8BDCD",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-30-ore-intake-connected-route-v2.png": {
+      "sha256": "0BFF336E0D8F6D9D97EAF1332BA3B3795EE226818D9D686D0AFB111FC95A545E",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-31-ore-intake-route-comparison.png": {
+      "sha256": "39FD7D12EA03830888BE6B79EAE3D14034708DFA0D818729F2F07E6757FDD3B8",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-32-crystal-power-connected-bus-v2.png": {
+      "sha256": "729BD7DD24785BFD23C5977FC842455F4FA01E9680CDA3BD173E626588C4E610",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-33-crystal-power-bus-comparison.png": {
+      "sha256": "B8CFC1058BA7041263D0A0C0224AF0CFF0E92D73394A36A5100B433EE3C0BFA2",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-34-ventilation-connected-spine-v2.png": {
+      "sha256": "359A537C309F48149AC1A3FB6C01C0B28A755F1C467802CBD820210FA7343965",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    },
+    "diorama-process-35-ventilation-spine-comparison.png": {
+      "sha256": "1CF84A9CFEC8BE9A699DA8975F15E16E0781AF6F5B27CD7C8A5424270DB285D1",
+      "dimensionsPixels": [
+        1920,
+        1080
+      ]
+    }
+  },
+  "contracts": {
+    "art-production/test-room-v01/working/primary-match-v2/manifest.json": {
+      "sha256": "53B744A8BD7E5EBD5D340DD842043A6105A1C63770C2D1E5D25E9EBCF8112141"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/placement-candidates.json": {
+      "sha256": "5DC891F8C899B5D1EA7E281FCB280CAE8BAA45E4EF7472FA8826D299B6074E66"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/runtime-catalog-candidates.json": {
+      "sha256": "4E386E2FBAAF2601DE17BD48E4E033B34BB65CBA58F5BDEF91DC3B49F58658B6"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/delivery-candidates/manifest.json": {
+      "sha256": "B9DCDEA2AB8E4408264E2F158F6C0758CD7AABCAE121DE2166472C70DCDF7C63"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/curated-diorama-layout.json": {
+      "sha256": "317E600788B382E8383B3C2D093CB01DB5E68D2575B3BFA38D0E32DA3B45A307"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/curated-room-variants.json": {
+      "sha256": "2D2235F8818280CF95E6A4444F3FE11DCABD99B366FEED72A5DFA14CA0F04F3B"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/curated-room-landscape-layouts.json": {
+      "sha256": "16753A0B821C23CD618AAAB3D2C49957A589F10A1582EA9D2AAB6A45C84C4869"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/fixture-placement-simulation.json": {
+      "sha256": "600BEC2C15CB607533C462B7ABDC63B46D8508BFDC4C44136872D64D5AF8CAD4"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/fixture-major-footprint-simulation.json": {
+      "sha256": "C64B0D536B8B24683F79829D0FB66CE6B69220EAC73F05E3EAF1E204D2607829"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/fixture-full-blueprint-footprint-simulation.json": {
+      "sha256": "3EEEE48B958D1DE5E9610540951A432426E6997FC071634D795F6D54790861CA"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/reference-composition-comparison.json": {
+      "sha256": "5ABEE6DE19D7A28E2C3FCE18FBAA49F20045113F3B8501D6C0396D12FE08A9EE"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/room-lighting-calibration-candidates.json": {
+      "sha256": "3D64C67FA76E42DE64E47EE9F26EC02F23B1D3997FB051FBA282EF31882FF4DC"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/room-lighting-calibration-candidates-v2.json": {
+      "sha256": "9EB48CF95B514D5C995052761BDCEFD671D4987949B7545A4AC98DC5C58D8FDE"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/foreground-fade-mask-candidates.json": {
+      "sha256": "6DFED8ADFFCAD03BAC2E40F59C4BD86F822E7A25A0F0564640B0BB430C78041C"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/connection-port-candidates.json": {
+      "sha256": "BFBCC88D731AF2A59B451663FF5719933064D2534A7872822AD52000DCF24E97"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/ore-intake-connected-route-v2.json": {
+      "sha256": "9ED5772F92E6C983B32616D681F2BD36B1AD699C4B6DBD122DD9C7D335D5350E"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/crystal-power-connected-bus-v2.json": {
+      "sha256": "3454CCCD4D0335CB03AC54D43A65CD3A8802E404F79305CD5119D3AF3F8CECAB"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/ventilation-connected-spine-v2.json": {
+      "sha256": "1A9AD5F3A7E2B72FB7AA7D8E14479B13DE47635037D4BEAD8A5967549BD0553F"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/light-socket-candidates.json": {
+      "sha256": "DEEDD3E5DFB8D0F8259CE9A0625F1D4CCBB5D7B9DE319005A7989E3DE243079B"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/shadow-contour-candidates.json": {
+      "sha256": "4633CA6403E278BFC78D19100F3C66624782CD749CB467E039316B6914147F23"
+    },
+    "art-production/test-room-v01/working/primary-match-v2/channels/resource-first/report.json": {
+      "sha256": "65FD052AA879CA63F7E8260102AD6AF5000A0F2B238D3957B4A3BC3809B49C2F"
+    },
+    "unity/TunnelCrew/AgentScripts/primary-match-bold-import-plan.json": {
+      "sha256": "4AD6FFD3F4636AB9BE734C86BC4EB0E1379E1369F5C2236F949813B63D12E888"
+    },
+    "tools/art/stage-primary-match-bold-candidates.ps1": {
+      "sha256": "251B411E4372E454A5AF6620B4EF42D50AB4A877C09BC4644B7695FCF5F44DC9"
+    },
+    "unity/TunnelCrew/AgentScripts/ImportPrimaryMatchBoldCandidates.cs": {
+      "sha256": "162E8DBF7ABC42D67552A136BF8CB5291560E640410D4062DFD69526AA054B01"
+    },
+    "unity/TunnelCrew/AgentScripts/VerifyPrimaryMatchBoldCandidates.cs": {
+      "sha256": "ADC65B06B1A20117CA3CDCF713321618FBC23E8C475B2261002C1FB6161C777E"
+    },
+    "unity/TunnelCrew/AgentScripts/InspectPrimaryMatchRoomTopology.cs": {
+      "sha256": "1FB61C1593A5424ABDB15E4D7FFEBD8266FC6ECB6B601272E23515B7C162CD85"
+    },
+    "unity/TunnelCrew/AgentScripts/primary-match-bold-stage-receipt.json": {
+      "sha256": "EA99B549B695ACCF0DE559698B841DC86A1F3CAF75E656ECBC4A38B2AB6903CB"
+    },
+    "unity/TunnelCrew/AgentScripts/primary-match-room-topology-preflight.json": {
+      "sha256": "575ED6399F32DF54321F42E81206F49C3AB46212E1A7E1AF98ED59BB596F205A"
+    },
+    "unity/TunnelCrew/primary-match-bold-import-verify.txt": {
+      "sha256": "7862AA736EF14F9C89A077A3C9356ECDE9595688602BABA50D7C8B1D5CC49767"
+    },
+    "unity/TunnelCrew/primary-match-bold-runtime-promotion.txt": {
+      "sha256": "4A02D2037AA5F8410EB4C89830EF3740D4EE1E15CA6A2D59A4B5DA5CDE544184"
+    },
+    "unity/TunnelCrew/Assets/_Project/Data/Resources/Visual/SetPieceCatalog_PrimaryMatchRuntime.asset": {
+      "sha256": "1ADB897C03681A5CE5467AD049E78AA88E9947986D719036A1FACBED2E608371"
+    },
+    "unity/TunnelCrew/Assets/_Project/Presentation/Visual/Environment/PrimaryMatchRoomDecorator.cs": {
+      "sha256": "DDBF5BB30DFEC0611055252B60050DEFBE599DC0161E0F2C99B8B60D9C4DAC1F"
+    },
+    "unity/TunnelCrew/Captures/PrimaryMatch/primary-match-runtime-depth1-ore-final.png": {
+      "sha256": "74025ADB1D3F984F353F4C0DF0927C630906F5EB33A4E4B195F5C5D823DE5015"
+    },
+    "unity/TunnelCrew/Captures/PrimaryMatch/primary-match-runtime-depth2-ventilation-final.png": {
+      "sha256": "4AFD9D314AF2BA0FC6B73B96D0301E1F6A0FD596970ADDE11F2AD68D72E7FA3B"
+    },
+    "unity/TunnelCrew/Captures/PrimaryMatch/primary-match-runtime-depth3-crystal-final.png": {
+      "sha256": "1BDB631667C85C2E8D105F73430E6BA09384C681043E65237D4C98563971A96F"
+    }
+  },
+  "remainingRuntimeGates": [
+    "confirm TunnelCrew Unity 6000.3.15f1 instance",
+    "import without editing scene or prefab YAML directly",
+    "verify pivots and sorting in all F8/F9 projection presets",
+    "verify central path and collision remain playable",
+    "verify foreground fade before enabling foreground shelves",
+    "verify intact damaged and depleted topology transitions",
+    "run MapGenParityTests and VisualBatch2Tests",
+    "capture Game View and compare with the primary reference"
+  ],
+  "landscapeOpenFloorBlockingCoverage": {
+    "ore_intake": 0.0,
+    "ventilation_service": 0.0,
+    "crystal_power": 0.0
+  }
+}

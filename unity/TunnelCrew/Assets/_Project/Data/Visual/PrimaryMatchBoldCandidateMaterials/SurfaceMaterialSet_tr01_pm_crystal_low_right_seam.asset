@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba29ccf1d985f943acb49bdc0fb66a0, type: 3}
+  m_Name: SurfaceMaterialSet_tr01_pm_crystal_low_right_seam
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
+  kind: 0
+  minLightSlot: 1
+  normal: {fileID: 2800000, guid: f17063fc3576d0b4f99b79bb188b8ab1, type: 3}
+  emission: {fileID: 2800000, guid: f704c5c99836c4546926015b2e34d414, type: 3}
+  materialMask: {fileID: 2800000, guid: b531540c67ab3f944877550b5892c410, type: 3}
+  ao: {fileID: 2800000, guid: ed95ca37b18cc9b45b60059171550aa6, type: 3}
+  normalStrength: 1
+  aoStrength: 1
+  emissionTint: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 1
+  minLightOverride: -1

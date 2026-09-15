@@ -1,0 +1,1937 @@
+fileFormatVersion: 2
+guid: 2e76845a5c5be3741a3a0484bf0e8d6c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2863842993336158523
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_0
+  - first:
+      213: -4104952686138319995
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_1
+  - first:
+      213: -1181053410424258305
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_2
+  - first:
+      213: -1214150222880673493
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_3
+  - first:
+      213: -8246823963188161519
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_4
+  - first:
+      213: 2355050893608345999
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_5
+  - first:
+      213: -7577507518010957580
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_6
+  - first:
+      213: -1570761948055876299
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_7
+  - first:
+      213: 5775986179685584723
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_8
+  - first:
+      213: -1293445735240263891
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_9
+  - first:
+      213: -3747080720011586027
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_10
+  - first:
+      213: 7814650173116420450
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_11
+  - first:
+      213: -1769531298792108771
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_12
+  - first:
+      213: 6585304162082507313
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_13
+  - first:
+      213: 5111291378577206598
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_14
+  - first:
+      213: -721775121615994120
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_15
+  - first:
+      213: 5140353589430426208
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_16
+  - first:
+      213: 4424833952409880143
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_17
+  - first:
+      213: -5185638686356567386
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_18
+  - first:
+      213: 412707825908061626
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_19
+  - first:
+      213: -6938848814946347131
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_20
+  - first:
+      213: -1369122382824038845
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_21
+  - first:
+      213: -8499564739444413047
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_22
+  - first:
+      213: 3775826077016313939
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_23
+  - first:
+      213: -3137851415496736627
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_24
+  - first:
+      213: 3291265476490381010
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_25
+  - first:
+      213: 281837129783511261
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_26
+  - first:
+      213: 2098763192288801929
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_27
+  - first:
+      213: -7633403137195563951
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_28
+  - first:
+      213: -6139374224340845140
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_29
+  - first:
+      213: -3654818364252596669
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_30
+  - first:
+      213: -3872248871833903229
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_31
+  - first:
+      213: -6070209986192676577
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_32
+  - first:
+      213: -6578665904841283900
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_33
+  - first:
+      213: -3558528053022606031
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_34
+  - first:
+      213: -3271197551795991907
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_35
+  - first:
+      213: -2988383092323710867
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_36
+  - first:
+      213: -7620210197996085780
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_37
+  - first:
+      213: -8992613861718824264
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_38
+  - first:
+      213: -7479659025537110604
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_39
+  - first:
+      213: 3261128252304777854
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_40
+  - first:
+      213: 2671514010230999766
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_41
+  - first:
+      213: -7805708488823425540
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_42
+  - first:
+      213: 1309482314551053697
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_43
+  - first:
+      213: -920768807497358447
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_44
+  - first:
+      213: 1938954031097776777
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_45
+  - first:
+      213: 8128285019101002548
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_46
+  - first:
+      213: 2226333491817441641
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_47
+  - first:
+      213: -7024592866722206899
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_48
+  - first:
+      213: 2389248035031860904
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_49
+  - first:
+      213: 9053591861968102496
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_50
+  - first:
+      213: -5359773055533177622
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_51
+  - first:
+      213: -6699054075855820329
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_52
+  - first:
+      213: -853345957373587174
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_53
+  - first:
+      213: 8164241087786253855
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_54
+  - first:
+      213: 7117536180693274256
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_55
+  - first:
+      213: 5812811543040065294
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_56
+  - first:
+      213: 1117036833815826636
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_57
+  - first:
+      213: -1822062772299510430
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_58
+  - first:
+      213: 6125903447115901030
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_59
+  - first:
+      213: 2156671973633182491
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_60
+  - first:
+      213: 5949296371504513819
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_61
+  - first:
+      213: -128936195352782201
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_62
+  - first:
+      213: -7108689066031946873
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_63
+  - first:
+      213: 5927388035402525315
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_64
+  - first:
+      213: 8685386414748972819
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_65
+  - first:
+      213: -8828036180055933689
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_66
+  - first:
+      213: 6730011027582826674
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_67
+  - first:
+      213: -379592657012734412
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_68
+  - first:
+      213: -5097909405569680238
+    second: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_69
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 294
+        width: 61
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c6f4b988f59148d0800000000000000
+      internalID: -2863842993336158523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 320
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58b90fae7474807c0800000000000000
+      internalID: -4104952686138319995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 319
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff006e24e2e0c9fe0800000000000000
+      internalID: -1181053410424258305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 318
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b217c3d1ec8762fe0800000000000000
+      internalID: -1214150222880673493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 293
+        width: 53
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1149dfc8c456d8d80800000000000000
+      internalID: -8246823963188161519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 289
+        width: 41
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f81ed756f42dea020800000000000000
+      internalID: 2355050893608345999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 301
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f0ea1a4f0947d690800000000000000
+      internalID: -7577507518010957580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 272
+        width: 56
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53dcd6b9458833ae0800000000000000
+      internalID: -1570761948055876299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 293
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35f89b3f3dc682050800000000000000
+      internalID: 5775986179685584723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 213
+        width: 44
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2792cee4f1cc0ee0800000000000000
+      internalID: -1293445735240263891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 242
+        width: 23
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5169ef220f1bffbc0800000000000000
+      internalID: -3747080720011586027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 240
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2619c8cbde6337c60800000000000000
+      internalID: 7814650173116420450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 214
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1d8f8cb8ac5177e0800000000000000
+      internalID: -1769531298792108771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_13
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 219
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13a44d6be33b36b50800000000000000
+      internalID: 6585304162082507313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_14
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 178
+        width: 39
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64d6c939d64fee640800000000000000
+      internalID: 5111291378577206598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_15
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 219
+        width: 10
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f24d5cd95dbbf5f0800000000000000
+      internalID: -721775121615994120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_16
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 180
+        width: 23
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a97e5da54365740800000000000000
+      internalID: 5140353589430426208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_17
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 201
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f468a73390b286d30800000000000000
+      internalID: 4424833952409880143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_18
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 170
+        width: 13
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aa8136e619e808b0800000000000000
+      internalID: -5185638686356567386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_19
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 171
+        width: 16
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab5164fb49b3ab500800000000000000
+      internalID: 412707825908061626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_20
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 170
+        width: 12
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5879bf234c144bf90800000000000000
+      internalID: -6938848814946347131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_21
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 171
+        width: 13
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34e9cbd5276effce0800000000000000
+      internalID: -1369122382824038845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_22
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 159
+        width: 14
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98deaffe6ea7b0a80800000000000000
+      internalID: -8499564739444413047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_23
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 159
+        width: 7
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350d636dfcd666430800000000000000
+      internalID: 3775826077016313939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_24
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 154
+        width: 22
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d804c5d33cc1474d0800000000000000
+      internalID: -3137851415496736627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_25
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 171
+        width: 14
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d647b3538cecad20800000000000000
+      internalID: 3291265476490381010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_26
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 159
+        width: 21
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd80345506949e300800000000000000
+      internalID: 281837129783511261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_27
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 177
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 984f900f00e402d10800000000000000
+      internalID: 2098763192288801929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_28
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 127
+        width: 36
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1542b1c4a44b01690800000000000000
+      internalID: -7633403137195563951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_29
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 130
+        width: 18
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cad79f6bbaf8ccaa0800000000000000
+      internalID: -6139374224340845140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_30
+      rect:
+        serializedVersion: 2
+        x: 259
+        y: 129
+        width: 23
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3465620df0a774dc0800000000000000
+      internalID: -3654818364252596669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_31
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 140
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38fde68ca22034ac0800000000000000
+      internalID: -3872248871833903229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_32
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 140
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f19e4fccd2842cba0800000000000000
+      internalID: -6070209986192676577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_33
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 150
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c626fdf632e3b4a0800000000000000
+      internalID: -6578665904841283900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_34
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 150
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13d3354f6919d9ec0800000000000000
+      internalID: -3558528053022606031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_35
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 117
+        width: 19
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a821f782f5a92d0800000000000000
+      internalID: -3271197551795991907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_36
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 135
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d68034129612786d0800000000000000
+      internalID: -2988383092323710867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_37
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 141
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced52a2d2339f3690800000000000000
+      internalID: -7620210197996085780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_38
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 125
+        width: 15
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8baeef17651d33380800000000000000
+      internalID: -8992613861718824264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_39
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 115
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bde0d5ceb9e23890800000000000000
+      internalID: -7479659025537110604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_40
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 102
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e72ed950edad14d20800000000000000
+      internalID: 3261128252304777854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_41
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 122
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6da4c4886df131520800000000000000
+      internalID: 2671514010230999766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_42
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 114
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf5bd6f5c7d8ca390800000000000000
+      internalID: -7805708488823425540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_43
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 113
+        width: 14
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18dc8762a373c2210800000000000000
+      internalID: 1309482314551053697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_44
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 107
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1932cd4e5a5c833f0800000000000000
+      internalID: -920768807497358447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_45
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 94
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98a05631b6c88ea10800000000000000
+      internalID: 1938954031097776777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_46
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 88
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43bf4acc8287dc070800000000000000
+      internalID: 8128285019101002548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_47
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 16
+        width: 71
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9696553e38685ee10800000000000000
+      internalID: 2226333491817441641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_48
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 88
+        width: 21
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4ba74f6102a38e90800000000000000
+      internalID: -7024592866722206899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_49
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 14
+        width: 118
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a6cf58dd60582120800000000000000
+      internalID: 2389248035031860904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_50
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 72
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 064e9f994d1d4ad70800000000000000
+      internalID: 9053591861968102496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_51
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 77
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae42c34adc24e95b0800000000000000
+      internalID: -5359773055533177622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_52
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 85
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d92b75afcd2803a0800000000000000
+      internalID: -6699054075855820329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_53
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 79
+        width: 18
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a115b3c7f5e4824f0800000000000000
+      internalID: -853345957373587174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_54
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 72
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1ef52a63063d4170800000000000000
+      internalID: 8164241087786253855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_55
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 37
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09e863e227196c260800000000000000
+      internalID: 7117536180693274256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_56
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 11
+        width: 43
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0f71310d414ba050800000000000000
+      internalID: 5812811543040065294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_57
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 28
+        width: 47
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc09e900513808f00800000000000000
+      internalID: 1117036833815826636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_58
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 36
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26dcf92ff8bb6b6e0800000000000000
+      internalID: -1822062772299510430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_59
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 37
+        width: 21
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6682fad8ab4930550800000000000000
+      internalID: 6125903447115901030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_60
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 27
+        width: 25
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1b4275cbb90eed10800000000000000
+      internalID: 2156671973633182491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_61
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 18
+        width: 24
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b130c077785209250800000000000000
+      internalID: 5949296371504513819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_62
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 17
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78a9e45a63de53ef0800000000000000
+      internalID: -128936195352782201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_63
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 23
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 783667835fcd85d90800000000000000
+      internalID: -7108689066031946873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_64
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 18
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38a61187300524250800000000000000
+      internalID: 5927388035402525315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_65
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 14
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 317bd145de0b88870800000000000000
+      internalID: 8685386414748972819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_66
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 15
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70d387ffdd38c7580800000000000000
+      internalID: -8828036180055933689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_67
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 14
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b839895f5dc56d50800000000000000
+      internalID: 6730011027582826674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_68
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 15
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 436c8675d7a6bbaf0800000000000000
+      internalID: -379592657012734412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_69
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 18
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29c75efc7669049b0800000000000000
+      internalID: -5097909405569680238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_0: -2863842993336158523
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_1: -4104952686138319995
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_10: -3747080720011586027
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_11: 7814650173116420450
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_12: -1769531298792108771
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_13: 6585304162082507313
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_14: 5111291378577206598
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_15: -721775121615994120
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_16: 5140353589430426208
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_17: 4424833952409880143
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_18: -5185638686356567386
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_19: 412707825908061626
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_2: -1181053410424258305
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_20: -6938848814946347131
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_21: -1369122382824038845
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_22: -8499564739444413047
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_23: 3775826077016313939
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_24: -3137851415496736627
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_25: 3291265476490381010
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_26: 281837129783511261
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_27: 2098763192288801929
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_28: -7633403137195563951
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_29: -6139374224340845140
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_3: -1214150222880673493
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_30: -3654818364252596669
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_31: -3872248871833903229
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_32: -6070209986192676577
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_33: -6578665904841283900
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_34: -3558528053022606031
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_35: -3271197551795991907
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_36: -2988383092323710867
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_37: -7620210197996085780
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_38: -8992613861718824264
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_39: -7479659025537110604
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_4: -8246823963188161519
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_40: 3261128252304777854
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_41: 2671514010230999766
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_42: -7805708488823425540
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_43: 1309482314551053697
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_44: -920768807497358447
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_45: 1938954031097776777
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_46: 8128285019101002548
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_47: 2226333491817441641
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_48: -7024592866722206899
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_49: 2389248035031860904
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_5: 2355050893608345999
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_50: 9053591861968102496
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_51: -5359773055533177622
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_52: -6699054075855820329
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_53: -853345957373587174
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_54: 8164241087786253855
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_55: 7117536180693274256
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_56: 5812811543040065294
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_57: 1117036833815826636
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_58: -1822062772299510430
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_59: 6125903447115901030
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_6: -7577507518010957580
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_60: 2156671973633182491
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_61: 5949296371504513819
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_62: -128936195352782201
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_63: -7108689066031946873
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_64: 5927388035402525315
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_65: 8685386414748972819
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_66: -8828036180055933689
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_67: 6730011027582826674
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_68: -379592657012734412
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_69: -5097909405569680238
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_7: -1570761948055876299
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_8: 5775986179685584723
+      tr01_primarymatch_backdrop_sealed_bulkhead_a_emission_9: -1293445735240263891
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

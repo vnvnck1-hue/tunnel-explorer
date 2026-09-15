@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 7e490f8d27bb0c948ac6c828d69c7e6c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3763304820373368853
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_0
+  - first:
+      213: -4139132487074291280
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_1
+  - first:
+      213: -6849320532928676995
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_2
+  - first:
+      213: -1926862028960168245
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_3
+  - first:
+      213: -3233756881532449775
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_4
+  - first:
+      213: -459935770318837102
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_5
+  - first:
+      213: 2423453820977509440
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_6
+  - first:
+      213: -3261190769270578694
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_7
+  - first:
+      213: 4332798842483587945
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_8
+  - first:
+      213: 6744725728934300024
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_9
+  - first:
+      213: 1404133332993600672
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_10
+  - first:
+      213: 1151486744984143842
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_11
+  - first:
+      213: -6421622317948095986
+    second: tr01_primarymatch_equipment_capped_machine_scar_a_emission_12
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 0
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 128
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 70
+        width: 30
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 510bed79bc1f93430800000000000000
+      internalID: 3763304820373368853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_1
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 82
+        width: 15
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b168addee8de86c0800000000000000
+      internalID: -4139132487074291280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_2
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 75
+        width: 46
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7b3ff9b34352f0a0800000000000000
+      internalID: -6849320532928676995
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_3
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 61
+        width: 15
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc604a091396245e0800000000000000
+      internalID: -1926862028960168245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_4
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 26
+        width: 33
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11c884adf336f13d0800000000000000
+      internalID: -3233756881532449775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_5
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 64
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a66ae8adafd99f0800000000000000
+      internalID: -459935770318837102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_6
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 55
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0447de00966d1a120800000000000000
+      internalID: 2423453820977509440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_7
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 57
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af128dc164cedb2d0800000000000000
+      internalID: -3261190769270578694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_8
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 27
+        width: 32
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96b35715791312c30800000000000000
+      internalID: 4332798842483587945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_9
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 27
+        width: 23
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 879019cb0541a9d50800000000000000
+      internalID: 6744725728934300024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_10
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 43
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ac6e52b3db7c7310800000000000000
+      internalID: 1404133332993600672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_11
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 49
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e7c95ef717eaff00800000000000000
+      internalID: 1151486744984143842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tr01_primarymatch_equipment_capped_machine_scar_a_emission_12
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 42
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e02bbf86680d1e6a0800000000000000
+      internalID: -6421622317948095986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_0: 3763304820373368853
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_1: -4139132487074291280
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_10: 1404133332993600672
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_11: 1151486744984143842
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_12: -6421622317948095986
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_2: -6849320532928676995
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_3: -1926862028960168245
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_4: -3233756881532449775
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_5: -459935770318837102
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_6: 2423453820977509440
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_7: -3261190769270578694
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_8: 4332798842483587945
+      tr01_primarymatch_equipment_capped_machine_scar_a_emission_9: 6744725728934300024
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

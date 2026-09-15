@@ -1,0 +1,76 @@
+{
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "unityExecuted": false,
+  "sourceRoom": "ore_intake",
+  "sourceComposition": "diorama-process-12-ore-intake-landscape.png",
+  "compositionImage": "diorama-process-30-ore-intake-connected-route-v2.png",
+  "comparisonImage": "diorama-process-31-ore-intake-route-comparison.png",
+  "change": "rail route shifted under crusher base and redundant equipment scar removed",
+  "route": {
+    "id": "ore_dock",
+    "assetIds": [
+      "TR01-PM-RAIL-HORIZONTAL-LEFT",
+      "TR01-PM-RAIL-HORIZONTAL-MIDDLE",
+      "TR01-PM-RAIL-HORIZONTAL-RIGHT"
+    ],
+    "screens": [
+      [
+        500,
+        575,
+        250
+      ],
+      [
+        710,
+        575,
+        250
+      ],
+      [
+        920,
+        575,
+        250
+      ]
+    ],
+    "portEdges": [
+      [
+        "east"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "west"
+      ]
+    ],
+    "internalConnectionsCompatible": true,
+    "crusherScreenOverlapPixels": 155,
+    "groundOverlayNonBlocking": true
+  },
+  "removedGroundOverlays": [
+    {
+      "source": "tr01_primarymatch_equipment_transitions_3x3_source.png",
+      "grid": [
+        3,
+        3
+      ],
+      "cell": [
+        1,
+        2
+      ],
+      "screen": [
+        690,
+        585,
+        235
+      ],
+      "layer": "ground"
+    }
+  ],
+  "openFloorRectPixels": [
+    660,
+    340,
+    1525,
+    1060
+  ],
+  "nonGroundPlacementsChanged": false,
+  "runtimeTopologyResolutionRequired": true
+}

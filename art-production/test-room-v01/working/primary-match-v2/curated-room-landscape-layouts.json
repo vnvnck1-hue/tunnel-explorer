@@ -1,0 +1,93 @@
+{
+  "layoutId": "TR01-PRIMARYMATCH-LANDSCAPE-ROOM-VARIANTS-V1",
+  "status": "offline_composition_candidate_not_runtime_integrated",
+  "canvasPixels": [1920, 1080],
+  "projection": "ReferenceTopDown",
+  "minimumOpenCenterWidthFraction": 0.45,
+  "sharedRules": {
+    "heroMachinesPerRoom": 1,
+    "monumentalBackdropsPerRoom": 1,
+    "foregroundOccludersPerRoom": 1,
+    "railRoutesMaximumPerRoom": 1,
+    "openFloorBlockingCoverageMaximum": 0.08,
+    "archesAllowed": false
+  },
+  "rooms": [
+    {
+      "id": "ore_intake",
+      "title": "Ore Intake",
+      "accent": "amber_magenta",
+      "compositionImage": "diorama-process-12-ore-intake-landscape.png",
+      "openFloorRectPixels": [660, 340, 1525, 1060],
+      "runtimeAnchors": {
+        "backdrop": "north_west_wall_plane",
+        "hero": "west_wall_foot",
+        "foreground": "southeast_screen_boundary",
+        "route": "east_service_to_crusher_connection",
+        "openFloor": "central_combat_clearance"
+      },
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[1,1],"screen":[90,35,570],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[135,325,520],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[2,0],"screen":[1570,315,145],"layer":"midground"},
+        {"source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[0,0],"screen":[870,575,250],"layer":"ground","route":"ore_dock"},
+        {"source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[1,0],"screen":[1080,575,250],"layer":"ground","route":"ore_dock"},
+        {"source":"tr01_primarymatch_floor_rail_transitions_3x3_source.png","grid":[3,3],"cell":[2,0],"screen":[1290,575,250],"layer":"ground","route":"ore_dock"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[690,585,235],"layer":"ground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[20,690,315],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[2,1],"screen":[1585,690,280],"layer":"midground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[1560,760,560],"layer":"foreground"}
+      ]
+    },
+    {
+      "id": "ventilation_service",
+      "title": "Ventilation Service",
+      "accent": "cyan",
+      "compositionImage": "diorama-process-13-ventilation-service-landscape.png",
+      "openFloorRectPixels": [500, 890, 1425, 1060],
+      "runtimeAnchors": {
+        "backdrop": "north_wall_center",
+        "hero": "north_wall_foot_center",
+        "foreground": "southwest_screen_boundary",
+        "servicePair": "west_east_service_edges",
+        "openFloor": "southern_combat_clearance"
+      },
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[650,25,620],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[710,340,510],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[330,425,145],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[1460,425,145],"layer":"midground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[225,610,230],"layer":"ground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[2,1],"screen":[1470,610,230],"layer":"ground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[1,2],"screen":[840,775,230],"layer":"ground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[35,675,275],"layer":"midground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[0,0],"screen":[-105,750,590],"layer":"foreground"}
+      ]
+    },
+    {
+      "id": "crystal_power",
+      "title": "Crystal Power",
+      "accent": "magenta_cyan",
+      "compositionImage": "diorama-process-14-crystal-power-landscape.png",
+      "openFloorRectPixels": [625, 760, 1490, 1060],
+      "runtimeAnchors": {
+        "backdrop": "north_wall_center",
+        "hero": "west_service_anchor",
+        "foreground": "southeast_screen_boundary",
+        "controlSocket": "east_service_floor",
+        "openFloor": "central_south_combat_clearance"
+      },
+      "placements": [
+        {"source":"tr01_primarymatch_monumental_wall_modules_2x2_source.png","grid":[2,2],"cell":[0,1],"screen":[665,20,650],"layer":"background"},
+        {"source":"tr01_primarymatch_hero_machinery_2x2_source.png","grid":[2,2],"cell":[0,1],"screen":[120,335,480],"layer":"midground"},
+        {"source":"tr01_primarymatch_service_pylons_3col_source.png","grid":[3,1],"cell":[0,0],"screen":[1500,360,140],"layer":"midground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[1,1],"screen":[970,590,245],"layer":"ground"},
+        {"source":"tr01_primarymatch_equipment_transitions_3x3_source.png","grid":[3,3],"cell":[2,0],"screen":[1270,575,225],"layer":"ground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[1,1],"screen":[1510,525,325],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[2,1],"screen":[1690,690,270],"layer":"midground"},
+        {"source":"tr01_primarymatch_crystal_outcrops_3x3_source.png","grid":[3,3],"cell":[0,1],"screen":[30,695,285],"layer":"midground"},
+        {"source":"tr01_primarymatch_foreground_depth_2x2_source.png","grid":[2,2],"cell":[1,0],"screen":[1550,770,575],"layer":"foreground"}
+      ]
+    }
+  ]
+}

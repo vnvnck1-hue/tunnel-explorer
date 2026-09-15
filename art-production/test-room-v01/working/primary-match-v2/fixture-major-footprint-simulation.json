@@ -1,0 +1,1209 @@
+{
+  "status": "verified_offline_exact_major_footprints",
+  "unityExecuted": false,
+  "viewportCells": [
+    18,
+    12
+  ],
+  "protectedOpenMinimumCells": [
+    9,
+    3
+  ],
+  "summary": {
+    "fixtureCount": 3,
+    "blueprintCount": 3,
+    "evaluations": 9,
+    "exactMajorFootprintFits": 9,
+    "assignedRoomFits": 3
+  },
+  "fixtures": [
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d1.json",
+      "fixtureSha256": "2DC6294C85511C865842486490AFAD617A089CD795A006A1F2349190C8D2A2F4",
+      "depth": 1,
+      "assignedRoom": "ore_intake",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  38,
+                  48
+                ],
+                "occupiedCells": [
+                  [
+                    37,
+                    47
+                  ],
+                  [
+                    37,
+                    48
+                  ],
+                  [
+                    38,
+                    47
+                  ],
+                  [
+                    38,
+                    48
+                  ],
+                  [
+                    39,
+                    47
+                  ],
+                  [
+                    39,
+                    48
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  41,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    41,
+                    45
+                  ],
+                  [
+                    42,
+                    44
+                  ],
+                  [
+                    42,
+                    45
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  49,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ],
+                  [
+                    48,
+                    46
+                  ],
+                  [
+                    49,
+                    45
+                  ],
+                  [
+                    49,
+                    46
+                  ],
+                  [
+                    50,
+                    45
+                  ],
+                  [
+                    50,
+                    46
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 16
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  45,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    46
+                  ],
+                  [
+                    45,
+                    46
+                  ],
+                  [
+                    46,
+                    46
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  41,
+                  44
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    42,
+                    44
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  49,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ],
+                  [
+                    48,
+                    46
+                  ],
+                  [
+                    49,
+                    45
+                  ],
+                  [
+                    49,
+                    46
+                  ],
+                  [
+                    50,
+                    45
+                  ],
+                  [
+                    50,
+                    46
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 11
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            35,
+            44,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 43,
+            "y": 53,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 23,
+            "northWallFootLongestRun": 7,
+            "westWallFoot": 17,
+            "eastWallFoot": 20,
+            "southBoundary": 30
+          },
+          "feasible": true,
+          "score": 352,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  45,
+                  46
+                ],
+                "occupiedCells": [
+                  [
+                    44,
+                    46
+                  ],
+                  [
+                    45,
+                    46
+                  ],
+                  [
+                    46,
+                    46
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  41,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    41,
+                    44
+                  ],
+                  [
+                    41,
+                    45
+                  ],
+                  [
+                    42,
+                    44
+                  ],
+                  [
+                    42,
+                    45
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  49,
+                  45
+                ],
+                "occupiedCells": [
+                  [
+                    48,
+                    45
+                  ],
+                  [
+                    48,
+                    46
+                  ],
+                  [
+                    49,
+                    45
+                  ],
+                  [
+                    49,
+                    46
+                  ],
+                  [
+                    50,
+                    45
+                  ],
+                  [
+                    50,
+                    46
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 13
+          },
+          "exactMajorFootprintsFeasible": true
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d2.json",
+      "fixtureSha256": "96359A98C697CC96E2A9CC6A4BC2CCD1ECECBDDC4DB3149BDFEDB13FF367309F",
+      "depth": 2,
+      "assignedRoom": "ventilation_service",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            29,
+            16,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 35,
+            "y": 20,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 18,
+            "northWallFootLongestRun": 4,
+            "westWallFoot": 17,
+            "eastWallFoot": 18,
+            "southBoundary": 22
+          },
+          "feasible": true,
+          "score": 640,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  30,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    29,
+                    17
+                  ],
+                  [
+                    29,
+                    18
+                  ],
+                  [
+                    30,
+                    17
+                  ],
+                  [
+                    30,
+                    18
+                  ],
+                  [
+                    31,
+                    17
+                  ],
+                  [
+                    31,
+                    18
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  45,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    45,
+                    16
+                  ],
+                  [
+                    45,
+                    17
+                  ],
+                  [
+                    46,
+                    16
+                  ],
+                  [
+                    46,
+                    17
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  43,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    42,
+                    18
+                  ],
+                  [
+                    42,
+                    19
+                  ],
+                  [
+                    43,
+                    18
+                  ],
+                  [
+                    43,
+                    19
+                  ],
+                  [
+                    44,
+                    18
+                  ],
+                  [
+                    44,
+                    19
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 16
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  56,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    14
+                  ],
+                  [
+                    56,
+                    14
+                  ],
+                  [
+                    57,
+                    14
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  52,
+                  17
+                ],
+                "occupiedCells": [
+                  [
+                    52,
+                    17
+                  ],
+                  [
+                    53,
+                    17
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  50,
+                  19
+                ],
+                "occupiedCells": [
+                  [
+                    49,
+                    19
+                  ],
+                  [
+                    49,
+                    20
+                  ],
+                  [
+                    50,
+                    19
+                  ],
+                  [
+                    50,
+                    20
+                  ],
+                  [
+                    51,
+                    19
+                  ],
+                  [
+                    51,
+                    20
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 11
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            49,
+            14,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 49,
+            "y": 21,
+            "width": 12,
+            "height": 5,
+            "area": 60
+          },
+          "openWidthFractionOfViewport": 0.6667,
+          "anchors": {
+            "northWallFoot": 13,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 15,
+            "eastWallFoot": 15,
+            "southBoundary": 19
+          },
+          "feasible": true,
+          "score": 644,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  56,
+                  14
+                ],
+                "occupiedCells": [
+                  [
+                    55,
+                    14
+                  ],
+                  [
+                    56,
+                    14
+                  ],
+                  [
+                    57,
+                    14
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  52,
+                  18
+                ],
+                "occupiedCells": [
+                  [
+                    52,
+                    17
+                  ],
+                  [
+                    52,
+                    18
+                  ],
+                  [
+                    53,
+                    17
+                  ],
+                  [
+                    53,
+                    18
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  50,
+                  19
+                ],
+                "occupiedCells": [
+                  [
+                    49,
+                    19
+                  ],
+                  [
+                    49,
+                    20
+                  ],
+                  [
+                    50,
+                    19
+                  ],
+                  [
+                    50,
+                    20
+                  ],
+                  [
+                    51,
+                    19
+                  ],
+                  [
+                    51,
+                    20
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 13
+          },
+          "exactMajorFootprintsFeasible": true
+        }
+      }
+    },
+    {
+      "fixture": "unity/TunnelCrew/Assets/Tests/EditMode/Fixtures/map-tunnel-891730050-d3.json",
+      "fixtureSha256": "61701B373CDCCCB4C7866449442CE733B5C1287A2A2C70239C0A66A3A4356CB2",
+      "depth": 3,
+      "assignedRoom": "crystal_power",
+      "blueprints": {
+        "ore_intake": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/collapsed_wall_machine",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  5,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ],
+                  [
+                    6,
+                    31
+                  ],
+                  [
+                    6,
+                    32
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ore_crusher",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  2,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    2,
+                    31
+                  ],
+                  [
+                    2,
+                    32
+                  ],
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  11,
+                  35
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    35
+                  ],
+                  [
+                    10,
+                    36
+                  ],
+                  [
+                    11,
+                    35
+                  ],
+                  [
+                    11,
+                    36
+                  ],
+                  [
+                    12,
+                    35
+                  ],
+                  [
+                    12,
+                    36
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 16
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "ventilation_service": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/sealed_bulkhead",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  11,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    31
+                  ],
+                  [
+                    11,
+                    31
+                  ],
+                  [
+                    12,
+                    31
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/ventilation_turbine",
+                "footprintCells": [
+                  2,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  6,
+                  30
+                ],
+                "occupiedCells": [
+                  [
+                    6,
+                    30
+                  ],
+                  [
+                    7,
+                    30
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/left_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  4,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ],
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 11
+          },
+          "exactMajorFootprintsFeasible": true
+        },
+        "crystal_power": {
+          "viewport": [
+            1,
+            30,
+            18,
+            12
+          ],
+          "openRect": {
+            "x": 2,
+            "y": 38,
+            "width": 10,
+            "height": 3,
+            "area": 30
+          },
+          "openWidthFractionOfViewport": 0.5556,
+          "anchors": {
+            "northWallFoot": 21,
+            "northWallFootLongestRun": 5,
+            "westWallFoot": 23,
+            "eastWallFoot": 22,
+            "southBoundary": 21
+          },
+          "feasible": true,
+          "score": 344,
+          "majorFootprintFit": {
+            "placements": [
+              {
+                "role": "backdrop",
+                "sourceVariantId": "TR01-PRIMARYMATCH-MONUMENTAL-WALL-MODULES-2X2/crystal_processor",
+                "footprintCells": [
+                  3,
+                  1
+                ],
+                "edgePreference": "center",
+                "anchorCell": [
+                  11,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    10,
+                    31
+                  ],
+                  [
+                    11,
+                    31
+                  ],
+                  [
+                    12,
+                    31
+                  ]
+                ]
+              },
+              {
+                "role": "hero",
+                "sourceVariantId": "TR01-PRIMARYMATCH-HERO-MACHINERY-2X2/power_relay",
+                "footprintCells": [
+                  2,
+                  2
+                ],
+                "edgePreference": "west",
+                "anchorCell": [
+                  2,
+                  32
+                ],
+                "occupiedCells": [
+                  [
+                    2,
+                    31
+                  ],
+                  [
+                    2,
+                    32
+                  ],
+                  [
+                    3,
+                    31
+                  ],
+                  [
+                    3,
+                    32
+                  ]
+                ]
+              },
+              {
+                "role": "foreground",
+                "sourceVariantId": "TR01-PRIMARYMATCH-FOREGROUND-DEPTH-2X2/right_foreground_shelf",
+                "footprintCells": [
+                  3,
+                  2
+                ],
+                "edgePreference": "east",
+                "anchorCell": [
+                  5,
+                  31
+                ],
+                "occupiedCells": [
+                  [
+                    4,
+                    31
+                  ],
+                  [
+                    4,
+                    32
+                  ],
+                  [
+                    5,
+                    31
+                  ],
+                  [
+                    5,
+                    32
+                  ],
+                  [
+                    6,
+                    31
+                  ],
+                  [
+                    6,
+                    32
+                  ]
+                ]
+              }
+            ],
+            "occupiedCellCount": 13
+          },
+          "exactMajorFootprintsFeasible": true
+        }
+      }
+    }
+  ]
+}

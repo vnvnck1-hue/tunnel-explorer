@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba29ccf1d985f943acb49bdc0fb66a0, type: 3}
+  m_Name: SurfaceMaterialSet_tr01_pm_rail_horizontal_left
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Visual.SurfaceMaterialSet
+  kind: 0
+  minLightSlot: 1
+  normal: {fileID: 2800000, guid: 6ff10822e7374a748a11ec546be3768a, type: 3}
+  emission: {fileID: 2800000, guid: d9ad1f2e966b4fc4593f9a46c0ac38b1, type: 3}
+  materialMask: {fileID: 2800000, guid: 5e78edb9717481c4d9bcd2c20c36a0a6, type: 3}
+  ao: {fileID: 2800000, guid: 1a615200a27634041a229868f84192c4, type: 3}
+  normalStrength: 1
+  aoStrength: 1
+  emissionTint: {r: 1, g: 1, b: 1, a: 1}
+  emissionIntensity: 1
+  minLightOverride: -1
