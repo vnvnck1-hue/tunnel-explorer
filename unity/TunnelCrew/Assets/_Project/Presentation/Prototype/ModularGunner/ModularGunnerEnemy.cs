@@ -23,6 +23,14 @@ namespace TunnelCrew.Presentation.Prototype
         [SerializeField] Rigidbody2D _body;
         [SerializeField] SpriteRenderer _renderer;
         [SerializeField] Sprite[] _frames;
+        [SerializeField] ModularGunnerEnemyVisuals _visuals;
+
+        // 로드맵 4.13 — 예고 → 공격 리듬. 예고 포즈를 이만큼 보여 준 뒤 실제로 움직인다.
+        const float TelegraphDuration = 0.55f;
+        const float TelegraphCooldownMin = 2.2f;
+        const float TelegraphCooldownMax = 4.5f;
+        const float ChargeSpeedMultiplier = 3.4f;
+        const float ChargeDuration = 0.45f;
 
         ModularGunnerController _target;
         Vector3 _baseScale;
@@ -33,12 +41,19 @@ namespace TunnelCrew.Presentation.Prototype
         bool _dying;
         int _deathFrame;
         float _nextDeathFrameAt;
+        ModularGunnerEnemyVisuals.Telegraph _pose = ModularGunnerEnemyVisuals.Telegraph.None;
+        float _poseUntil;
+        float _nextTelegraphAt;
+        float _chargeUntil;
+        Vector2 _chargeDirection;
 
-        public void EditorAssign(Rigidbody2D body, SpriteRenderer renderer, Sprite[] frames)
+        public void EditorAssign(Rigidbody2D body, SpriteRenderer renderer, Sprite[] frames,
+            ModularGunnerEnemyVisuals visuals)
         {
             _body = body;
             _renderer = renderer;
             _frames = frames;
+            _visuals = visuals;
         }
 
         void Awake()
@@ -46,6 +61,14 @@ namespace TunnelCrew.Presentation.Prototype
             ModularGunnerPhysicsLayers.Assign(gameObject, ModularGunnerPhysicsLayers.Enemy);
             _baseScale = transform.localScale;
             _health = _maxHealth;
+            _nextTelegraphAt = Time.time + Random.Range(1.2f, 3f);
+            // 소수의 개체를 엘리트로 승격한다. 팔레트와 외곽광이 달라 한눈에 구분된다.
+            if (_visuals != null && Random.value < 0.18f)
+            {
+                _visuals.MakeElite();
+                _maxHealth += 3;
+                _health = _maxHealth;
+            }
             if (_renderer != null)
             {
                 _baseColor = _renderer.color;
@@ -59,6 +82,17 @@ namespace TunnelCrew.Presentation.Prototype
             if (_dying) return;
             if (_target == null) _target = FindFirstObjectByType<ModularGunnerController>();
             if (_target == null || _body == null) return;
+            if (_pose != ModularGunnerEnemyVisuals.Telegraph.None)
+            {
+                // 예고 중에는 제자리에서 자세만 잡는다.
+                _body.linearVelocity = Vector2.zero;
+                return;
+            }
+            if (Time.time < _chargeUntil)
+            {
+                _body.linearVelocity = _chargeDirection * (_moveSpeed * ChargeSpeedMultiplier);
+                return;
+            }
             Vector2 delta = (Vector2)_target.transform.position - _body.position;
             _body.linearVelocity = delta.sqrMagnitude > 2.5f ? delta.normalized * _moveSpeed : Vector2.zero;
         }
@@ -75,7 +109,9 @@ namespace TunnelCrew.Presentation.Prototype
             // 백색 플래시는 즉시 꺼지지 않고 곡선을 그리며 원래 색으로 돌아온다(로드맵 4.3).
             if (_renderer != null && Time.time >= _flashUntil)
                 _renderer.color = Color.Lerp(_renderer.color, _baseColor, 1f - Mathf.Exp(-22f * Time.deltaTime));
-            if (Time.time >= _hitPoseUntil) SetFrame(SurvivingFrame());
+            if (Time.time >= _hitPoseUntil && _pose == ModularGunnerEnemyVisuals.Telegraph.None)
+                SetFrame(SurvivingFrame());
+            UpdateTelegraph();
         }
 
         /// <summary>체력이 절반 아래로 내려가면 균열 프레임을 계속 유지한다.</summary>
@@ -83,8 +119,50 @@ namespace TunnelCrew.Presentation.Prototype
 
         void SetFrame(int index)
         {
+            // 생존 구간의 손상 표현은 체력 단계 아트가 맡는다. 사망 구간만 원래 시트를 쓴다.
+            if (_visuals != null && index < FrameDeathStart)
+            {
+                _visuals.ApplyHealth(HealthRatio);
+                return;
+            }
             if (_renderer == null || _frames == null || _frames.Length == 0) return;
             _renderer.sprite = _frames[Mathf.Clamp(index, 0, _frames.Length - 1)];
+        }
+
+        float HealthRatio => _maxHealth > 0 ? Mathf.Clamp01(_health / (float)_maxHealth) : 0f;
+
+        /// <summary>
+        /// 로드맵 4.13 — 돌진 · 사격 · 광역의 예고 포즈를 먼저 띄우고 나서 움직인다.
+        /// 예고 없이 갑자기 붙으면 플레이어가 읽을 수 없다.
+        /// </summary>
+        void UpdateTelegraph()
+        {
+            if (_visuals == null) return;
+
+            if (_pose != ModularGunnerEnemyVisuals.Telegraph.None)
+            {
+                if (Time.time < _poseUntil) return;
+                // 예고가 끝나면 돌진만 실제 동작으로 이어 준다.
+                if (_pose == ModularGunnerEnemyVisuals.Telegraph.Charge && _target != null)
+                {
+                    _chargeDirection = ((Vector2)_target.transform.position - (Vector2)transform.position).normalized;
+                    _chargeUntil = Time.time + ChargeDuration;
+                }
+                _pose = ModularGunnerEnemyVisuals.Telegraph.None;
+                _visuals.ShowTelegraph(_pose, HealthRatio);
+                _nextTelegraphAt = Time.time + Random.Range(TelegraphCooldownMin, TelegraphCooldownMax);
+                return;
+            }
+
+            if (Time.time < _nextTelegraphAt || _target == null) return;
+            float distance = Vector2.Distance(transform.position, _target.transform.position);
+            _pose = distance > 6f
+                ? ModularGunnerEnemyVisuals.Telegraph.Ranged
+                : distance > 2.5f
+                    ? ModularGunnerEnemyVisuals.Telegraph.Charge
+                    : ModularGunnerEnemyVisuals.Telegraph.Slam;
+            _poseUntil = Time.time + TelegraphDuration;
+            _visuals.ShowTelegraph(_pose, HealthRatio);
         }
 
         void AdvanceDeath()
@@ -122,7 +200,11 @@ namespace TunnelCrew.Presentation.Prototype
                 return;
             }
 
-            SetFrame(FrameLightHit);
+            // 맞으면 예고가 끊긴다. 플레이어가 선공으로 패턴을 끊을 수 있어야 한다.
+            _pose = ModularGunnerEnemyVisuals.Telegraph.None;
+            _chargeUntil = 0f;
+            if (_renderer != null && _frames != null && _frames.Length > FrameLightHit)
+                _renderer.sprite = _frames[FrameLightHit];
             _hitPoseUntil = Time.time + HitPoseDuration;
         }
 

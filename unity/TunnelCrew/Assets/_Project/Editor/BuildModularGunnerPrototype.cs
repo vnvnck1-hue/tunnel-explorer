@@ -65,6 +65,34 @@ namespace TunnelCrew.EditorTools
         const string WallRimFacePath = GeneratedDir + "/wall_rim_face.png";
         const string WallRimTopPath = GeneratedDir + "/wall_rim_top.png";
         const int RimThickness = 3;
+
+        // 2차 승인 배치.
+        const string PropDir = Root + "/Art/Props";
+        const string VfxDir = Root + "/Art/Vfx";
+        const string BodyDirsPath = SpriteDir + "/gunner_body_dirs.png";
+        const string HeadDirsPath = SpriteDir + "/gunner_head_dirs.png";
+        const string EnemyTelegraphPath = SpriteDir + "/enemy_telegraph.png";
+        const string EnemyStagePath = SpriteDir + "/enemy_stage.png";
+        const string EnemyElitePath = SpriteDir + "/enemy_elite.png";
+        const int DirectionCount = 5;
+        const int TelegraphCount = 3;
+        const int StageCount = 4;
+        const int EliteCount = 3;
+        const int VfxFrameCount = 5;
+        const int EnemyShardCount = 8;
+
+        static readonly string[] WallEdgeNames =
+        {
+            "n", "s", "e", "w", "nw", "ne", "sw", "se",
+            "inner_nw", "inner_ne", "inner_sw", "inner_se", "fill",
+        };
+        static readonly string[] PropNames =
+        {
+            "door_closed", "door_open", "pillar", "lamp_wall", "lamp_floor",
+            "crystal_magenta", "crystal_cyan", "ore_boulder", "support_beam", "rubble_pile",
+        };
+        static readonly string[] VfxSheetNames = { "shockwave", "smoke", "spark" };
+        static readonly string[] BulletNames = { "player", "enemy", "pierce", "explosive" };
         const string DustMotePath = GeneratedDir + "/dust_mote.png";
         const string VolumeProfilePath = Root + "/ModularGunnerPostProcess.asset";
 
@@ -107,7 +135,7 @@ namespace TunnelCrew.EditorTools
 
         static void EnsureFolders()
         {
-            foreach (string path in new[] { Root, GeneratedDir, AnimationDir, PrefabDir, EnvironmentDir, DecalDir, TileDir })
+            foreach (string path in new[] { Root, GeneratedDir, AnimationDir, PrefabDir, EnvironmentDir, DecalDir, TileDir, PropDir, VfxDir })
                 Directory.CreateDirectory(AbsolutePath(path));
         }
 
@@ -282,6 +310,33 @@ namespace TunnelCrew.EditorTools
             // 데칼은 회전해 찍으므로 전부 중앙 피벗이다.
             foreach (string path in DecalPaths())
                 ConfigureSprite(path, new Vector2(0.5f, 0.5f));
+
+            // 벽 외곽·코너 자동 타일 세트.
+            foreach (string name in WallEdgeNames)
+                ConfigureSprite($"{EnvironmentDir}/env_wall_edge_{name}.png", new Vector2(0.5f, 0.5f));
+
+            // 방 소품. 바닥에 놓이므로 발 위치가 피벗이다.
+            foreach (string name in PropNames)
+                ConfigureSprite($"{PropDir}/prop_{name}.png", new Vector2(0.5f, 0.02f));
+
+            // 탄종별 탄두는 진행 방향 뒤쪽이 피벗이다.
+            foreach (string name in BulletNames)
+                ConfigureSprite($"{VfxDir}/bullet_{name}.png", new Vector2(0.15f, 0.5f));
+            for (int i = 0; i < EnemyShardCount; i++)
+                ConfigureSprite($"{VfxDir}/enemy_shard_{i:00}.png", new Vector2(0.5f, 0.5f));
+
+            // VFX 시트 3종 — 충격파 · 연기 · 스파크.
+            foreach (string name in VfxSheetNames)
+                SliceSheet($"{VfxDir}/vfx_{name}.png", 32, 32, VfxFrameCount, new Vector2(0.5f, 0.5f));
+
+            // 방향별 몸통·머리. 접지선을 프레임 하단에 맞춰 두었다.
+            SliceSheet(BodyDirsPath, 20, 22, DirectionCount, new Vector2(0.5f, 0.04f));
+            SliceSheet(HeadDirsPath, 18, 17, DirectionCount, new Vector2(0.5f, 0.04f));
+
+            // 적 시각 언어 — 예고 · 체력 단계 · 엘리트.
+            SliceSheet(EnemyTelegraphPath, 32, 32, TelegraphCount, new Vector2(0.5f, 0.1875f));
+            SliceSheet(EnemyStagePath, 32, 32, StageCount, new Vector2(0.5f, 0.1875f));
+            SliceSheet(EnemyElitePath, 32, 32, EliteCount, new Vector2(0.5f, 0.1875f));
 
             // 무기 반동 4프레임: 총구가 +X 를 향하도록 뒤집혀 있고, 손잡이가 피벗이다.
             // 피벗 x=0.22 는 기존 무기와 같은 25px 총구 거리를 유지한다.
@@ -499,7 +554,7 @@ namespace TunnelCrew.EditorTools
         {
             var go = new GameObject("ModularGunner_Projectile");
             var renderer = go.AddComponent<SpriteRenderer>();
-            renderer.sprite = LoadSprite(TracerPath);
+            renderer.sprite = LoadSprite($"{VfxDir}/bullet_player.png");
             renderer.sharedMaterial = unlitMaterial;
             renderer.sortingOrder = 300;
             var body = go.AddComponent<Rigidbody2D>();
@@ -542,13 +597,16 @@ namespace TunnelCrew.EditorTools
             shadowRenderer.sprite = LoadSprite(GeneratedDir + "/shadow.png");
             shadowRenderer.sortingOrder = 1;
 
+            Sprite[] bodyDirections = LoadSheet(BodyDirsPath, DirectionCount);
+            Sprite[] headDirections = LoadSheet(HeadDirsPath, DirectionCount);
+
             var visual = Child(root.transform, "Visual", Vector3.zero);
             var bodyPart = Child(visual, "Body", Vector3.zero);
-            var bodyRenderer = AddSprite(bodyPart, LoadSprite(BodyDownLeftPath), 10);
+            var bodyRenderer = AddSprite(bodyPart, bodyDirections[0], 10);
 
             var headAnchor = Child(visual, "HeadAnchor", new Vector3(0, 0.94f, 0));
             var head = Child(headAnchor, "Head", Vector3.zero);
-            var headRenderer = AddSprite(head, LoadSprite(HeadDownLeftPath), 20);
+            var headRenderer = AddSprite(head, headDirections[0], 20);
 
             var aimRig = Child(visual, "AimRig", new Vector3(0, 0.64f, 0));
             var weaponKick = Child(aimRig, "WeaponKick", Vector3.zero);
@@ -573,7 +631,7 @@ namespace TunnelCrew.EditorTools
             var controllerComponent = root.AddComponent<ModularGunnerController>();
             controllerComponent.EditorAssign(body, animator, aimRig, muzzle, ejectionPort, bodyRenderer, headRenderer,
                 weaponRenderer, mainHandRenderer, supportHandRenderer, flashRenderer, projectilePrefab,
-                LoadSprite(BodyUpLeftPath), LoadSprite(HeadUpLeftPath), weaponFrames);
+                bodyDirections, headDirections, weaponFrames, visual);
 
             foreach (var spriteRenderer in root.GetComponentsInChildren<SpriteRenderer>(true))
                 spriteRenderer.sharedMaterial = litMaterial;
@@ -614,8 +672,13 @@ namespace TunnelCrew.EditorTools
             var collider = root.AddComponent<CircleCollider2D>();
             collider.radius = 0.43f;
             collider.offset = new Vector2(0, 0.38f);
+            var visuals = root.AddComponent<ModularGunnerEnemyVisuals>();
+            visuals.EditorAssign(renderer,
+                LoadSheet(EnemyTelegraphPath, TelegraphCount),
+                LoadSheet(EnemyStagePath, StageCount),
+                LoadSheet(EnemyElitePath, EliteCount));
             var enemy = root.AddComponent<ModularGunnerEnemy>();
-            enemy.EditorAssign(body, renderer, enemyFrames);
+            enemy.EditorAssign(body, renderer, enemyFrames, visuals);
             PrefabUtility.SaveAsPrefabAsset(root, EnemyPrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.ImportAsset(EnemyPrefabPath, ImportAssetOptions.ForceSynchronousImport);
@@ -679,6 +742,18 @@ namespace TunnelCrew.EditorTools
                 wallCapTiles[i].colliderType = Tile.ColliderType.Grid;
                 EditorUtility.SetDirty(wallCapTiles[i]);
             }
+
+            // 로드맵 4.1 — 8이웃 자동 타일 세트. 덩어리 경계에만 외곽선이 오고
+            // 내부는 이음매 없는 채움 타일이라 이어 붙은 벽이 하나의 암반으로 읽힌다.
+            var wallEdgeTiles = new Dictionary<string, Tile>();
+            foreach (string name in WallEdgeNames)
+            {
+                Tile tile = GetOrCreateTile($"{TileDir}/WallEdge_{name}.asset",
+                    LoadSprite($"{EnvironmentDir}/env_wall_edge_{name}.png"));
+                tile.colliderType = Tile.ColliderType.Grid;
+                EditorUtility.SetDirty(tile);
+                wallEdgeTiles[name] = tile;
+            }
             var wallFaceSprites = new Sprite[WallVariants];
             for (int i = 0; i < WallVariants; i++)
                 wallFaceSprites[i] = LoadSprite($"{EnvironmentDir}/env_wall_face_{i:00}.png");
@@ -741,11 +816,11 @@ namespace TunnelCrew.EditorTools
                 AddWallFace(wallFaces, cell, wallFaceSprites[faceVariant], litMaterial, faceVariant >= 2);
                 wallShadows.SetTile(position, wallShadowTile);
             }
+            ApplyWallAutoTiles(walls, wallEdgeTiles, occupied);
             walls.gameObject.AddComponent<TilemapCollider2D>();
 
-            AddWallRims(gridGo.transform, unlitMaterial, occupied);
-
             ScatterRubble(gridGo.transform, litMaterial, occupied, environmentRandom, minX, maxX, minY, maxY);
+            ScatterProps(gridGo.transform, litMaterial, occupied, environmentRandom, minX, maxX, minY, maxY);
 
             var playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PlayerPrefabPath);
             var enemyPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(EnemyPrefabPath);
@@ -774,6 +849,11 @@ namespace TunnelCrew.EditorTools
                 LoadSprite(CasingPath), LoadSprite(StoneShardPath), LoadSprite(EnemyShardPath),
                 LoadSprite(SparkPath), LoadSprite(BurstPath), LoadSprite(GeneratedDir + "/shadow.png"),
                 litMaterial, unlitMaterial, cameraRig);
+            effectsGo.GetComponent<ModularGunnerEffects>().EditorAssignSheets(
+                LoadSheet($"{VfxDir}/vfx_shockwave.png", VfxFrameCount),
+                LoadSheet($"{VfxDir}/vfx_smoke.png", VfxFrameCount),
+                LoadSheet($"{VfxDir}/vfx_spark.png", VfxFrameCount),
+                LoadEnemyShards());
             effectsGo.AddComponent<ModularGunnerHitStop>();
             effectsGo.AddComponent<ModularGunnerDecals>().EditorAssign(
                 LoadDecals("wall"), LoadDecals("floor"), LoadDecals("splat"), litMaterial);
@@ -965,9 +1045,39 @@ namespace TunnelCrew.EditorTools
         }
 
         /// <summary>
-        /// 벽 덩어리의 노출된 모서리에만 림을 붙인다. 덩어리 내부에는 아무것도 넣지 않으므로
-        /// 이어 붙은 벽이 하나의 암반으로 읽히고, 바깥 경계에서만 실루엣이 생긴다.
+        /// 8이웃 점유 상태로 셀마다 외곽·코너·내측코너·채움 타일을 고른다(로드맵 4.1).
+        /// 절차적 림을 덧그리던 방식을 대체한다. 이제 외곽선이 아트 자체에 들어 있다.
         /// </summary>
+        static void ApplyWallAutoTiles(Tilemap walls, Dictionary<string, Tile> tiles, HashSet<Vector2Int> occupied)
+        {
+            foreach (Vector2Int cell in occupied)
+            {
+                bool up = occupied.Contains(cell + Vector2Int.up);
+                bool down = occupied.Contains(cell + Vector2Int.down);
+                bool left = occupied.Contains(cell + Vector2Int.left);
+                bool right = occupied.Contains(cell + Vector2Int.right);
+
+                string key;
+                if (!up && !left) key = "nw";
+                else if (!up && !right) key = "ne";
+                else if (!down && !left) key = "sw";
+                else if (!down && !right) key = "se";
+                else if (!up) key = "n";
+                else if (!down) key = "s";
+                else if (!left) key = "w";
+                else if (!right) key = "e";
+                else if (!occupied.Contains(cell + new Vector2Int(-1, 1))) key = "inner_nw";
+                else if (!occupied.Contains(cell + new Vector2Int(1, 1))) key = "inner_ne";
+                else if (!occupied.Contains(cell + new Vector2Int(-1, -1))) key = "inner_sw";
+                else if (!occupied.Contains(cell + new Vector2Int(1, -1))) key = "inner_se";
+                else key = "fill";
+
+                if (tiles.TryGetValue(key, out Tile tile))
+                    walls.SetTile(new Vector3Int(cell.x, cell.y, 0), tile);
+            }
+        }
+
+        /// <summary>남겨 둔 절차적 림. 자동 타일 세트가 없을 때만 쓴다.</summary>
         static void AddWallRims(Transform parent, Material material, HashSet<Vector2Int> occupied)
         {
             Sprite capRim = LoadSprite(WallRimCapPath);
@@ -1046,6 +1156,79 @@ namespace TunnelCrew.EditorTools
                 renderer.sortingOrder = 6;
                 go.AddComponent<SortingGroup>().sortingOrder = ModularGunnerDepthSorter.OrderFor(go.transform.position.y);
                 placed++;
+            }
+        }
+
+        /// <summary>
+        /// 로드맵 4.14 — 방별 중심 소품과 시선 유도.
+        /// 결정·광맥·기둥·지지대는 열린 바닥에, 램프는 빛을 함께 달아 시선을 끈다.
+        /// 이동 공간을 막지 않도록 콜라이더는 기둥에만 준다.
+        /// </summary>
+        static void ScatterProps(Transform parent, Material material, HashSet<Vector2Int> occupied,
+            System.Random random, int minX, int maxX, int minY, int maxY)
+        {
+            var root = new GameObject("Room Props").transform;
+            root.SetParent(parent, false);
+
+            // (이름, 배치 수, 빛 색, 빛 세기, 콜라이더 반지름)
+            (string name, int count, Color light, float intensity, float collider)[] plan =
+            {
+                ("crystal_magenta", 7, new Color(0.78f, 0.36f, 1f), 0.5f, 0f),
+                ("crystal_cyan", 6, new Color(0.34f, 0.86f, 1f), 0.5f, 0f),
+                ("ore_boulder", 6, new Color(1f, 0.62f, 0.2f), 0.35f, 0f),
+                ("support_beam", 6, default, 0f, 0f),
+                ("rubble_pile", 8, default, 0f, 0f),
+                ("pillar", 5, default, 0f, 0.36f),
+                ("lamp_floor", 5, new Color(1f, 0.6f, 0.2f), ModularGunnerLighting.LampIntensity, 0f),
+                ("lamp_wall", 4, new Color(1f, 0.66f, 0.26f), ModularGunnerLighting.LampIntensity * 0.8f, 0f),
+            };
+
+            var taken = new HashSet<Vector2Int>();
+            foreach (var entry in plan)
+            {
+                Sprite sprite = LoadSprite($"{PropDir}/prop_{entry.name}.png");
+                bool wantsWall = entry.name == "lamp_wall";
+                int placed = 0;
+                for (int attempt = 0; attempt < 500 && placed < entry.count; attempt++)
+                {
+                    int x = random.Next(minX, maxX + 1);
+                    int y = random.Next(minY, maxY + 1);
+                    var cell = new Vector2Int(x, y);
+                    if (occupied.Contains(cell) || !taken.Add(cell)) continue;
+                    // 벽 램프는 벽 바로 아래 칸에만, 나머지는 벽에서 떨어진 칸에만 놓는다.
+                    bool underWall = occupied.Contains(cell + Vector2Int.up);
+                    if (wantsWall != underWall) continue;
+                    if (new Vector2(x + 1f, y + 0.8f).sqrMagnitude < 16f) continue;
+
+                    var go = new GameObject($"Prop {entry.name} {x},{y}");
+                    go.transform.SetParent(root, false);
+                    go.transform.position = new Vector3(x + 0.5f, y + (wantsWall ? 0.85f : 0.15f), 0f);
+                    var renderer = go.AddComponent<SpriteRenderer>();
+                    renderer.sprite = sprite;
+                    renderer.sharedMaterial = material;
+                    renderer.sortingOrder = 7;
+                    go.AddComponent<SortingGroup>().sortingOrder = ModularGunnerDepthSorter.OrderFor(go.transform.position.y);
+
+                    if (entry.intensity > 0f)
+                    {
+                        var light = go.AddComponent<Light2D>();
+                        light.lightType = Light2D.LightType.Point;
+                        light.color = entry.light;
+                        light.intensity = entry.intensity;
+                        light.pointLightInnerRadius = 0.4f;
+                        light.pointLightOuterRadius = entry.name.StartsWith("lamp") ? 5.2f : 2.4f;
+                        light.pointLightInnerAngle = 360f;
+                        light.pointLightOuterAngle = 360f;
+                    }
+                    if (entry.collider > 0f)
+                    {
+                        ModularGunnerPhysicsLayers.Assign(go, ModularGunnerPhysicsLayers.World);
+                        var collider = go.AddComponent<CircleCollider2D>();
+                        collider.radius = entry.collider;
+                        collider.offset = new Vector2(0f, 0.3f);
+                    }
+                    placed++;
+                }
             }
         }
 
@@ -1168,6 +1351,14 @@ namespace TunnelCrew.EditorTools
         static void SetCurve(AnimationClip clip, string path, string property, AnimationCurve curve)
         {
             AnimationUtility.SetEditorCurve(clip, EditorCurveBinding.FloatCurve(path, typeof(Transform), property), curve);
+        }
+
+        static Sprite[] LoadEnemyShards()
+        {
+            var shards = new Sprite[EnemyShardCount];
+            for (int i = 0; i < EnemyShardCount; i++)
+                shards[i] = LoadSprite($"{VfxDir}/enemy_shard_{i:00}.png");
+            return shards;
         }
 
         static Sprite[] LoadDecals(string kind) =>

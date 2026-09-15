@@ -20,16 +20,15 @@ namespace TunnelCrew.Presentation.Prototype
         [SerializeField] Transform _ejectionPort;
         [SerializeField] SpriteRenderer _bodyRenderer;
         [SerializeField] SpriteRenderer _headRenderer;
-        [SerializeField] Sprite _bodyDownLeftSprite;
-        [SerializeField] Sprite _bodyUpLeftSprite;
-        [SerializeField] Sprite _headDownLeftSprite;
-        [SerializeField] Sprite _headUpLeftSprite;
+        [SerializeField] Sprite[] _bodyDirections;
+        [SerializeField] Sprite[] _headDirections;
         [SerializeField] SpriteRenderer _weaponRenderer;
         [SerializeField] SpriteRenderer _mainHandRenderer;
         [SerializeField] SpriteRenderer _supportHandRenderer;
         [SerializeField] SpriteRenderer _muzzleFlashRenderer;
         [SerializeField] ModularGunnerProjectile _projectilePrefab;
         [SerializeField] Sprite[] _weaponRecoilFrames;
+        [SerializeField] Transform _visualRoot;
 
         [Header("Weapon shake preset — 로드맵 4.11")]
         [Tooltip("이 총기의 발사 흔들림 세기. 총기를 늘릴 때 무기마다 다른 값을 준다.")]
@@ -46,6 +45,9 @@ namespace TunnelCrew.Presentation.Prototype
         // 발사 순간 그 포즈로 튀었다가 두 단계에 걸쳐 정지 포즈로 돌아온다.
         static readonly int[] RecoilSequence = { 2, 1, 0 };
         const float RecoilFrameDuration = 0.035f;
+        const float Ppu = 16f;
+        const float InertiaPixels = 2f;
+        const float InertiaRecovery = 14f;
 
         Vector2 _moveInput;
         Vector2 _aimDirection = Vector2.right;
@@ -54,6 +56,8 @@ namespace TunnelCrew.Presentation.Prototype
         float _flashUntil;
         int _recoilStep = -1;
         float _nextRecoilStepAt;
+        Vector2 _lastMoveInput;
+        Vector2 _leanOffset;
 
         public Vector2 AimDirection => _aimDirection;
 
@@ -70,11 +74,15 @@ namespace TunnelCrew.Presentation.Prototype
             SpriteRenderer supportHandRenderer,
             SpriteRenderer muzzleFlashRenderer,
             ModularGunnerProjectile projectilePrefab,
-            Sprite bodyUpLeftSprite,
-            Sprite headUpLeftSprite,
-            Sprite[] weaponRecoilFrames)
+            Sprite[] bodyDirections,
+            Sprite[] headDirections,
+            Sprite[] weaponRecoilFrames,
+            Transform visualRoot)
         {
+            _visualRoot = visualRoot;
             _weaponRecoilFrames = weaponRecoilFrames;
+            _bodyDirections = bodyDirections;
+            _headDirections = headDirections;
             _body = body;
             _animator = animator;
             _aimRig = aimRig;
@@ -82,10 +90,6 @@ namespace TunnelCrew.Presentation.Prototype
             _ejectionPort = ejectionPort;
             _bodyRenderer = bodyRenderer;
             _headRenderer = headRenderer;
-            _bodyDownLeftSprite = bodyRenderer != null ? bodyRenderer.sprite : null;
-            _bodyUpLeftSprite = bodyUpLeftSprite;
-            _headDownLeftSprite = headRenderer != null ? headRenderer.sprite : null;
-            _headUpLeftSprite = headUpLeftSprite;
             _weaponRenderer = weaponRenderer;
             _mainHandRenderer = mainHandRenderer;
             _supportHandRenderer = supportHandRenderer;
@@ -120,6 +124,32 @@ namespace TunnelCrew.Presentation.Prototype
                 _muzzleFlashRenderer.enabled = false;
 
             AdvanceRecoil();
+            UpdateInertia();
+        }
+
+        /// <summary>
+        /// 로드맵 4.2 — 급정지와 방향 전환에서 1~2픽셀 관성.
+        /// 입력이 꺾인 순간 몸을 이전 진행 방향으로 살짝 남겨 두었다가 되돌린다.
+        /// 16 PPU 기준 2픽셀(0.125유닛)을 넘지 않게 묶어 픽셀 격자를 흐리지 않는다.
+        /// </summary>
+        void UpdateInertia()
+        {
+            if (_visualRoot == null) return;
+
+            Vector2 delta = _moveInput - _lastMoveInput;
+            if (delta.sqrMagnitude > 0.02f)
+            {
+                // 입력이 바뀐 만큼 이전 방향으로 끌린다. 급정지면 delta 가 곧 이전 방향이다.
+                _leanOffset -= delta * InertiaPixels / Ppu;
+                _leanOffset = Vector2.ClampMagnitude(_leanOffset, InertiaPixels / Ppu);
+            }
+            _lastMoveInput = _moveInput;
+
+            _leanOffset = Vector2.Lerp(_leanOffset, Vector2.zero, 1f - Mathf.Exp(-InertiaRecovery * Time.deltaTime));
+            // 최종 위치는 픽셀 격자에 맞춘다.
+            _visualRoot.localPosition = new Vector3(
+                Mathf.Round(_leanOffset.x * Ppu) / Ppu,
+                Mathf.Round(_leanOffset.y * Ppu) / Ppu, 0f);
         }
 
         /// <summary>발사 후 무기 스프라이트를 반동 포즈에서 정지 포즈로 되돌린다.</summary>
@@ -196,25 +226,24 @@ namespace TunnelCrew.Presentation.Prototype
             _aimRig.localRotation = Quaternion.Euler(0f, 0f, angle);
             _aimRig.localScale = new Vector3(1f, _aimDirection.x < 0f ? -1f : 1f, 1f);
 
-            bool aimingUp = _aimDirection.y > 0.15f;
-            if (_bodyRenderer != null && _bodyDownLeftSprite != null && _bodyUpLeftSprite != null)
-                _bodyRenderer.sprite = aimingUp ? _bodyUpLeftSprite : _bodyDownLeftSprite;
-            if (_headRenderer != null && _headDownLeftSprite != null && _headUpLeftSprite != null)
-                _headRenderer.sprite = aimingUp ? _headUpLeftSprite : _headDownLeftSprite;
+            ModularGunnerDirectionSet.Resolve(_aimDirection, out int dirFrame, out bool dirFlip);
+            if (_bodyRenderer != null && _bodyDirections != null && _bodyDirections.Length == ModularGunnerDirectionSet.Count)
+            {
+                _bodyRenderer.sprite = _bodyDirections[dirFrame];
+                _bodyRenderer.flipX = dirFlip;
+            }
+            if (_headRenderer != null && _headDirections != null && _headDirections.Length == ModularGunnerDirectionSet.Count)
+            {
+                _headRenderer.sprite = _headDirections[dirFrame];
+                _headRenderer.flipX = dirFlip;
+            }
 
-            int weaponOrder = aimingUp ? 4 : 30;
+            int weaponOrder = ModularGunnerDirectionSet.WeaponBehindBody(dirFrame) ? 4 : 30;
             if (_weaponRenderer != null) _weaponRenderer.sortingOrder = weaponOrder;
             if (_mainHandRenderer != null) _mainHandRenderer.sortingOrder = weaponOrder + 2;
             if (_supportHandRenderer != null) _supportHandRenderer.sortingOrder = weaponOrder + 1;
             if (_muzzleFlashRenderer != null) _muzzleFlashRenderer.sortingOrder = weaponOrder + 3;
 
-            if (Mathf.Abs(_aimDirection.x) > 0.08f)
-            {
-                bool flipToRight = _aimDirection.x > 0f;
-                if (_headRenderer != null) _headRenderer.flipX = flipToRight;
-                // 생성 원본에서 머리는 좌향, 몸통은 우향으로 읽히므로 몸통은 반대 플립을 쓴다.
-                if (_bodyRenderer != null) _bodyRenderer.flipX = !flipToRight;
-            }
         }
 
         void Fire()

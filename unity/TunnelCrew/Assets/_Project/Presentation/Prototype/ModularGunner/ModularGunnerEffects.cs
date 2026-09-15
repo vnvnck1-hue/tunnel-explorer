@@ -72,6 +72,10 @@ namespace TunnelCrew.Presentation.Prototype
         const int StageSmoke = 0;
         const int StageGroundMark = 1;
 
+        // 승인 VFX 시트는 프레임이 32px(2유닛)이다. 기존 버스트 스프라이트는 16px(1유닛)이라
+        // 같은 BurstScale 을 그대로 쓰면 두 배로 커진다. 시트에는 이 보정을 곱한다.
+        const float SheetScale = 0.5f;
+
         [SerializeField] Sprite _casingSprite;
         [SerializeField] Sprite _stoneShardSprite;
         [SerializeField] Sprite _enemyShardSprite;
@@ -81,6 +85,12 @@ namespace TunnelCrew.Presentation.Prototype
         [SerializeField] Material _litMaterial;
         [SerializeField] Material _unlitMaterial;
         [SerializeField] ModularGunnerCameraRig _cameraRig;
+
+        [Header("승인 VFX 시트 — 로드맵 4.3 · 4.9")]
+        [SerializeField] Sprite[] _shockwaveFrames;
+        [SerializeField] Sprite[] _smokeFrames;
+        [SerializeField] Sprite[] _sparkFrames;
+        [SerializeField] Sprite[] _enemyShards;
 
         public static ModularGunnerEffects Instance { get; private set; }
 
@@ -98,6 +108,14 @@ namespace TunnelCrew.Presentation.Prototype
             _litMaterial = litMaterial;
             _unlitMaterial = unlitMaterial;
             _cameraRig = cameraRig;
+        }
+
+        public void EditorAssignSheets(Sprite[] shockwave, Sprite[] smoke, Sprite[] spark, Sprite[] enemyShards)
+        {
+            _shockwaveFrames = shockwave;
+            _smokeFrames = smoke;
+            _sparkFrames = spark;
+            _enemyShards = enemyShards;
         }
 
         void Awake() => Instance = this;
@@ -160,22 +178,35 @@ namespace TunnelCrew.Presentation.Prototype
             _cameraRig?.AddKick(incoming, preset.Kick);
             if (preset.ZoomPunch > 0f) _cameraRig?.AddZoomPunch(preset.ZoomPunch);
 
-            // 1단계 — 불꽃.
-            SpawnBurst(lethal ? "Enemy Burst" : "Enemy Hit", center, hot,
-                preset.BurstLife, 0.3f, preset.BurstScale, 66, lethal ? 3.4f : 2.2f,
-                lethal ? ModularGunnerLighting.LethalImpactIntensity : ModularGunnerLighting.ImpactIntensity);
+            // 1단계 — 불꽃. 전용 스파크 시트가 있으면 그것으로 친다.
+            if (_sparkFrames != null && _sparkFrames.Length > 0)
+            {
+                SpawnSheet(lethal ? "Enemy Burst" : "Enemy Hit", _sparkFrames, center, hot,
+                    preset.BurstLife * 1.6f, preset.BurstScale * 0.8f * SheetScale, 66,
+                    lethal ? 3.4f : 2.2f,
+                    lethal ? ModularGunnerLighting.LethalImpactIntensity : ModularGunnerLighting.ImpactIntensity);
+            }
+            else
+            {
+                SpawnBurst(lethal ? "Enemy Burst" : "Enemy Hit", center, hot,
+                    preset.BurstLife, 0.3f, preset.BurstScale, 66, lethal ? 3.4f : 2.2f,
+                    lethal ? ModularGunnerLighting.LethalImpactIntensity : ModularGunnerLighting.ImpactIntensity);
+            }
             if (preset.Shockwave)
             {
-                // 충격파 링: 넓고 옅게 한 번만 퍼져 실루엣을 지우지 않는다.
-                SpawnBurst("Shockwave", center, new Color(1f, 0.85f, 0.6f, 0.34f),
-                    0.17f, preset.BurstScale * 0.6f, preset.BurstScale * 2.4f, 62, 0f, 0f);
+                // 충격파 링: 전용 시트가 확산을 그리므로 크기는 고정하고 옅게만 깐다.
+                SpawnSheet("Shockwave", _shockwaveFrames, center, new Color(1f, 0.92f, 0.78f, 0.55f),
+                    0.2f, preset.BurstScale * 1.7f * SheetScale, 62);
             }
 
             // 2단계 — 파편.
             for (int i = 0; i < preset.Shards; i++)
             {
                 Vector2 direction = (-incoming.normalized + Random.insideUnitCircle * (lethal ? 1.8f : 0.9f)).normalized;
-                SpawnDebris("Enemy Pixel", position + Vector2.up * 0.28f, _enemyShardSprite,
+                Sprite shard = _enemyShards != null && _enemyShards.Length > 0
+                    ? _enemyShards[Random.Range(0, _enemyShards.Length)]
+                    : _enemyShardSprite;
+                SpawnDebris("Enemy Pixel", position + Vector2.up * 0.28f, shard,
                     Color.Lerp(new Color(0.32f, 0.05f, 0.04f), hot, Random.value),
                     direction * Random.Range(1.5f, preset.ShardSpeed), Random.Range(1.8f, lethal ? 5.5f : 3.8f),
                     Random.Range(0.8f, lethal ? 2.1f : 1.35f), Random.Range(0.7f, 1.25f),
@@ -217,9 +248,8 @@ namespace TunnelCrew.Presentation.Prototype
             Preset preset = Presets[stage.Reaction];
             if (stage.Kind == StageSmoke)
             {
-                SpawnBurst("Impact Smoke", stage.Position + Vector2.up * 0.1f,
-                    new Color(0.42f, 0.4f, 0.46f, 0.46f), 0.3f, preset.BurstScale * 0.5f,
-                    preset.BurstScale * 1.5f, 60, 0f, 0f);
+                SpawnSheet("Impact Smoke", _smokeFrames, stage.Position + Vector2.up * 0.1f,
+                    new Color(0.62f, 0.6f, 0.68f, 0.5f), 0.34f, preset.BurstScale * 1.1f * SheetScale, 60);
                 return;
             }
 
@@ -240,6 +270,20 @@ namespace TunnelCrew.Presentation.Prototype
             debris.transform.position = position;
             debris.Prepare(sprite, _shadowSprite, _litMaterial, color, velocity,
                 verticalSpeed, life, scale, spin, bounce, sortingOrder);
+        }
+
+        /// <summary>승인 VFX 시트를 프레임 순서대로 한 번 재생한다.</summary>
+        void SpawnSheet(string name, Sprite[] frames, Vector2 position, Color color, float life,
+            float scale, int sortingOrder, float lightRadius = 0f, float lightIntensity = 0f)
+        {
+            if (frames == null || frames.Length == 0) return;
+            ModularGunnerFxBurst burst = ModularGunnerFxPool.Instance?.RentBurst();
+            if (burst == null) return;
+            color.a = Mathf.Min(color.a, ModularGunnerLighting.MaxFlashAlpha);
+            burst.name = name;
+            burst.transform.position = position;
+            burst.Prepare(frames[0], frames, _unlitMaterial, color, life, scale, scale,
+                sortingOrder + 300, lightRadius, lightIntensity);
         }
 
         void SpawnBurst(string name, Vector2 position, Color color, float life, float startScale,

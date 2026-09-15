@@ -149,12 +149,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 960351a5059d1fd46bc1e47b42aea01e, type: 3}
+  m_Sprite: {fileID: 5692339991673976094, guid: 377100851596248459ccb9285a0c0207, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.1875, y: 1.3125}
+  m_Size: {x: 1.25, y: 1.375}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -397,7 +397,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 36ba5afbaa099574783fc7037f129c5b, type: 3}
+  m_Sprite: {fileID: -6472234816480908987, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -975,10 +975,18 @@ MonoBehaviour:
   _ejectionPort: {fileID: 8645754449785948943}
   _bodyRenderer: {fileID: 4824218286876749982}
   _headRenderer: {fileID: 8400507937927757165}
-  _bodyDownLeftSprite: {fileID: 21300000, guid: 960351a5059d1fd46bc1e47b42aea01e, type: 3}
-  _bodyUpLeftSprite: {fileID: 21300000, guid: 0126fb201ebda15418666decf3154b70, type: 3}
-  _headDownLeftSprite: {fileID: 21300000, guid: 36ba5afbaa099574783fc7037f129c5b, type: 3}
-  _headUpLeftSprite: {fileID: 21300000, guid: 40ae37cc3b4fb8e4889704f98b8dba50, type: 3}
+  _bodyDirections:
+  - {fileID: 5692339991673976094, guid: 377100851596248459ccb9285a0c0207, type: 3}
+  - {fileID: 8228643624601109608, guid: 377100851596248459ccb9285a0c0207, type: 3}
+  - {fileID: -7695491907654473229, guid: 377100851596248459ccb9285a0c0207, type: 3}
+  - {fileID: -8967932736623401215, guid: 377100851596248459ccb9285a0c0207, type: 3}
+  - {fileID: 6660207371733458840, guid: 377100851596248459ccb9285a0c0207, type: 3}
+  _headDirections:
+  - {fileID: -6472234816480908987, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
+  - {fileID: 7871187792035820101, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
+  - {fileID: -1471696304440890434, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
+  - {fileID: 1621721427561910263, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
+  - {fileID: -1886667191357641292, guid: 7d211be0e299f7441b9e3a674a203c72, type: 3}
   _weaponRenderer: {fileID: 2506440464724953392}
   _mainHandRenderer: {fileID: 7074646934477310913}
   _supportHandRenderer: {fileID: 1337812375636801733}
@@ -989,6 +997,7 @@ MonoBehaviour:
   - {fileID: 1663944113, guid: a666e379d0201be4e93404b735382372, type: 3}
   - {fileID: 1436043290, guid: a666e379d0201be4e93404b735382372, type: 3}
   - {fileID: 615984826, guid: a666e379d0201be4e93404b735382372, type: 3}
+  _visualRoot: {fileID: 2339617323147707614}
   _shakeStrength: 0.18
   _shakeHighRatio: 0.95
   _kickStrength: 0.12

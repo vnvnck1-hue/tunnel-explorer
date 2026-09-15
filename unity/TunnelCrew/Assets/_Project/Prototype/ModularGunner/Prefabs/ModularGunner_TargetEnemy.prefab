@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7865830711627109109}
   - component: {fileID: 9206497238913826505}
   - component: {fileID: 5387435053357761524}
+  - component: {fileID: 8642785965169921313}
   - component: {fileID: 4798730099203934709}
   m_Layer: 0
   m_Name: ModularGunner_TargetEnemy
@@ -185,6 +186,33 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.38}
   m_Radius: 0.43
+--- !u!114 &8642785965169921313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054554065372561690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e298c477a2ce5384e89e6ee37ab02771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TunnelCrew.Presentation::TunnelCrew.Presentation.Prototype.ModularGunnerEnemyVisuals
+  _telegraph:
+  - {fileID: 334385490331648612, guid: 0a87d576d56ea8a45b5b4e1f94a42ca1, type: 3}
+  - {fileID: 3803227120985355743, guid: 0a87d576d56ea8a45b5b4e1f94a42ca1, type: 3}
+  - {fileID: -1506090376081873528, guid: 0a87d576d56ea8a45b5b4e1f94a42ca1, type: 3}
+  _stages:
+  - {fileID: 2974786704785017696, guid: 94a197834b0ff1d4485cbbdfadfb3a6d, type: 3}
+  - {fileID: 438494219308065053, guid: 94a197834b0ff1d4485cbbdfadfb3a6d, type: 3}
+  - {fileID: -9018274616868921188, guid: 94a197834b0ff1d4485cbbdfadfb3a6d, type: 3}
+  - {fileID: 1391299371138187185, guid: 94a197834b0ff1d4485cbbdfadfb3a6d, type: 3}
+  _elite:
+  - {fileID: 8807759431842940913, guid: e0c53b138e4d7b741bdbcd17f6cc99ef, type: 3}
+  - {fileID: -387474484816848459, guid: e0c53b138e4d7b741bdbcd17f6cc99ef, type: 3}
+  - {fileID: 7441074683704932829, guid: e0c53b138e4d7b741bdbcd17f6cc99ef, type: 3}
+  _renderer: {fileID: 7865830711627109109}
+  _isElite: 0
 --- !u!114 &4798730099203934709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,6 +236,7 @@ MonoBehaviour:
   - {fileID: 3422751798401846667, guid: ef44bb6b48603974a97f0f17db523efd, type: 3}
   - {fileID: 5395611929921718900, guid: ef44bb6b48603974a97f0f17db523efd, type: 3}
   - {fileID: 8931126536515563123, guid: ef44bb6b48603974a97f0f17db523efd, type: 3}
+  _visuals: {fileID: 8642785965169921313}
 --- !u!1 &4572379760636335747
 GameObject:
   m_ObjectHideFlags: 0
