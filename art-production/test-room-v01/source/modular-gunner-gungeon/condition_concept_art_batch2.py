@@ -465,6 +465,40 @@ def build_enemy_language():
     return made
 
 
+# ------------------------------------------------------------------ HUD 아이콘
+HUD = "mg-hud-icons-concept-v01.png"
+HUD_ROWS = [
+    ("ammo", ["standard", "rapid", "pierce", "explosive"]),
+    ("marker", ["danger", "elite", "reload", "low_ammo", "kill"]),
+]
+HUD_SIZE = 12          # 12px 높이에서 읽히게 그려 달라고 요청한 크기다.
+
+
+def build_hud_icons():
+    src = key_checkerboard(load(HUD))
+    rs = rows_of(src, min_run=30, max_gap=20)
+    if len(rs) != 2:
+        raise SystemExit(f"expected 2 hud rows, got {rs}")
+
+    made = []
+    for row_index, (kind, names) in enumerate(HUD_ROWS):
+        band = src[rs[row_index][0]:rs[row_index][1] + 1]
+        cs = split_columns(band, len(names), thr=4)
+        if len(cs) != len(names):
+            raise SystemExit(f"hud row {row_index}: expected {len(names)}, got {len(cs)}")
+        for i, (x0, x1) in enumerate(cs):
+            cell = band[:, x0:x1 + 1]
+            bx0, by0, bx1, by1 = content_box(cell)
+            crop = cell[by0:by1 + 1, bx0:bx1 + 1]
+            side = max(crop.shape[0], crop.shape[1])
+            pad = np.zeros((side, side, 4), np.uint8)
+            pad[(side - crop.shape[0]) // 2:(side - crop.shape[0]) // 2 + crop.shape[0],
+                (side - crop.shape[1]) // 2:(side - crop.shape[1]) // 2 + crop.shape[1]] = crop
+            made.append(save(box_resize(pad, HUD_SIZE, HUD_SIZE, alpha_cut=90), f"hud_{kind}_{names[i]}.png"))
+    contact_sheet(made, "_preview_hud.png", zoom=10)
+    return made
+
+
 if __name__ == "__main__":
     gunner, gmeta = build_gunner_directions()
     print("gunner dirs : %s head=%dx%d body=%dx%d x%d" % (gunner, gmeta[0], gmeta[1], gmeta[2], gmeta[3], gmeta[4]))
@@ -472,3 +506,4 @@ if __name__ == "__main__":
     print("vfx         : %d" % len(build_vfx()))
     print("props       : %d" % len(build_props()))
     print("enemy lang  : %d" % len(build_enemy_language()))
+    print("hud icons   : %d" % len(build_hud_icons()))

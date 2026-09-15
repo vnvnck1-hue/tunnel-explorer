@@ -72,8 +72,9 @@ namespace TunnelCrew.Presentation.Prototype
         const int StageSmoke = 0;
         const int StageGroundMark = 1;
 
-        // 승인 VFX 시트는 프레임이 32px(2유닛)이다. 기존 버스트 스프라이트는 16px(1유닛)이라
-        // 같은 BurstScale 을 그대로 쓰면 두 배로 커진다. 시트에는 이 보정을 곱한다.
+        // 승인 VFX 시트는 프레임이 32px, 즉 16 PPU 에서 이미 2유닛이다.
+        // localScale 은 그 위에 곱해지므로 원하는 월드 크기를 2로 나눠 줘야 한다.
+        // 기존 버스트 스프라이트(16px = 1유닛) 기준으로 잡아 둔 BurstScale 을 그대로 쓰려면 0.5 다.
         const float SheetScale = 0.5f;
 
         [SerializeField] Sprite _casingSprite;
@@ -182,7 +183,7 @@ namespace TunnelCrew.Presentation.Prototype
             if (_sparkFrames != null && _sparkFrames.Length > 0)
             {
                 SpawnSheet(lethal ? "Enemy Burst" : "Enemy Hit", _sparkFrames, center, hot,
-                    preset.BurstLife * 1.6f, preset.BurstScale * 0.8f * SheetScale, 66,
+                    preset.BurstLife * 1.6f, preset.BurstScale * 0.55f * SheetScale, 66,
                     lethal ? 3.4f : 2.2f,
                     lethal ? ModularGunnerLighting.LethalImpactIntensity : ModularGunnerLighting.ImpactIntensity);
             }
@@ -195,8 +196,8 @@ namespace TunnelCrew.Presentation.Prototype
             if (preset.Shockwave)
             {
                 // 충격파 링: 전용 시트가 확산을 그리므로 크기는 고정하고 옅게만 깐다.
-                SpawnSheet("Shockwave", _shockwaveFrames, center, new Color(1f, 0.92f, 0.78f, 0.55f),
-                    0.2f, preset.BurstScale * 1.7f * SheetScale, 62);
+                SpawnSheet("Shockwave", _shockwaveFrames, center, new Color(1f, 0.92f, 0.78f, 0.38f),
+                    0.2f, preset.BurstScale * 0.9f * SheetScale, 62);
             }
 
             // 2단계 — 파편.
@@ -249,7 +250,7 @@ namespace TunnelCrew.Presentation.Prototype
             if (stage.Kind == StageSmoke)
             {
                 SpawnSheet("Impact Smoke", _smokeFrames, stage.Position + Vector2.up * 0.1f,
-                    new Color(0.62f, 0.6f, 0.68f, 0.5f), 0.34f, preset.BurstScale * 1.1f * SheetScale, 60);
+                    new Color(0.62f, 0.6f, 0.68f, 0.45f), 0.34f, preset.BurstScale * 0.7f * SheetScale, 60);
                 return;
             }
 

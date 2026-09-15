@@ -69,6 +69,7 @@ namespace TunnelCrew.EditorTools
         // 2차 승인 배치.
         const string PropDir = Root + "/Art/Props";
         const string VfxDir = Root + "/Art/Vfx";
+        const string HudDir = Root + "/Art/Hud";
         const string BodyDirsPath = SpriteDir + "/gunner_body_dirs.png";
         const string HeadDirsPath = SpriteDir + "/gunner_head_dirs.png";
         const string EnemyTelegraphPath = SpriteDir + "/enemy_telegraph.png";
@@ -135,7 +136,7 @@ namespace TunnelCrew.EditorTools
 
         static void EnsureFolders()
         {
-            foreach (string path in new[] { Root, GeneratedDir, AnimationDir, PrefabDir, EnvironmentDir, DecalDir, TileDir, PropDir, VfxDir })
+            foreach (string path in new[] { Root, GeneratedDir, AnimationDir, PrefabDir, EnvironmentDir, DecalDir, TileDir, PropDir, VfxDir, HudDir })
                 Directory.CreateDirectory(AbsolutePath(path));
         }
 
@@ -325,6 +326,10 @@ namespace TunnelCrew.EditorTools
             for (int i = 0; i < EnemyShardCount; i++)
                 ConfigureSprite($"{VfxDir}/enemy_shard_{i:00}.png", new Vector2(0.5f, 0.5f));
 
+            // HUD 아이콘은 GUI.DrawTexture 로 그리므로 스프라이트가 아니라 텍스처로 임포트한다.
+            foreach (string name in HudIconNames)
+                ConfigureHudTexture($"{HudDir}/hud_{name}.png");
+
             // VFX 시트 3종 — 충격파 · 연기 · 스파크.
             foreach (string name in VfxSheetNames)
                 SliceSheet($"{VfxDir}/vfx_{name}.png", 32, 32, VfxFrameCount, new Vector2(0.5f, 0.5f));
@@ -343,6 +348,27 @@ namespace TunnelCrew.EditorTools
             SliceSheet(WeaponRecoilPath, 32, 12, WeaponRecoilFrameCount, new Vector2(0.22f, 0.5f));
             // 적 6프레임: 무손상·경피격·균열·붕괴·파쇄·잔해. 접지점을 프레임 하단 6px 로 맞춰 두었다.
             SliceSheet(EnemyFramesPath, 32, 32, EnemyFrameCount, new Vector2(0.5f, 0.1875f));
+        }
+
+        static readonly string[] HudIconNames =
+        {
+            "ammo_standard", "ammo_rapid", "ammo_pierce", "ammo_explosive",
+            "marker_danger", "marker_elite", "marker_reload", "marker_low_ammo", "marker_kill",
+        };
+
+        /// <summary>HUD 아이콘 임포트. 스프라이트가 아니라 GUI 용 텍스처다.</summary>
+        static void ConfigureHudTexture(string assetPath)
+        {
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceSynchronousImport);
+            var importer = (TextureImporter)AssetImporter.GetAtPath(assetPath);
+            if (importer == null) throw new InvalidOperationException($"Missing texture importer: {assetPath}");
+            importer.textureType = TextureImporterType.GUI;
+            importer.filterMode = FilterMode.Point;
+            importer.mipmapEnabled = false;
+            importer.alphaIsTransparency = true;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.npotScale = TextureImporterNPOTScale.None;
+            importer.SaveAndReimport();
         }
 
         static IEnumerable<string> DecalPaths()
@@ -873,7 +899,17 @@ namespace TunnelCrew.EditorTools
             var hud = new GameObject("Prototype HUD");
             SceneManager.MoveGameObjectToScene(hud, scene);
             hud.AddComponent<ModularGunnerHud>();
-            hud.AddComponent<ModularGunnerCombatHud>();
+            hud.AddComponent<ModularGunnerCombatHud>().EditorAssign(
+                LoadTexture($"{HudDir}/hud_marker_danger.png"),
+                LoadTexture($"{HudDir}/hud_marker_elite.png"),
+                LoadTexture($"{HudDir}/hud_marker_kill.png"),
+                new[]
+                {
+                    LoadTexture($"{HudDir}/hud_ammo_standard.png"),
+                    LoadTexture($"{HudDir}/hud_ammo_rapid.png"),
+                    LoadTexture($"{HudDir}/hud_ammo_pierce.png"),
+                    LoadTexture($"{HudDir}/hud_ammo_explosive.png"),
+                });
             cameraGo.AddComponent<ModularGunnerCrtTuning>();
 
             AddPostProcessing(scene, cameraData);
@@ -1352,6 +1388,10 @@ namespace TunnelCrew.EditorTools
         {
             AnimationUtility.SetEditorCurve(clip, EditorCurveBinding.FloatCurve(path, typeof(Transform), property), curve);
         }
+
+        static Texture2D LoadTexture(string path) =>
+            AssetDatabase.LoadAssetAtPath<Texture2D>(path)
+            ?? throw new InvalidOperationException($"Missing texture: {path}");
 
         static Sprite[] LoadEnemyShards()
         {
