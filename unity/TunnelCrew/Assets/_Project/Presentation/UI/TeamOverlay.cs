@@ -59,11 +59,17 @@ namespace TunnelCrew.Presentation
         static Color Hex(string hex) { if (string.IsNullOrEmpty(hex) || !ColorUtility.TryParseHtmlString(hex, out var c)) return Color.white; return c; }
         Vector2 WorldToGui(Vec2 w)
         {
+            // 원근 월드가 켜져 있으면 그쪽 카메라·레터박스 기준으로 다시 투영한다(§4 2단계).
+            if (TunnelCrew.Presentation.Visual.PerspectiveViewport.TrySimToScreen(
+                    new Vector2((float)w.X, (float)w.Y), 0f, out var ps))
+                return new Vector2(ps.x, Screen.height - ps.y);
             var s = _cam.WorldToScreenPoint(IsometricProjection.ToRender3(w));
             return new Vector2(s.x, Screen.height - s.y);
         }
         Vec2 ScreenToWorld(Vector2 screen)
         {
+            if (TunnelCrew.Presentation.Visual.PerspectiveViewport.TryScreenToSim(screen, out var hit))
+                return new Vec2(hit.x, hit.y);
             var w = _cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_cam.transform.position.z));
             var sim = IsometricProjection.ToWorld(new Vector2(w.x, w.y));
             return new Vec2(sim.x, sim.y);

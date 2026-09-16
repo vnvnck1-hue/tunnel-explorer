@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TunnelCrew.Data;
 using TunnelCrew.Sim;
+using TunnelCrew.Presentation.Visual;
 using UnityEngine;
 
 namespace TunnelCrew.Presentation
@@ -24,6 +25,9 @@ namespace TunnelCrew.Presentation
         readonly List<LineRenderer> _lines = new List<LineRenderer>();
         Sprite _dot, _square, _ring;
         Font _font;
+
+        /// <summary>설치물 스프라이트 하나마다의 원근 계약 슬롯. 풀 인덱스와 1:1 이다.</summary>
+        readonly List<int> _instHandles = new List<int>();
 
         static readonly Color[] RoleCol = { new Color(1f, .83f, .43f), new Color(1f, .55f, .45f), new Color(.5f, .92f, .82f), new Color(.78f, .63f, 1f) };
 
@@ -94,6 +98,15 @@ namespace TunnelCrew.Presentation
             it.HpBar.color = m.Down ? new Color(1f, .33f, .49f) : hp > .5f ? new Color(.5f, .92f, .82f) : hp > .25f ? new Color(1f, .83f, .43f) : new Color(1f, .55f, .66f);
             it.Shield.enabled = m.ShieldT > 0;
             if (it.Shield.enabled) it.Shield.color = new Color(.5f, .92f, .82f, .5f + .3f * Mathf.Sin(Time.time * 9f));
+
+            // 원근 월드 — 머리 위 정보는 빌보드가 아니라 화면 해상도 오버레이로 다시 투영한다(§4 5단계).
+            if (PerspectiveWorldInfo.Wanted)
+            {
+                var ground = new Vector2((float)m.Position.X, (float)m.Position.Y);
+                PerspectiveWorldInfo.Bar(ground, 1.42f, hp, .68f, it.HpBar.color);
+                PerspectiveWorldInfo.Text(ground, 1.62f, it.Label.text, it.Label.color);
+                PerspectiveWorldInfo.Text(ground, 1.92f, it.State.text, it.State.color, .82f);
+            }
         }
 
         // ── 설치물
@@ -121,15 +134,48 @@ namespace TunnelCrew.Presentation
             sr.transform.position = IsometricProjection.ToRender3(at, z); sr.sprite = s; sr.color = c; sr.transform.localScale = Vector3.one * scale; sr.sortingOrder = order;
         }
 
+        /// <summary>
+        /// 설치물·표식을 원근 월드의 <b>바닥 대역</b> 계약으로 올린다.
+        /// 2D 에서 바닥에 깔린 표시였으므로 3D 에서도 세우지 않고 눕힌다.
+        /// </summary>
+        void PublishInstallation(int index, Vec2 at, SpriteRenderer sr, float order)
+        {
+            while (_instHandles.Count <= index) _instHandles.Add(0);
+            if (sr == null || sr.sprite == null) return;
+            if (_instHandles[index] == 0) _instHandles[index] = PerspectiveActors.Acquire("Installation");
+
+            var scale = sr.transform.localScale;
+            var sample = PerspectiveActorSample.Default;
+            sample.Ground = new Vector2((float)at.X, (float)at.Y);
+            sample.Height = 0.02f + order * 0.0015f;
+            sample.Sprite = sr.sprite;
+            sample.Tint = sr.color;
+            sample.Scale = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+            sample.Roll = sr.transform.eulerAngles.z;
+            sample.AlignFeet = false;
+            sample.Group = PerspectiveActorGroup.Ground;
+            sample.Visible = sr.gameObject.activeSelf;
+            sample.Source = sr;
+            PerspectiveActors.Submit(_instHandles[index], sample);
+        }
+
+        /// <summary>바닥 대역 제출을 곁들인 <see cref="Set"/>. 2D 표시와 3D 계약이 같은 값을 쓴다.</summary>
+        void Place(int index, Vec2 at, Sprite s, Color c, float scale, int order, float z = 0)
+        {
+            var sr = Rent(index);
+            Set(sr, at, s, c, scale, order, z);
+            PublishInstallation(index, at, sr, order);
+        }
+
         void DrawInstallations(AiCrewSystem crew)
         {
             int i = 0, li = 0;
             foreach (var n in crew.Nodes)
             {
                 float a = Mathf.Min(1, (float)(n.Life / 4));
-                Set(Rent(i++), n.Position, _ring, new Color(.5f, .92f, .82f, .28f * a), (float)n.Radius * 2, 27);
-                Set(Rent(i++), n.Position, _dot, new Color(.07f, .17f, .16f, a), .36f, 28);
-                Set(Rent(i++), n.Position, _dot, new Color(.75f, 1f, .94f, a), .14f, 29);
+                Place(i++, n.Position, _ring, new Color(.5f, .92f, .82f, .28f * a), (float)n.Radius * 2, 27);
+                Place(i++, n.Position, _dot, new Color(.07f, .17f, .16f, a), .36f, 28);
+                Place(i++, n.Position, _dot, new Color(.75f, 1f, .94f, a), .14f, 29);
             }
             foreach (var t in crew.Turrets)
             {
@@ -141,26 +187,36 @@ namespace TunnelCrew.Presentation
                     l.SetPosition(0, IsometricProjection.ToRender3(src.Position)); l.SetPosition(1, IsometricProjection.ToRender3(t.Position));
                     var c = new Color(.5f, .92f, .82f, .3f + .15f * Mathf.Sin(Time.time * 8f)); l.startColor = l.endColor = c;
                 }
-                Set(Rent(i++), t.Position, _dot, new Color(.13f, .08f, .18f), .5f, 28);
-                Set(Rent(i++), t.Position, _ring, col, .52f, 29);
-                var barrel = Rent(i++); Set(barrel, t.Position + Vec2.FromAngle(t.Aim) * .18, _square, col, 1, 30);
+                Place(i++, t.Position, _dot, new Color(.13f, .08f, .18f), .5f, 28);
+                Place(i++, t.Position, _ring, col, .52f, 29);
+                int barrelIndex = i++;
+                var barrel = Rent(barrelIndex); Set(barrel, t.Position + Vec2.FromAngle(t.Aim) * .18, _square, col, 1, 30);
                 barrel.transform.localScale = new Vector3(.36f, .15f, 1); barrel.transform.rotation = Quaternion.Euler(0, 0, IsometricProjection.AngleToRender(t.Aim) * Mathf.Rad2Deg);
-                Set(Rent(i++), t.Position, _dot, new Color(.95f, .91f, 1f), .16f, 31);
+                PublishInstallation(barrelIndex, t.Position + Vec2.FromAngle(t.Aim) * .18, barrel, 30);
+                Place(i++, t.Position, _dot, new Color(.95f, .91f, 1f), .16f, 31);
                 float ammo = t.Mag > 0 ? (float)t.Ammo / t.Mag : 0;
-                Set(Rent(i++), t.Position, _ring, t.Powered ? new Color(.5f, .92f, .82f, .5f + .5f * ammo) : new Color(1f, .44f, .54f, .8f), .66f, 29);
+                Place(i++, t.Position, _ring, t.Powered ? new Color(.5f, .92f, .82f, .5f + .5f * ammo) : new Color(1f, .44f, .54f, .8f), .66f, 29);
             }
             foreach (var kv in crew.Cracks)
             {
                 var v = kv.Value; var w = crewWorld;
                 if (w == null) break;
                 int c = kv.Key % w.Cols, r = kv.Key / w.Cols;
-                Set(Rent(i++), WorldGrid.CellCenter(c, r), _ring, (v.P > .72 ? new Color(1f, .95f, .84f) : new Color(1f, .83f, .43f)) * new Color(1, 1, 1, .32f + .62f * (float)v.P), .34f + .34f * (float)v.P, 29);
+                Place(i++, WorldGrid.CellCenter(c, r), _ring, (v.P > .72 ? new Color(1f, .95f, .84f) : new Color(1f, .83f, .43f)) * new Color(1, 1, 1, .32f + .62f * (float)v.P), .34f + .34f * (float)v.P, 29);
             }
             foreach (var k in crew.Marks)
             {
                 float a = Mathf.Min(1, (float)(k.Ttl / 1.5)) * .7f;
-                if (k.Threat) { var x = Rent(i++); Set(x, k.At, _square, new Color(1f, .44f, .54f, a), 1, 29); x.transform.localScale = new Vector3(.36f, .08f, 1); x.transform.rotation = Quaternion.Euler(0, 0, 45); var y = Rent(i++); Set(y, k.At, _square, new Color(1f, .44f, .54f, a), 1, 29); y.transform.localScale = new Vector3(.36f, .08f, 1); y.transform.rotation = Quaternion.Euler(0, 0, -45); }
-                else { Set(Rent(i++), k.At, _ring, new Color(1f, .83f, .43f, a), .6f, 29); Set(Rent(i++), k.At, _dot, new Color(1f, .83f, .43f, a), .1f, 29); }
+                if (k.Threat)
+                {
+                    int xi = i++; var x = Rent(xi); Set(x, k.At, _square, new Color(1f, .44f, .54f, a), 1, 29);
+                    x.transform.localScale = new Vector3(.36f, .08f, 1); x.transform.rotation = Quaternion.Euler(0, 0, 45);
+                    PublishInstallation(xi, k.At, x, 29);
+                    int yi = i++; var y = Rent(yi); Set(y, k.At, _square, new Color(1f, .44f, .54f, a), 1, 29);
+                    y.transform.localScale = new Vector3(.36f, .08f, 1); y.transform.rotation = Quaternion.Euler(0, 0, -45);
+                    PublishInstallation(yi, k.At, y, 29);
+                }
+                else { Place(i++, k.At, _ring, new Color(1f, .83f, .43f, a), .6f, 29); Place(i++, k.At, _dot, new Color(1f, .83f, .43f, a), .1f, 29); }
             }
             for (; i < _pool.Count; i++) _pool[i].gameObject.SetActive(false);
             for (; li < _lines.Count; li++) _lines[li].gameObject.SetActive(false);
@@ -168,5 +224,11 @@ namespace TunnelCrew.Presentation
 
         /// <summary>균열 키 → 칸 변환에 필요한 월드. RunBootstrap 이 층마다 넣어 준다.</summary>
         public WorldGrid crewWorld;
+
+        void OnDestroy()
+        {
+            foreach (int h in _instHandles) if (h != 0) PerspectiveActors.Release(h);
+            _instHandles.Clear();
+        }
     }
 }

@@ -83,6 +83,10 @@ namespace TunnelCrew.Presentation
         /// </summary>
         [SerializeField] TunnelCrew.Presentation.Visual.EnvironmentKit[] _envKitsByStratum = new TunnelCrew.Presentation.Visual.EnvironmentKit[3];
 
+        [Header("3D 원근 월드")]
+        [Tooltip("메인 런 월드를 3D 벽 + 빌보드 액터 원근 렌더러로 표시한다. 끄면 기존 2D 본선으로 즉시 폴백한다.")]
+        [SerializeField] bool _perspectiveWorld = true;
+
         TunnelCrew.Presentation.Visual.EnvironmentKit KitForDepth(int depth)
         {
             int idx = TunnelCrew.Presentation.Visual.StratumMoodDirector.IndexFor(depth) - 1;   // 0 = 지층 2
@@ -94,6 +98,8 @@ namespace TunnelCrew.Presentation
             return _envKit;
         }
         TunnelCrew.Presentation.Visual.EnvironmentChunkRenderer _env;
+        /// <summary>원근 월드 렌더러. 같은 환경 키트·재질 채널을 3D 표면에 물린다(3d-perspective-production-plan).</summary>
+        TunnelCrew.Presentation.Visual.PerspectiveWorldView _perspective;
         TunnelCrew.Presentation.Visual.LabWallDropShadow _envDropShadow;
         TunnelCrew.Presentation.Visual.WallCrackOverlay _envCrack;
         TunnelCrew.Presentation.Visual.WallOreOverlay _envOre;
@@ -277,6 +283,15 @@ namespace TunnelCrew.Presentation
             BuildWorld();
             BuildPlayer();
             BuildLighting();
+
+            // 실제 메인 런 데이터를 읽는 3D 공간감 렌더러. 규칙·충돌은 기존 Sim 그대로 두고
+            // 월드와 액터의 표시만 3D 벽 + 카메라 빌보드로 합성한다. 필드 하나로 즉시 2D 폴백 가능하다.
+            _perspective = GetComponent<TunnelCrew.Presentation.Visual.PerspectiveWorldView>()
+                ?? gameObject.AddComponent<TunnelCrew.Presentation.Visual.PerspectiveWorldView>();
+            _perspective.Bind(Sim.World, () => Sim.Player,
+                _playerView != null ? _playerView.GetComponent<SpriteRenderer>() : null, _cam);
+            BindPerspectiveEnvironment();
+            _perspective.SetMainlineMode(_perspectiveWorld);
 
             _rig.Bind(Sim.World, () => Sim.Player);
             Prespawn();
@@ -707,12 +722,50 @@ namespace TunnelCrew.Presentation
             world.TileBroken += e => OnEnvCellChanged(e.Col, e.Row);
             world.TileChanged += k => OnEnvCellChanged(k % world.Cols, k / world.Cols);
             world.TileDamaged += e => _envCrack.SetStage(e.Col, e.Row, world.DamageStage(world.Index(e.Col, e.Row)));
+
+            BindPerspectiveEnvironment();
+        }
+
+        /// <summary>
+        /// 원근 월드에 2D 본선과 <b>같은</b> 환경 키트·표면 규칙·재질 채널을 물린다.
+        /// 지층이 바뀌어 키트가 교체될 때마다 다시 부른다 — 3D 표면도 같이 갈아 끼워진다.
+        /// </summary>
+        void BindPerspectiveEnvironment()
+        {
+            if (_perspective == null || Sim?.World == null) return;
+            var kit = KitForDepth(Sim.Depth);
+            if (kit == null) return;
+
+            var rules = _envProfile != null
+                ? _envProfile.BuildSurfaceRules(_envRules)
+                : (_envRules != null ? _envRules.Rules : TunnelCrew.Presentation.Visual.SurfaceRules.Default);
+
+            var world = Sim.World;
+            var field = new TunnelCrew.Presentation.Visual.WorldGridSolidField(
+                world, k => Sim?.Bosses != null && Sim.Bosses.WallCells.Contains(k));
+
+            _perspective.BindEnvironment(field, rules, kit,
+                kit.floorSet != null ? kit.floorSet : _envFloorSet,
+                kit.wallTopSet != null ? kit.wallTopSet : _envWallTopSet,
+                kit.wallFrontSet != null ? kit.wallFrontSet : _envWallFrontSet,
+                _envProfile, IsOreFace);
+        }
+
+        /// <summary>광맥 정면을 얹을 셀인가 — <see cref="RefreshOre"/> 와 같은 판정이다.</summary>
+        bool IsOreFace(int c, int r)
+        {
+            var world = Sim?.World;
+            if (world == null || !world.InBounds(c, r)) return false;
+            var t = world.At(c, r);
+            return (t == TunnelCrew.Sim.TileType.Ore || t == TunnelCrew.Sim.TileType.Gem
+                || t == TunnelCrew.Sim.TileType.Crys) && !world.IsSolid(c, r - 1);
         }
 
         void OnEnvCellChanged(int c, int r)
         {
             var world = Sim.World;
             _env.MarkCellDirty(c, r);
+            _perspective?.MarkCellDirty(c, r);
             _envShadows?.MarkDirty();   // 표면 dirty 와 같은 프레임에 윤곽 재추적(LateUpdate)
             _envCrack.SetStage(c, r, world.IsSolid(c, r) ? world.DamageStage(world.Index(c, r)) : 0);
             _envDropDirty = true;   // 셀마다 전체 Resync 는 비싸다 — 프레임 끝에 한 번
@@ -1301,7 +1354,9 @@ namespace TunnelCrew.Presentation
                 float x = (kb.dKey.isPressed ? 1 : 0) - (kb.aKey.isPressed ? 1 : 0);
                 // 원본은 y 가 아래로 증가한다. Unity 는 위로 증가하므로 W 가 +y 다.
                 float y = (kb.wKey.isPressed ? 1 : 0) - (kb.sKey.isPressed ? 1 : 0);
-                var move = IsometricProjection.ScreenDirectionToWorld(new Vector2(x, y));
+                var move = TunnelCrew.Presentation.Visual.PerspectiveViewport.Active
+                    ? TunnelCrew.Presentation.Visual.PerspectiveViewport.ScreenDirectionToSim(new Vector2(x, y))
+                    : IsometricProjection.ScreenDirectionToWorld(new Vector2(x, y));
                 input.Move = new Vec2(move.x, move.y);
                 input.DashPressed = kb.spaceKey.wasPressedThisFrame;
                 input.ReloadPressed = kb.rKey.wasPressedThisFrame;
@@ -1327,7 +1382,9 @@ namespace TunnelCrew.Presentation
                 var ls = gp.leftStick.ReadValue();
                 if (ls.magnitude > .18f)
                 {
-                    var move = IsometricProjection.ScreenDirectionToWorld(ls);
+                    var move = TunnelCrew.Presentation.Visual.PerspectiveViewport.Active
+                        ? TunnelCrew.Presentation.Visual.PerspectiveViewport.ScreenDirectionToSim(ls)
+                        : IsometricProjection.ScreenDirectionToWorld(ls);
                     input.Move = new Vec2(move.x, move.y);
                 }
                 var rs = gp.rightStick.ReadValue();

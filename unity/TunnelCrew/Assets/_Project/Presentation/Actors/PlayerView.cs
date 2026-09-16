@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TunnelCrew.Sim;
+using TunnelCrew.Presentation.Visual;
 using UnityEngine;
 
 namespace TunnelCrew.Presentation
@@ -31,6 +32,10 @@ namespace TunnelCrew.Presentation
         readonly Dictionary<string, Sprite[]> _walk = new Dictionary<string, Sprite[]>();
         float _animTime, _walkT;
 
+        /// <summary>3D 원근 렌더러에 넘기는 표현 계약 슬롯. 2D 표시와 무관하게 항상 유지한다.</summary>
+        int _perspectiveHandle;
+        float _bobHeight, _squashOffsetY;
+
         /// <summary>
         /// 발(피벗)을 시뮬 위치보다 얼마나 아래에 두는가. 원본 drawDrillerSprite 는
         /// `translate(x,y)` 뒤 `LIT.spr(..., -w*.5, r - pivot*scale, ...)` 로 그려서 피벗 픽셀이
@@ -54,11 +59,19 @@ namespace TunnelCrew.Presentation
 
         public void Render(PlayerState p, float dt)
         {
+            RenderSprite(p, dt);
+            PublishPerspective(p);
+        }
+
+        void RenderSprite(PlayerState p, float dt)
+        {
             bool moving = p.Velocity.Length > 0.05 || p.DashActive;
             _walkT += dt;
 
             // 원본: 걷는 동안 sin(t*16)*r*.035 만큼 위아래로 들썩임 (화면 y 는 아래가 +, Unity 는 위가 + 라 부호 반전)
             float bob = moving ? -Mathf.Sin(_walkT * 16f) * FootDrop * .035f : 0f;
+            _bobHeight = bob;
+            _squashOffsetY = 0f;
             var renderPos = IsometricProjection.ToRender(p.Position);
             transform.position = new Vector3(renderPos.x, renderPos.y - FootDrop + bob, 0f);
             if (_renderer == null) return;
@@ -86,7 +99,11 @@ namespace TunnelCrew.Presentation
                 if (!float.IsNaN(sq.ScaleX) && !float.IsNaN(sq.ScaleY))
                 {
                     transform.localScale = new Vector3(sq.ScaleX, sq.ScaleY, 1f);
-                    if (!float.IsNaN(sq.OffsetX) && !float.IsNaN(sq.OffsetY)) transform.position += new Vector3(sq.OffsetX, sq.OffsetY, 0f);
+                    if (!float.IsNaN(sq.OffsetX) && !float.IsNaN(sq.OffsetY))
+                    {
+                        transform.position += new Vector3(sq.OffsetX, sq.OffsetY, 0f);
+                        _squashOffsetY = sq.OffsetY;
+                    }
                 }
             }
 
@@ -96,6 +113,40 @@ namespace TunnelCrew.Presentation
             else if (p.StunTime > 0) c = new Color(0.75f, 0.7f, 0.8f);
             else if (p.IFrames > 0 && ((int)(Time.unscaledTime * 24) & 1) == 0) c = new Color(1f, 0.55f, 0.55f, 0.75f);
             _renderer.color = c;
+        }
+
+        /// <summary>
+        /// 3D 원근 렌더러용 표현 계약을 제출한다. 바닥 좌표는 시뮬레이션 XY 를 그대로 쓰고,
+        /// 들썩임·스쿼시는 화면 Y 가 아니라 높이로만 표현한다(발 피벗은 바닥에 고정).
+        /// </summary>
+        void PublishPerspective(PlayerState p)
+        {
+            if (_renderer == null || _renderer.sprite == null)
+            {
+                if (_perspectiveHandle != 0) PerspectiveActors.Submit(_perspectiveHandle, default);
+                return;
+            }
+            if (_perspectiveHandle == 0) _perspectiveHandle = PerspectiveActors.Acquire(name);
+
+            var scale = transform.localScale;
+            var sample = PerspectiveActorSample.Default;
+            sample.Ground = new Vector2((float)p.Position.X, (float)p.Position.Y);
+            sample.Height = _bobHeight + _squashOffsetY;
+            sample.Sprite = _renderer.sprite;
+            sample.Tint = _renderer.color;
+            sample.Scale = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+            sample.FlipX = _renderer.flipX ^ (scale.x < 0f);
+            sample.FlipY = _renderer.flipY ^ (scale.y < 0f);
+            sample.Visible = _renderer.enabled && isActiveAndEnabled;
+            sample.Group = PerspectiveActorGroup.Actor;
+            sample.Source = _renderer;
+            PerspectiveActors.Submit(_perspectiveHandle, sample);
+        }
+
+        void OnDestroy()
+        {
+            if (_perspectiveHandle != 0) PerspectiveActors.Release(_perspectiveHandle);
+            _perspectiveHandle = 0;
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TunnelCrew.Data;
 using TunnelCrew.Sim;
+using TunnelCrew.Presentation.Visual;
 using UnityEngine;
 
 namespace TunnelCrew.Presentation
@@ -26,9 +27,11 @@ namespace TunnelCrew.Presentation
             public LineRenderer Windup;
             /// <summary>보스 드래곤 애니 상태 (원본 e.bossAnimKey / bossAnimT).</summary>
             public string AnimKey; public float AnimT;
+            /// <summary>3D 원근 렌더러 표현 계약 슬롯. 풀에 반납된 동안은 제출을 멈춰 자동으로 숨는다.</summary>
+            public int Perspective;
         }
         /// <summary>격파된 보스 — 원본 bossDying: 몸을 남겨 death 24프레임(2.4s)을 끝까지 보여준다.</summary>
-        sealed class Dying { public Item It; public float T, R; public bool Flip; }
+        sealed class Dying { public Item It; public float T, R; public bool Flip; public Vector2 At; }
         readonly List<Dying> _dying = new List<Dying>();
 
         /// <summary>보스 드래곤 애니 선택 재료 (fireBreath 중인가, 배속). RunBootstrap 이 BossSystem 에서 연결한다.</summary>
@@ -64,7 +67,8 @@ namespace TunnelCrew.Presentation
                 if (e.IsBoss && death != null && death.Length > 0)
                 {   // 보스는 바로 지우지 않고 death 애니를 끝까지 (원본 bossDying · bossFade)
                     it.HpBg.enabled = it.HpBar.enabled = it.Windup.enabled = false;
-                    _dying.Add(new Dying { It = it, T = 0, R = (float)e.Radius, Flip = it.Body.flipX });
+                    _dying.Add(new Dying { It = it, T = 0, R = (float)e.Radius, Flip = it.Body.flipX,
+                        At = new Vector2((float)e.Position.X, (float)e.Position.Y) });
                 }
                 else Return(it);
             }
@@ -79,6 +83,7 @@ namespace TunnelCrew.Presentation
                 d.It.Body.transform.localScale = Vector3.one * (sh > 0 ? targetH / sh : 1f);
                 d.It.Body.color = new Color(1f, .62f, .68f, Mathf.Clamp01(1.4f - d.T * .45f));
                 d.It.Shadow.color = new Color(0, 0, 0, .32f * Mathf.Clamp01(1f - d.T / 2.4f));
+                Publish(d.It, d.At, 0f);
                 if (d.T >= death.Length / DragonFps) { Return(d.It); _dying.RemoveAt(i); }
             }
         }
@@ -163,6 +168,10 @@ namespace TunnelCrew.Presentation
             // 체력바 — 광란종·보스 제외 (원본 규칙)
             bool showHp = !e.IsApex && !e.IsBoss && e.Hp < e.HpMax;
             it.HpBg.enabled = it.HpBar.enabled = showHp;
+            if (showHp && PerspectiveWorldInfo.Wanted)
+                PerspectiveWorldInfo.Bar(new Vector2((float)e.Position.X, (float)e.Position.Y),
+                    r * 1.75f + bob + lift, Mathf.Clamp01((float)(e.Hp / e.HpMax)), r * 2.2f,
+                    new Color(0.95f, 0.35f, 0.35f));
             if (showHp)
             {
                 float w = r * 2.2f, h = 0.09f;
@@ -189,6 +198,31 @@ namespace TunnelCrew.Presentation
                 it.Windup.SetPosition(0, IsometricProjection.ToRender3(e.Position + e.AttackDir * inner, -0.05f));
                 it.Windup.SetPosition(1, IsometricProjection.ToRender3(e.Position + e.AttackDir * outer, -0.05f));
             }
+
+            Publish(it, new Vector2((float)e.Position.X, (float)e.Position.Y), bob + lift);
+        }
+
+        /// <summary>
+        /// 3D 원근 렌더러용 표현 계약. 몸은 시뮬레이션 바닥 좌표에 세우고,
+        /// 들썩임(bob)과 도약(lift)은 화면 Y 가 아니라 높이로만 보낸다.
+        /// </summary>
+        void Publish(Item it, Vector2 ground, float height)
+        {
+            if (it.Body == null || it.Body.sprite == null) return;
+            if (it.Perspective == 0) it.Perspective = PerspectiveActors.Acquire("Enemy");
+
+            var scale = it.Body.transform.localScale;
+            var sample = PerspectiveActorSample.Default;
+            sample.Ground = ground;
+            sample.Height = height;
+            sample.Sprite = it.Body.sprite;
+            sample.Tint = it.Body.color;
+            sample.Scale = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+            sample.FlipX = it.Body.flipX ^ (scale.x < 0f);
+            sample.Visible = it.Body.enabled && it.Go.activeInHierarchy;
+            sample.Group = PerspectiveActorGroup.Actor;
+            sample.Source = it.Body;
+            PerspectiveActors.Submit(it.Perspective, sample);
         }
 
         static string KindId(EnemyKind k) => k switch
@@ -225,6 +259,13 @@ namespace TunnelCrew.Presentation
             return it;
         }
         void Return(Item it) { it.Go.SetActive(false); it.AnimKey = null; it.AnimT = 0; it.Body.flipX = false; it.Body.color = Color.white; _pool.Push(it); }
+
+        void OnDestroy()
+        {
+            foreach (var kv in _items) if (kv.Value.Perspective != 0) PerspectiveActors.Release(kv.Value.Perspective);
+            foreach (var d in _dying) if (d.It.Perspective != 0) PerspectiveActors.Release(d.It.Perspective);
+            foreach (var it in _pool) if (it.Perspective != 0) PerspectiveActors.Release(it.Perspective);
+        }
 
         static Sprite _square;
         static Sprite MakeSquare()

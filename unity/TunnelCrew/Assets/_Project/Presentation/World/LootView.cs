@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TunnelCrew.Sim;
+using TunnelCrew.Presentation.Visual;
 using UnityEngine;
 
 namespace TunnelCrew.Presentation
@@ -14,6 +15,9 @@ namespace TunnelCrew.Presentation
     {
         readonly List<SpriteRenderer> _pool = new List<SpriteRenderer>();
         readonly List<SpriteRenderer> _shadowPool = new List<SpriteRenderer>();
+        /// <summary>원근 계약 슬롯 — 전리품 본체와 발밑 그림자.</summary>
+        readonly List<int> _itemHandles = new List<int>();
+        readonly List<int> _shadowHandles = new List<int>();
         Sprite _dot;
 
         static readonly Color PulpColor = new Color(0.45f, 0.85f, 0.42f);
@@ -47,7 +51,46 @@ namespace TunnelCrew.Presentation
                 _shadowPool[i].transform.position = new Vector3(ground.x, ground.y, 0f);
                 _shadowPool[i].transform.localScale = Vector3.one * (s * 0.8f * Mathf.Lerp(0.5f, 1f, t));
                 _shadowPool[i].color = new Color(0f, 0f, 0f, 0.35f * t);
+
+                // 원근 월드 — 본체는 가짜 z 만큼 띄우고, 그림자는 바닥에 눕는다.
+                Publish(_itemHandles, i, "Loot", new Vector2(x, y), z, _pool[i], PerspectiveActorGroup.Fx, false);
+                Publish(_shadowHandles, i, "Loot shadow", new Vector2(x, y), 0.015f, _shadowPool[i], PerspectiveActorGroup.Ground, false);
             }
+
+            for (int i = items.Count; i < _itemHandles.Count; i++)
+            {
+                if (_itemHandles[i] != 0) PerspectiveActors.Submit(_itemHandles[i], default);
+                if (_shadowHandles[i] != 0) PerspectiveActors.Submit(_shadowHandles[i], default);
+            }
+        }
+
+        static void Publish(List<int> handles, int index, string label, Vector2 ground, float height,
+            SpriteRenderer sr, PerspectiveActorGroup group, bool alignFeet)
+        {
+            while (handles.Count <= index) handles.Add(0);
+            if (sr == null || sr.sprite == null) return;
+            if (handles[index] == 0) handles[index] = PerspectiveActors.Acquire(label);
+
+            var scale = sr.transform.localScale;
+            var sample = PerspectiveActorSample.Default;
+            sample.Ground = ground;
+            sample.Height = height;
+            sample.Sprite = sr.sprite;
+            sample.Tint = sr.color;
+            sample.Scale = new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+            sample.AlignFeet = alignFeet;
+            sample.Group = group;
+            sample.Visible = sr.gameObject.activeSelf;
+            sample.Source = sr;
+            PerspectiveActors.Submit(handles[index], sample);
+        }
+
+        void OnDestroy()
+        {
+            foreach (int h in _itemHandles) if (h != 0) PerspectiveActors.Release(h);
+            foreach (int h in _shadowHandles) if (h != 0) PerspectiveActors.Release(h);
+            _itemHandles.Clear();
+            _shadowHandles.Clear();
         }
 
         void EnsurePool(int n)

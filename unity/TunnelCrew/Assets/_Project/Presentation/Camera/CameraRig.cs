@@ -162,9 +162,13 @@ namespace TunnelCrew.Presentation
             transform.position = new Vector3(finalCenter.x, finalCenter.y, -10f);
         }
 
-        /// <summary>화면 좌표 → 월드 좌표(셀 단위).</summary>
+        /// <summary>
+        /// 화면 좌표 → 월드 좌표(셀 단위).
+        /// 원근 월드가 화면을 소유하고 있으면 바닥 평면 레이캐스트가 단일 출처다(§4 2단계).
+        /// </summary>
         public Vector2 ScreenToWorld(Vector3 screen)
         {
+            if (PerspectiveViewport.TryScreenToSim(new Vector2(screen.x, screen.y), out var sim)) return sim;
             if (_cam == null) _cam = GetComponent<Camera>();
             var w = _cam.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_cam.transform.position.z));
             return IsometricProjection.ToWorld(new Vector2(w.x, w.y));
