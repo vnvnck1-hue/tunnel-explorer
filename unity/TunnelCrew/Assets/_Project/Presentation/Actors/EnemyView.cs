@@ -54,7 +54,14 @@ namespace TunnelCrew.Presentation
         {
             foreach (var e in enemies)
             {
-                if (!_items.TryGetValue(e, out var it)) _items[e] = it = Rent();
+                if (!_items.TryGetValue(e, out var it))
+                {
+                    // 이미 사망 처리해 _dying 으로 넘긴 개체를 다시 빌리지 않는다.
+                    // 시뮬이 시체를 한 프레임이라도 목록에 남기면 매 프레임 새 Item·새 표현 계약 슬롯이
+                    // 만들어져 무한히 쌓인다(2026-09-16 QA 실측: _dying 143개 · 계약 슬롯 218개).
+                    if (!e.Alive) continue;
+                    _items[e] = it = Rent();
+                }
                 Draw(e, it, dt);
             }
 

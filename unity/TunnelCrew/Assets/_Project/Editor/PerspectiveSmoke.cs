@@ -180,8 +180,39 @@ namespace TunnelCrew.EditorTools
                 }
                 else if (kv[0].Trim() == "boss" && value > 0.5f)
                 {
-                    run.Sim.Bosses.Spawn(run.Sim.Player, run.Sim.Depth);
+                    var boss = run.Sim.Bosses.Spawn(run.Sim.Player, run.Sim.Depth);
+                    // 소환 지점은 초점에서 멀 수 있다 — 촬영을 위해 화면 안으로 옮긴다(표현만 바꾼다).
+                    if (boss != null)
+                        boss.Body.Position = new TunnelCrew.Sim.Vec2(
+                            run.Sim.Player.Position.X + 5.5, run.Sim.Player.Position.Y + 1.5);
                     Debug.Log("[원근 스모크] 보스 소환");
+                }
+                else if (kv[0].Trim() == "apex")
+                {
+                    // 광란종 — 몸집·색·질주 프레임이 일반 적과 다르다(§4 1단계 완료 기준).
+                    int wanted = Mathf.RoundToInt(value);
+                    for (int i = 0; i < wanted; i++)
+                    {
+                        var e = run.Sim.Enemies.Spawn(run.Sim.Player.Position, true);
+                        if (e == null) continue;
+                        double angle = i * 2.2;
+                        e.Position = new TunnelCrew.Sim.Vec2(
+                            run.Sim.Player.Position.X + System.Math.Cos(angle) * 4.5,
+                            run.Sim.Player.Position.Y + System.Math.Sin(angle) * 4.5);
+                    }
+                    Debug.Log($"[원근 스모크] 광란종 {wanted}마리 소환");
+                }
+                else if (kv[0].Trim() == "bosskill" && value > 0.5f)
+                {
+                    // 보스 사망 연출(dragon_death 24프레임)을 찍기 위해 즉시 격파한다.
+                    var boss = run.Sim.Bosses.Boss;
+                    if (boss != null)
+                    {
+                        boss.Body.Position = new TunnelCrew.Sim.Vec2(
+                            run.Sim.Player.Position.X + 5.5, run.Sim.Player.Position.Y + 1.5);
+                        boss.Body.Hp = 0;   // Alive 는 Hp > 0 파생값이다
+                        Debug.Log("[원근 스모크] 보스 격파 — 사망 연출");
+                    }
                 }
             }
         }
