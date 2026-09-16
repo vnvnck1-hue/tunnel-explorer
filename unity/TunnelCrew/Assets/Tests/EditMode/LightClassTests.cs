@@ -118,7 +118,7 @@ namespace TunnelCrew.Tests
         [Test]
         public void 깜빡이지_않는_분류는_항상_1_이다()
         {
-            foreach (var c in new[] { LightClass.Scout, LightClass.Indicator, LightClass.Combat })
+            foreach (var c in new[] { LightClass.Scout, LightClass.Worklamp, LightClass.Indicator, LightClass.Combat })
             {
                 Assert.AreEqual(1f, LightClassRules.FlickerAt(c, 1.7f, 0.2f), 1e-6f, c.ToString());
                 Assert.AreEqual(0f, LightClassRules.FlickerAmplitude(c), c.ToString());
@@ -126,33 +126,30 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
-        public void 작업등_깜빡임은_미세하고_항상_양수다()
+        public void 작업등은_시간과_위상에_관계없이_밝기가_고정된다()
         {
-            // §7.3 은 "미세 깜빡임" 을 요구한다. 크게 흔들면 광과민 옵션(§14 F)에 걸린다.
-            float min = float.MaxValue, max = float.MinValue;
+            // 주변 작업등이 흔들리면 겹쳐진 손전등 원뿔 전체가 주기적으로 반짝이는 것처럼 보인다.
             for (int i = 0; i < 2000; i++)
             {
-                float k = LightClassRules.FlickerAt(LightClass.Worklamp, i * 0.01f, 0.13f);
-                min = Mathf.Min(min, k);
-                max = Mathf.Max(max, k);
+                float time = i * 0.01f;
+                Assert.AreEqual(1f, LightClassRules.FlickerAt(LightClass.Worklamp, time, 0.13f), 1e-6f);
+                Assert.AreEqual(1f, LightClassRules.FlickerAt(LightClass.Worklamp, time, 0.71f), 1e-6f);
             }
-            Assert.Greater(min, 0.9f, "가장 어두울 때도 10% 이상 줄지 않는다");
-            Assert.Less(max, 1.1f, "가장 밝을 때도 10% 이상 늘지 않는다");
         }
 
         [Test]
-        public void 광물광은_작업등보다_훨씬_느리게_숨쉰다()
+        public void 광물광은_1Hz_미만으로_천천히_숨쉰다()
         {
-            Assert.Less(LightClassRules.FlickerHz(LightClass.MineralGlow),
-                        LightClassRules.FlickerHz(LightClass.Worklamp));
+            Assert.Greater(LightClassRules.FlickerHz(LightClass.MineralGlow), 0f);
+            Assert.Less(LightClassRules.FlickerHz(LightClass.MineralGlow), 1f);
         }
 
         [Test]
         public void 위상이_다르면_같은_시각에_다른_값이_나온다()
         {
-            // 램프가 여러 개일 때 한꺼번에 흔들리면 방 전체가 맥박처럼 보인다.
-            float a = LightClassRules.FlickerAt(LightClass.Worklamp, 2.5f, 0.0f);
-            float b = LightClassRules.FlickerAt(LightClass.Worklamp, 2.5f, 0.5f);
+            // 광물이 여러 개일 때 한꺼번에 흔들리면 방 전체가 맥박처럼 보인다.
+            float a = LightClassRules.FlickerAt(LightClass.MineralGlow, 2.5f, 0.0f);
+            float b = LightClassRules.FlickerAt(LightClass.MineralGlow, 2.5f, 0.5f);
             Assert.AreNotEqual(a, b);
         }
 

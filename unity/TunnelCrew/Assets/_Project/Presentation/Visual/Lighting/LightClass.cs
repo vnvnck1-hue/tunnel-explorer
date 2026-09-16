@@ -15,7 +15,7 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>탐색광 — 플레이어·크루 손전등. 방향성, 벽 그림자, 노멀 반응.</summary>
         Scout = 0,
 
-        /// <summary>작업등 — 랜턴·문·기계. 고정 소켓, 색 온도, 미세 깜빡임.</summary>
+        /// <summary>작업등 — 랜턴·문·기계. 고정 소켓, 색 온도, 안정된 밝기.</summary>
         Worklamp = 1,
 
         /// <summary>생체·광물광 — 수정·식생·광맥. Emission 중심, 저비용 비그림자.</summary>
@@ -93,25 +93,23 @@ namespace TunnelCrew.Presentation.Visual
         /// <summary>
         /// 미세 깜빡임의 세기(세기 배율의 진폭). 0 이면 깜빡이지 않는다.
         ///
-        /// §7.3 은 작업등에 "미세 깜빡임" 을 요구한다. <b>미세</b>가 핵심이다 —
-        /// 크게 흔들면 광과민 옵션(§14 F)에 걸리고 가독성을 해친다.
+        /// 작업등은 손전등과 빛이 겹칠 때 작은 변화도 원뿔 전체의 주기적 반짝임처럼 보인다.
+        /// 따라서 플레이 공간의 고정광은 안정시키고 광물광의 느린 호흡에만 변화를 둔다.
         /// </summary>
         public static float FlickerAmplitude(LightClass c)
         {
             switch (c)
             {
-                case LightClass.Worklamp: return 0.06f;    // 랜턴의 불안정한 빛
                 case LightClass.MineralGlow: return 0.04f; // 결정의 느린 숨쉬기
                 default: return 0f;
             }
         }
 
-        /// <summary>깜빡임 주파수(Hz). 광물광은 훨씬 느리게 숨쉰다.</summary>
+        /// <summary>깜빡임 주파수(Hz). 현재는 광물광만 느리게 숨쉰다.</summary>
         public static float FlickerHz(LightClass c)
         {
             switch (c)
             {
-                case LightClass.Worklamp: return 7.3f;     // 무리수에 가깝게 — 주기가 눈에 띄지 않는다
                 case LightClass.MineralGlow: return 0.45f;
                 default: return 0f;
             }

@@ -121,12 +121,12 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
-        public void 광과민_옵션에서_작업등_깜빡임이_멈춘다()
+        public void 광과민_옵션에서_광물광_호흡이_멈춘다()
         {
             float scale = VisualQualityRules.FlashScale(reducePhotosensitivity: true);
             for (int i = 0; i < 200; i++)
                 Assert.AreEqual(1f,
-                    LightClassRules.FlickerAt(LightClass.Worklamp, i * 0.05f, 0.2f, scale), 1e-6f);
+                    LightClassRules.FlickerAt(LightClass.MineralGlow, i * 0.05f, 0.2f, scale), 1e-6f);
         }
 
         // ───────────────────────────── 컨트롤러
