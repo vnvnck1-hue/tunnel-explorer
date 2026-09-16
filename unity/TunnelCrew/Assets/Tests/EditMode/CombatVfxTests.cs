@@ -164,10 +164,21 @@ namespace TunnelCrew.Tests
                 fx.ProjectileMuzzle(Vector2.zero, Vector2.right, "standard", ProjectileStyleFlags.None, 1, false);
                 Assert.That(fx.ActiveTransientLightCount, Is.EqualTo(1));
                 Assert.That(fx.ActiveCasingCount, Is.EqualTo(1));
+                Assert.That(go.transform.Find("Casings"), Is.Null, "기존 중력 전용 탄피 ParticleSystem은 제거되어야 한다");
 
                 fx.ProjectileImpact(Vector2.right, Vector2.left, "standard", ProjectileImpactKind.Wall,
                     ProjectileStyleFlags.None, true, false, false, 1f);
                 Assert.That(fx.ActiveTransientLightCount, Is.EqualTo(2));
+                Assert.That(fx.ActiveGroundDebrisCount, Is.GreaterThanOrEqualTo(5));
+                Assert.That(fx.ActiveForgeSparkCount, Is.InRange(4, 7));
+                Assert.That(fx.ActiveHeatMarkCount, Is.EqualTo(1));
+                foreach (var trail in go.GetComponentsInChildren<TrailRenderer>(true))
+                    Assert.That(Vector2.Distance(trail.transform.position, Vector2.right), Is.LessThan(.25f),
+                        "재사용된 불꽃 Trail은 이전 피격점에서 새 피격점까지 긴 선을 만들면 안 된다");
+
+                int wallDebris = fx.ActiveGroundDebrisCount;
+                fx.EnemyHit(Vector2.zero, Vector2.right, dead: true, big: true);
+                Assert.That(fx.ActiveGroundDebrisCount, Is.GreaterThan(wallDebris + 10));
             }
             finally { Object.DestroyImmediate(go); }
         }

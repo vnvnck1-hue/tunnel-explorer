@@ -60,6 +60,33 @@ namespace TunnelCrew.Tests
         }
 
         [Test]
+        public void 플레이어_탄은_열린_공간에서_마우스_조준점_거리의_바닥에_착탄한다()
+        {
+            var sim = new TunnelSim();
+            sim.StartRun(RoleId.Gunner);
+            sim.EnterDepth(1, DungeonConfig.Runtime);
+            sim.Enemies.SpawnInterval = 9999;
+
+            var origin = sim.Player.Position;
+            const double targetDistance = .32;
+            sim.Player.Aim = 0;
+            sim.Player.AimPoint = origin + new Vec2(targetDistance, 0);
+            sim.Player.AimReady = true;
+            sim.Build.Accuracy = 1.0;
+
+            ProjectileImpactEvent? impact = null;
+            sim.ProjectileImpacted += e => { if (e.Kind == ProjectileImpactKind.Ground) impact = e; };
+            Assert.That(sim.Projectiles.TryFire(sim.Player, sim.Build, false), Is.True);
+
+            for (int i = 0; i < 20 && !impact.HasValue; i++)
+                sim.Projectiles.Tick(sim.Player, sim.Build, SimTuning.FixedDeltaTime);
+
+            Assert.That(impact.HasValue, Is.True);
+            Assert.That(Vec2.Distance(origin, impact.Value.Position), Is.EqualTo(targetDistance).Within(1e-6));
+            Assert.That(sim.Projectiles.Projectiles, Is.Empty);
+        }
+
+        [Test]
         public void 초고속_투사체도_한_틱_사이에_벽을_건너뛰지_않는다()
         {
             var sim = new TunnelSim();

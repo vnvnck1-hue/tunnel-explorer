@@ -19,19 +19,60 @@ namespace TunnelCrew.Presentation
         public const float LaserMuzzleFlashOffset = .24f;
         public int ActiveShapeCount => _shapes.Count;
         public int ActiveTransientLightCount => _transientLights.Count;
-        public int ActiveCasingCount => _casings != null ? _casings.particleCount : 0;
+        public int ActiveCasingCount
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < _groundDebris.Count; i++) if (_groundDebris[i].Casing) count++;
+                return count;
+            }
+        }
+        public int ActiveGroundDebrisCount => _groundDebris.Count;
+        public int ActiveForgeSparkCount => _forgeSparks.Count;
+        public int ActiveHeatMarkCount => _heatMarks.Count;
         const float Px = 1f / 50f;
 
-        ParticleSystem _chunks, _burst, _spikes, _smoke, _casings;
+        ParticleSystem _chunks, _burst, _spikes, _smoke;
         readonly List<Shape> _shapes = new List<Shape>();
         readonly Stack<SpriteRenderer> _shapePool = new Stack<SpriteRenderer>();
         readonly Stack<Shape> _shapeStatePool = new Stack<Shape>();
         readonly List<Material> _materials = new List<Material>();
-        Sprite _ring, _dot, _square, _star;
+        Sprite _ring, _dot, _square, _star, _casing;
+        Material _forgeSparkMaterial, _forgeCoreMaterial;
         VisualOptionsController _visualOptions;
         bool _initialized;
 
         sealed class Shape { public SpriteRenderer Sr; public float Life, Decay, R0, R1; public Color Col; public bool Ring; }
+        sealed class GroundDebris
+        {
+            public SpriteRenderer Sr;
+            public Vector2 Ground, PlanarVelocity;
+            public float Height, VerticalVelocity, Gravity, Age, Life, Spin, Scale;
+            public int Bounces;
+            public Color Color, HotColor;
+            public bool Splat, Casing;
+        }
+        readonly List<GroundDebris> _groundDebris = new List<GroundDebris>(128);
+        readonly Stack<GroundDebris> _groundDebrisPool = new Stack<GroundDebris>(128);
+        sealed class ForgeSpark
+        {
+            public SpriteRenderer Core;
+            public TrailRenderer Trail;
+            public Vector2 Ground, PlanarVelocity;
+            public float Height, VerticalVelocity, Gravity, Age, Life, Scale;
+            public int Bounces;
+        }
+        readonly List<ForgeSpark> _forgeSparks = new List<ForgeSpark>(96);
+        readonly Stack<ForgeSpark> _forgeSparkPool = new Stack<ForgeSpark>(96);
+        sealed class HeatMark
+        {
+            public GameObject Root;
+            public SpriteRenderer Rim, Hole;
+            public float Age, CoolTime, Life, Radius;
+        }
+        readonly List<HeatMark> _heatMarks = new List<HeatMark>(48);
+        readonly Stack<HeatMark> _heatMarkPool = new Stack<HeatMark>(48);
         sealed class TransientLight
         {
             public Light2D Light;
@@ -75,6 +116,24 @@ namespace TunnelCrew.Presentation
             _ring = ProcSprites.Ring(64, 0.11f);
             _square = ProcSprites.Square();
             _star = ProcSprites.Star(64);
+            _casing = MakeCasingSprite();
+
+            var sparkShader = Shader.Find("Tunnel Crew/Projectile-Trail");
+            if (sparkShader != null && sparkShader.isSupported)
+            {
+                _forgeSparkMaterial = new Material(sparkShader)
+                {
+                    name = "Forge Sparks (shared)",
+                    hideFlags = HideFlags.HideAndDontSave,
+                };
+                _materials.Add(_forgeSparkMaterial);
+            }
+            _forgeCoreMaterial = OverlayMaterials.Unlit("Forge Spark Core (shared)");
+            if (_forgeCoreMaterial != null)
+            {
+                _forgeCoreMaterial.hideFlags = HideFlags.HideAndDontSave;
+                _materials.Add(_forgeCoreMaterial);
+            }
 
             // 돌덩이 — 중력·회전·감속 (원본 ch: vx*=.93, rot, life 1/1.45s)
             _chunks = MakeSystem("Chunks", 36, _square, gravity: 0.9f, drag: 2.5f, rotate: true, stretch: false, order2: 44);
@@ -84,8 +143,6 @@ namespace TunnelCrew.Presentation
             _spikes = MakeSystem("Spikes", 43, _dot, gravity: 0f, drag: 0f, rotate: false, stretch: true, order2: 46);
             // 연기 — 커지며 사라진다
             _smoke = MakeSystem("Smoke", 30, _dot, gravity: -0.15f, drag: 4f, rotate: false, stretch: false, order2: 41);
-            // 탄피 — 화면의 위쪽으로 튀었다가 중력에 끌리고, 회전하면서 어둠 속으로 떨어진다.
-            _casings = MakeSystem("Casings", 34, MakeCasingSprite(), gravity: 1.25f, drag: 1.4f, rotate: true, stretch: false, order2: 43);
         }
 
         ParticleSystem MakeSystem(string name, int order, Sprite sprite, float gravity, float drag, bool rotate, bool stretch, int order2)
@@ -287,6 +344,336 @@ namespace TunnelCrew.Presentation
                 _transientLights.RemoveAt(i);
                 _transientLightPool.Push(pulse);
             }
+
+            // 피격 직후 붉게 달아오른 테두리가 최대 2초 동안 어두운 탄흔으로 식는다.
+            for (int i = _heatMarks.Count - 1; i >= 0; i--)
+            {
+                var mark = _heatMarks[i];
+                mark.Age += dt;
+                if (mark.Age >= mark.Life)
+                {
+                    mark.Root.SetActive(false);
+                    _heatMarks.RemoveAt(i);
+                    _heatMarkPool.Push(mark);
+                    continue;
+                }
+
+                float coolT = Mathf.Clamp01(mark.Age / mark.CoolTime);
+                float heat = Mathf.Pow(1f - coolT, 1.45f);
+                float fade = mark.Age <= mark.CoolTime
+                    ? 1f
+                    : 1f - Mathf.SmoothStep(mark.CoolTime, mark.Life, mark.Age);
+                var rim = Color.Lerp(new Color(.085f, .055f, .045f, .72f), new Color(1f, .09f, .012f, .96f), heat);
+                var hole = Color.Lerp(new Color(.012f, .010f, .009f, .92f), new Color(.50f, .018f, .004f, .96f), heat);
+                rim.a *= fade;
+                hole.a *= fade;
+                mark.Rim.color = rim;
+                mark.Hole.color = hole;
+                float settle = Mathf.Lerp(1.08f, 1f, 1f - heat);
+                mark.Root.transform.localScale = new Vector3(mark.Radius * 2f * settle, mark.Radius * 1.30f * settle, 1f);
+            }
+
+            // 파편은 화면 Y로 단순 낙하시키지 않는다. 바닥 평면 이동과 높이를 따로 적분한 뒤
+            // 마지막에 합쳐, 솟구침 → 바닥 충돌 → 짧은 미끄러짐이 분명하게 읽히게 한다.
+            for (int i = _groundDebris.Count - 1; i >= 0; i--)
+            {
+                var d = _groundDebris[i];
+                d.Age += dt;
+                d.Ground += d.PlanarVelocity * dt;
+                if (d.Height > 0f || d.VerticalVelocity > 0f)
+                {
+                    d.Height += d.VerticalVelocity * dt;
+                    d.VerticalVelocity -= d.Gravity * dt;
+                    if (d.Height <= 0f)
+                    {
+                        d.Height = 0f;
+                        if (d.Bounces > 0 && Mathf.Abs(d.VerticalVelocity) > .55f)
+                        {
+                            d.VerticalVelocity = -d.VerticalVelocity * Random.Range(.24f, .39f);
+                            d.PlanarVelocity *= Random.Range(d.Casing ? .72f : .62f, d.Casing ? .91f : .78f);
+                            if (d.Casing)
+                            {
+                                float scatter = Random.Range(-.58f, .58f);
+                                float cs = Mathf.Cos(scatter), sn = Mathf.Sin(scatter);
+                                d.PlanarVelocity = new Vector2(
+                                    d.PlanarVelocity.x * cs - d.PlanarVelocity.y * sn,
+                                    d.PlanarVelocity.x * sn + d.PlanarVelocity.y * cs);
+                                d.Spin = -d.Spin * Random.Range(.58f, .92f);
+                            }
+                            d.Bounces--;
+                        }
+                        else d.VerticalVelocity = 0f;
+                    }
+                }
+                else d.PlanarVelocity = Vector2.MoveTowards(d.PlanarVelocity, Vector2.zero,
+                    dt * (d.Splat ? 1.4f : d.Casing ? 1.65f : 3.8f));
+
+                float remain = 1f - d.Age / d.Life;
+                if (remain <= 0f)
+                {
+                    d.Sr.gameObject.SetActive(false);
+                    _groundDebris.RemoveAt(i);
+                    _groundDebrisPool.Push(d);
+                    continue;
+                }
+
+                d.Sr.transform.position = new Vector3(d.Ground.x, d.Ground.y + d.Height, -.035f);
+                d.Sr.transform.Rotate(0f, 0f, d.Spin * dt);
+                if (d.Height <= 0f) d.Spin = Mathf.MoveTowards(d.Spin, 0f, dt * (d.Casing ? 115f : 420f));
+                float shadowSquash = d.Splat ? Mathf.Lerp(.22f, .38f, IsometricProjection.ShadowSquash) : 1f;
+                float tumble = d.Casing ? Mathf.Lerp(.30f, 1f, Mathf.Abs(Mathf.Sin(d.Age * 19f + d.Spin * .013f))) : 1f;
+                d.Sr.transform.localScale = new Vector3(d.Scale * (d.Splat ? 1.65f : 1f), d.Scale * shadowSquash * tumble, 1f);
+                float heat = d.Casing ? Mathf.Pow(1f - Mathf.Clamp01(d.Age / .95f), 2.2f) : 0f;
+                var c = d.Casing ? Color.Lerp(d.Color, d.HotColor, heat) : d.Color;
+                c.a *= Mathf.Clamp01(remain * (d.Splat ? 2.2f : 3.3f));
+                d.Sr.color = c;
+            }
+
+            for (int i = _forgeSparks.Count - 1; i >= 0; i--)
+            {
+                var s = _forgeSparks[i];
+                s.Age += dt;
+                s.Ground += s.PlanarVelocity * dt;
+                s.Height += s.VerticalVelocity * dt;
+                s.VerticalVelocity -= s.Gravity * dt;
+                if (s.Height <= 0f)
+                {
+                    s.Height = 0f;
+                    if (s.Bounces-- > 0 && Mathf.Abs(s.VerticalVelocity) > .24f)
+                    {
+                        s.VerticalVelocity = -s.VerticalVelocity * Random.Range(.38f, .52f);
+                        s.PlanarVelocity *= Random.Range(.62f, .78f);
+                        float scatter = Random.Range(-.24f, .24f);
+                        float cs = Mathf.Cos(scatter), sn = Mathf.Sin(scatter);
+                        s.PlanarVelocity = new Vector2(
+                            s.PlanarVelocity.x * cs - s.PlanarVelocity.y * sn,
+                            s.PlanarVelocity.x * sn + s.PlanarVelocity.y * cs);
+                    }
+                    else s.VerticalVelocity = 0f;
+                }
+
+                float remain = 1f - s.Age / s.Life;
+                if (remain <= 0f)
+                {
+                    s.Trail.emitting = false;
+                    s.Trail.Clear();
+                    s.Core.gameObject.SetActive(false);
+                    _forgeSparks.RemoveAt(i);
+                    _forgeSparkPool.Push(s);
+                    continue;
+                }
+
+                s.Core.transform.position = new Vector3(s.Ground.x, s.Ground.y + s.Height, -.055f);
+                float hot = Mathf.Clamp01(remain * 1.7f);
+                var color = Color.Lerp(new Color(.82f, .055f, .008f, 1f), new Color(1f, .62f, .16f, 1f), hot * hot);
+                s.Core.color = color;
+                s.Core.transform.localScale = Vector3.one * s.Scale * Mathf.Lerp(.55f, 1f, remain);
+                s.Trail.startColor = color;
+                s.Trail.endColor = new Color(.48f, .012f, .002f, 0f);
+                s.Trail.widthMultiplier = s.Scale * Mathf.Lerp(.09f, .14f, hot);
+            }
+        }
+
+        /// <summary>대장간 쇠불꽃처럼 밝은 코어와 긴 가산 잔광을 남기며 바닥에 한두 번 튄다.</summary>
+        void ForgeSparks(Vector2 at, Vector2 reboundDir, int count, float power, bool hard)
+        {
+            EnsureInitialized();
+            count = ScaledCount(count);
+            reboundDir = reboundDir.sqrMagnitude > 1e-5f ? reboundDir.normalized : Vector2.up;
+            float baseAngle = Mathf.Atan2(reboundDir.y, reboundDir.x);
+            for (int i = 0; i < count; i++)
+            {
+                ForgeSpark s;
+                if (_forgeSparkPool.Count > 0) s = _forgeSparkPool.Pop();
+                else if (_forgeSparks.Count >= 96)
+                {
+                    s = _forgeSparks[0];
+                    _forgeSparks.RemoveAt(0);
+                    s.Trail.Clear();
+                }
+                else s = NewForgeSpark();
+
+                float a = baseAngle + Random.Range(-1.28f, 1.28f);
+                // 직전 상한에서 다시 80%를 줄여, 가장 강한 탄도 반 칸조차 벗어나지 않게 한다.
+                float speed = Random.Range(hard ? .099f : .075f, hard ? .213f : .174f) * Mathf.Sqrt(power);
+                s.Ground = at + Random.insideUnitCircle * .035f;
+                s.PlanarVelocity = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * speed;
+                s.Height = Random.Range(.01f, .045f);
+                s.VerticalVelocity = Random.Range(.9f, hard ? 1.4f : 1.25f);
+                s.Gravity = Random.Range(12f, 14f);
+                s.Age = 0f;
+                s.Life = Random.Range(.42f, hard ? .62f : .56f);
+                s.Bounces = Random.Range(1, 3);
+                s.Scale = Random.Range(.065f, .105f) * Mathf.Lerp(.9f, 1.18f, power - .55f);
+                s.Core.sprite = _dot;
+                s.Core.color = new Color(1f, .62f, .16f, 1f);
+                // 풀에서 꺼낸 Trail이 이전 피격점과 새 피격점을 긴 선으로 잇지 않게
+                // 방출을 끈 채 새 위치로 먼저 옮긴 다음 기록을 비우고 재개한다.
+                s.Trail.emitting = false;
+                s.Trail.Clear();
+                s.Core.transform.position = new Vector3(s.Ground.x, s.Ground.y + s.Height, -.055f);
+                s.Core.gameObject.SetActive(true);
+                s.Trail.emitting = true;
+                _forgeSparks.Add(s);
+            }
+
+        }
+
+        ForgeSpark NewForgeSpark()
+        {
+            var go = new GameObject("forge-spark");
+            go.transform.SetParent(transform, false);
+            var core = go.AddComponent<SpriteRenderer>();
+            core.sortingOrder = 49;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) core.sortingLayerName = VisualLayers.WorldFX;
+            if (_forgeCoreMaterial != null) core.sharedMaterial = _forgeCoreMaterial;
+            var trail = go.AddComponent<TrailRenderer>();
+            trail.sharedMaterial = _forgeSparkMaterial;
+            trail.time = .012f;
+            trail.minVertexDistance = .025f;
+            trail.numCornerVertices = 2;
+            trail.numCapVertices = 2;
+            trail.textureMode = LineTextureMode.Stretch;
+            trail.sortingOrder = 48;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) trail.sortingLayerName = VisualLayers.WorldFX;
+            return new ForgeSpark { Core = core, Trail = trail };
+        }
+
+        void HeatImpactDecal(Vector2 at, float radius)
+        {
+            EnsureInitialized();
+            HeatMark mark;
+            if (_heatMarkPool.Count > 0) mark = _heatMarkPool.Pop();
+            else if (_heatMarks.Count >= 48)
+            {
+                mark = _heatMarks[0];
+                _heatMarks.RemoveAt(0);
+            }
+            else mark = NewHeatMark();
+
+            mark.Age = 0f;
+            mark.CoolTime = Random.Range(.90f, 2.0001f);
+            mark.Life = mark.CoolTime + Random.Range(2f, 4.5f);
+            mark.Radius = radius * Random.Range(.88f, 1.12f);
+            mark.Root.transform.position = new Vector3(at.x, at.y, -.028f);
+            mark.Root.transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+            mark.Root.transform.localScale = new Vector3(mark.Radius * 2.16f, mark.Radius * 1.40f, 1f);
+            mark.Rim.color = new Color(1f, .09f, .012f, .96f);
+            mark.Hole.color = new Color(.50f, .018f, .004f, .96f);
+            mark.Root.SetActive(true);
+            _heatMarks.Add(mark);
+        }
+
+        HeatMark NewHeatMark()
+        {
+            var root = new GameObject("impact-heat-decal");
+            root.transform.SetParent(transform, false);
+            var rim = root.AddComponent<SpriteRenderer>();
+            rim.sprite = _ring;
+            rim.sortingOrder = 42;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) rim.sortingLayerName = VisualLayers.WorldFX;
+            if (_forgeCoreMaterial != null) rim.sharedMaterial = _forgeCoreMaterial;
+
+            var holeGo = new GameObject("bullet-hole");
+            holeGo.transform.SetParent(root.transform, false);
+            holeGo.transform.localScale = new Vector3(.43f, .43f, 1f);
+            var hole = holeGo.AddComponent<SpriteRenderer>();
+            hole.sprite = _dot;
+            hole.sortingOrder = 43;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) hole.sortingLayerName = VisualLayers.WorldFX;
+            if (_forgeCoreMaterial != null) hole.sharedMaterial = _forgeCoreMaterial;
+            return new HeatMark { Root = root, Rim = rim, Hole = hole };
+        }
+
+        /// <summary>
+        /// 바닥 평면과 높이를 분리해 적분하는 착탄/사망 파편. 일부는 멀리 튀지만 대부분은 발생점 근처에 착지한다.
+        /// </summary>
+        void GroundDebrisBurst(Vector2 at, Vector2 reboundDir, int count, Color[] palette,
+            float minSpeed, float maxSpeed, float minSize, float maxSize, bool body)
+        {
+            EnsureInitialized();
+            count = ScaledCount(count);
+            bool biased = reboundDir.sqrMagnitude > 1e-5f;
+            float baseAngle = biased ? Mathf.Atan2(reboundDir.y, reboundDir.x) : 0f;
+            for (int i = 0; i < count; i++)
+            {
+                GroundDebris d;
+                if (_groundDebrisPool.Count > 0) d = _groundDebrisPool.Pop();
+                else if (_groundDebris.Count >= 140)
+                {
+                    d = _groundDebris[0];
+                    _groundDebris.RemoveAt(0);
+                }
+                else d = new GroundDebris();
+
+                if (d.Sr == null) d.Sr = NewGroundDebrisRenderer();
+                float a = biased ? baseAngle + Random.Range(-1.18f, 1.18f) : Random.value * Mathf.PI * 2f;
+                float farMul = Random.value < (body ? .28f : .14f) ? Random.Range(1.55f, 2.25f) : 1f;
+                float speed = Random.Range(minSpeed, maxSpeed) * farMul;
+                d.Ground = at + new Vector2(Random.Range(-.08f, .08f), Random.Range(-.05f, .05f));
+                d.PlanarVelocity = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * speed;
+                d.Height = Random.Range(.02f, .12f);
+                d.VerticalVelocity = Random.Range(body ? 1.8f : 1.15f, body ? 4.2f : 3.0f);
+                d.Gravity = Random.Range(7.8f, 10.8f);
+                d.Age = 0f;
+                d.Life = Random.Range(body ? 1.55f : 1.05f, body ? 2.45f : 1.75f);
+                d.Bounces = Random.Range(1, 3);
+                d.Spin = Random.Range(-760f, 760f);
+                d.Scale = Random.Range(minSize, maxSize);
+                d.Color = palette[Random.Range(0, palette.Length)];
+                d.HotColor = d.Color;
+                d.Splat = false;
+                d.Casing = false;
+                d.Sr.sprite = _square;
+                d.Sr.color = d.Color;
+                d.Sr.sortingOrder = 44;
+                d.Sr.gameObject.SetActive(true);
+                _groundDebris.Add(d);
+            }
+        }
+
+        void FloorFluidSplats(Vector2 at, int count)
+        {
+            count = ScaledCount(count);
+            for (int i = 0; i < count; i++)
+            {
+                GroundDebris d;
+                if (_groundDebrisPool.Count > 0) d = _groundDebrisPool.Pop();
+                else if (_groundDebris.Count >= 140) { d = _groundDebris[0]; _groundDebris.RemoveAt(0); }
+                else d = new GroundDebris();
+                if (d.Sr == null) d.Sr = NewGroundDebrisRenderer();
+                float a = Random.value * Mathf.PI * 2f;
+                float radius = Random.Range(.18f, 1.15f);
+                d.Ground = at + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius;
+                d.PlanarVelocity = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * Random.Range(.08f, .38f);
+                d.Height = d.VerticalVelocity = 0f;
+                d.Gravity = 0f;
+                d.Age = 0f;
+                d.Life = Random.Range(1.5f, 2.6f);
+                d.Bounces = 0;
+                d.Spin = Random.Range(-35f, 35f);
+                d.Scale = Random.Range(.13f, .34f);
+                d.Color = Color.Lerp(PalBlood[0], PalBlood[2], Random.value * .75f);
+                d.Color.a = Random.Range(.68f, .94f);
+                d.HotColor = d.Color;
+                d.Splat = true;
+                d.Casing = false;
+                d.Sr.sprite = _dot;
+                d.Sr.color = d.Color;
+                d.Sr.sortingOrder = 42;
+                d.Sr.gameObject.SetActive(true);
+                _groundDebris.Add(d);
+            }
+        }
+
+        SpriteRenderer NewGroundDebrisRenderer()
+        {
+            var go = new GameObject("ground-debris");
+            go.transform.SetParent(transform, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = 44;
+            if (VisualLayers.Exists(VisualLayers.WorldFX)) sr.sortingLayerName = VisualLayers.WorldFX;
+            return sr;
         }
 
         void PulseLight(Vector2 at, Color color, float radius, float peak, float duration)
@@ -328,23 +715,40 @@ namespace TunnelCrew.Presentation
 
         void EjectCasing(Vector2 origin, Vector2 dir, bool ai, string visualId)
         {
-            if (_casings == null || visualId == "laser" || visualId == "support" || visualId == "shard") return;
+            if (visualId == "laser" || visualId == "support" || visualId == "shard") return;
             if (ai && Random.value > .35f) return;
             dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : Vector2.right;
             var side = new Vector2(-dir.y, dir.x);
             if (side.y < 0f) side = -side;
-            float speed = Random.Range(1.15f, 1.85f) * (ai ? .75f : 1f);
-            var velocity = side * speed - dir * Random.Range(.12f, .42f) + Vector2.up * Random.Range(.28f, .62f);
-            var ep = new ParticleSystem.EmitParams
-            {
-                position = origin - dir * .12f + side * .13f,
-                velocity = velocity,
-                startSize = Random.Range(.18f, .24f),
-                startLifetime = Random.Range(.78f, 1.18f),
-                startColor = Color.white,
-                rotation = Random.value * 360f,
-            };
-            _casings.Emit(ep, 1);
+            GroundDebris d;
+            if (_groundDebrisPool.Count > 0) d = _groundDebrisPool.Pop();
+            else if (_groundDebris.Count >= 140) { d = _groundDebris[0]; _groundDebris.RemoveAt(0); }
+            else d = new GroundDebris();
+            if (d.Sr == null) d.Sr = NewGroundDebrisRenderer();
+
+            float speed = Random.Range(.38f, .82f) * (ai ? .76f : 1f);
+            d.Ground = origin - dir * .10f + side * .16f;
+            d.PlanarVelocity = side * speed - dir * Random.Range(.15f, .72f)
+                             + Random.insideUnitCircle * Random.Range(.04f, .16f);
+            d.Height = Random.Range(.05f, .12f);
+            d.VerticalVelocity = Random.Range(1.05f, 1.78f) * (ai ? .82f : 1f);
+            d.Gravity = Random.Range(8.8f, 10.8f);
+            d.Age = 0f;
+            d.Life = Random.Range(2.4f, 3.5f);
+            d.Bounces = Random.Range(2, 5);
+            d.Spin = Random.Range(-760f, 760f);
+            // 기존 Shuriken 탄피보다 화면상 약 2배 크게 잡아, 튀고 구르는 실루엣을 놓치지 않게 한다.
+            d.Scale = Random.Range(.76f, .98f) * (ai ? .86f : 1f);
+            d.Color = C("#D39A32");
+            d.HotColor = new Color(2.05f, .20f, .018f, 1f);
+            d.Splat = false;
+            d.Casing = true;
+            d.Sr.sprite = _casing;
+            d.Sr.color = d.HotColor;
+            d.Sr.sortingOrder = 47;
+            d.Sr.gameObject.SetActive(true);
+            _groundDebris.Add(d);
+
         }
 
         // ───────────────────────────── 게임 이벤트 → 원본 연출 조합
@@ -392,8 +796,18 @@ namespace TunnelCrew.Presentation
         /// <summary>적 피격 — 피 튀김 + 링.</summary>
         public void EnemyHit(Vector2 at, Vector2 dir, bool dead, bool big)
         {
-            Burst(at, dead ? 18 : big ? 10 : 6, PalBlood, dead ? 230f : 160f);
-            if (dead) { Ring(at, C("#FF557D"), .2f, 1.2f); Smoke(at, 3, C("#3A0D1A"), 60f); }
+            Burst(at, dead ? 34 : big ? 10 : 6, PalBlood, dead ? 285f : 160f);
+            if (dead)
+            {
+                // 몸 파편은 공중 높이와 바닥 미끄러짐을 따로 계산한다. 체액은 납작한 바닥 얼룩으로 남아
+                // 단순히 화면 아래로 떨어지는 파티클보다 사망 위치와 주변 공간을 또렷하게 보여 준다.
+                GroundDebrisBurst(at, dir.sqrMagnitude > 1e-5f ? dir : Vector2.zero,
+                    13, PalBlood, .75f, 2.75f, .11f, .28f, body: true);
+                FloorFluidSplats(at, 11);
+                Ring(at, C("#FF557D"), .2f, 1.45f);
+                Smoke(at, 7, C("#3A0D1A"), 95f, .72f);
+                Spikes(at, 12, C("#FFB0B8"), .62f, dir);
+            }
             else Spikes(at, 4, C("#FFB0B8"), .25f, dir);
         }
 
@@ -493,18 +907,45 @@ namespace TunnelCrew.Presentation
 
             bool hard = kind == ProjectileImpactKind.Bedrock;
             bool bounce = kind == ProjectileImpactKind.Ricochet;
+            bool ground = kind == ProjectileImpactKind.Ground;
             int sparks = visualId == "pierce" || visualId == "laser" ? 9
                        : visualId == "support" ? 3 : visualId == "multi" ? 5 : 6;
             var palette2 = visualId == "pierce" || visualId == "laser" ? PalImpactPierce
                         : visualId == "ricochet" ? PalImpactRicochet
                         : visualId == "support" || visualId == "shard" ? PalImpactSupport : PalImpactStandard;
-            Burst(at, sparks + (hard ? 3 : 0), palette2, (hard ? 235f : 175f) * power);
+            if (kind == ProjectileImpactKind.Enemy)
+                Burst(at, sparks, palette2, 175f * power);
+
+            if (kind == ProjectileImpactKind.Wall || hard || bounce)
+            {
+                var stonePalette = hard ? PalRock : PalStone;
+                // 벽 표면에서 사수 쪽으로 반발한 뒤 높이를 잃고 벽 가까운 바닥에 착지한다.
+                GroundDebrisBurst(at, -dir, hard ? 11 : 8, stonePalette,
+                    .38f, hard ? 2.45f : 1.95f, .055f, hard ? .18f : .145f, body: false);
+                Smoke(at - dir.normalized * .06f, hard ? 5 : 3, hard ? C("#34394B") : C("#4A4640"),
+                    hard ? 92f : 68f, hard ? .82f : .58f);
+                ForgeSparks(at, -dir, hard ? 7 : 5, power, hard);
+                HeatImpactDecal(at, hard ? .19f : .15f);
+            }
+            else if (ground)
+            {
+                // 조준점까지 열린 공간을 날아온 탄은 바닥 먼지와 낮은 파편으로 종착점을 표시한다.
+                GroundDebrisBurst(at, -dir, 5, PalDirt, .22f, 1.05f, .045f, .11f, body: false);
+                Smoke(at, 2, C("#61594E"), 45f, .42f);
+                ForgeSparks(at, -dir, 4, power, hard: false);
+                HeatImpactDecal(at, .13f);
+                Ring(at, new Color(p.Body.r, p.Body.g, p.Body.b, .52f), .02f, .28f, 10f);
+            }
 
             if (bounce)
             {
                 Square(at, p.Body, .05f, .58f);
                 Ring(at, p.Accent, .03f, .40f, 8f);
-                Spikes(at, 6, p.Core, .42f, -dir);
+            }
+            else if (kind == ProjectileImpactKind.Wall || hard || ground)
+            {
+                Flash(at, hard ? .34f : .24f, new Color(1f, .58f, .16f, .82f));
+                Ring(at, new Color(p.Body.r, p.Body.g, p.Body.b, .55f), .025f, hard ? .58f : .38f, 9f);
             }
             else if (visualId == "pierce" || visualId == "laser")
             {
